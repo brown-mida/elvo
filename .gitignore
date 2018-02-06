@@ -1,6 +1,8 @@
 .idea/
 .ipynb_checkpoints/
 venv/
+__pycache__/
 
 RI Hospital ELVO Data/
+data*/
 *.npy
