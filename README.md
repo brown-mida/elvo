@@ -13,18 +13,21 @@ in the root directory of the repo.
 
 ```
 pip3 install -r requirements.txt
-python3 untitled.py
+python3 main.py
 ```
 
-The Jupyter notebook contains some code which shows a slice of a scan on the
-browser.
+The Jupyter notebooks contains some code for generating images of
+the data which can be interactively run in the browser.
+
+Type in `jupyter notebook` into the console to start the notebook.
+
 
 ## TODO
 
-* Connect the data labels to the images
-* Build and run a simple ConvNet on the data
-* Write better instructions for how to use the code
-* Make sure that the code runs on Python 2
+* Write test cases focused on ensuring that all preprocessing steps are completed
+* Write initial test cases to ensure that models are training correctly
+* Write better instructions for how to get started with the code
+* Create a contribution guide
 * Make sure that the data is anonymized.
 
 
