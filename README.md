@@ -12,9 +12,12 @@ Then run the following commands while
 in the root directory of the repo.
 
 ```
-pip3 install -r requirements.txt
+conda install pydicom
+conda install pytorch torchvision -c pytorch
 python3 main.py
 ```
+
+Note: We are using Anaconda >4.4 (for Python 3.6)
 
 The Jupyter notebooks contains some code for generating images of
 the data which can be interactively run in the browser.
