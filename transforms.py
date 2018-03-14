@@ -3,12 +3,9 @@
 
 # TODO: Create more clear instructions for running these files
 import os
-import re
-import time
 
-import dicom
+import pydicom
 import numpy as np
-import pandas as pd
 import scipy.misc
 import scipy.ndimage
 import scipy.stats
@@ -19,7 +16,7 @@ def load_scan(dirpath):
     returns a list of dicom dataset objects. Each dicom dataset
     contains a single image slice.
     """
-    slices = [dicom.read_file(dirpath + '/' + filename)
+    slices = [pydicom.read_file(dirpath + '/' + filename)
               for filename in os.listdir(dirpath)]
     return sorted(slices, key=lambda x: float(x.ImagePositionPatient[2]))
 
@@ -92,3 +89,33 @@ def crop(image, output_shape=(200, 200, 200)):
         selected_indices = list(range(start_idx, start_idx + output_shape[dim]))
         image = image.take(selected_indices, axis=dim)
     return image
+
+
+def parse_bounding_box(annotation_path: str):
+    """Parses an AnnotationROI.acsv file and returns a tuple of
+    the region of interest.
+
+    The first triple in the tuple is the center of the ROI.
+    The second triple in the tuple is the distance of the
+    bounding box from the center.
+
+    For example, the pair ((0, 0, 0), (1, 1, 1)) would described
+    the box with coordinates (1, 1, 1), (-1, -1, -1), (-1, 1, 1) ...
+    """
+    point = []
+    with open(annotation_path, 'r') as annotation_fp:
+        for line in annotation_fp:
+            if line.startswith('# pointNumberingScheme'):
+                assert line == '# pointNumberingScheme = 0\n'
+            if line.startswith('# pointColumns'):
+                assert line == '# pointColumns = type|x|y|z|sel|vis\n'
+            if line.startswith('point|'):
+                values = line.split('|')
+                coordinates = (
+                    float(values[1]),
+                    float(values[2]),
+                    float(values[3]),
+                )
+                point.append(coordinates)
+    assert len(point) == 2
+    return tuple(point)
