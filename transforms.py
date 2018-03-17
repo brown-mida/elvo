@@ -1,24 +1,10 @@
 # Code borrowed from
 # https://www.kaggle.com/gzuidhof/full-preprocessing-tutorial/notebook
 
-# TODO: Create more clear instructions for running these files
-import os
-
-import pydicom
 import numpy as np
 import scipy.misc
 import scipy.ndimage
 import scipy.stats
-
-
-def load_scan(dirpath):
-    """Takes in the path of a directory containing scans and
-    returns a list of dicom dataset objects. Each dicom dataset
-    contains a single image slice.
-    """
-    slices = [pydicom.read_file(dirpath + '/' + filename)
-              for filename in os.listdir(dirpath)]
-    return sorted(slices, key=lambda x: float(x.ImagePositionPatient[2]))
 
 
 def get_pixels_hu(slices):
@@ -54,8 +40,10 @@ def standardize_spacing(image, slices):
     each pixel corresponds to approximately a 1x1x1 box.
     """
     # Determine current pixel spacing
-    spacing = np.array([slices[0].SliceThickness] + slices[0].PixelSpacing,
-                       dtype=np.float32)
+    spacing = np.array(
+        [slices[0].SliceThickness] + list(slices[0].PixelSpacing),
+        dtype=np.float32
+    )
     new_shape = np.round(image.shape * spacing)
     resize_factor = new_shape / image.shape
     return scipy.ndimage.interpolation.zoom(image,

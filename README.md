@@ -27,8 +27,11 @@ Type in `jupyter notebook` into the console to start the notebook.
 
 ## TODO
 
-* Write test cases focused on ensuring that all preprocessing steps are completed
-* Write initial test cases to ensure that models are training correctly
+* Document the schema of the processed data (labels, centerX, etc.)
+* Set up the validation pipeline: See
+    http://cs231n.github.io/neural-networks-3/
+    https://research.googleblog.com/2017/11/feature-visualization.html
+* Write a few system tests for checking the preprocessing step
 * Write better instructions for how to get started with the code
 * Create a contribution guide
 * Make sure that the data is anonymized.
