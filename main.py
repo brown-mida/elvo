@@ -1,3 +1,4 @@
+import logging
 import os
 import time
 
@@ -8,54 +9,80 @@ import parsers
 import transforms
 
 
-def preprocess(input_dir, output_dir):
+def preprocess(ct_dir, roi_dir, output_dir):
     """Loads the data from the input directory and saves
     normalized, zero-centered, 200 x 200 x 200 3D renderings
     in output_dir.
     """
-    # Input (NOTE: Keep I/O separate from transformations for clarity!)
-    patient_ids, preprocessed_scans = parsers.load_scans(input_dir)
+    # parsers.unzip_scans(ct_dir)
+    patient_ids = parsers.load_patient_infos(ct_dir)
+    logging.debug('Loaded patient ids in {}'.format(ct_dir))
 
-    # Transformations
-    processed_scans = []
-    for id_, slices in zip(patient_ids, preprocessed_scans):
-        scan = transforms.get_pixels_hu(slices)
-        scan = transforms.standardize_spacing(scan, slices)
-        scan = transforms.crop(scan)
-        # TODO: Generate an image at this point to verify the preprocessing
-        print('Finished converting to HU, standardizing pixels'
-              ' to 1mm, and cropping the array to 200x200x200')
-        processed_scans.append(scan)
+    os.makedirs(output_dir)
+
+    for id_, path in patient_ids.items():
+        slices = parsers.load_scan(path)
+        logging.debug('Loaded slices for patient {}'.format(id_))
+        scan = _preprocess_scan(slices)
+        _save_scan(id_, scan, output_dir)
 
     # Consider doing this step just before training the model
     # normalized = normalize(np.stack(processed_scans))
-    # Output
-    # TODO: Consider moving this step into a separate function
-    os.makedirs(output_dir)
-    for id_, scan in zip(patient_ids, processed_scans):
-        outfile = '{}/patient-{}'.format(output_dir, id_)
-        np.save(outfile, scan)
 
+    _save_info(patient_ids, roi_dir, output_dir)
+
+
+def _preprocess_scan(slices):
+    """Transforms the CT slices into a processed 3D numpy array.
+    """
+    scan = transforms.get_pixels_hu(slices)
+    scan = transforms.standardize_spacing(scan, slices)
+    scan = transforms.crop(scan)
+    # TODO: Generate an image at this point to verify the preprocessing
+    logging.debug(
+        'Finished converting to HU, standardizing pixels'
+        ' to 1mm, and cropping the array to 200x200x200'
+    )
+    return scan
+
+
+def _save_scan(id_, scan, output_dir):
+    """Saves the scan for patient id_ in the output_dir
+    as a numpy file."""
+    outfile = '{}/patient-{}'.format(output_dir, id_)
+    np.save(outfile, scan)
+    logging.debug(
+        'Finished saving scan as a .npy file'
+    )
+
+
+def _save_info(patient_ids, roi_dir, output_dir):
+    """Saves labels by matching directory names in roi_dir to
+    patient ids. Also saves the bounding boxes.
+    """
     columns = [
         'label',
         'centerX', 'centerY', 'centerZ',
         'deviationX', 'deviationY', 'deviationZ'
     ]
-    labels = pd.DataFrame(index=patient_ids, columns=columns)
-    labels['label'] = 0  # Set a default
+    info = pd.DataFrame(index=patient_ids, columns=columns)
+    info['label'] = 0  # Set a default
 
-    for name in os.listdir(input_dir):
-        if name.isdigit():
-            path = '{}/{}/AnnotationROI.acsv'.format(input_dir, name)
+    for name in os.listdir(roi_dir):
+        try:
+            path = '{}/{}/AnnotationROI.acsv'.format(roi_dir, name)
             center, dev = parsers.parse_bounding_box(path)
-            labels.loc[name, 'label'] = 1
-            labels.loc[name, ['centerX', 'centerY', 'centerZ']] = center
-            labels.loc[name, ['deviationX', 'deviationY', 'deviationZ']] = dev
+            info.loc[name, 'label'] = 1
+            info.loc[name, ['centerX', 'centerY', 'centerZ']] = center
+            info.loc[name, ['deviationX', 'deviationY', 'deviationZ']] = dev
+        except OSError:
+            pass
 
-    labels.to_csv('{}/labels.csv'.format(output_dir))
+    info.to_csv('{}/labels.csv'.format(output_dir))
 
 
 if __name__ == '__main__':
-    IN_DIR = 'RI Hospital ELVO Data'  # The relative path to the dataset
-    OUT_DIR = 'data-{}'.format(int(time.time()))
-    preprocess(IN_DIR, OUT_DIR)
+    OUTPUT_DIR = 'data-{}'.format(int(time.time()))
+    logging.basicConfig(level=logging.DEBUG)
+    # preprocess('RI Hospital ELVO Data', 'RI Hospital ELVO Data', OUT_DIR)
+    preprocess('ELVOS/anon', 'ELVOS/ROI_cropped', OUTPUT_DIR)

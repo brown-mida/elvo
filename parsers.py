@@ -1,5 +1,7 @@
+import logging
 import os
 import re
+import shutil
 
 import pydicom
 
@@ -14,6 +16,24 @@ def load_scan(dirpath):
     return sorted(slices, key=lambda x: float(x.ImagePositionPatient[2]))
 
 
+def _parse_id(dirpath: str, input_dir: str) -> str:
+    """Turns a dirpath like
+        ELVOS/anon/HIA2VPHI6ABMCQTV HANKERSON IGNACIO A/f8...
+    to its patient id: HIA2VPHI6ABMCQTV
+    """
+    return dirpath[len(input_dir) + 1:].split()[0]
+
+
+def load_patient_infos(input_dir):
+    """Returns a mapping of patient ids to the directory of scans"""
+    patient_ids = {}
+    for dirpath, dirnames, filenames in os.walk(input_dir):
+        if filenames and '.dcm' in filenames[0]:
+            patient_id = _parse_id(dirpath, input_dir)
+            patient_ids[patient_id] = dirpath
+    return patient_ids
+
+
 def load_scans(input_dir):
     id_pattern = re.compile(r'\d+')
     patient_ids = []
@@ -23,19 +43,21 @@ def load_scans(input_dir):
             patient_id = id_pattern.findall(dirpath)[0]
             patient_ids.append(patient_id)
             preprocessed_scans.append(load_scan(dirpath))
-            print('Loaded data for patient', patient_id)
     return patient_ids, preprocessed_scans
 
 
 def unzip_scans(input_dir):
-    id_pattern = re.compile(r'\d+')
-    patient_ids = []
-    for dirpath, dirnames, filenames in os.walk(input_dir):
-        if filenames and '.dcm' in filenames[0]:
-            patient_id = id_pattern.findall(dirpath)[0]
-            patient_ids.append(patient_id)
-            print('Unzipped data for patient', patient_id)
-    return patient_ids
+    """Unzips the zip files in the directory, writing to folders in
+    input_dir with the same name.
+    """
+    os.chdir(input_dir)
+    for filepath in os.listdir('.'):
+        if filepath.endswith('.zip'):
+            shutil.unpack_archive(filepath, format='zip')
+            logging.debug(
+                'Unzipped data in file {}'.format(filepath)
+            )
+    os.chdir('..')
 
 
 def parse_bounding_box(annotation_path: str):
