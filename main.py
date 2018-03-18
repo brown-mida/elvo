@@ -14,7 +14,7 @@ def preprocess(ct_dir, roi_dir, output_dir):
     normalized, zero-centered, 200 x 200 x 200 3D renderings
     in output_dir.
     """
-    # parsers.unzip_scans(ct_dir)
+    parsers.unzip_scans(ct_dir)
     patient_ids = parsers.load_patient_infos(ct_dir)
     logging.debug('Loaded patient ids in {}'.format(ct_dir))
 
@@ -82,7 +82,11 @@ def _save_info(patient_ids, roi_dir, output_dir):
 
 
 if __name__ == '__main__':
-    OUTPUT_DIR = 'data-{}'.format(int(time.time()))
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(filename='preprocessing.log', level=logging.DEBUG)
+    start = int(time.time())
+    OUTPUT_DIR = 'data-{}'.format(start)
+    logging.debug('Saving processed data to {}'.format(OUTPUT_DIR))
     # preprocess('RI Hospital ELVO Data', 'RI Hospital ELVO Data', OUT_DIR)
     preprocess('ELVOS/anon', 'ELVOS/ROI_cropped', OUTPUT_DIR)
+    end = int(time.time())
+    logging.debug('Preprocessing took {} seconds'.format(end - start))
