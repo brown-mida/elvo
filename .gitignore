@@ -7,3 +7,5 @@ RI Hospital ELVO Data/
 ELVOS/
 data*/
 *.npy
+
+preprocessing.log

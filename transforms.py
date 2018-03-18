@@ -9,7 +9,7 @@ import scipy.stats
 
 def get_pixels_hu(slices):
     """Takes in a list of dicom datasets and returns the 3D pixel
-    array in Houndsworth units, taking slope and intercept into
+    array in Hounsfield scale, taking slope and intercept into
     account.
     """
     for s in slices:
@@ -74,6 +74,7 @@ def crop(image, output_shape=(200, 200, 200)):
             start_idx = output_shape[dim] - output_shape[dim]
         else:
             start_idx = image.shape[dim] // 2 - output_shape[dim] // 2
-        selected_indices = list(range(start_idx, start_idx + output_shape[dim]))
+        selected_indices = \
+            list(range(start_idx, start_idx + output_shape[dim]))
         image = image.take(selected_indices, axis=dim)
     return image

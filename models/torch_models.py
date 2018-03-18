@@ -16,7 +16,8 @@ class ResNetBlock(Module):
         # TODO: Include downsampling, different stride lengths
         """
         :param n_channels: (int) Number of channels in the input image
-        :param out_channels: (int) Number of channels produced by the convolution
+        :param out_channels: (int) Number of channels produced by the
+                             convolution
         :param downsample: A function for downsampl
         """
         super().__init__()
@@ -36,7 +37,7 @@ class ResNetBlock(Module):
         input = F.relu(input)
         input = self.conv2(input)
         input = self.bn2(input)
-        residual = self.downsample(input)  # Makes sure that the dimensions match
+        residual = self.downsample(input)  # Makes sure that dimensions match
         input += residual
         return F.relu(input)
 
@@ -45,7 +46,8 @@ class ResNet3d(Module):
 
     def __init__(self):
         super().__init__()
-        self.conv1 = Conv3d(1, 32, kernel_size=7, stride=2, padding=3, bias=False)
+        self.conv1 = Conv3d(1, 32, kernel_size=7, stride=2,
+                            padding=3, bias=False)
         self.bn1 = BatchNorm3d(32)
         self.maxpool = MaxPool3d(kernel_size=3, stride=2, padding=1)
 
@@ -99,9 +101,12 @@ class SimpleCNN(Module):
 
 
 if __name__ == '__main__':
+    folder_name = 'data-1521414749'
+
     images = []
-    for filename in os.listdir('data-1517851899'):
-        images.append(np.load('data-1517851899' + '/' + filename))
+    for filename in os.listdir(folder_name):
+        if 'patient' in filename:
+            images.append(np.load(folder_name + '/' + filename))
     print('Data Loaded')
 
     images = np.stack(
