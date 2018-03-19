@@ -4,6 +4,7 @@ import time
 
 import numpy as np
 import pandas as pd
+import scipy.ndimage
 
 import parsers
 import transforms
@@ -19,12 +20,16 @@ def preprocess(ct_dir, roi_dir, output_dir):
     logging.debug('Loaded patient ids in {}'.format(ct_dir))
 
     os.makedirs(output_dir)
-
     for id_, path in patient_ids.items():
-        slices = parsers.load_scan(path)
-        logging.debug('Loaded slices for patient {}'.format(id_))
-        scan = _preprocess_scan(slices)
-        _save_scan(id_, scan, output_dir)
+        try:
+            slices = parsers.load_scan(path)
+            logging.debug('Loaded slices for patient {}'.format(id_))
+            scan = _preprocess_scan(slices)
+            _save_scan(id_, scan, output_dir)
+        except Exception as e:
+            # TODO(Luke): Remove after first run
+            logging.error('Failed to load {}'.format(id_))
+            logging.error(e)
 
     # Consider doing this step just before training the model
     # normalized = normalize(np.stack(processed_scans))
@@ -79,6 +84,35 @@ def _save_info(patient_ids, roi_dir, output_dir):
             pass
 
     info.to_csv('{}/labels.csv'.format(output_dir))
+
+
+def load_images(dirpath):
+    # Reading in the data
+    images = []
+    for filename in sorted(os.listdir(dirpath)):
+        if 'csv' in filename:
+            continue
+        images.append(np.load(dirpath + '/' + filename))
+
+    labels = pd.read_csv(dirpath + '/labels.csv', index_col=0)
+    labels.sort_index(inplace=True)
+
+    resized = np.stack([scipy.ndimage.interpolation.zoom(arr, 96 / 200)
+                        for arr in images])
+
+    normalized = transforms.normalize(resized)
+
+    return normalized, labels
+
+
+def train_resnet():
+    from models.resnet3d import Resnet3DBuilder
+    X, y = load_images('data-1521417219')
+    model = Resnet3DBuilder.build_resnet_50((96, 96, 96, 1), 20)
+    model.compile(optimizer='adam',
+                  loss='categorical_crossentropy',
+                  metrics=['accuracy'])
+    model.fit(X, y, batch_size=32)
 
 
 if __name__ == '__main__':
