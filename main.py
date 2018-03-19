@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import scipy.ndimage
 from keras.callbacks import TensorBoard, ModelCheckpoint
+from keras.optimizers import Adam
 
 import parsers
 import transforms
@@ -129,7 +130,7 @@ def load_and_transform(dirpath, dim_length):
 
 def train_resnet():
     from models.resnet3d import Resnet3DBuilder
-    dim_length = 32  # ~ 3 minutes per epoch
+    dim_length = 64  # ~ 3 minutes per epoch
     epochs = 10
     X, y = load_and_transform('data-1521428185', dim_length)
     model = Resnet3DBuilder.build_resnet_18((dim_length, dim_length,
@@ -142,8 +143,11 @@ def train_resnet():
     # tb_callback = TensorBoard(write_images=True)
     print('Compiled model')
     model.fit(X, y,
-              epochs=epochs, validation_split=0.2,
-              callbacks=[mc_callback], verbose=2)
+              batch_size=16,
+              epochs=epochs,
+              validation_split=0.2,
+              callbacks=[mc_callback],
+              verbose=2)
     print('Fit model')
 
 
