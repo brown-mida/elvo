@@ -5,6 +5,7 @@ import time
 import numpy as np
 import pandas as pd
 import scipy.ndimage
+from keras.callbacks import TensorBoard
 
 import parsers
 import transforms
@@ -87,7 +88,7 @@ def _save_info(patient_ids, roi_dir, output_dir):
     info.to_csv('{}/labels.csv'.format(output_dir))
 
 
-def load_images(dirpath):
+def load_processed_data(dirpath):
     # Reading in the data
     images = []
     for filename in sorted(os.listdir(dirpath)):
@@ -98,37 +99,46 @@ def load_images(dirpath):
     labels = pd.read_csv(dirpath + '/labels.csv', index_col=0)
     labels.sort_index(inplace=True)
 
-    resized = np.stack([scipy.ndimage.interpolation.zoom(arr, 96 / 200)
-                        for arr in images])
-
-    normalized = transforms.normalize(resized)
-
-    return normalized, labels
+    return images, labels
 
 
 def train_resnet():
     from models.resnet3d import Resnet3DBuilder
-    normalized, labels = load_images('data-1521342371')
+    images, labels = load_processed_data('data-1521342371')
+    print('Loaded data')
+
+    dim_length = 64  # ~ 3 minutes per epoch
+    epochs = 10
+
+    interpolated = [scipy.ndimage.interpolation.zoom(arr, dim_length / 200)
+                    for arr in images]
+    resized = np.stack(interpolated)
+    normalized = transforms.normalize(resized)
     X = np.expand_dims(normalized, axis=4)
     y = labels['label'].values
-    y = np.eye(2)[y]
-    print('X shape', X.shape)
-    print('y shape', y.shape)
-    model = Resnet3DBuilder.build_resnet_18((96, 96, 96, 1), 2)
+    print('Transformed data')
+    model = Resnet3DBuilder.build_resnet_18((dim_length, dim_length,
+                                             dim_length, 1),
+                                            1)
     model.compile(optimizer='adam',
-                  loss='categorical_crossentropy',
+                  loss='binary_crossentropy',
                   metrics=['accuracy'])
-    model.fit(X, y, batch_size=32)
+    tb_callback = TensorBoard(write_grads=True, write_images=True)
+    print('Compiled model')
+    model.fit(X, y,
+              batch_size=32, epochs=epochs, validation_split=0.2,
+              callbacks=[tb_callback], verbose=2)
+    print('Fit model')
 
 
 if __name__ == '__main__':
-    logging.basicConfig(filename='preprocessing.log', level=logging.DEBUG)
+    logging.basicConfig(filename='logs/preprocessing.log', level=logging.DEBUG)
     start = int(time.time())
     OUTPUT_DIR = 'data-{}'.format(start)
     logging.debug('Saving processed data to {}'.format(OUTPUT_DIR))
     # preprocess('RI Hospital ELVO Data', 'RI Hospital ELVO Data', OUTPUT_DIR)
     # preprocess('ELVOS/anon', 'ELVOS/ROI_cropped', OUTPUT_DIR)
-    preprocess('../data/ELVOS/anon', '../data/ELVOS/ROI_cropped', OUTPUT_DIR)
-    # train_resnet()
+    # preprocess('../data/ELVOS/anon', '../data/ELVOS/ROI_cropped', OUTPUT_DIR)
+    train_resnet()
     end = int(time.time())
     logging.debug('Preprocessing took {} seconds'.format(end - start))
