@@ -111,11 +111,12 @@ def train_resnet():
     normalized, labels = load_images('data-1521342371')
     X = np.expand_dims(normalized, axis=4)
     y = labels['label'].values
+    y = np.eye(2)[y]
     print('X shape', X.shape)
-    print('Y shape', y.shape)
-    model = Resnet3DBuilder.build_resnet_18((96, 96, 96, 1), 1)
+    print('y shape', y.shape)
+    model = Resnet3DBuilder.build_resnet_18((96, 96, 96, 1), 2)
     model.compile(optimizer='adam',
-                  loss='binary_crossentropy',
+                  loss='categorical_crossentropy',
                   metrics=['accuracy'])
     model.fit(X, y, batch_size=32)
 
@@ -127,6 +128,7 @@ if __name__ == '__main__':
     logging.debug('Saving processed data to {}'.format(OUTPUT_DIR))
     # preprocess('RI Hospital ELVO Data', 'RI Hospital ELVO Data', OUTPUT_DIR)
     # preprocess('ELVOS/anon', 'ELVOS/ROI_cropped', OUTPUT_DIR)
-    train_resnet()
+    preprocess('../data/ELVOS/anon', '../data/ELVOS/ROI_cropped', OUTPUT_DIR)
+    # train_resnet()
     end = int(time.time())
     logging.debug('Preprocessing took {} seconds'.format(end - start))

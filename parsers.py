@@ -53,10 +53,13 @@ def unzip_scans(input_dir):
     os.chdir(input_dir)
     for filepath in os.listdir('.'):
         if filepath.endswith('.zip'):
-            shutil.unpack_archive(filepath, format='zip')
-            logging.debug(
-                'Unzipped data in file {}'.format(filepath)
-            )
+            try:
+                shutil.unpack_archive(filepath, format='zip')
+                logging.debug(
+                    'Unzipped data in file {}'.format(filepath)
+                )
+            except OSError:
+                logging.debug('Error unzipping {}'.format(filepath))
     os.chdir('..')
 
 
