@@ -90,21 +90,30 @@ def _save_info(patient_ids, roi_dir, output_dir):
 
 def load_processed_data(dirpath):
     # Reading in the data
+    patient_ids = []
     images = []
-    for filename in sorted(os.listdir(dirpath)):
+    for i, filename in enumerate(os.listdir(dirpath)):
         if 'csv' in filename:
             continue
+        if i > 200:
+            break
+        patient_ids.append(filename[8:-4])
         images.append(np.load(dirpath + '/' + filename))
-
-    labels = pd.read_csv(dirpath + '/labels.csv', index_col=0)
-    labels.sort_index(inplace=True)
-
-    return images, labels
+        print('Loading image {}'.format(i))
+    return images, patient_ids
 
 
 def train_resnet():
     from models.resnet3d import Resnet3DBuilder
-    images, labels = load_processed_data('data-1521428185')
+    images, patient_ids = load_processed_data('data-1521428185')
+    labels = pd.read_excel('/home/lukezhu/data/ELVOS/elvos_meta_drop1.xls')
+
+    X = images
+    y = np.zeros(len(patient_ids))
+    for _, row in labels.iterrows():
+        for i, id_ in enumerate(patient_ids):
+            if row['PatientID'] == id_:
+                y[i] = (row['ELVO status'] == 'Yes')
     print('Loaded data')
 
     dim_length = 32  # ~ 3 minutes per epoch
@@ -127,7 +136,7 @@ def train_resnet():
     tb_callback = TensorBoard(write_images=True)
     print('Compiled model')
     model.fit(X, y,
-              batch_size=32, epochs=epochs, validation_split=0.2,
+              epochs=epochs, validation_split=0.2,
               callbacks=[mc_callback, tb_callback], verbose=2)
     print('Fit model')
 
