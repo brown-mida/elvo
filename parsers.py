@@ -46,10 +46,11 @@ def load_scans(input_dir):
     return patient_ids, preprocessed_scans
 
 
-def unzip_scans(input_dir):
+def unzip_scans(input_dir, remove_zip=True):
     """Unzips the zip files in the directory, writing to folders in
     input_dir with the same name.
     """
+    previous_dir = os.getcwd()
     os.chdir(input_dir)
     for filepath in os.listdir('.'):
         if filepath.endswith('.zip'):
@@ -58,9 +59,11 @@ def unzip_scans(input_dir):
                 logging.debug(
                     'Unzipped data in file {}'.format(filepath)
                 )
+                if remove_zip:
+                    os.remove(filepath)
             except OSError:
                 logging.debug('Error unzipping {}'.format(filepath))
-    os.chdir('..')
+    os.chdir(previous_dir)
 
 
 def parse_bounding_box(annotation_path: str):
