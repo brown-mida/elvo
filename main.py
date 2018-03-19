@@ -108,7 +108,6 @@ def train_resnet():
     images, patient_ids = load_processed_data('data-1521428185')
     labels = pd.read_excel('/home/lukezhu/data/ELVOS/elvos_meta_drop1.xls')
 
-    X = images
     y = np.zeros(len(patient_ids))
     for _, row in labels.iterrows():
         for i, id_ in enumerate(patient_ids):
@@ -124,7 +123,6 @@ def train_resnet():
     resized = np.stack(interpolated)
     normalized = transforms.normalize(resized)
     X = np.expand_dims(normalized, axis=4)
-    y = labels['label'].values
     print('Transformed data')
     model = Resnet3DBuilder.build_resnet_18((dim_length, dim_length,
                                              dim_length, 1),
