@@ -113,9 +113,9 @@ def train_resnet():
     y = labels['label'].values
     print('X shape', X.shape)
     print('Y shape', y.shape)
-    model = Resnet3DBuilder.build_resnet_18((96, 96, 96, 1), 20)
+    model = Resnet3DBuilder.build_resnet_18((96, 96, 96, 1), 1)
     model.compile(optimizer='adam',
-                  loss='categorical_crossentropy',
+                  loss='binary_crossentropy',
                   metrics=['accuracy'])
     model.fit(X, y, batch_size=32)
 
