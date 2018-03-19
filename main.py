@@ -5,7 +5,7 @@ import time
 import numpy as np
 import pandas as pd
 import scipy.ndimage
-from keras.callbacks import TensorBoard
+from keras.callbacks import TensorBoard, ModelCheckpoint
 
 import parsers
 import transforms
@@ -104,10 +104,10 @@ def load_processed_data(dirpath):
 
 def train_resnet():
     from models.resnet3d import Resnet3DBuilder
-    images, labels = load_processed_data('data-1521342371')
+    images, labels = load_processed_data('data-1521428185')
     print('Loaded data')
 
-    dim_length = 64  # ~ 3 minutes per epoch
+    dim_length = 32  # ~ 3 minutes per epoch
     epochs = 10
 
     interpolated = [scipy.ndimage.interpolation.zoom(arr, dim_length / 200)
@@ -123,15 +123,18 @@ def train_resnet():
     model.compile(optimizer='adam',
                   loss='binary_crossentropy',
                   metrics=['accuracy'])
-    tb_callback = TensorBoard(write_grads=True, write_images=True)
+    mc_callback = ModelCheckpoint(filepath='tmp/weights.hdf5', verbose=1)
+    tb_callback = TensorBoard(write_images=True)
     print('Compiled model')
     model.fit(X, y,
               batch_size=32, epochs=epochs, validation_split=0.2,
-              callbacks=[tb_callback], verbose=2)
+              callbacks=[mc_callback, tb_callback], verbose=2)
     print('Fit model')
 
 
 if __name__ == '__main__':
+    # TODO (Make separate loggers)
+    # TODO (Split this file into separate scripts)
     logging.basicConfig(filename='logs/preprocessing.log', level=logging.DEBUG)
     start = int(time.time())
     OUTPUT_DIR = 'data-{}'.format(start)
