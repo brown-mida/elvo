@@ -102,27 +102,31 @@ def load_processed_data(dirpath):
         print('Loading image {}'.format(i))
     return images, patient_ids
 
+def transform_images(images, dim_length):
+    resized = np.stack([scipy.ndimage.interpolation.zoom(arr, dim_length / 200)
+                    for arr in images])
+    print('Resized data')
+    normalized = transforms.normalize(resized)
+    print('Normalized data')
+    return normalized
+
 
 def train_resnet():
     from models.resnet3d import Resnet3DBuilder
     images, patient_ids = load_processed_data('data-1521428185')
     labels = pd.read_excel('/home/lukezhu/data/ELVOS/elvos_meta_drop1.xls')
-
-    y = np.zeros(len(patient_ids))
-    for _, row in labels.iterrows():
-        for i, id_ in enumerate(patient_ids):
-            if row['PatientID'] == id_:
-                y[i] = (row['ELVO status'] == 'Yes')
     print('Loaded data')
 
     dim_length = 32  # ~ 3 minutes per epoch
     epochs = 10
 
-    interpolated = [scipy.ndimage.interpolation.zoom(arr, dim_length / 200)
-                    for arr in images]
-    resized = np.stack(interpolated)
-    normalized = transforms.normalize(resized)
-    X = np.expand_dims(normalized, axis=4)
+    X = transform_images(images, dim_length)
+    y = np.zeros(len(patient_ids))
+    for _, row in labels.iterrows():
+        for i, id_ in enumerate(patient_ids):
+            if row['PatientID'] == id_:
+                y[i] = (row['ELVO status'] == 'Yes')
+    print('Parsed labels')
     print('Transformed data')
     model = Resnet3DBuilder.build_resnet_18((dim_length, dim_length,
                                              dim_length, 1),
