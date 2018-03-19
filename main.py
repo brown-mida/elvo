@@ -108,17 +108,13 @@ def transform_images(images, dim_length):
     print('Resized data')
     normalized = transforms.normalize(resized)
     print('Normalized data')
-    return normalized
+    return np.expand_dims(normalized, axis=4)
 
 
-def train_resnet():
-    from models.resnet3d import Resnet3DBuilder
-    images, patient_ids = load_processed_data('data-1521428185')
+def load_and_transform(dirpath, dim_length):
+    images, patient_ids = load_processed_data(dirpath)
     labels = pd.read_excel('/home/lukezhu/data/ELVOS/elvos_meta_drop1.xls')
     print('Loaded data')
-
-    dim_length = 32  # ~ 3 minutes per epoch
-    epochs = 10
 
     X = transform_images(images, dim_length)
     y = np.zeros(len(patient_ids))
@@ -128,6 +124,14 @@ def train_resnet():
                 y[i] = (row['ELVO status'] == 'Yes')
     print('Parsed labels')
     print('Transformed data')
+    return X, y
+
+
+def train_resnet():
+    from models.resnet3d import Resnet3DBuilder
+    dim_length = 32  # ~ 3 minutes per epoch
+    epochs = 10
+    X, y = load_and_transform('data-1521428185', dim_length)
     model = Resnet3DBuilder.build_resnet_18((dim_length, dim_length,
                                              dim_length, 1),
                                             1)
@@ -135,11 +139,11 @@ def train_resnet():
                   loss='binary_crossentropy',
                   metrics=['accuracy'])
     mc_callback = ModelCheckpoint(filepath='tmp/weights.hdf5', verbose=1)
-    tb_callback = TensorBoard(write_images=True)
+    # tb_callback = TensorBoard(write_images=True)
     print('Compiled model')
     model.fit(X, y,
               epochs=epochs, validation_split=0.2,
-              callbacks=[mc_callback, tb_callback], verbose=2)
+              callbacks=[mc_callback], verbose=2)
     print('Fit model')
 
 
