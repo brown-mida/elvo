@@ -96,7 +96,7 @@ def load_processed_data(dirpath):
     for i, filename in enumerate(os.listdir(dirpath)):
         if 'csv' in filename:
             continue
-        if i > 200:
+        if i > 160:
             break
         patient_ids.append(filename[8:-4])
         images.append(np.load(dirpath + '/' + filename))
@@ -119,7 +119,7 @@ def load_and_transform(dirpath, dim_length):
 
     X = transform_images(images, dim_length)
     y = np.zeros(len(patient_ids))
-    for _, row in labels.iterrows():
+    for _, row in labels.sample(frac=1).iterrows():
         for i, id_ in enumerate(patient_ids):
             if row['PatientID'] == id_:
                 y[i] = (row['ELVO status'] == 'Yes')
@@ -128,11 +128,18 @@ def load_and_transform(dirpath, dim_length):
     return X, y
 
 
+def summarize_labels(y):
+    print('Number of positives', sum(y == 1))
+    print('Number of validation positives', sum(y[-40:0] == 1))
+    return
+
 def train_resnet():
     from models.resnet3d import Resnet3DBuilder
     dim_length = 64  # ~ 3 minutes per epoch
     epochs = 10
     X, y = load_and_transform('data-1521428185', dim_length)
+    summarize_labels(y)
+
     model = Resnet3DBuilder.build_resnet_18((dim_length, dim_length,
                                              dim_length, 1),
                                             1)
