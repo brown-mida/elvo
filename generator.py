@@ -17,7 +17,8 @@ class Generator(object):
         
         filenames = []
         for filename in os.listdir(loc):
-            filenames.append(filename)
+            if 'npy' in filename:
+                filenames.append(filename)
 
         if validation:
             filenames = filenames[:int(len(filenames) * split)]
@@ -44,6 +45,7 @@ class Generator(object):
         steps = self.get_steps_per_epoch()
         while True:
             for i in range(steps):
+                print(i)
                 x, y = self.__data_generation(i)
                 yield x, y
 
