@@ -1,5 +1,6 @@
-import main as m
+from generator import Generator
 
-print("Hello")
-x, y = m.load_and_transform('data-1521428185', 64)
-print(y)
+gen = Generator('data-1521428185', '/home/lukezhu/data/ELVOS/elvos_meta_drop1.xls')
+print(gen.get_steps_per_epoch())
+for each in gen.generate():
+    print(each)

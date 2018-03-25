@@ -1,39 +1,72 @@
-def load_processed_data(dirpath):
-    # Reading in the data
-    patient_ids = []
-    images = []
-    for i, filename in enumerate(os.listdir(dirpath)):
-        if 'csv' in filename:
-            continue
-        if i > 160:
-            break
-        patient_ids.append(filename[8:-4])
-        images.append(np.load(dirpath + '/' + filename))
-        print('Loading image {}'.format(i))
-    return images, patient_ids
+import os
+import random
+import numpy as np
+import pandas as pd
+import scipy.ndimage
 
-def transform_images(images, dim_length):
-    resized = np.stack([scipy.ndimage.interpolation.zoom(arr, dim_length / 200)
+from preprocessors import transforms
+
+
+class Generator(object):
+
+    def __init__(self, loc, labels_loc, dim_length=64, batch_size=16,
+                 shuffle=True, validation=False, split=0.2):
+        self.loc = loc
+        self.dim_length = dim_length
+        self.batch_size = batch_size
+        
+        filenames = []
+        for filename in os.listdir(loc):
+            filenames.append(filename)
+
+        if validation:
+            filenames = filenames[:int(len(filenames) * split)]
+        else:
+            filenames = filenames[int(len(filenames) * split):]
+
+        label_data = pd.read_excel(labels_loc)
+        labels = np.zeros(len(filenames))
+        for _, row in label_data.sample(frac=1).iterrows():
+            for i, id_ in enumerate(filenames):
+                if row['PatientID'] == id_[8:-4]:
+                    labels[i] = (row['ELVO status'] == 'Yes')
+
+        if shuffle:
+            tmp = list(zip(filenames, labels))
+            random.shuffle(tmp)
+            filenames, labels = zip(*tmp)
+            labels = np.array(labels)
+
+        self.filenames = filenames
+        self.labels = labels
+
+    def generate(self):
+        steps = self.get_steps_per_epoch()
+        while True:
+            for i in range(steps):
+                x, y = self.__data_generation(i)
+                yield x, y
+
+    def get_steps_per_epoch(self):
+        return len(self.filenames) // self.batch_size
+
+
+    def __data_generation(self, i):
+        bsz = self.batch_size
+        filenames = self.filenames[i * bsz:(i + 1) * bsz]
+        labels = self.labels[i * bsz:(i + 1) * bsz]
+        images = []
+        for filename in filenames:
+            images.append(np.load(self.loc + '/' + filename))
+        images = self.__transform_images(images, self.dim_length)
+        return images, labels
+
+    def __transform_images(self,images, dim_length):
+        resized = np.stack([scipy.ndimage.interpolation.zoom(arr, dim_length / 200)
                     for arr in images])
-    print('Resized data')
-    normalized = transforms.normalize(resized)
-    print('Normalized data')
-    return np.expand_dims(normalized, axis=4)
+        normalized = transforms.normalize(resized)
+        return np.expand_dims(normalized, axis=4)
 
 
-def load_and_transform(dirpath, dim_length):
-    images, patient_ids = load_processed_data(dirpath)
-    labels = pd.read_excel('/home/lukezhu/data/ELVOS/elvos_meta_drop1.xls')
-    print('Loaded data')
-
-    X = transform_images(images, dim_length)
-    y = np.zeros(len(patient_ids))
-    for _, row in labels.sample(frac=1).iterrows():
-        for i, id_ in enumerate(patient_ids):
-            if row['PatientID'] == id_:
-                y[i] = (row['ELVO status'] == 'Yes')
-    print('Parsed labels')
-    print('Transformed data')
-    return X, y
 
 
