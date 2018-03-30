@@ -23,9 +23,9 @@ def train_resnet():
     label_loc = '/home/lukezhu/data/ELVOS/elvos_meta_drop1.xls'
 
     # Generators
-    training_gen = Generator(data_loc, label_loc, dim_length=dim_length, 
+    training_gen = Generator(data_loc, label_loc, dim_length=dim_length,
                              batch_size=batch_size)
-    validation_gen = Generator(data_loc, label_loc, dim_length=dim_length, 
+    validation_gen = Generator(data_loc, label_loc, dim_length=dim_length,
                                batch_size=batch_size, validation=True)
 
     # Build and run model
@@ -36,7 +36,7 @@ def train_resnet():
                   metrics=['accuracy'])
     mc_callback = ModelCheckpoint(filepath='tmp/weights.hdf5', verbose=1)
     # tb_callback = TensorBoard(write_images=True)
-    
+
     print('Model has been compiled.')
     model.fit_generator(
         generator=training_gen.generate(),
