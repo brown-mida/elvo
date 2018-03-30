@@ -29,7 +29,7 @@ def train_resnet():
                                batch_size=batch_size, validation=True)
 
     # Build and run model
-    model = Resnet3DBuilder.build_resnet_18((dim_length, dim_length,
+    model = Resnet3DBuilder.build_resnet_34((dim_length, dim_length,
                                              dim_length, 1), 1)
     model.compile(optimizer='adam',
                   loss='binary_crossentropy',
@@ -45,8 +45,45 @@ def train_resnet():
         validation_steps=validation_gen.get_steps_per_epoch(),
         epochs=epochs,
         callbacks=[mc_callback],
-        verbose=2)
+        verbose=2,
+        max_queue_size=1)
     print('Model has been fit.')
+
+
+def train_cad():
+    # Parameters
+    epochs = 10
+    batch_size = 16
+    data_loc = 'data-1521428185'
+    label_loc = '/home/lukezhu/data/ELVOS/elvos_meta_drop1.xls'
+
+    # Generators
+    training_gen = Generator(data_loc, label_loc, dim_length=dim_length, 
+                             batch_size=batch_size)
+    validation_gen = Generator(data_loc, label_loc, dim_length=dim_length, 
+                               batch_size=batch_size, validation=True)
+
+    # Build and run model
+    model = Resnet3DBuilder.build_resnet_34((dim_length, dim_length,
+                                             dim_length, 1), 1)
+    model.compile(optimizer='adam',
+                  loss='binary_crossentropy',
+                  metrics=['accuracy'])
+    mc_callback = ModelCheckpoint(filepath='tmp/weights.hdf5', verbose=1)
+    # tb_callback = TensorBoard(write_images=True)
+    
+    print('Model has been compiled.')
+    model.fit_generator(
+        generator=training_gen.generate(),
+        steps_per_epoch=training_gen.get_steps_per_epoch(),
+        validation_data=validation_gen.generate(),
+        validation_steps=validation_gen.get_steps_per_epoch(),
+        epochs=epochs,
+        callbacks=[mc_callback],
+        verbose=2,
+        max_queue_size=1)
+    print('Model has been fit.')
+
 
 
 if __name__ == '__main__':
