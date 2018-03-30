@@ -9,9 +9,11 @@ from keras.callbacks import TensorBoard, ModelCheckpoint
 from keras.optimizers import Adam
 
 from preprocessors import preprocessor, parsers, transforms
-from generator import Generator
+from generators.generator import Generator
+from generators.cad_generator import CadGenerator
 
 from models.resnet3d import Resnet3DBuilder
+from models.autoencoder import Cad3dBuilder
 
 
 def train_resnet():
@@ -58,18 +60,16 @@ def train_cad():
     label_loc = '/home/lukezhu/data/ELVOS/elvos_meta_drop1.xls'
 
     # Generators
-    training_gen = Generator(data_loc, label_loc, dim_length=dim_length, 
-                             batch_size=batch_size)
-    validation_gen = Generator(data_loc, label_loc, dim_length=dim_length, 
-                               batch_size=batch_size, validation=True)
+    training_gen = CadGenerator(data_loc, batch_size=batch_size)
+    validation_gen = CadGenerator(data_loc, batch_size=batch_size, 
+                                  validation=True)
 
     # Build and run model
-    model = Resnet3DBuilder.build_resnet_34((dim_length, dim_length,
-                                             dim_length, 1), 1)
+    model = Cad3dBuilder.build((200, 200, 200, 1))
     model.compile(optimizer='adam',
-                  loss='binary_crossentropy',
+                  loss='mse',
                   metrics=['accuracy'])
-    mc_callback = ModelCheckpoint(filepath='tmp/weights.hdf5', verbose=1)
+    mc_callback = ModelCheckpoint(filepath='tmp/cad_weights.hdf5', verbose=1)
     # tb_callback = TensorBoard(write_images=True)
     
     print('Model has been compiled.')
@@ -96,6 +96,7 @@ if __name__ == '__main__':
     # preprocess('RI Hospital ELVO Data', 'RI Hospital ELVO Data', OUTPUT_DIR)
     # preprocess('ELVOS/anon', 'ELVOS/ROI_cropped', OUTPUT_DIR)
     # preprocess('../data/ELVOS/anon', '../data/ELVOS/ROI_cropped', OUTPUT_DIR)
-    train_resnet()
+    # train_resnet()
+    train_cad()
     end = int(time.time())
     # logging.debug('Preprocessing took {} seconds'.format(end - start))
