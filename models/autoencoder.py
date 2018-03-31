@@ -22,7 +22,7 @@ from keras.layers.convolutional import Conv3D, MaxPooling3D, UpSampling3D
 class Cad3dBuilder(object):
 
     @staticmethod
-    def build(input_shape, filters=(64, 128, 256), num_encoding_layers=3,
+    def build(input_shape, filters=(64, 128, 256),
               filter_size=(3, 3, 3), pool_size=(2, 2, 2)):
         """Create a 3D Convolutional Autoencoder model.
 
@@ -44,21 +44,21 @@ class Cad3dBuilder(object):
             raise ValueError("Input shape should be a tuple "
                              "(conv_dim1, conv_dim2, conv_dim3, channels)")
 
-        if num_encoding_layers < 1:
-            raise ValueError("Encoding layers need to be more than 1")
+        if len(filters) < 1:
+            raise ValueError("Filter layers need to be more than 1")
 
-        if len(filters) != num_encoding_layers:
-            raise ValueError("Number of filters need to be the same"
-                             "as the number of encoding layers")
-
-        input_img = Input(shape=input_shape)
+        input_img = Input(shape=input_shape, name="cad_input")
         x = input_img
+
+        num_encoding_layers = len(filters)
 
         for i in range(num_encoding_layers):
             x = Conv3D(filters[i], filter_size,
-                       activation='relu', padding='same')(x)
+                       activation='relu', padding='same',
+                       name="cad_enc_{}".format(i))(x)
             x = MaxPooling3D(pool_size=pool_size, strides=(2, 2, 2),
-                             padding="same")(x)
+                             padding="same",
+                             name="cad_pool_{}".format(i))(x)
 
         for i in range(num_encoding_layers)[::-1]:
             if i == 0:
@@ -67,10 +67,13 @@ class Cad3dBuilder(object):
                 filter_size = (3, 3, 3)
 
             x = Conv3D(filters[i], filter_size,
-                       activation='relu', padding='same')(x)
-            x = UpSampling3D(size=pool_size, data_format=None)(x)
+                       activation='relu', padding='same',
+                       name="cad_dec_{}".format(i))(x)
+            x = UpSampling3D(size=pool_size, data_format=None,
+                             name="cad_unpool_{}".format(i))(x)
 
-        x = Conv3D(1, (3, 3, 3), activation='sigmoid', padding='same')(x)
+        x = Conv3D(1, (3, 3, 3), activation='sigmoid', padding='same',
+                   name="cad_sigmoid")(x)
         model = Model(inputs=input_img, outputs=x)
         return model
 

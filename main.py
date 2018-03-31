@@ -55,23 +55,24 @@ def train_resnet():
 def train_cad():
     # Parameters
     epochs = 10
-    batch_size = 16
+    batch_size = 2
     data_loc = 'data-1521428185'
-    label_loc = '/home/lukezhu/data/ELVOS/elvos_meta_drop1.xls'
 
     # Generators
     training_gen = CadGenerator(data_loc, batch_size=batch_size)
-    validation_gen = CadGenerator(data_loc, batch_size=batch_size, 
+    validation_gen = CadGenerator(data_loc, batch_size=batch_size,
                                   validation=True)
 
     # Build and run model
-    model = Cad3dBuilder.build((200, 200, 200, 1))
+    model = Cad3dBuilder.build((200, 200, 200, 1), filters=(8, 8, 8))
     model.compile(optimizer='adam',
                   loss='mse',
-                  metrics=['accuracy'])
-    mc_callback = ModelCheckpoint(filepath='tmp/cad_weights.hdf5', verbose=1)
+                  metrics=['mse'])
+    mc_callback = ModelCheckpoint(filepath='tmp/cad_weights.hdf5',
+                                  verbose=1,
+                                  save_weights_only=True)
     # tb_callback = TensorBoard(write_images=True)
-    
+
     print('Model has been compiled.')
     model.fit_generator(
         generator=training_gen.generate(),
@@ -83,7 +84,6 @@ def train_cad():
         verbose=2,
         max_queue_size=1)
     print('Model has been fit.')
-
 
 
 if __name__ == '__main__':
