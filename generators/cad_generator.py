@@ -12,7 +12,7 @@ class CadGenerator(object):
                  shuffle=True, validation=False, split=0.2):
         self.loc = loc
         self.batch_size = batch_size
-        
+
         filenames = []
         for filename in os.listdir(loc):
             if 'npy' in filename:
@@ -44,11 +44,13 @@ class CadGenerator(object):
         filenames = self.filenames[i * bsz:(i + 1) * bsz]
         images = []
         for filename in filenames:
+            print("Loaded " + filename)
             images.append(np.load(self.loc + '/' + filename))
         images = self.__transform_images(images)
         return images
 
     def __transform_images(self, images):
+        images = np.array(images)
         normalized = transforms.normalize(images)
         return np.expand_dims(normalized, axis=4)
 
