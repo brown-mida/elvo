@@ -1,5 +1,6 @@
 import logging
 import os
+from argparse import ArgumentParser
 
 import numpy as np
 import pandas as pd
@@ -18,14 +19,20 @@ def preprocess(bucket_name, roi_dir, output_dir):
     # logging.debug('Unzipped data in {}'.format(bucket_name))
     # patient_ids = parsers.load_patient_infos(bucket_name)
     # logging.debug('Loaded patient ids in {}'.format(bucket_name))
-    df = pd.read_excel('/home/shared/data/elvos_meta_drop1.xls')
+    # TODO: Remove hardcoded path
+    # df = pd.read_excel('/home/shared/data/elvos_meta_drop1.xls')
+    ids_ = [
+        'IKLKZYXDYTCCYUAZ',
+        'KNKVPM2UV4UFFC5R',
+        'UJHKCBMXXLB5QHTP',
+    ]
 
     os.makedirs(output_dir)
-    for id_ in df.items():
+    for id_ in ids_:
         try:
             filename = id_ + '.zip'
             _download_blob(bucket_name, filename, filename)
-            print('Done')
+            print('Worked on a single blob')
             return
             slices = parsers.load_scan(path)
             logging.debug('Loaded slices for patient {}'.format(id_))
@@ -102,3 +109,23 @@ def _save_info(patient_ids, roi_dir, output_dir):
             pass
 
     info.to_csv('{}/labels.csv'.format(output_dir))
+
+
+# Move this code outside of the module eventually
+if __name__ == '__main__':
+    parser = ArgumentParser(description='Preprocesses the ELVO scans')
+    parser.add_argument(
+        'ct_dir',
+        help='Path to the directory holding anonymized folders of CT scans',
+    )
+    parser.add_argument(
+        'roi_dir',
+        help='Path to the directory holding'
+             ' anonymized folders of ROI annotations',
+    )
+    parser.add_argument(
+        'output_dir',
+        help='Path to write the processed data to',
+    )
+    args = parser.parse_args()
+    preprocess(args.ct_dir, args.roi_dir, args.output_dir)

@@ -2,6 +2,7 @@ from argparse import ArgumentParser
 
 from preprocessors.preprocessor import preprocess
 
+# TODO: This doesn't work
 if __name__ == '__main__':
     parser = ArgumentParser(description='Preprocesses the ELVO scans')
     parser.add_argument(
