@@ -30,9 +30,12 @@ def preprocess(bucket_name, roi_dir, output_dir):
             blob_path = 'ELVOs_anon/{}'.format(filename)
             _download_blob(bucket_name, blob_path, filename)
             logging.debug('Downloaded data for {}'.format(id_))
-            shutil.unpack_archive(filename, extract_dir=id_, format='zip')
+            shutil.unpack_archive(filename, format='zip')
             logging.debug('Unzipped the data')
-            slices = parsers.load_scan(id_)
+            scans_path = [
+                path for path in os.listdir('.') if path.startswith(id_)
+            ]
+            slices = parsers.load_scan(scans_path)
             logging.debug('Loaded slices for patient {}'.format(id_))
             scan = _preprocess_scan(slices)
             _save_scan(id_, scan, output_dir)
