@@ -35,7 +35,7 @@ def preprocess(bucket_name, roi_dir, output_dir):
             scans_path = [
                 path for path in os.listdir('.') if path.startswith(id_)
             ]
-            slices = parsers.load_scan(scans_path)
+            slices = parsers.load_scan(scans_path[0])
             logging.debug('Loaded slices for patient {}'.format(id_))
             scan = _preprocess_scan(slices)
             _save_scan(id_, scan, output_dir)
