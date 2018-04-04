@@ -31,7 +31,8 @@ def preprocess(bucket_name, roi_dir, output_dir):
     for id_ in ids_:
         try:
             filename = id_ + '.zip'
-            _download_blob(bucket_name, filename, filename)
+            blob_path = 'ELVOs_anon/{}'.format(filename)
+            _download_blob(bucket_name, blob_path, filename)
             print('Worked on a single blob')
             return
             slices = parsers.load_scan(path)
