@@ -1,5 +1,6 @@
 import logging
 import os
+import shutil
 from argparse import ArgumentParser
 
 import numpy as np
@@ -28,11 +29,16 @@ def preprocess(bucket_name, roi_dir, output_dir):
             filename = id_ + '.zip'
             blob_path = 'ELVOs_anon/{}'.format(filename)
             _download_blob(bucket_name, blob_path, filename)
-            print('Downloaded data for {}'.format(id_))
-            slices = parsers.load_scan(filename)
+            logging.debug('Downloaded data for {}'.format(id_))
+            shutil.unpack_archive(filename, extract_dir=id_, format='zip')
+            logging.debug('Unzipped the data')
+            slices = parsers.load_scan(id_)
             logging.debug('Loaded slices for patient {}'.format(id_))
             scan = _preprocess_scan(slices)
             _save_scan(id_, scan, output_dir)
+            logging.debug('Removing scans from local filesystem')
+            os.remove(filename)
+            os.remove(id_)
         except Exception as e:
             # TODO(Luke): Remove after first run
             logging.error('Failed to preprocess {}'.format(id_))
