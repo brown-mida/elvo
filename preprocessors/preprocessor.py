@@ -20,22 +20,16 @@ def preprocess(bucket_name, roi_dir, output_dir):
     # patient_ids = parsers.load_patient_infos(bucket_name)
     # logging.debug('Loaded patient ids in {}'.format(bucket_name))
     # TODO: Remove hardcoded path
-    # df = pd.read_excel('/home/shared/data/elvos_meta_drop1.xls')
-    ids_ = [
-        'IKLKZYXDYTCCYUAZ',
-        'KNKVPM2UV4UFFC5R',
-        'UJHKCBMXXLB5QHTP',
-    ]
+    df = pd.read_excel('/home/shared/data/elvos_meta_drop1.xls')
 
     os.makedirs(output_dir)
-    for id_ in ids_:
+    for id_ in df['PatientID']:
         try:
             filename = id_ + '.zip'
             blob_path = 'ELVOs_anon/{}'.format(filename)
             _download_blob(bucket_name, blob_path, filename)
-            print('Worked on a single blob')
-            return
-            slices = parsers.load_scan(path)
+            print('Downloaded data for {}'.format(id_))
+            slices = parsers.load_scan(filename)
             logging.debug('Loaded slices for patient {}'.format(id_))
             scan = _preprocess_scan(slices)
             _save_scan(id_, scan, output_dir)
