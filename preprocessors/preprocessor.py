@@ -1,7 +1,6 @@
 import logging
 import os
 import shutil
-from argparse import ArgumentParser
 
 import numpy as np
 import pandas as pd
@@ -16,42 +15,45 @@ def preprocess(bucket_name, roi_dir, output_dir):
     normalized, zero-centered, 200 x 200 x 200 3D renderings
     in output_dir.
     """
-    # parsers.unzip_scans(bucket_name)
-    # logging.debug('Unzipped data in {}'.format(bucket_name))
-    # patient_ids = parsers.load_patient_infos(bucket_name)
-    # logging.debug('Loaded patient ids in {}'.format(bucket_name))
     # TODO: Remove hardcoded path
     df = pd.read_excel('/home/shared/data/elvos_meta_drop1.xls')
 
     os.makedirs(output_dir)
     for id_ in df['PatientID']:
         try:
+            logging.info('Preprocessing scans for patient {}'.format(id_))
             filename = id_ + '.zip'
             blob_path = 'ELVOs_anon/{}'.format(filename)
             _download_blob(bucket_name, blob_path, filename)
-            logging.debug('Downloaded data for {}'.format(id_))
+            logging.info('Downloaded the data')
             shutil.unpack_archive(filename, format='zip')
-            logging.debug('Unzipped the data')
+            logging.info('Unzipped the data')
             # For some reason, we need to go two levels deep
             scans_path_root = [
                 path for path in os.listdir('.')
                 if path.startswith(id_)
-                and not path.endswith('.zip')
+                   and not path.endswith('.zip')
             ][0]
             scans_path = scans_path_root
             scans_path += '/' + os.listdir(scans_path_root)[0]
             scans_path += '/' + os.listdir(scans_path)[0]
             slices = parsers.load_scan(scans_path)
-            logging.debug('Loaded slices for patient {}'.format(id_))
+            logging.info('Loaded slices into memory')
             scan = _preprocess_scan(slices)
+            logging.info(
+                'Finished converting to HU, standardizing pixels'
+                ' to 1mm, and cropping the array to 200x200x200'
+            )
             _save_scan(id_, scan, output_dir)
-            logging.debug('Removing scans from local filesystem')
+            logging.info('Finished saving scan as a .npy file')
             os.remove(filename)
             shutil.rmtree(scans_path_root)
+            logging.info('Removed scan from local filesystem')
         except Exception:
             # TODO(Luke): Remove after first run
             logging.exception(
-                'Something failed while processing patient {}'.format(id_)
+                'Something failed while processing the scans for'
+                ' patient {}'.format(id_)
             )
 
     # Consider doing this step just before training the model
@@ -67,10 +69,6 @@ def _download_blob(bucket_name, source_blob_name, destination_file_name):
 
     blob.download_to_filename(destination_file_name)
 
-    print('Blob {} downloaded to {}.'.format(
-        source_blob_name,
-        destination_file_name))
-
 
 def _preprocess_scan(slices):
     """Transforms the CT slices into a processed 3D numpy array.
@@ -80,10 +78,6 @@ def _preprocess_scan(slices):
     # TODO: consider cropping at another point
     # scan = transforms.crop(scan)
     # TODO: Generate an image at this point to verify the preprocessing
-    logging.debug(
-        'Finished converting to HU, standardizing pixels'
-        ' to 1mm, and cropping the array to 200x200x200'
-    )
     return scan
 
 
@@ -92,9 +86,6 @@ def _save_scan(id_, scan, output_dir):
     as a numpy file."""
     outfile = '{}/patient-{}'.format(output_dir, id_)
     np.save(outfile, scan)
-    logging.debug(
-        'Finished saving scan as a .npy file'
-    )
 
 
 def _save_info(patient_ids, roi_dir, output_dir):
@@ -120,23 +111,3 @@ def _save_info(patient_ids, roi_dir, output_dir):
             pass
 
     info.to_csv('{}/labels.csv'.format(output_dir))
-
-
-# Move this code outside of the module eventually
-if __name__ == '__main__':
-    parser = ArgumentParser(description='Preprocesses the ELVO scans')
-    parser.add_argument(
-        'ct_dir',
-        help='Path to the directory holding anonymized folders of CT scans',
-    )
-    parser.add_argument(
-        'roi_dir',
-        help='Path to the directory holding'
-             ' anonymized folders of ROI annotations',
-    )
-    parser.add_argument(
-        'output_dir',
-        help='Path to write the processed data to',
-    )
-    args = parser.parse_args()
-    preprocess(args.ct_dir, args.roi_dir, args.output_dir)
