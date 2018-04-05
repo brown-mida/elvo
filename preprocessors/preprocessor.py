@@ -47,16 +47,16 @@ def preprocess(bucket_name, roi_dir, output_dir):
             _save_scan(id_, scan, output_dir)
             logging.debug('Removing scans from local filesystem')
             os.remove(filename)
-            shutil.rmtree(scans_path)
-        except Exception as e:
+            shutil.rmtree(scans_path_root)
+        except Exception:
             # TODO(Luke): Remove after first run
-            logging.error('Failed to preprocess {}'.format(id_))
-            logging.error(e)
+            logging.exception(
+                'Something failed while processing patient {}'.format(id_)
+            )
 
     # Consider doing this step just before training the model
     # normalized = normalize(np.stack(processed_scans))
-
-    _save_info(patient_ids, roi_dir, output_dir)
+    _save_info(df['PatientID'], roi_dir, output_dir)
 
 
 def _download_blob(bucket_name, source_blob_name, destination_file_name):
