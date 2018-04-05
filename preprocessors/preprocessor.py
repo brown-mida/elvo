@@ -32,10 +32,13 @@ def preprocess(bucket_name, roi_dir, output_dir):
             logging.debug('Downloaded data for {}'.format(id_))
             shutil.unpack_archive(filename, format='zip')
             logging.debug('Unzipped the data')
+            # For some reason, we need to go two levels deep
             scans_path = [
                 path for path in os.listdir('.') if path.startswith(id_)
-            ]
-            slices = parsers.load_scan(scans_path[0])
+            ][0]
+            scans_path += '/' + os.listdir(scans_path)[0]
+            scans_path += '/' + os.listdir(scans_path)[0]
+            slices = parsers.load_scan(scans_path)
             logging.debug('Loaded slices for patient {}'.format(id_))
             scan = _preprocess_scan(slices)
             _save_scan(id_, scan, output_dir)
@@ -46,6 +49,8 @@ def preprocess(bucket_name, roi_dir, output_dir):
             # TODO(Luke): Remove after first run
             logging.error('Failed to preprocess {}'.format(id_))
             logging.error(e)
+            # TODO(Luke): Remove before running on all data
+            return
 
     # Consider doing this step just before training the model
     # normalized = normalize(np.stack(processed_scans))
