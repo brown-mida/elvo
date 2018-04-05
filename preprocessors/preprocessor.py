@@ -34,7 +34,9 @@ def preprocess(bucket_name, roi_dir, output_dir):
             logging.debug('Unzipped the data')
             # For some reason, we need to go two levels deep
             scans_path_root = [
-                path for path in os.listdir('.') if path.startswith(id_)
+                path for path in os.listdir('.')
+                if path.startswith(id_)
+                and not path.endswith('.zip')
             ][0]
             scans_path = scans_path_root
             scans_path += '/' + os.listdir(scans_path_root)[0]
