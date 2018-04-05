@@ -33,10 +33,11 @@ def preprocess(bucket_name, roi_dir, output_dir):
             shutil.unpack_archive(filename, format='zip')
             logging.debug('Unzipped the data')
             # For some reason, we need to go two levels deep
-            scans_path = [
+            scans_path_root = [
                 path for path in os.listdir('.') if path.startswith(id_)
             ][0]
-            scans_path += '/' + os.listdir(scans_path)[0]
+            scans_path = scans_path_root
+            scans_path += '/' + os.listdir(scans_path_root)[0]
             scans_path += '/' + os.listdir(scans_path)[0]
             slices = parsers.load_scan(scans_path)
             logging.debug('Loaded slices for patient {}'.format(id_))
@@ -44,13 +45,11 @@ def preprocess(bucket_name, roi_dir, output_dir):
             _save_scan(id_, scan, output_dir)
             logging.debug('Removing scans from local filesystem')
             os.remove(filename)
-            os.remove(id_)
+            shutil.rmtree(scans_path)
         except Exception as e:
             # TODO(Luke): Remove after first run
             logging.error('Failed to preprocess {}'.format(id_))
             logging.error(e)
-            # TODO(Luke): Remove before running on all data
-            return
 
     # Consider doing this step just before training the model
     # normalized = normalize(np.stack(processed_scans))
@@ -76,6 +75,7 @@ def _preprocess_scan(slices):
     """
     scan = transforms.get_pixels_hu(slices)
     scan = transforms.standardize_spacing(scan, slices)
+    # TODO: consider cropping at another point
     # scan = transforms.crop(scan)
     # TODO: Generate an image at this point to verify the preprocessing
     logging.debug(
