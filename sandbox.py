@@ -1,18 +1,8 @@
-import logging
-import os
-import time
-
 import numpy as np
-import pandas as pd
-import scipy.ndimage
-from keras.callbacks import TensorBoard, ModelCheckpoint
-from keras.optimizers import Adam
+import os
 
-from preprocessors import preprocessor, parsers, transforms
-from generator import Generator
+dirname = '/home/shared/data/data-20180405'
 
-from models.resnet3d import Resnet3DBuilder
-
-
-model = Resnet3DBuilder.build_resnet_18((64, 64, 64, 1), 1)
-model.summary()
+for filename in os.listdir(dirname):
+    tmp = np.load(dirname + '/' + filename)
+    print(np.shape(tmp))
