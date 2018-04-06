@@ -9,7 +9,7 @@ from keras.callbacks import TensorBoard, ModelCheckpoint
 from keras.optimizers import Adam
 
 from preprocessors import preprocessor, parsers, transforms
-from generators.generator import Generator
+from generators.t_generator import Generator
 from generators.cad_generator import CadGenerator
 
 from models.resnet3d import Resnet3DBuilder
@@ -21,8 +21,8 @@ def train_resnet():
     dim_length = 64  # ~ 3 minutes per epoch
     epochs = 10
     batch_size = 16
-    data_loc = 'data-1521428185'
-    label_loc = '/home/lukezhu/data/ELVOS/elvos_meta_drop1.xls'
+    data_loc = '/home/shared/data/data-20180405'
+    label_loc = '/home/shared/data/elvos_meta_drop1.xls'
 
     # Generators
     training_gen = Generator(data_loc, label_loc, dim_length=dim_length,
@@ -33,7 +33,7 @@ def train_resnet():
     # Build and run model
     model = Resnet3DBuilder.build_resnet_34((dim_length, dim_length,
                                              dim_length, 1), 1)
-    model.compile(optimizer='adam',
+    model.compile(optimizer=Adam(lr=0.0001),
                   loss='binary_crossentropy',
                   metrics=['accuracy'])
     mc_callback = ModelCheckpoint(filepath='tmp/weights.hdf5', verbose=1)
@@ -47,7 +47,7 @@ def train_resnet():
         validation_steps=validation_gen.get_steps_per_epoch(),
         epochs=epochs,
         callbacks=[mc_callback],
-        verbose=2,
+        verbose=1,
         max_queue_size=1)
     print('Model has been fit.')
 
@@ -96,7 +96,7 @@ if __name__ == '__main__':
     # preprocess('RI Hospital ELVO Data', 'RI Hospital ELVO Data', OUTPUT_DIR)
     # preprocess('ELVOS/anon', 'ELVOS/ROI_cropped', OUTPUT_DIR)
     # preprocess('../data/ELVOS/anon', '../data/ELVOS/ROI_cropped', OUTPUT_DIR)
-    # train_resnet()
-    train_cad()
+    train_resnet()
+    # train_cad()
     end = int(time.time())
     # logging.debug('Preprocessing took {} seconds'.format(end - start))

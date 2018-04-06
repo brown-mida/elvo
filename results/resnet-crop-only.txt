@@ -1,0 +1,55 @@
+/home/lukezhu/anaconda3/lib/python3.6/site-packages/h5py/__init__.py:36: FutureWarning: Conversion of the second argument of issubdtype from `float` to `np.floating` is deprecated. In future, it will be treated as `np.float64 == np.dtype(float).type`.
+  from ._conv import register_converters as _register_converters
+Using TensorFlow backend.
+Model has been compiled.
+0
+Epoch 1/10
+(16, 200, 200, 200)
+2018-04-06 03:54:58.141058: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+1
+(16, 200, 200, 200)
+
+ 1/20 [>.............................] - ETA: 1:47:59 - loss: 1.9791 - acc: 0.75002
+(16, 200, 200, 200)
+
+ 2/20 [==>...........................] - ETA: 1:38:37 - loss: 2.0146 - acc: 0.62503
+(16, 200, 200, 200)
+
+ 3/20 [===>..........................] - ETA: 1:31:56 - loss: 1.9843 - acc: 0.64584
+(16, 200, 200, 200)
+
+ 4/20 [=====>........................] - ETA: 1:26:01 - loss: 1.9938 - acc: 0.62505
+(16, 200, 200, 200)
+
+ 5/20 [======>.......................] - ETA: 1:20:23 - loss: 2.0173 - acc: 0.56256
+(16, 200, 200, 200)
+
+ 6/20 [========>.....................] - ETA: 1:14:51 - loss: 2.0039 - acc: 0.58337
+(16, 200, 200, 200)
+
+ 7/20 [=========>....................] - ETA: 1:09:22 - loss: 2.0451 - acc: 0.54468
+
+ 8/20 [===========>..................] - ETA: 1:03:53 - loss: 2.0437 - acc: 0.5469Traceback (most recent call last):
+  File "main.py", line 99, in <module>
+    train_resnet()
+  File "main.py", line 51, in train_resnet
+    max_queue_size=1)
+  File "/home/lukezhu/anaconda3/lib/python3.6/site-packages/keras/legacy/interfaces.py", line 91, in wrapper
+    return func(*args, **kwargs)
+  File "/home/lukezhu/anaconda3/lib/python3.6/site-packages/keras/engine/training.py", line 2192, in fit_generator
+    generator_output = next(output_generator)
+  File "/home/lukezhu/anaconda3/lib/python3.6/site-packages/keras/utils/data_utils.py", line 793, in get
+    six.reraise(value.__class__, value, value.__traceback__)
+  File "/home/lukezhu/anaconda3/lib/python3.6/site-packages/six.py", line 693, in reraise
+    raise value
+  File "/home/lukezhu/anaconda3/lib/python3.6/site-packages/keras/utils/data_utils.py", line 658, in _data_generator_task
+    generator_output = next(self._generator)
+  File "/home/lukezhu/medical-image-analysis/generators/t_generator.py", line 49, in generate
+    x, y = self.__data_generation(i)
+  File "/home/lukezhu/medical-image-analysis/generators/t_generator.py", line 63, in __data_generation
+    images.append(self.__hot_preprocess(tmp))
+  File "/home/lukezhu/medical-image-analysis/generators/t_generator.py", line 76, in __hot_preprocess
+    return transforms.crop(image)
+  File "/home/lukezhu/medical-image-analysis/preprocessors/transforms.py", line 70, in crop
+    assert all([image.shape[i] > output_shape[i] for i in range(3)])
+AssertionError
