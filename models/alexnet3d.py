@@ -81,5 +81,5 @@ class AlexNet3DBuilder(object):
         return model
 
 
-m = AlexNet3DBuilder.build((200, 200, 24, 1))
-m.summary()
+# m = AlexNet3DBuilder.build((200, 200, 24, 1))
+# m.summary()
