@@ -1,11 +1,12 @@
 import numpy as np
 import os
+from generators.generator import Generator
 
 dirname = '/home/shared/data/data-20180407'
+labels = '/home/shared/data/elvos_meta_drop1.xls'
 
-for filename in os.listdir(dirname):
-    if '.npy' in filename:
-        tmp = np.load(dirname + '/' + filename)
-        if (min(np.shape(tmp)) < 200):
-            print(filename)
-            print(np.shape(tmp))
+gen = Generator(dirname, labels, dim_length=200, batch_size=16)
+while True:
+    a = gen.generate()
+    b, c = next(a)
+    print(np.shape(b))

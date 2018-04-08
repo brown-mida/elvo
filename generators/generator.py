@@ -7,7 +7,7 @@ import scipy.ndimage
 from preprocessors import transforms
 
 
-class ResnetGenerator(object):
+class Generator(object):
 
     def __init__(self, loc, labels_loc, dim_length=64, batch_size=16,
                  shuffle=True, validation=False, split=0.2):
@@ -47,6 +47,7 @@ class ResnetGenerator(object):
             for i in range(steps):
                 print(i)
                 x, y = self.__data_generation(i)
+                print(np.shape(x))
                 yield x, y
 
     def get_steps_per_epoch(self):
@@ -60,14 +61,15 @@ class ResnetGenerator(object):
         images = []
         for filename in filenames:
             images.append(np.load(self.loc + '/' + filename))
+            print("Loaded " + filename)
         images = self.__transform_images(images, self.dim_length)
         return images, labels
 
     def __transform_images(self,images, dim_length):
-        resized = np.stack([scipy.ndimage.interpolation.zoom(arr, dim_length / 200)
+        resized = np.stack([scipy.ndimage.interpolation.zoom(arr, (24 / 200, 1, 1))
                     for arr in images])
+        resized = np.moveaxis(resized, 1, -1)
         normalized = transforms.normalize(resized)
-        normalized = normalized[:, :32]
         return np.expand_dims(normalized, axis=4)
 
 
