@@ -61,11 +61,6 @@ class Cad3dBuilder(object):
                              name="cad_pool_{}".format(i))(x)
 
         for i in range(num_encoding_layers)[::-1]:
-            if i == 0:
-                filter_size = (5, 5, 5)
-            else:
-                filter_size = (3, 3, 3)
-
             x = Conv3D(filters[i], filter_size,
                        activation='relu', padding='same',
                        name="cad_dec_{}".format(i))(x)
@@ -78,5 +73,5 @@ class Cad3dBuilder(object):
         return model
 
 
-# m = Cad3dBuilder.build((200, 200, 200, 1), filters=(8, 8, 8))
-# m.summary()
+m = Cad3dBuilder.build((200, 200, 200, 1), filters=(8, 8, 8))
+m.summary()
