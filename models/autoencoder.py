@@ -73,5 +73,5 @@ class Cad3dBuilder(object):
         return model
 
 
-m = Cad3dBuilder.build((200, 200, 200, 1), filters=(8, 8, 8))
-m.summary()
+# m = Cad3dBuilder.build((200, 200, 200, 1), filters=(8, 8, 8))
+# m.summary()

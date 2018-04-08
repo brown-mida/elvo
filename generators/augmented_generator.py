@@ -9,10 +9,10 @@ from preprocessors import transforms
 
 class AugmentedGenerator(object):
 
-    def __init__(self, loc, labels_loc, dim_length=64, batch_size=16,
+    def __init__(self, loc, labels_loc, dims=(200, 200, 24), batch_size=16,
                  shuffle=True, validation=False, split=0.2):
         self.loc = loc
-        self.dim_length = dim_length
+        self.dims = dims
         self.batch_size = batch_size
 
         files = []
@@ -112,10 +112,11 @@ class AugmentedGenerator(object):
             image = transforms.gaussian_img(image)
         elif mode == "flip":
             image = transforms.flip_img(image)
-        image = transforms.crop_center(image, 200, 200)
+        image = transforms.crop_center(image, self.dims[0],
+                                       self.dims[1])
 
         # Interpolate z axis to reduce to 24
-        image = zoom(image, (1, 1, 24 / 200))
+        image = zoom(image, (1, 1, self.dims[2] / 200))
         image = transforms.normalize(image)
         return np.expand_dims(image, axis=-1)
 
