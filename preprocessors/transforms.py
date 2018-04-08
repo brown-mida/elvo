@@ -5,6 +5,8 @@ import numpy as np
 import scipy.misc
 import scipy.ndimage
 import scipy.stats
+from scipy.ndimage.interpolation import rotate, zoom, shift
+from scipy.ndimage.filters import gaussian_filter
 
 
 def get_pixels_hu(slices):
@@ -46,9 +48,7 @@ def standardize_spacing(image, slices):
     )
     new_shape = np.round(image.shape * spacing)
     resize_factor = new_shape / image.shape
-    return scipy.ndimage.interpolation.zoom(image,
-                                            resize_factor,
-                                            mode='nearest')
+    return zoom(image, resize_factor, mode='nearest')
 
 
 def normalize(image, lower_bound=None, upper_bound=None):
@@ -79,3 +79,43 @@ def crop(image, output_shape=(200, 200, 200)):
             list(range(start_idx, start_idx + output_shape[dim]))
         image = image.take(selected_indices, axis=dim)
     return image
+
+
+def crop_z(image, z=200):
+    assert image.shape[2] >= z
+
+    selected_indices = list(range(z))
+    image = image.take(selected_indices, axis=0)
+    return image
+
+
+def crop_center(img, cropx, cropy):
+    x, y = img.shape[0:2]
+    startx = x // 2 - (cropx // 2)
+    starty = y // 2 - (cropy // 2)
+    return img[starty:starty + cropy, startx:startx + cropx, :]
+
+
+def rotate_img(img):
+    angle = np.random.uniform(-15, 15)
+    return rotate(img, angle)
+
+
+def flip_img(img):
+    return np.flipud(img)
+
+
+def gaussian_img(img):
+    sigma = np.random.uniform(0.2, 0.8)
+    return gaussian_filter(img, sigma)
+
+
+def translated_img(img):
+    x_shift = int(np.random.uniform(-20, 20))
+    y_shift = int(np.random.uniform(-20, 20))
+    return shift(img, (x_shift, y_shift, 0))
+
+
+def zoom_img(img):
+    zoom = np.random.uniform(0.85, 1.15)
+    return zoom(img, (zoom, zoom, 1))
