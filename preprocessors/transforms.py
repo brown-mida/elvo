@@ -52,6 +52,7 @@ def standardize_spacing(image, slices):
 
 
 def normalize(image, lower_bound=None, upper_bound=None):
+    # TODO: This is an issue, we can't zero center per image
     if lower_bound is None:
         lower_bound = image.min()
     if upper_bound is None:
@@ -71,7 +72,7 @@ def crop(image, output_shape=(200, 200, 200)):
 
     for dim in range(3):
         if dim == 0:
-            start_idx = output_shape[dim] - output_shape[dim]
+            start_idx = 0
         else:
             start_idx = image.shape[dim] // 2 - output_shape[dim] // 2
         selected_indices = \
