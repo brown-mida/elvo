@@ -47,12 +47,12 @@ class AlexNet3DBuilder(object):
         input_img = Input(shape=input_shape, name="cad_input")
 
         # Conv1 (Output 200 x 200 x 24 x 48)
-        x = Conv3D(48, (3, 3, 3), activation='relu', padding='same')(input_img)
+        x = Conv3D(48, (11, 11, 5), activation='relu', padding='same')(input_img)
         x = BatchNormalization()(x)
         x = MaxPooling3D(pool_size=(4, 4, 2), strides=(4, 4, 2))(x)
 
         # Conv2 (Output 50 x 50 x 24 x 64)
-        x = Conv3D(64, (3, 3, 3), activation='relu', padding='same')(x)
+        x = Conv3D(64, (5, 5, 5), activation='relu', padding='same')(x)
         x = BatchNormalization()(x)
         x = MaxPooling3D(pool_size=(4, 4, 2), strides=(4, 4, 2))(x)
 
@@ -81,5 +81,5 @@ class AlexNet3DBuilder(object):
         return model
 
 
-# m = AlexNet3DBuilder.build((200, 200, 24, 1))
-# m.summary()
+m = AlexNet3DBuilder.build((200, 200, 24, 1))
+m.summary()
