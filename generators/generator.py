@@ -7,7 +7,7 @@ import scipy.ndimage
 from preprocessors import transforms
 
 
-class Generator(object):
+class ResnetGenerator(object):
 
     def __init__(self, loc, labels_loc, dim_length=64, batch_size=16,
                  shuffle=True, validation=False, split=0.2):
@@ -67,6 +67,7 @@ class Generator(object):
         resized = np.stack([scipy.ndimage.interpolation.zoom(arr, dim_length / 200)
                     for arr in images])
         normalized = transforms.normalize(resized)
+        normalized = normalized[:, :32]
         return np.expand_dims(normalized, axis=4)
 
 

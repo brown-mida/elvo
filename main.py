@@ -9,7 +9,7 @@ from keras.callbacks import TensorBoard, ModelCheckpoint
 from keras.optimizers import Adam
 
 from preprocessors import preprocessor, parsers, transforms
-from generators.t_generator import Generator
+from generators.resnet_generator import ResnetGenerator
 from generators.cad_generator import CadGenerator
 
 from models.resnet3d import Resnet3DBuilder
@@ -18,20 +18,20 @@ from models.autoencoder import Cad3dBuilder
 
 def train_resnet():
     # Parameters
-    dim_length = 64  # ~ 3 minutes per epoch
+    dim_length = 192  # ~ 3 minutes per epoch
     epochs = 10
     batch_size = 16
-    data_loc = '/home/shared/data/data-20180405'
+    data_loc = '/home/shared/data/data-20180407'
     label_loc = '/home/shared/data/elvos_meta_drop1.xls'
 
     # Generators
-    training_gen = Generator(data_loc, label_loc, dim_length=dim_length,
+    training_gen = ResnetGenerator(data_loc, label_loc, dim_length=dim_length,
                              batch_size=batch_size)
-    validation_gen = Generator(data_loc, label_loc, dim_length=dim_length,
+    validation_gen = ResnetGenerator(data_loc, label_loc, dim_length=dim_length,
                                batch_size=batch_size, validation=True)
 
     # Build and run model
-    model = Resnet3DBuilder.build_resnet_34((dim_length, dim_length,
+    model = Resnet3DBuilder.build_resnet_34((32, dim_length,
                                              dim_length, 1), 1)
     model.compile(optimizer=Adam(lr=0.0001),
                   loss='binary_crossentropy',
@@ -55,8 +55,8 @@ def train_resnet():
 def train_cad():
     # Parameters
     epochs = 10
-    batch_size = 2
-    data_loc = 'data-1521428185'
+    batch_size = 1
+    data_loc = '/home/shared/data/data-20180407'
 
     # Generators
     training_gen = CadGenerator(data_loc, batch_size=batch_size)
@@ -64,7 +64,8 @@ def train_cad():
                                   validation=True)
 
     # Build and run model
-    model = Cad3dBuilder.build((200, 200, 200, 1), filters=(8, 8, 8))
+    model = Cad3dBuilder.build((200, 200, 200,  1), 
+                               filters=(8, 8, 8))
     model.compile(optimizer='adam',
                   loss='mse',
                   metrics=['mse'])
@@ -81,7 +82,7 @@ def train_cad():
         validation_steps=validation_gen.get_steps_per_epoch(),
         epochs=epochs,
         callbacks=[mc_callback],
-        verbose=2,
+        verbose=1,
         max_queue_size=1)
     print('Model has been fit.')
 

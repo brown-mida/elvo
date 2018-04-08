@@ -9,6 +9,7 @@ ELVOS/
 logs/
 tmp/
 data*/
+results/
 *.npy
 
 preprocessing.log
