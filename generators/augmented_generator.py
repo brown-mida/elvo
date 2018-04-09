@@ -10,13 +10,16 @@ from preprocessors import transforms
 class AugmentedGenerator(object):
 
     def __init__(self, loc, labels_loc, dims=(200, 200, 24), batch_size=16,
-                 shuffle=True, validation=False, split=0.2):
+                 shuffle=True, validation=False, split=0.2, extend_dims=True):
         self.loc = loc
         self.dims = dims
         self.batch_size = batch_size
+        self.extend_dims = extend_dims
 
         files = []
-        blacklisted = []
+        blacklisted = ['patient-QPDX2K3DS7IS5QNM.npy',
+                       'patient-LAUIHISOEZIM5ILF.npy',
+                       'patient-NQXVKFP54XTD3GVF.npy']
         for file in os.listdir(loc):
             if ('npy' in file and
                file not in blacklisted):
@@ -118,7 +121,9 @@ class AugmentedGenerator(object):
         # Interpolate z axis to reduce to 24
         image = zoom(image, (1, 1, self.dims[2] / 200))
         image = transforms.normalize(image)
-        return np.expand_dims(image, axis=-1)
+        if self.extend_dims:
+            image = np.expand_dims(image, axis=-1)
+        return image
 
 
 
