@@ -96,6 +96,7 @@ class AugmentedGenerator(object):
             img = self.__transform_images(img, file["mode"])
             images.append(img)
             print("Loaded " + file["name"])
+            print(np.shape(img))
         images = np.array(images)
         return images, labels
 

@@ -117,5 +117,5 @@ def translated_img(img):
 
 
 def zoom_img(img):
-    zoom_val = np.random.uniform(0.85, 1.15)
+    zoom_val = np.random.uniform(1.05, 1.20)
     return zoom(img, (zoom_val, zoom_val, 1))

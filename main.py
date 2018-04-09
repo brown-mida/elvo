@@ -63,7 +63,7 @@ def train_alexnet2d():
     dim_len = 200
     top_len = 24
     epochs = 10
-    batch_size = 16
+    batch_size = 32
 
     data_loc = '/home/shared/data/data-20180405'
     label_loc = '/home/shared/data/elvos_meta_drop1.xls'
@@ -82,7 +82,7 @@ def train_alexnet2d():
     # Build and run model
     model = AlexNet2DBuilder.build((dim_len, dim_len, top_len))
     model.compile(optimizer=Adam(lr=0.0001),
-                  loss='binary_crossentropy',
+                  loss='sparse_categorical_crossentropy',
                   metrics=['accuracy'])
     mc_callback = ModelCheckpoint(filepath='tmp/alex_weights.hdf5', verbose=1)
 
@@ -144,7 +144,8 @@ if __name__ == '__main__':
     # preprocess('RI Hospital ELVO Data', 'RI Hospital ELVO Data', OUTPUT_DIR)
     # preprocess('ELVOS/anon', 'ELVOS/ROI_cropped', OUTPUT_DIR)
     # preprocess('../data/ELVOS/anon', '../data/ELVOS/ROI_cropped', OUTPUT_DIR)
-    train_resnet()
+    # train_resnet()
+    train_alexnet2d()
     # train_cad()
     end = int(time.time())
     # logging.debug('Preprocessing took {} seconds'.format(end - start))

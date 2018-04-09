@@ -75,7 +75,7 @@ class AlexNet2DBuilder(object):
         # Fully connected layers
         x = Dense(1000, activation='relu', use_bias=True)(x)
         x = Dense(1000, activation='relu', use_bias=True)(x)
-        output_img = Dense(2, activation='relu', use_bias=True)(x)
+        output_img = Dense(2, activation='softmax', use_bias=True)(x)
 
         model = Model(inputs=input_img, outputs=output_img)
         return model
