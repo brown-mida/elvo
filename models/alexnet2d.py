@@ -75,11 +75,11 @@ class AlexNet2DBuilder(object):
         # Fully connected layers
         x = Dense(1000, activation='relu', use_bias=True)(x)
         x = Dense(1000, activation='relu', use_bias=True)(x)
-        x = Dense(2, activation='relu', use_bias=True)(x)
+        output_img = Dense(2, activation='relu', use_bias=True)(x)
 
-        model = Model(inputs=input_img, outputs=x)
+        model = Model(inputs=input_img, outputs=output_img)
         return model
 
 
-# m = AlexNet3DBuilder.build((200, 200, 24))
-# m.summary()
+m = AlexNet2DBuilder.build((200, 200, 24))
+m.summary()
