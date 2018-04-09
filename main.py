@@ -11,6 +11,7 @@ from keras.optimizers import Adam
 from preprocessors import preprocessor, parsers, transforms
 from generators.resnet_generator import ResnetGenerator
 from generators.cad_generator import CadGenerator
+from generators.augmented_generator import AugmentedGenerator
 
 from models.resnet3d import Resnet3DBuilder
 from models.autoencoder import Cad3dBuilder
@@ -18,21 +19,24 @@ from models.autoencoder import Cad3dBuilder
 
 def train_resnet():
     # Parameters
-    dim_length = 192  # ~ 3 minutes per epoch
+    dim_len = 192  # ~ 3 minutes per epoch
+    top_len = 32
     epochs = 10
     batch_size = 16
-    data_loc = '/home/shared/data/data-20180407'
+    data_loc = '/home/shared/data/data-20180405'
     label_loc = '/home/shared/data/elvos_meta_drop1.xls'
 
     # Generators
-    training_gen = ResnetGenerator(data_loc, label_loc, dim_length=dim_length,
-                             batch_size=batch_size)
-    validation_gen = ResnetGenerator(data_loc, label_loc, dim_length=dim_length,
-                               batch_size=batch_size, validation=True)
+    training_gen = AugmentedGenerator(data_loc, label_loc, 
+                                      dims=(dim_len, dim_len, top_len),
+                                      batch_size=batch_size)
+    validation_gen = AugmentedGenerator(data_loc, label_loc, 
+                                        dims=(dim_len, dim_len, top_len),
+                                        batch_size=batch_size, 
+                                        validation=True)
 
     # Build and run model
-    model = Resnet3DBuilder.build_resnet_34((32, dim_length,
-                                             dim_length, 1), 1)
+    model = Resnet3DBuilder.build_resnet_34((dim_len, dim_len, top_len, 1), 1)
     model.compile(optimizer=Adam(lr=0.0001),
                   loss='binary_crossentropy',
                   metrics=['accuracy'])
