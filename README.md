@@ -36,5 +36,12 @@ Type in `jupyter notebook` into the console to start the notebook.
 * Create a contribution guide
 * Make sure that the data is anonymized.
 
+Mary Dong
+
+Andrew Kim
+
+Amy Wang
+
+Sumera Subzwari
 
 Hal Triedman
