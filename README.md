@@ -37,3 +37,5 @@ Type in `jupyter notebook` into the console to start the notebook.
 * Make sure that the data is anonymized.
 
 Mary Dong
+
+Andrew Kim
