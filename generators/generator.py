@@ -47,6 +47,7 @@ class Generator(object):
             for i in range(steps):
                 print(i)
                 x, y = self.__data_generation(i)
+                print(np.shape(x))
                 yield x, y
 
     def get_steps_per_epoch(self):
@@ -60,12 +61,14 @@ class Generator(object):
         images = []
         for filename in filenames:
             images.append(np.load(self.loc + '/' + filename))
+            print("Loaded " + filename)
         images = self.__transform_images(images, self.dim_length)
         return images, labels
 
     def __transform_images(self,images, dim_length):
-        resized = np.stack([scipy.ndimage.interpolation.zoom(arr, dim_length / 200)
+        resized = np.stack([scipy.ndimage.interpolation.zoom(arr, (24 / 200, 1, 1))
                     for arr in images])
+        resized = np.moveaxis(resized, 1, -1)
         normalized = transforms.normalize(resized)
         return np.expand_dims(normalized, axis=4)
 

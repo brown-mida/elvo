@@ -19,11 +19,10 @@ from keras.layers import Input
 from keras.layers.convolutional import Conv3D, MaxPooling3D, UpSampling3D
 
 
-class Cad3dBuilder(object):
+class SimpleCad3DBuilder(object):
 
     @staticmethod
-    def build(input_shape, filters=(64, 128, 256),
-              filter_size=(3, 3, 3), pool_size=(2, 2, 2)):
+    def build(input_shape):
         """Create a 3D Convolutional Autoencoder model.
 
         Parameters:
@@ -44,34 +43,38 @@ class Cad3dBuilder(object):
             raise ValueError("Input shape should be a tuple "
                              "(conv_dim1, conv_dim2, conv_dim3, channels)")
 
-        if len(filters) < 1:
-            raise ValueError("Filter layers need to be more than 1")
-
         input_img = Input(shape=input_shape, name="cad_input")
-        x = input_img
 
-        num_encoding_layers = len(filters)
+        # Encoding
+        x = Conv3D(8, (3, 3, 3), activation='relu', padding='same',
+                   name="cad_enc_1")(input_img)
+        x = MaxPooling3D(pool_size=(2, 2, 2), strides=(2, 2, 2),
+                         padding="same", name="cad_pool_1")(x)
+        x = Conv3D(8, (3, 3, 3), activation='relu', padding='same',
+                   name="cad_enc_2")(x)
+        x = MaxPooling3D(pool_size=(2, 2, 2), strides=(2, 2, 2),
+                         padding="same", name="cad_pool_2")(x)
+        x = Conv3D(8, (3, 3, 3), activation='relu', padding='same',
+                   name="cad_enc_3")(x)
+        x = MaxPooling3D(pool_size=(2, 2, 2), strides=(2, 2, 2),
+                         padding="same", name="cad_pool_3")(x)
 
-        for i in range(num_encoding_layers):
-            x = Conv3D(filters[i], filter_size,
-                       activation='relu', padding='same',
-                       name="cad_enc_{}".format(i))(x)
-            x = MaxPooling3D(pool_size=pool_size, strides=(2, 2, 2),
-                             padding="same",
-                             name="cad_pool_{}".format(i))(x)
+        # Decoding
+        x = Conv3D(8, (3, 3, 3), activation='relu', padding='same',
+                   name="cad_dec_1")(x)
+        x = UpSampling3D(size=(2, 2, 2), name="cad_unpool_1")(x)
+        x = Conv3D(8, (3, 3, 3), activation='relu', padding='same',
+                   name="cad_dec_2")(x)
+        x = UpSampling3D(size=(2, 2, 2), name="cad_unpool_2")(x)
+        x = Conv3D(8, (3, 3, 3), activation='relu', padding='same',
+                   name="cad_dec_3")(x)
+        x = UpSampling3D(size=(2, 2, 2), name="cad_unpool_3")(x)
 
-        for i in range(num_encoding_layers)[::-1]:
-            x = Conv3D(filters[i], filter_size,
-                       activation='relu', padding='same',
-                       name="cad_dec_{}".format(i))(x)
-            x = UpSampling3D(size=pool_size, data_format=None,
-                             name="cad_unpool_{}".format(i))(x)
-
-        x = Conv3D(1, (3, 3, 3), activation='sigmoid', padding='same',
-                   name="cad_sigmoid")(x)
-        model = Model(inputs=input_img, outputs=x)
+        output_img = Conv3D(1, (3, 3, 3), activation='sigmoid',
+                            padding='same', name="cad_sigmoid")(x)
+        model = Model(inputs=input_img, outputs=output_img)
         return model
 
 
-# m = Cad3dBuilder.build((200, 200, 200, 1), filters=(8, 8, 8))
+# m = SimpleCad3DBuilder.build((200, 200, 200, 1))
 # m.summary()

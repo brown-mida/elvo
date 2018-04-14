@@ -4,52 +4,4989 @@ Using TensorFlow backend.
 Model has been compiled.
 0
 Epoch 1/10
-(16, 200, 200, 200)
-2018-04-06 03:54:58.141058: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+Loaded patient-TITRFCZEPFJKM3NY.npy
+(285, 271, 271)
+Loaded patient-OPLQZBP3BOBS4LTY.npy
+(347, 235, 235)
+Loaded patient-WUG3VLS7FYXG35LH.npy
+(355, 254, 254)
+Loaded patient-SODFDRR2LWR7JDMN.npy
+(325, 250, 250)
+Loaded patient-NJB6RYF62XWGMSE2.npy
+(311, 235, 235)
+Loaded patient-XGUULATQ6C4ZP3QQ.npy
+(334, 280, 280)
+Loaded patient-NLXOSUXOZZHPFQQX.npy
+(354, 284, 284)
+Loaded patient-NCI33JITLERBTWXI.npy
+(381, 250, 250)
+Loaded patient-VJNCTEEYR7U4HIQU.npy
+(339, 235, 235)
+Loaded patient-ECJB3HH5WPIVOJJW.npy
+(295, 280, 280)
+Loaded patient-PAHYRPTLLQOU2FTB.npy
+(353, 279, 279)
+Loaded patient-IGIIMA3LABMNETMA.npy
+(411, 243, 243)
+Loaded patient-VKMYOQD5A64UFEED.npy
+(358, 231, 231)
+Loaded patient-HAKJSG5CHDGOBP6B.npy
+(309, 280, 280)
+Loaded patient-TNUEVMD3Z4YZFQDG.npy
+(345, 211, 211)
+Loaded patient-JWV4HKJ6OCKS26IR.npy
+(353, 266, 266)
+2018-04-07 03:35:24.280473: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
 1
-(16, 200, 200, 200)
+Loaded patient-GFRJ7SPGIEJVXVRS.npy
+(879, 360, 360)
+Loaded patient-RFSGSDQ5MWIVM6QV.npy
+(300, 235, 235)
+Loaded patient-OLIQUZ7ERFP4DJVD.npy
+(325, 280, 280)
+Loaded patient-MYTHDP7XSELNJUBQ.npy
+(313, 249, 249)
+Loaded patient-HAYSFX75ACG77ZJE.npy
+(311, 235, 235)
+Loaded patient-BLPHSKRODCJLHZZS.npy
+(333, 233, 233)
+Loaded patient-QJFMNVKKVZXKBROO.npy
+(352, 274, 274)
+Loaded patient-DPSG75LCBZVBTRPO.npy
+(302, 250, 250)
+Loaded patient-ZAJH6DQQBAECJ7AX.npy
+(355, 235, 235)
+Loaded patient-OSO6K4FGNA57I3VJ.npy
+(314, 217, 217)
+Loaded patient-ZASCC2YE27A6IT45.npy
+(342, 258, 258)
+Loaded patient-HLXOSVDF27JWNCMJ.npy
+(323, 273, 273)
+Loaded patient-BSBXPIGXEUV3WWOZ.npy
+(292, 250, 250)
+Loaded patient-TJAPUMPEDA32J5JW.npy
+(374, 287, 287)
+Loaded patient-EPSAH2BCBGV7WQHM.npy
+(378, 235, 235)
+Loaded patient-UOZJSIPCXRA7UJF2.npy
+(317, 250, 250)
 
- 1/20 [>.............................] - ETA: 1:47:59 - loss: 1.9791 - acc: 0.75002
-(16, 200, 200, 200)
+ 1/20 [>.............................] - ETA: 1:47:07 - loss: 1.8932 - acc: 0.68752
+Loaded patient-WDIYHNMBALZ4ZP2A.npy
+(286, 213, 213)
+Loaded patient-UGXVSPJLHJL6AHSW.npy
+(345, 220, 220)
+Loaded patient-JWKB7SHIBYWSEVMC.npy
+(295, 325, 325)
+Loaded patient-IAUKV5R644JZFD55.npy
+(292, 224, 224)
+Loaded patient-CRKZOVFXYNXRGJYR.npy
+(337, 281, 281)
+Loaded patient-PMMV7MLZUWJTIMLR.npy
+(286, 250, 250)
+Loaded patient-LQMW3GK5JQEVVFBK.npy
+(339, 235, 235)
+Loaded patient-IAR66U7QVOBXOFQE.npy
+(341, 280, 280)
+Loaded patient-FLSUE7ZIXI6HSJWN.npy
+(318, 280, 280)
+Loaded patient-LQG4BRZPSCMR5XAN.npy
+(349, 235, 235)
+Loaded patient-XJVLT6YE7FKB3T3B.npy
+(369, 250, 250)
+Loaded patient-PNPGGIFOXWJJQ22P.npy
+(378, 250, 250)
+Loaded patient-ZMP6NER3I4ERS2JE.npy
+(347, 235, 235)
+Loaded patient-GBXENHYLRVZ5DTHI.npy
+(329, 236, 236)
+Loaded patient-JCWGEJIJO2LDRY2U.npy
+(339, 305, 305)
+Loaded patient-YRC3D4LSQNDZCXDA.npy
+(335, 261, 261)
 
- 2/20 [==>...........................] - ETA: 1:38:37 - loss: 2.0146 - acc: 0.62503
-(16, 200, 200, 200)
+ 2/20 [==>...........................] - ETA: 1:38:14 - loss: 2.0071 - acc: 0.62503
+Loaded patient-RODVAIJ6A6P4D54Y.npy
+(374, 283, 283)
+Loaded patient-SVYZISKLZLQKBPX6.npy
+(317, 252, 252)
+Loaded patient-OUM3NFGU5U3TCBBK.npy
+(320, 205, 205)
+Loaded patient-LHMGXWC6J7DRD3CP.npy
+(441, 349, 349)
+Loaded patient-TFXM6VTRLJH2DS7G.npy
+(377, 253, 253)
+Loaded patient-NFG67H47EUPD5URG.npy
+(322, 213, 213)
+Loaded patient-YNLMIJ5S24AYYZXN.npy
+(309, 229, 229)
+Loaded patient-NWO33W453F6ZJ4BU.npy
+(325, 258, 258)
+Loaded patient-COFP4UFH6MWZA7HI.npy
+(313, 251, 251)
+Loaded patient-SQD3UDNZH2Q3ET4V.npy
+(335, 250, 250)
+Loaded patient-BMTJZEMYGJCVHX7N.npy
+(329, 252, 252)
+Loaded patient-RKFD4L7QSBXPHFJU.npy
+(341, 250, 250)
+Loaded patient-NGQAJ2GBHZE2DN5C.npy
+(324, 280, 280)
+Loaded patient-IIAFOQ3HGHU4A6UT.npy
+(343, 259, 259)
+Loaded patient-LZU7NSTDRFX77U7G.npy
+(472, 239, 239)
+Loaded patient-VSJRIEOFJCVJIO2C.npy
+(366, 264, 264)
 
- 3/20 [===>..........................] - ETA: 1:31:56 - loss: 1.9843 - acc: 0.64584
-(16, 200, 200, 200)
+ 3/20 [===>..........................] - ETA: 1:31:38 - loss: 2.0045 - acc: 0.58334
+Loaded patient-LVOHLK3FOHWE66BP.npy
+(369, 229, 229)
+Loaded patient-DRT3F4ITWPCCBB6T.npy
+(330, 235, 235)
+Loaded patient-OCD6VASBJF4SNZ4U.npy
+(324, 220, 220)
+Loaded patient-EYEDMZ3Z6OIKPERL.npy
+(329, 316, 316)
+Loaded patient-HLQKXLS4OQ2BGQ5C.npy
+(318, 250, 250)
+Loaded patient-JMWZRLKLB5DSSXE3.npy
+(317, 235, 235)
+Loaded patient-UMRXCXFIT4YDD7RQ.npy
+(366, 235, 235)
+Loaded patient-THKULF2KHMNVMTUR.npy
+(457, 235, 235)
+Loaded patient-IPFO2JH7ZZYTQHH2.npy
+(309, 226, 226)
+Loaded patient-FYSSUUSC5XYNLUQW.npy
+(317, 227, 227)
+Loaded patient-RLJSRNLTRUQAVT3L.npy
+(307, 235, 235)
+Loaded patient-HXLMZWH3SFX3SPAN.npy
+(352, 250, 250)
+Loaded patient-XYOD23KJFH7NZXXK.npy
+(316, 250, 250)
+Loaded patient-XXEE333ZVHOJTRJJ.npy
+(325, 253, 253)
+Loaded patient-BHA4CDH32NPSOKTZ.npy
+(304, 228, 228)
+Loaded patient-MRYGCR7462Z7IN2L.npy
+(282, 250, 250)
 
- 4/20 [=====>........................] - ETA: 1:26:01 - loss: 1.9938 - acc: 0.62505
-(16, 200, 200, 200)
+ 4/20 [=====>........................] - ETA: 1:25:40 - loss: 2.0033 - acc: 0.59385
+Loaded patient-JGNEVHX7BEKLBQJY.npy
+(346, 318, 318)
+Loaded patient-OOAKLUZ2A4XYXC4X.npy
+(309, 211, 211)
+Loaded patient-MZAZFTEIU4NLYXDF.npy
+(343, 250, 250)
+Loaded patient-NIED5UTOZ2JOFCWT.npy
+(318, 280, 280)
+Loaded patient-WIJONRZUXV2SJOMN.npy
+(330, 235, 235)
+Loaded patient-HXBUUFVQBNISYKNU.npy
+(332, 280, 280)
+Loaded patient-BTLLL3I67PYRN7R4.npy
+(341, 280, 280)
+Loaded patient-SWSY42N45J3YWV5I.npy
+(312, 250, 250)
+Loaded patient-ADKFJYDHLE7M3XE6.npy
+(302, 250, 250)
+Loaded patient-MOAADIHO5RHQJEK3.npy
+(335, 250, 250)
+Loaded patient-SBLQEZAZEXCC76C6.npy
+(365, 327, 327)
+Loaded patient-JLHG7VESTU3GH2KX.npy
+(345, 245, 245)
+Loaded patient-ZFMUMZVL6HFQCKSX.npy
+(333, 266, 266)
+Loaded patient-WZPADD37RLXRX3IG.npy
+(337, 255, 255)
+Loaded patient-WHCQX5APWQZHMM3Q.npy
+(349, 302, 302)
+Loaded patient-FYXMPCGHTGJXJBSD.npy
+(329, 234, 234)
 
- 5/20 [======>.......................] - ETA: 1:20:23 - loss: 2.0173 - acc: 0.56256
-(16, 200, 200, 200)
+ 5/20 [======>.......................] - ETA: 1:20:00 - loss: 2.0445 - acc: 0.58756
+Loaded patient-GKDV3FW4M56I3IKV.npy
+(332, 279, 279)
+Loaded patient-WCSSH2NHDNNZIVML.npy
+(300, 250, 250)
+Loaded patient-VKFW6CO5FV2P3PUE.npy
+(331, 235, 235)
+Loaded patient-EQD7NRTYLRGYENOM.npy
+(307, 231, 231)
+Loaded patient-JSV6UEFKJAVM6OGO.npy
+(319, 235, 235)
+Loaded patient-UAFTPLA47GA7WS27.npy
+(315, 236, 236)
+Loaded patient-RHWTMTHC7HIWZ2YZ.npy
+(350, 409, 409)
+Loaded patient-XVPBCFNYTDI4HHW2.npy
+(323, 214, 214)
+Loaded patient-ZNPFNNZ2DRELKNQ3.npy
+(340, 244, 244)
+Loaded patient-IJBSBL7IRLNRVXUC.npy
+(317, 235, 235)
+Loaded patient-FKHXWQEPTPIWXHBR.npy
+(356, 250, 250)
+Loaded patient-UZFAM45KRI3C7MGB.npy
+(325, 263, 263)
+Loaded patient-ZCMTUATV42LAXACO.npy
+(309, 293, 293)
+Loaded patient-KNKVPM2UV4UFFC5R.npy
+(328, 250, 250)
+Loaded patient-IKLKZYXDYTCCYUAZ.npy
+(349, 279, 279)
+Loaded patient-SEV2GAEFNJBLX3ZJ.npy
+(341, 280, 280)
 
- 6/20 [========>.....................] - ETA: 1:14:51 - loss: 2.0039 - acc: 0.58337
-(16, 200, 200, 200)
+ 6/20 [========>.....................] - ETA: 1:14:28 - loss: 2.0386 - acc: 0.56257
+Loaded patient-JAS2TYJWKQL65CQT.npy
+(367, 235, 235)
+Loaded patient-EKKECBQEXHI5ME2T.npy
+(335, 213, 213)
+Loaded patient-PCJ6DNFF7XHMUSWE.npy
+(307, 266, 266)
+Loaded patient-AGTDPQEU54ODFAUD.npy
+(333, 464, 464)
+Loaded patient-LCGP6HURGG2XVJ5B.npy
+(327, 235, 235)
+Loaded patient-GET5PY3CH6RJV3UW.npy
+(364, 250, 250)
+Loaded patient-NXSJBZWIQX5RKNO3.npy
+(288, 280, 280)
+Loaded patient-GBA7XJ5E7ITWZW7K.npy
+(341, 280, 280)
+Loaded patient-LRCPYDPZFFC6HR6K.npy
+(306, 250, 250)
+Loaded patient-NHXCOHZ4HH53NLQ6.npy
+(310, 213, 213)
+Loaded patient-SZKV26SJOHXJBPVX.npy
+(315, 269, 269)
+Loaded patient-BIASJO43N3A7Z63W.npy
+(360, 275, 275)
+Loaded patient-GXR5YMJB3PZQNLAC.npy
+(349, 225, 225)
+Loaded patient-VZHXKDEYF7EK4RRP.npy
+(329, 280, 280)
+Loaded patient-IETROE62UNT5QVWS.npy
+(293, 363, 363)
+Loaded patient-ZOROHVT5JZVIBEEX.npy
+(341, 280, 280)
 
- 7/20 [=========>....................] - ETA: 1:09:22 - loss: 2.0451 - acc: 0.54468
+ 7/20 [=========>....................] - ETA: 1:09:00 - loss: 2.0619 - acc: 0.53578
+Loaded patient-BSKAYXMTSEXR6U5K.npy
+(325, 235, 235)
+Loaded patient-RMID4XEKTVEYCSGK.npy
+(354, 243, 243)
+Loaded patient-EURBSIKPYU66GBRW.npy
+(365, 331, 331)
+Loaded patient-NLV36DRLRZY5AKIJ.npy
+(367, 241, 241)
+Loaded patient-JNTL5ESEIA5FWMUQ.npy
+(325, 250, 250)
+Loaded patient-FUVL4PLSUHRCEAHC.npy
+(357, 254, 254)
+Loaded patient-ANCCICBPHIDJ5PJ4.npy
+(383, 259, 259)
+Loaded patient-WHDZVHCOCOTIJLXV.npy
+(349, 235, 235)
+Loaded patient-ENBHS75LQ7FWO5CP.npy
+(374, 263, 263)
+Loaded patient-AUGXT5PI4VY62M6L.npy
+(319, 237, 237)
+Loaded patient-RZVMIO4YX2JHAUQ5.npy
+(327, 220, 220)
+Loaded patient-RRZGAIOEIS6WPXDT.npy
+(367, 269, 269)
+Loaded patient-DSIFGAA3BMQKFE7A.npy
+(306, 274, 274)
+Loaded patient-OLYVZJAPCZJQWGIE.npy
+(321, 268, 268)
+Loaded patient-GCBJDIT55TRGHZIR.npy
+(355, 235, 235)
+Loaded patient-JNLCZIQGTGTFNEKK.npy
+(324, 280, 280)
 
- 8/20 [===========>..................] - ETA: 1:03:53 - loss: 2.0437 - acc: 0.5469Traceback (most recent call last):
-  File "main.py", line 99, in <module>
-    train_resnet()
-  File "main.py", line 51, in train_resnet
-    max_queue_size=1)
-  File "/home/lukezhu/anaconda3/lib/python3.6/site-packages/keras/legacy/interfaces.py", line 91, in wrapper
-    return func(*args, **kwargs)
-  File "/home/lukezhu/anaconda3/lib/python3.6/site-packages/keras/engine/training.py", line 2192, in fit_generator
-    generator_output = next(output_generator)
-  File "/home/lukezhu/anaconda3/lib/python3.6/site-packages/keras/utils/data_utils.py", line 793, in get
-    six.reraise(value.__class__, value, value.__traceback__)
-  File "/home/lukezhu/anaconda3/lib/python3.6/site-packages/six.py", line 693, in reraise
-    raise value
-  File "/home/lukezhu/anaconda3/lib/python3.6/site-packages/keras/utils/data_utils.py", line 658, in _data_generator_task
-    generator_output = next(self._generator)
-  File "/home/lukezhu/medical-image-analysis/generators/t_generator.py", line 49, in generate
-    x, y = self.__data_generation(i)
-  File "/home/lukezhu/medical-image-analysis/generators/t_generator.py", line 63, in __data_generation
-    images.append(self.__hot_preprocess(tmp))
-  File "/home/lukezhu/medical-image-analysis/generators/t_generator.py", line 76, in __hot_preprocess
-    return transforms.crop(image)
-  File "/home/lukezhu/medical-image-analysis/preprocessors/transforms.py", line 70, in crop
-    assert all([image.shape[i] > output_shape[i] for i in range(3)])
-AssertionError
+ 8/20 [===========>..................] - ETA: 1:03:38 - loss: 2.0474 - acc: 0.55479
+Loaded patient-PBR2STY62FZ3MQHZ.npy
+(302, 301, 301)
+Loaded patient-FFVM6VCPRIKK7453.npy
+(316, 235, 235)
+Loaded patient-BVYSR54MKT5SPMSU.npy
+(317, 235, 235)
+Loaded patient-TXOGS5CQ6RZMSV3W.npy
+(327, 235, 235)
+Loaded patient-OXRK4I6CTXCENAZV.npy
+(344, 444, 444)
+Loaded patient-OMR7KPUBB2T7X3QQ.npy
+(349, 235, 235)
+Loaded patient-MTWW42SPCGLHEDKY.npy
+(355, 223, 223)
+Loaded patient-NXDFBWPXYWHEIO2O.npy
+(322, 219, 219)
+Loaded patient-NXLFQLVZRLUEK2UF.npy
+(343, 235, 235)
+Loaded patient-UZQJZEDGVTWFY23U.npy
+(385, 260, 260)
+Loaded patient-ZUEK5YSS7CITVWIP.npy
+(361, 251, 251)
+Loaded patient-YBMFJQLVZENVF6MA.npy
+(327, 304, 304)
+Loaded patient-KGK66IWDH2EX5XNP.npy
+(283, 261, 261)
+Loaded patient-HVPI7QQSXPDHSFME.npy
+(319, 250, 250)
+Loaded patient-SRKOPGCEG62ZJTT2.npy
+(362, 249, 249)
+Loaded patient-LYUO2OPTNYUBCHT2.npy
+(328, 220, 220)
+
+ 9/20 [============>.................] - ETA: 58:15 - loss: 2.0190 - acc: 0.5972  10
+Loaded patient-NWRLBSNF3RVU3MAC.npy
+(367, 246, 246)
+Loaded patient-ZVRO2HKWM7JSS6IA.npy
+(359, 269, 269)
+Loaded patient-CMELUGEVB3ESBIAK.npy
+(356, 245, 245)
+Loaded patient-TEHE4SMNJTXDNW2O.npy
+(341, 280, 280)
+Loaded patient-ATY6WNE6JVYJ2RLN.npy
+(351, 281, 281)
+Loaded patient-GIPUIOSNW2C34HIS.npy
+(306, 222, 222)
+Loaded patient-SSJQF5OU3VSC3HAD.npy
+(352, 250, 250)
+Loaded patient-NEYLUIYPCL6O74O6.npy
+(291, 301, 301)
+Loaded patient-PYZP7WQ4QRH46EFS.npy
+(351, 250, 250)
+Loaded patient-ZCTE57VMPCGWDG75.npy
+(296, 269, 269)
+Loaded patient-XDNEWPTKFLCWWUSV.npy
+(387, 275, 275)
+Loaded patient-JUM3FRXBYLTATYYH.npy
+(341, 250, 250)
+Loaded patient-PYRDN2YA3MWCWKCC.npy
+(315, 250, 250)
+Loaded patient-SZY3J4UTKSCFM2H4.npy
+(370, 215, 215)
+Loaded patient-EGCV7CJ6LF2CACQM.npy
+(298, 250, 250)
+Loaded patient-VFHSASVT4EXZWAOS.npy
+(326, 280, 280)
+
+10/20 [==============>...............] - ETA: 52:55 - loss: 2.0070 - acc: 0.600011
+Loaded patient-GHVG2CNNRZ65UBEU.npy
+(330, 273, 273)
+Loaded patient-KRWJSE7TVM2QLJI7.npy
+(308, 250, 250)
+Loaded patient-BRSZTKDWTB2X5P3W.npy
+(352, 273, 273)
+Loaded patient-RWJZNVFII5INU6Z5.npy
+(367, 246, 246)
+Loaded patient-BNZ2UKOA43BESZGP.npy
+(301, 235, 235)
+Loaded patient-JJEB6MFMSB6UAKHU.npy
+(369, 262, 262)
+Loaded patient-NJZN2TNXUUFRZ3GZ.npy
+(387, 235, 235)
+Loaded patient-RWKA32WBSVFB4MQF.npy
+(327, 235, 235)
+Loaded patient-DENODP22U2Q7E4LM.npy
+(341, 280, 280)
+Loaded patient-AGTRMFUZM2MQUAB4.npy
+(350, 263, 263)
+Loaded patient-RCDAHVLV6QUTDFVD.npy
+(322, 215, 215)
+Loaded patient-BHYZMLL7GBZZLACW.npy
+(311, 302, 302)
+Loaded patient-AFEB6XW5UCQTSYJL.npy
+(322, 250, 250)
+Loaded patient-MJFHYCVEV2GTJD3N.npy
+(341, 265, 265)
+Loaded patient-QPKEZOB3X6B6HMCR.npy
+(303, 341, 341)
+Loaded patient-ARZ7H7BSITHOSSMG.npy
+(327, 233, 233)
+
+11/20 [===============>..............] - ETA: 47:35 - loss: 2.0169 - acc: 0.608012
+Loaded patient-IIOOPK6T2ZWDZMU3.npy
+(319, 250, 250)
+Loaded patient-DNO6CS3YNGFMUWXL.npy
+(284, 250, 250)
+Loaded patient-VUTDS6OC2VUSNQMK.npy
+(348, 280, 280)
+Loaded patient-ADIO4U6QJTXF3YQH.npy
+(350, 230, 230)
+Loaded patient-TNXMNBGRZHPIMJJI.npy
+(371, 272, 272)
+Loaded patient-OAYNHJ5ZLLVYHXCA.npy
+(367, 246, 246)
+Loaded patient-OJC5WXUS4IEGGOYC.npy
+(339, 235, 235)
+Loaded patient-OTIP25YORHBKJPZM.npy
+(353, 269, 269)
+Loaded patient-PQJEIXKIJMZTBZ74.npy
+(316, 261, 261)
+Loaded patient-KPC2RVJBDHQLC5EM.npy
+(302, 250, 250)
+Loaded patient-BWDRAF5ZOQPFOOL7.npy
+(308, 255, 255)
+Loaded patient-DXLPP6QTNOHQRHVG.npy
+(320, 270, 270)
+Loaded patient-SBRRR2SATWOOR5D6.npy
+(476, 243, 243)
+Loaded patient-ANLMZN6NS4S3TCCF.npy
+(293, 250, 250)
+Loaded patient-PVMXD3RZSHEQTYW3.npy
+(311, 280, 280)
+Loaded patient-IDUHFQWVS4WKXPC5.npy
+(340, 250, 250)
+
+12/20 [=================>............] - ETA: 42:15 - loss: 2.0171 - acc: 0.588513
+Loaded patient-ZUR2IKTUC2KQVB2X.npy
+(259, 267, 267)
+Loaded patient-ZANU4GPPZNIFRN6W.npy
+(329, 209, 209)
+Loaded patient-YYNFU45K2WIMXWE4.npy
+(303, 252, 252)
+Loaded patient-WPNYHBQRGJ4NHU3C.npy
+(335, 263, 263)
+Loaded patient-BMFSUHVBPJ7RY56P.npy
+(331, 214, 214)
+Loaded patient-UOSAPEMY76KAGOUR.npy
+(336, 297, 297)
+Loaded patient-NJDN23E34MZVQU66.npy
+(298, 250, 250)
+Loaded patient-UZUCCRJIMUZMQSQE.npy
+(335, 280, 280)
+Loaded patient-TFCLOHN4ROEYF6QY.npy
+(371, 203, 203)
+Loaded patient-CGQFS5PB627OWLL7.npy
+(327, 229, 229)
+Loaded patient-SKBIT57CPAKAGQVB.npy
+(341, 364, 364)
+Loaded patient-QTMN6M3FY3YSJ6ZP.npy
+(276, 279, 279)
+Loaded patient-XKHDNXXCRND47JLF.npy
+(320, 359, 359)
+Loaded patient-UUKSYXBYQQZATBP5.npy
+(349, 250, 250)
+Loaded patient-QLYPHVVU3RG43OZO.npy
+(336, 245, 245)
+Loaded patient-PMEECXFHBLN6KHO7.npy
+(353, 271, 271)
+
+13/20 [==================>...........] - ETA: 36:57 - loss: 2.0132 - acc: 0.581714
+Loaded patient-VKDRQPXRMRRBAHW3.npy
+(348, 229, 229)
+Loaded patient-ZQYME7XWFWQXXOXA.npy
+(314, 500, 500)
+Loaded patient-CFC7SE7TGP55RMUB.npy
+(330, 252, 252)
+Loaded patient-EWYGH3OSPLJI27UF.npy
+(329, 244, 244)
+Loaded patient-TVCP433TKOVBCQTW.npy
+(347, 268, 268)
+Loaded patient-NUWPDW6HBRTLEYWD.npy
+(357, 225, 225)
+Loaded patient-VGF4YIHDAARLWS7A.npy
+(311, 250, 250)
+Loaded patient-OTIGVYUMMBXDNSHN.npy
+(377, 281, 281)
+Loaded patient-RATVCRHG4ZHLCOV3.npy
+(325, 280, 280)
+Loaded patient-VBPF3M5P5YIFVZ4L.npy
+(326, 250, 250)
+Loaded patient-DXOUKNW7AXCZFUIL.npy
+(350, 264, 264)
+Loaded patient-GONORRCZWHDZV3M5.npy
+(364, 250, 250)
+Loaded patient-UBDRB3DMSB6TJ76N.npy
+(372, 250, 250)
+Loaded patient-SUOA7XPFTTR2O5NQ.npy
+(365, 250, 250)
+Loaded patient-MSZB67BPZ32ILNLK.npy
+(375, 251, 251)
+Loaded patient-KEYZSDHDH2DINCKO.npy
+(285, 280, 280)
+
+14/20 [====================>.........] - ETA: 31:39 - loss: 2.0159 - acc: 0.575915
+Loaded patient-YGJSUAFCVJ52LIRD.npy
+(340, 268, 268)
+Loaded patient-XZUUUC426GUXSCGJ.npy
+(333, 258, 258)
+Loaded patient-TVY4XBCLXJBKK72S.npy
+(302, 289, 289)
+Loaded patient-ZSXFDYQ4ST4Z6SRF.npy
+(309, 211, 211)
+Loaded patient-VZOXMEUK7BN7PQH3.npy
+(302, 280, 280)
+Loaded patient-BNAGD36PDWFHIEOO.npy
+(371, 255, 255)
+Loaded patient-JOJU5LPDDBBP6LYG.npy
+(321, 280, 280)
+Loaded patient-PIORRASXKMO7LEXJ.npy
+(349, 250, 250)
+Loaded patient-ILNTKMBVTXNXURGV.npy
+(330, 231, 231)
+Loaded patient-OAC7JXARELEVVEQW.npy
+(346, 348, 348)
+Loaded patient-RKXO5JUDKMYRUTN5.npy
+(305, 221, 221)
+Loaded patient-ZTFA5BJQHNJIRH4T.npy
+(341, 280, 280)
+Loaded patient-XJLRFX244JGJZUUF.npy
+(351, 289, 289)
+Loaded patient-SUVCYHBWWKNAVUGQ.npy
+(305, 235, 235)
+Loaded patient-ZHLGEIY4UAEIPL33.npy
+(318, 237, 237)
+Loaded patient-EOI25OVG7DHZ6KH2.npy
+(296, 286, 286)
+
+15/20 [=====================>........] - ETA: 26:21 - loss: 2.0066 - acc: 0.583316
+Loaded patient-ENPUI7ZVHUGIXYN7.npy
+(300, 235, 235)
+Loaded patient-XHX3PCDOWEWDB34X.npy
+(315, 280, 280)
+Loaded patient-DJGKDC32BE5NKELX.npy
+(325, 220, 220)
+Loaded patient-XQLUVUDY23UZMYW3.npy
+(303, 287, 287)
+Loaded patient-ASI5JI7DJLB3RKFS.npy
+(336, 250, 250)
+Loaded patient-HIA2VPHI6ABMCQTV.npy
+(333, 261, 261)
+Loaded patient-FCYGZ75WMW6L4PJM.npy
+(361, 262, 262)
+Loaded patient-IWYDKUPY2NSYJGLF.npy
+(356, 235, 235)
+Loaded patient-CRH6GLC3CTD2WACN.npy
+(327, 285, 285)
+Loaded patient-CYIJD3WQ3J3Q67LF.npy
+(351, 280, 280)
+Loaded patient-PCNMFAZL5VWWK7RP.npy
+(349, 258, 258)
+Loaded patient-XJJ3IXEOPNFXBGP7.npy
+(355, 235, 235)
+Loaded patient-EYYSOUW6PR2WMBZS.npy
+(344, 235, 235)
+Loaded patient-LOGIP43ZSLSUA5SZ.npy
+(325, 277, 277)
+Loaded patient-AHNGBFJSTEBO4BJW.npy
+(341, 230, 230)
+Loaded patient-TFLSOP3FLUBQDLL2.npy
+(321, 235, 235)
+
+16/20 [=======================>......] - ETA: 21:04 - loss: 2.0089 - acc: 0.585917
+Loaded patient-TRM3ANQXS7O6Y7OA.npy
+(290, 214, 214)
+Loaded patient-PMUXVQHYYYBOK4RL.npy
+(317, 235, 235)
+Loaded patient-MKIAFF7LDGXTZN4C.npy
+(371, 255, 255)
+Loaded patient-HDQYSVBJ4MPRGYRN.npy
+(341, 280, 280)
+Loaded patient-IEJDGAS52VTH4G74.npy
+(321, 280, 280)
+Loaded patient-SLPTPLSMZYJEUEXK.npy
+(353, 241, 241)
+Loaded patient-MPTG3X65O7O7HYHX.npy
+(323, 263, 263)
+Loaded patient-CQHAXTV5WJLZBRFB.npy
+(300, 280, 280)
+Loaded patient-UKOHM6O57N37U2E2.npy
+(333, 398, 398)
+Loaded patient-CJDXGZHXAGH7QL3C.npy
+(337, 249, 249)
+Loaded patient-AFN5EQGSDERZCTLM.npy
+(341, 280, 280)
+Loaded patient-ROF7JT3SZGBNY3MG.npy
+(341, 280, 280)
+Loaded patient-FBJFYBF7A46A4GIM.npy
+(341, 280, 280)
+Loaded patient-JUOV5YWN6IS7OXIJ.npy
+(350, 325, 325)
+Loaded patient-RHOULE6IWB6KWLE5.npy
+(321, 235, 235)
+Loaded patient-WAP327ZXF6FGV5E4.npy
+(314, 235, 235)
+
+17/20 [========================>.....] - ETA: 15:48 - loss: 2.0107 - acc: 0.588218
+Loaded patient-HIAEQWMTUGATOAVI.npy
+(351, 281, 281)
+Loaded patient-TBNR4PRU7XIL27G6.npy
+(323, 235, 235)
+Loaded patient-DZLYYZNR6M5BZFBT.npy
+(297, 263, 263)
+Loaded patient-FPTFJD4JZA7ZKYQJ.npy
+(332, 235, 235)
+Loaded patient-KFX44Z5T5RWT4LLI.npy
+(353, 229, 229)
+Loaded patient-OAEVXX4IFAX5IYOR.npy
+(337, 278, 278)
+Loaded patient-ECLDQAP52JUWQZHM.npy
+(355, 235, 235)
+Loaded patient-ROMHUDLTCOEXUQCA.npy
+(331, 300, 300)
+Loaded patient-HSKRXAPZ7WNBT2TI.npy
+(341, 488, 488)
+Loaded patient-ZMEGS4G44P6FMONO.npy
+(243, 235, 235)
+Loaded patient-JAANEAKBEZPKV4JV.npy
+(311, 269, 269)
+Loaded patient-JQWIIAADGKE2YMJS.npy
+(330, 235, 235)
+Loaded patient-NJNFVZMSGBGM6H5Y.npy
+(358, 235, 235)
+Loaded patient-UYA5YJUAVC3SE6HV.npy
+(341, 280, 280)
+Loaded patient-UJHKCBMXXLB5QHTP.npy
+(315, 250, 250)
+Loaded patient-QTUPNSXYST53IETT.npy
+(353, 261, 261)
+
+18/20 [==========================>...] - ETA: 10:33 - loss: 2.0028 - acc: 0.590319
+Loaded patient-XSNEILWLDG2HVSVH.npy
+(285, 282, 282)
+Loaded patient-DDWAA4OECH5TXONN.npy
+(301, 304, 304)
+Loaded patient-HBAZOCWOGBJYCEAZ.npy
+(340, 250, 250)
+Loaded patient-JID2LWYOKIWCMT2Z.npy
+(316, 297, 297)
+Loaded patient-SADEJMD27KKWZQ5L.npy
+(348, 250, 250)
+Loaded patient-NHCZX3GOEMPDDHW3.npy
+(343, 272, 272)
+Loaded patient-NMHOGEKTK7LT57ZI.npy
+(331, 251, 251)
+Loaded patient-IBRRD5O4NGVPABDT.npy
+(562, 265, 265)
+Loaded patient-NJPOTXDCGONCOU7C.npy
+(347, 245, 245)
+Loaded patient-ENB4V4BPR4HRCRXW.npy
+(307, 220, 220)
+Loaded patient-TRRYZ5WXYHUMTPCQ.npy
+(314, 250, 250)
+Loaded patient-XPBRBUB6YYHIWHVO.npy
+(310, 280, 280)
+Loaded patient-VDL6YJQYER3CXFOI.npy
+(321, 280, 280)
+Loaded patient-SZXTZ3LQ5MBFDFXR.npy
+(321, 227, 227)
+Loaded patient-XPJH44FSBRVL2WTV.npy
+(312, 259, 259)
+Loaded patient-CJNLJB43ZD3GIUN3.npy
+(339, 250, 250)
+
+19/20 [===========================>..] - ETA: 5:17 - loss: 2.0050 - acc: 0.5822 0
+Loaded patient-TITRFCZEPFJKM3NY.npy
+(285, 271, 271)
+Loaded patient-OPLQZBP3BOBS4LTY.npy
+(347, 235, 235)
+Loaded patient-WUG3VLS7FYXG35LH.npy
+(355, 254, 254)
+Loaded patient-SODFDRR2LWR7JDMN.npy
+(325, 250, 250)
+Loaded patient-NJB6RYF62XWGMSE2.npy
+(311, 235, 235)
+Loaded patient-XGUULATQ6C4ZP3QQ.npy
+(334, 280, 280)
+Loaded patient-NLXOSUXOZZHPFQQX.npy
+(354, 284, 284)
+Loaded patient-NCI33JITLERBTWXI.npy
+(381, 250, 250)
+Loaded patient-VJNCTEEYR7U4HIQU.npy
+(339, 235, 235)
+Loaded patient-ECJB3HH5WPIVOJJW.npy
+(295, 280, 280)
+Loaded patient-PAHYRPTLLQOU2FTB.npy
+(353, 279, 279)
+Loaded patient-IGIIMA3LABMNETMA.npy
+(411, 243, 243)
+Loaded patient-VKMYOQD5A64UFEED.npy
+(358, 231, 231)
+Loaded patient-HAKJSG5CHDGOBP6B.npy
+(309, 280, 280)
+Loaded patient-TNUEVMD3Z4YZFQDG.npy
+(345, 211, 211)
+Loaded patient-JWV4HKJ6OCKS26IR.npy
+(353, 266, 266)
+0
+Loaded patient-MEP2WAB3JNIXJTON.npy
+(352, 235, 235)
+Loaded patient-LIJBIVVBI6TJCT6Z.npy
+(329, 250, 250)
+Loaded patient-VRSBMSXUYCQ3NC5A.npy
+(315, 280, 280)
+Loaded patient-CCVIH3DIM3GF6SLG.npy
+(357, 475, 475)
+Loaded patient-XQBRGW3CYGNUMWHI.npy
+(327, 298, 298)
+Loaded patient-OLCBKEY2WKCWPHJW.npy
+(328, 250, 250)
+Loaded patient-NYR7NWGHIRZDCL66.npy
+(342, 235, 235)
+Loaded patient-DRS5DZGN5PVUZX4Y.npy
+(341, 280, 280)
+Loaded patient-MHL54TPCTOQJ2I4K.npy
+(309, 313, 313)
+Loaded patient-WWEFFBIMLZ3KLQVZ.npy
+(355, 235, 235)
+Loaded patient-JUBFRXRHLG46KY42.npy
+(302, 279, 279)
+Loaded patient-POYYSD3RSJFBKSLQ.npy
+(317, 235, 235)
+Loaded patient-EUNTRXNEDB7VDVIS.npy
+(354, 290, 290)
+Loaded patient-WIPV3EQ34O55HCUI.npy
+(358, 304, 304)
+Loaded patient-POSX6PS6LR34HENB.npy
+(332, 269, 269)
+Loaded patient-RKBSU42WA7AY22E7.npy
+(325, 287, 287)
+1
+Loaded patient-ADJYK6PUQSLE2GLN.npy
+(279, 200, 200)
+Loaded patient-EGIAP2GDM33PCW5A.npy
+(498, 235, 235)
+Loaded patient-WPA6WCTE24HGRIXH.npy
+(296, 250, 250)
+Loaded patient-CSCIKXOMNAIB3LUQ.npy
+(291, 250, 250)
+Loaded patient-MLHE2CESZAWQKZVP.npy
+(285, 241, 241)
+Loaded patient-VDO7JNWOEJ5KGJYJ.npy
+(308, 235, 235)
+Loaded patient-ASD2URNKFRN3ZSFL.npy
+(329, 280, 280)
+Loaded patient-RBC423N4RNB3UZ5P.npy
+(341, 250, 250)
+Loaded patient-KJAWMYSKQTYINTNC.npy
+(355, 240, 240)
+Loaded patient-QKBS566N24RMCV5H.npy
+(296, 280, 280)
+Loaded patient-QGEQ4IFSRIA3RBVB.npy
+(316, 346, 346)
+Loaded patient-SGFWUNFEYCKBMF65.npy
+(320, 256, 256)
+Loaded patient-CQARGKFSIVQWNCT6.npy
+(291, 200, 200)
+Loaded patient-MEQKZCRF5TR6MHLY.npy
+(299, 280, 280)
+Loaded patient-CSXRYWJCXJXAJRLP.npy
+(330, 306, 306)
+Loaded patient-JJMENP4QE4CSXSHV.npy
+(320, 250, 250)
+2
+Loaded patient-YEXJFFF2ZK44FYCP.npy
+(278, 280, 280)
+Loaded patient-LOR7YOK3PYHXSHCM.npy
+(358, 235, 235)
+Loaded patient-HXKDQ5I26Z2CRUQB.npy
+(362, 250, 250)
+Loaded patient-ABPO2BORDNF3OVL3.npy
+(325, 225, 225)
+Loaded patient-KQSTLFNPLNP5M43F.npy
+(348, 255, 255)
+Loaded patient-RTC5RXQHUXCSPNLN.npy
+(341, 250, 250)
+Loaded patient-OQNPNGEBR4D54PRA.npy
+(276, 250, 250)
+Loaded patient-BRFHLOM2KPUXSBMI.npy
+(301, 280, 280)
+Loaded patient-DDPQNEBC34XCOF2U.npy
+(281, 201, 201)
+Loaded patient-RXK7K2FPVPLFMID2.npy
+(369, 250, 250)
+Loaded patient-VOPMJMGIDQQ75E6G.npy
+(337, 281, 281)
+Loaded patient-DZTDN47H2IKSYN3Q.npy
+(347, 235, 235)
+Loaded patient-DVYKX4XMBHD57MZJ.npy
+(341, 280, 280)
+Loaded patient-IAX2O3NWENSSH4D5.npy
+(363, 247, 247)
+Loaded patient-FIBU2GYR72UU7E5M.npy
+(315, 219, 219)
+Loaded patient-AJHYOJIG3DZLSIKI.npy
+(317, 222, 222)
+3
+Loaded patient-ALOUY4SF3BQKXQCZ.npy
+(356, 307, 307)
+Loaded patient-TUX27MONFI7VC6M3.npy
+(321, 251, 251)
+Loaded patient-ICWMS7OCXZLUTUFT.npy
+(322, 280, 280)
+Loaded patient-FTAKNRFGOGVS632K.npy
+(326, 215, 215)
+Loaded patient-OCP7EUZJEB7JUL65.npy
+(392, 252, 252)
+Loaded patient-ZIDRKXRWTVGHW7ZD.npy
+(341, 280, 280)
+Loaded patient-VVGO45TQNOASBLZM.npy
+(490, 235, 235)
+Loaded patient-JQVBM4FUT34IUSUB.npy
+(335, 200, 200)
+Loaded patient-TZES7PMHXV4XVJBV.npy
+(397, 255, 255)
+Loaded patient-ESLHGQCGYB7J4DX3.npy
+(319, 250, 250)
+Loaded patient-ZCIMXZ73NFNRDH46.npy
+(322, 250, 250)
+Loaded patient-NHKUCEIIHLJQ25VM.npy
+(280, 280, 280)
+Loaded patient-YSTBBUD35YZBOT2Z.npy
+(356, 287, 287)
+Loaded patient-MSXY2JKZXPEBXR72.npy
+(369, 273, 273)
+Loaded patient-AOTGHQ6S5AD7LOBO.npy
+(296, 280, 280)
+Loaded patient-CWWKNDYG2UERXH7X.npy
+(337, 257, 257)
+4
+Loaded patient-RYNCGNVRZH2LB7BN.npy
+(314, 213, 213)
+Loaded patient-PIKNNHQAI52EI62K.npy
+(324, 271, 271)
+Loaded patient-QBOBDYYD4R7WP37S.npy
+(346, 305, 305)
+Loaded patient-LUVMEPI5JWYL67RF.npy
+(309, 306, 306)
+Loaded patient-UNREF6O6622LZWNN.npy
+(343, 255, 255)
+Loaded patient-KACA7XHWXRM6A3W3.npy
+(336, 259, 259)
+Loaded patient-UMFGGCOJN6GDPQDV.npy
+(279, 250, 250)
+Loaded patient-BJI23MUAPMUMIED2.npy
+(343, 232, 232)
+Loaded patient-ZTGZBI2QX2JQFXIG.npy
+(319, 235, 235)
+Loaded patient-HGJTE6ROVCUFUC4S.npy
+(349, 231, 231)
+Loaded patient-IXBFNU6QB2SEZQ7N.npy
+(303, 293, 293)
+Loaded patient-SXF2FCCYEQLXMQO5.npy
+(368, 336, 336)
+Loaded patient-JWVEP6ZLYCOE5IAE.npy
+(301, 235, 235)
+Loaded patient-RKIZJRFZGCXD4EOL.npy
+(362, 235, 235)
+Loaded patient-LGFNFIWO2ZEQYK36.npy
+(335, 259, 259)
+Loaded patient-MKKOO7NDN26O6RLZ.npy
+(297, 235, 235)
+0
+Loaded patient-MEP2WAB3JNIXJTON.npy
+(352, 235, 235)
+Loaded patient-LIJBIVVBI6TJCT6Z.npy
+(329, 250, 250)
+Loaded patient-VRSBMSXUYCQ3NC5A.npy
+(315, 280, 280)
+Loaded patient-CCVIH3DIM3GF6SLG.npy
+(357, 475, 475)
+Loaded patient-XQBRGW3CYGNUMWHI.npy
+(327, 298, 298)
+Loaded patient-OLCBKEY2WKCWPHJW.npy
+(328, 250, 250)
+Loaded patient-NYR7NWGHIRZDCL66.npy
+(342, 235, 235)
+Loaded patient-DRS5DZGN5PVUZX4Y.npy
+(341, 280, 280)
+Loaded patient-MHL54TPCTOQJ2I4K.npy
+(309, 313, 313)
+Loaded patient-WWEFFBIMLZ3KLQVZ.npy
+(355, 235, 235)
+Loaded patient-JUBFRXRHLG46KY42.npy
+(302, 279, 279)
+Loaded patient-POYYSD3RSJFBKSLQ.npy
+(317, 235, 235)
+Loaded patient-EUNTRXNEDB7VDVIS.npy
+(354, 290, 290)
+Loaded patient-WIPV3EQ34O55HCUI.npy
+(358, 304, 304)
+Loaded patient-POSX6PS6LR34HENB.npy
+(332, 269, 269)
+Loaded patient-RKBSU42WA7AY22E7.npy
+(325, 287, 287)
+
+20/20 [==============================] - 6460s 323s/step - loss: 2.0066 - acc: 0.5844 - val_loss: 2.0585 - val_acc: 0.5250
+
+Epoch 00001: saving model to tmp/weights.hdf5
+Epoch 2/10
+1
+Loaded patient-GFRJ7SPGIEJVXVRS.npy
+(879, 360, 360)
+Loaded patient-RFSGSDQ5MWIVM6QV.npy
+(300, 235, 235)
+Loaded patient-OLIQUZ7ERFP4DJVD.npy
+(325, 280, 280)
+Loaded patient-MYTHDP7XSELNJUBQ.npy
+(313, 249, 249)
+Loaded patient-HAYSFX75ACG77ZJE.npy
+(311, 235, 235)
+Loaded patient-BLPHSKRODCJLHZZS.npy
+(333, 233, 233)
+Loaded patient-QJFMNVKKVZXKBROO.npy
+(352, 274, 274)
+Loaded patient-DPSG75LCBZVBTRPO.npy
+(302, 250, 250)
+Loaded patient-ZAJH6DQQBAECJ7AX.npy
+(355, 235, 235)
+Loaded patient-OSO6K4FGNA57I3VJ.npy
+(314, 217, 217)
+Loaded patient-ZASCC2YE27A6IT45.npy
+(342, 258, 258)
+Loaded patient-HLXOSVDF27JWNCMJ.npy
+(323, 273, 273)
+Loaded patient-BSBXPIGXEUV3WWOZ.npy
+(292, 250, 250)
+Loaded patient-TJAPUMPEDA32J5JW.npy
+(374, 287, 287)
+Loaded patient-EPSAH2BCBGV7WQHM.npy
+(378, 235, 235)
+Loaded patient-UOZJSIPCXRA7UJF2.npy
+(317, 250, 250)
+
+ 1/20 [>.............................] - ETA: 1:43:55 - loss: 1.6563 - acc: 1.00002
+Loaded patient-WDIYHNMBALZ4ZP2A.npy
+(286, 213, 213)
+Loaded patient-UGXVSPJLHJL6AHSW.npy
+(345, 220, 220)
+Loaded patient-JWKB7SHIBYWSEVMC.npy
+(295, 325, 325)
+Loaded patient-IAUKV5R644JZFD55.npy
+(292, 224, 224)
+Loaded patient-CRKZOVFXYNXRGJYR.npy
+(337, 281, 281)
+Loaded patient-PMMV7MLZUWJTIMLR.npy
+(286, 250, 250)
+Loaded patient-LQMW3GK5JQEVVFBK.npy
+(339, 235, 235)
+Loaded patient-IAR66U7QVOBXOFQE.npy
+(341, 280, 280)
+Loaded patient-FLSUE7ZIXI6HSJWN.npy
+(318, 280, 280)
+Loaded patient-LQG4BRZPSCMR5XAN.npy
+(349, 235, 235)
+Loaded patient-XJVLT6YE7FKB3T3B.npy
+(369, 250, 250)
+Loaded patient-PNPGGIFOXWJJQ22P.npy
+(378, 250, 250)
+Loaded patient-ZMP6NER3I4ERS2JE.npy
+(347, 235, 235)
+Loaded patient-GBXENHYLRVZ5DTHI.npy
+(329, 236, 236)
+Loaded patient-JCWGEJIJO2LDRY2U.npy
+(339, 305, 305)
+Loaded patient-YRC3D4LSQNDZCXDA.npy
+(335, 261, 261)
+
+ 2/20 [==>...........................] - ETA: 1:38:47 - loss: 1.6383 - acc: 0.96883
+Loaded patient-RODVAIJ6A6P4D54Y.npy
+(374, 283, 283)
+Loaded patient-SVYZISKLZLQKBPX6.npy
+(317, 252, 252)
+Loaded patient-OUM3NFGU5U3TCBBK.npy
+(320, 205, 205)
+Loaded patient-LHMGXWC6J7DRD3CP.npy
+(441, 349, 349)
+Loaded patient-TFXM6VTRLJH2DS7G.npy
+(377, 253, 253)
+Loaded patient-NFG67H47EUPD5URG.npy
+(322, 213, 213)
+Loaded patient-YNLMIJ5S24AYYZXN.npy
+(309, 229, 229)
+Loaded patient-NWO33W453F6ZJ4BU.npy
+(325, 258, 258)
+Loaded patient-COFP4UFH6MWZA7HI.npy
+(313, 251, 251)
+Loaded patient-SQD3UDNZH2Q3ET4V.npy
+(335, 250, 250)
+Loaded patient-BMTJZEMYGJCVHX7N.npy
+(329, 252, 252)
+Loaded patient-RKFD4L7QSBXPHFJU.npy
+(341, 250, 250)
+Loaded patient-NGQAJ2GBHZE2DN5C.npy
+(324, 280, 280)
+Loaded patient-IIAFOQ3HGHU4A6UT.npy
+(343, 259, 259)
+Loaded patient-LZU7NSTDRFX77U7G.npy
+(472, 239, 239)
+Loaded patient-VSJRIEOFJCVJIO2C.npy
+(366, 264, 264)
+
+ 3/20 [===>..........................] - ETA: 1:33:17 - loss: 1.6192 - acc: 0.97924
+Loaded patient-LVOHLK3FOHWE66BP.npy
+(369, 229, 229)
+Loaded patient-DRT3F4ITWPCCBB6T.npy
+(330, 235, 235)
+Loaded patient-OCD6VASBJF4SNZ4U.npy
+(324, 220, 220)
+Loaded patient-EYEDMZ3Z6OIKPERL.npy
+(329, 316, 316)
+Loaded patient-HLQKXLS4OQ2BGQ5C.npy
+(318, 250, 250)
+Loaded patient-JMWZRLKLB5DSSXE3.npy
+(317, 235, 235)
+Loaded patient-UMRXCXFIT4YDD7RQ.npy
+(366, 235, 235)
+Loaded patient-THKULF2KHMNVMTUR.npy
+(457, 235, 235)
+Loaded patient-IPFO2JH7ZZYTQHH2.npy
+(309, 226, 226)
+Loaded patient-FYSSUUSC5XYNLUQW.npy
+(317, 227, 227)
+Loaded patient-RLJSRNLTRUQAVT3L.npy
+(307, 235, 235)
+Loaded patient-HXLMZWH3SFX3SPAN.npy
+(352, 250, 250)
+Loaded patient-XYOD23KJFH7NZXXK.npy
+(316, 250, 250)
+Loaded patient-XXEE333ZVHOJTRJJ.npy
+(325, 253, 253)
+Loaded patient-BHA4CDH32NPSOKTZ.npy
+(304, 228, 228)
+Loaded patient-MRYGCR7462Z7IN2L.npy
+(282, 250, 250)
+
+ 4/20 [=====>........................] - ETA: 1:27:53 - loss: 1.6368 - acc: 0.93755
+Loaded patient-JGNEVHX7BEKLBQJY.npy
+(346, 318, 318)
+Loaded patient-OOAKLUZ2A4XYXC4X.npy
+(309, 211, 211)
+Loaded patient-MZAZFTEIU4NLYXDF.npy
+(343, 250, 250)
+Loaded patient-NIED5UTOZ2JOFCWT.npy
+(318, 280, 280)
+Loaded patient-WIJONRZUXV2SJOMN.npy
+(330, 235, 235)
+Loaded patient-HXBUUFVQBNISYKNU.npy
+(332, 280, 280)
+Loaded patient-BTLLL3I67PYRN7R4.npy
+(341, 280, 280)
+Loaded patient-SWSY42N45J3YWV5I.npy
+(312, 250, 250)
+Loaded patient-ADKFJYDHLE7M3XE6.npy
+(302, 250, 250)
+Loaded patient-MOAADIHO5RHQJEK3.npy
+(335, 250, 250)
+Loaded patient-SBLQEZAZEXCC76C6.npy
+(365, 327, 327)
+Loaded patient-JLHG7VESTU3GH2KX.npy
+(345, 245, 245)
+Loaded patient-ZFMUMZVL6HFQCKSX.npy
+(333, 266, 266)
+Loaded patient-WZPADD37RLXRX3IG.npy
+(337, 255, 255)
+Loaded patient-WHCQX5APWQZHMM3Q.npy
+(349, 302, 302)
+Loaded patient-FYXMPCGHTGJXJBSD.npy
+(329, 234, 234)
+
+ 5/20 [======>.......................] - ETA: 1:22:21 - loss: 1.6405 - acc: 0.92506
+Loaded patient-GKDV3FW4M56I3IKV.npy
+(332, 279, 279)
+Loaded patient-WCSSH2NHDNNZIVML.npy
+(300, 250, 250)
+Loaded patient-VKFW6CO5FV2P3PUE.npy
+(331, 235, 235)
+Loaded patient-EQD7NRTYLRGYENOM.npy
+(307, 231, 231)
+Loaded patient-JSV6UEFKJAVM6OGO.npy
+(319, 235, 235)
+Loaded patient-UAFTPLA47GA7WS27.npy
+(315, 236, 236)
+Loaded patient-RHWTMTHC7HIWZ2YZ.npy
+(350, 409, 409)
+Loaded patient-XVPBCFNYTDI4HHW2.npy
+(323, 214, 214)
+Loaded patient-ZNPFNNZ2DRELKNQ3.npy
+(340, 244, 244)
+Loaded patient-IJBSBL7IRLNRVXUC.npy
+(317, 235, 235)
+Loaded patient-FKHXWQEPTPIWXHBR.npy
+(356, 250, 250)
+Loaded patient-UZFAM45KRI3C7MGB.npy
+(325, 263, 263)
+Loaded patient-ZCMTUATV42LAXACO.npy
+(309, 293, 293)
+Loaded patient-KNKVPM2UV4UFFC5R.npy
+(328, 250, 250)
+Loaded patient-IKLKZYXDYTCCYUAZ.npy
+(349, 279, 279)
+Loaded patient-SEV2GAEFNJBLX3ZJ.npy
+(341, 280, 280)
+
+ 6/20 [========>.....................] - ETA: 1:16:47 - loss: 1.6267 - acc: 0.91677
+Loaded patient-JAS2TYJWKQL65CQT.npy
+(367, 235, 235)
+Loaded patient-EKKECBQEXHI5ME2T.npy
+(335, 213, 213)
+Loaded patient-PCJ6DNFF7XHMUSWE.npy
+(307, 266, 266)
+Loaded patient-AGTDPQEU54ODFAUD.npy
+(333, 464, 464)
+Loaded patient-LCGP6HURGG2XVJ5B.npy
+(327, 235, 235)
+Loaded patient-GET5PY3CH6RJV3UW.npy
+(364, 250, 250)
+Loaded patient-NXSJBZWIQX5RKNO3.npy
+(288, 280, 280)
+Loaded patient-GBA7XJ5E7ITWZW7K.npy
+(341, 280, 280)
+Loaded patient-LRCPYDPZFFC6HR6K.npy
+(306, 250, 250)
+Loaded patient-NHXCOHZ4HH53NLQ6.npy
+(310, 213, 213)
+Loaded patient-SZKV26SJOHXJBPVX.npy
+(315, 269, 269)
+Loaded patient-BIASJO43N3A7Z63W.npy
+(360, 275, 275)
+Loaded patient-GXR5YMJB3PZQNLAC.npy
+(349, 225, 225)
+Loaded patient-VZHXKDEYF7EK4RRP.npy
+(329, 280, 280)
+Loaded patient-IETROE62UNT5QVWS.npy
+(293, 363, 363)
+Loaded patient-ZOROHVT5JZVIBEEX.npy
+(341, 280, 280)
+
+ 7/20 [=========>....................] - ETA: 1:10:50 - loss: 1.6320 - acc: 0.90188
+Loaded patient-BSKAYXMTSEXR6U5K.npy
+(325, 235, 235)
+Loaded patient-RMID4XEKTVEYCSGK.npy
+(354, 243, 243)
+Loaded patient-EURBSIKPYU66GBRW.npy
+(365, 331, 331)
+Loaded patient-NLV36DRLRZY5AKIJ.npy
+(367, 241, 241)
+Loaded patient-JNTL5ESEIA5FWMUQ.npy
+(325, 250, 250)
+Loaded patient-FUVL4PLSUHRCEAHC.npy
+(357, 254, 254)
+Loaded patient-ANCCICBPHIDJ5PJ4.npy
+(383, 259, 259)
+Loaded patient-WHDZVHCOCOTIJLXV.npy
+(349, 235, 235)
+Loaded patient-ENBHS75LQ7FWO5CP.npy
+(374, 263, 263)
+Loaded patient-AUGXT5PI4VY62M6L.npy
+(319, 237, 237)
+Loaded patient-RZVMIO4YX2JHAUQ5.npy
+(327, 220, 220)
+Loaded patient-RRZGAIOEIS6WPXDT.npy
+(367, 269, 269)
+Loaded patient-DSIFGAA3BMQKFE7A.npy
+(306, 274, 274)
+Loaded patient-OLYVZJAPCZJQWGIE.npy
+(321, 268, 268)
+Loaded patient-GCBJDIT55TRGHZIR.npy
+(355, 235, 235)
+Loaded patient-JNLCZIQGTGTFNEKK.npy
+(324, 280, 280)
+
+ 8/20 [===========>..................] - ETA: 1:05:04 - loss: 1.6159 - acc: 0.91419
+Loaded patient-PBR2STY62FZ3MQHZ.npy
+(302, 301, 301)
+Loaded patient-FFVM6VCPRIKK7453.npy
+(316, 235, 235)
+Loaded patient-BVYSR54MKT5SPMSU.npy
+(317, 235, 235)
+Loaded patient-TXOGS5CQ6RZMSV3W.npy
+(327, 235, 235)
+Loaded patient-OXRK4I6CTXCENAZV.npy
+(344, 444, 444)
+Loaded patient-OMR7KPUBB2T7X3QQ.npy
+(349, 235, 235)
+Loaded patient-MTWW42SPCGLHEDKY.npy
+(355, 223, 223)
+Loaded patient-NXDFBWPXYWHEIO2O.npy
+(322, 219, 219)
+Loaded patient-NXLFQLVZRLUEK2UF.npy
+(343, 235, 235)
+Loaded patient-UZQJZEDGVTWFY23U.npy
+(385, 260, 260)
+Loaded patient-ZUEK5YSS7CITVWIP.npy
+(361, 251, 251)
+Loaded patient-YBMFJQLVZENVF6MA.npy
+(327, 304, 304)
+Loaded patient-KGK66IWDH2EX5XNP.npy
+(283, 261, 261)
+Loaded patient-HVPI7QQSXPDHSFME.npy
+(319, 250, 250)
+Loaded patient-SRKOPGCEG62ZJTT2.npy
+(362, 249, 249)
+Loaded patient-LYUO2OPTNYUBCHT2.npy
+(328, 220, 220)
+
+ 9/20 [============>.................] - ETA: 59:23 - loss: 1.6138 - acc: 0.9167  10
+Loaded patient-NWRLBSNF3RVU3MAC.npy
+(367, 246, 246)
+Loaded patient-ZVRO2HKWM7JSS6IA.npy
+(359, 269, 269)
+Loaded patient-CMELUGEVB3ESBIAK.npy
+(356, 245, 245)
+Loaded patient-TEHE4SMNJTXDNW2O.npy
+(341, 280, 280)
+Loaded patient-ATY6WNE6JVYJ2RLN.npy
+(351, 281, 281)
+Loaded patient-GIPUIOSNW2C34HIS.npy
+(306, 222, 222)
+Loaded patient-SSJQF5OU3VSC3HAD.npy
+(352, 250, 250)
+Loaded patient-NEYLUIYPCL6O74O6.npy
+(291, 301, 301)
+Loaded patient-PYZP7WQ4QRH46EFS.npy
+(351, 250, 250)
+Loaded patient-ZCTE57VMPCGWDG75.npy
+(296, 269, 269)
+Loaded patient-XDNEWPTKFLCWWUSV.npy
+(387, 275, 275)
+Loaded patient-JUM3FRXBYLTATYYH.npy
+(341, 250, 250)
+Loaded patient-PYRDN2YA3MWCWKCC.npy
+(315, 250, 250)
+Loaded patient-SZY3J4UTKSCFM2H4.npy
+(370, 215, 215)
+Loaded patient-EGCV7CJ6LF2CACQM.npy
+(298, 250, 250)
+Loaded patient-VFHSASVT4EXZWAOS.npy
+(326, 280, 280)
+
+10/20 [==============>...............] - ETA: 53:49 - loss: 1.6053 - acc: 0.925011
+Loaded patient-GHVG2CNNRZ65UBEU.npy
+(330, 273, 273)
+Loaded patient-KRWJSE7TVM2QLJI7.npy
+(308, 250, 250)
+Loaded patient-BRSZTKDWTB2X5P3W.npy
+(352, 273, 273)
+Loaded patient-RWJZNVFII5INU6Z5.npy
+(367, 246, 246)
+Loaded patient-BNZ2UKOA43BESZGP.npy
+(301, 235, 235)
+Loaded patient-JJEB6MFMSB6UAKHU.npy
+(369, 262, 262)
+Loaded patient-NJZN2TNXUUFRZ3GZ.npy
+(387, 235, 235)
+Loaded patient-RWKA32WBSVFB4MQF.npy
+(327, 235, 235)
+Loaded patient-DENODP22U2Q7E4LM.npy
+(341, 280, 280)
+Loaded patient-AGTRMFUZM2MQUAB4.npy
+(350, 263, 263)
+Loaded patient-RCDAHVLV6QUTDFVD.npy
+(322, 215, 215)
+Loaded patient-BHYZMLL7GBZZLACW.npy
+(311, 302, 302)
+Loaded patient-AFEB6XW5UCQTSYJL.npy
+(322, 250, 250)
+Loaded patient-MJFHYCVEV2GTJD3N.npy
+(341, 265, 265)
+Loaded patient-QPKEZOB3X6B6HMCR.npy
+(303, 341, 341)
+Loaded patient-ARZ7H7BSITHOSSMG.npy
+(327, 233, 233)
+
+11/20 [===============>..............] - ETA: 48:17 - loss: 1.6009 - acc: 0.931812
+Loaded patient-IIOOPK6T2ZWDZMU3.npy
+(319, 250, 250)
+Loaded patient-DNO6CS3YNGFMUWXL.npy
+(284, 250, 250)
+Loaded patient-VUTDS6OC2VUSNQMK.npy
+(348, 280, 280)
+Loaded patient-ADIO4U6QJTXF3YQH.npy
+(350, 230, 230)
+Loaded patient-TNXMNBGRZHPIMJJI.npy
+(371, 272, 272)
+Loaded patient-OAYNHJ5ZLLVYHXCA.npy
+(367, 246, 246)
+Loaded patient-OJC5WXUS4IEGGOYC.npy
+(339, 235, 235)
+Loaded patient-OTIP25YORHBKJPZM.npy
+(353, 269, 269)
+Loaded patient-PQJEIXKIJMZTBZ74.npy
+(316, 261, 261)
+Loaded patient-KPC2RVJBDHQLC5EM.npy
+(302, 250, 250)
+Loaded patient-BWDRAF5ZOQPFOOL7.npy
+(308, 255, 255)
+Loaded patient-DXLPP6QTNOHQRHVG.npy
+(320, 270, 270)
+Loaded patient-SBRRR2SATWOOR5D6.npy
+(476, 243, 243)
+Loaded patient-ANLMZN6NS4S3TCCF.npy
+(293, 250, 250)
+Loaded patient-PVMXD3RZSHEQTYW3.npy
+(311, 280, 280)
+Loaded patient-IDUHFQWVS4WKXPC5.npy
+(340, 250, 250)
+
+12/20 [=================>............] - ETA: 42:49 - loss: 1.5943 - acc: 0.932313
+Loaded patient-ZUR2IKTUC2KQVB2X.npy
+(259, 267, 267)
+Loaded patient-ZANU4GPPZNIFRN6W.npy
+(329, 209, 209)
+Loaded patient-YYNFU45K2WIMXWE4.npy
+(303, 252, 252)
+Loaded patient-WPNYHBQRGJ4NHU3C.npy
+(335, 263, 263)
+Loaded patient-BMFSUHVBPJ7RY56P.npy
+(331, 214, 214)
+Loaded patient-UOSAPEMY76KAGOUR.npy
+(336, 297, 297)
+Loaded patient-NJDN23E34MZVQU66.npy
+(298, 250, 250)
+Loaded patient-UZUCCRJIMUZMQSQE.npy
+(335, 280, 280)
+Loaded patient-TFCLOHN4ROEYF6QY.npy
+(371, 203, 203)
+Loaded patient-CGQFS5PB627OWLL7.npy
+(327, 229, 229)
+Loaded patient-SKBIT57CPAKAGQVB.npy
+(341, 364, 364)
+Loaded patient-QTMN6M3FY3YSJ6ZP.npy
+(276, 279, 279)
+Loaded patient-XKHDNXXCRND47JLF.npy
+(320, 359, 359)
+Loaded patient-UUKSYXBYQQZATBP5.npy
+(349, 250, 250)
+Loaded patient-QLYPHVVU3RG43OZO.npy
+(336, 245, 245)
+Loaded patient-PMEECXFHBLN6KHO7.npy
+(353, 271, 271)
+
+13/20 [==================>...........] - ETA: 37:23 - loss: 1.5844 - acc: 0.937514
+Loaded patient-VKDRQPXRMRRBAHW3.npy
+(348, 229, 229)
+Loaded patient-ZQYME7XWFWQXXOXA.npy
+(314, 500, 500)
+Loaded patient-CFC7SE7TGP55RMUB.npy
+(330, 252, 252)
+Loaded patient-EWYGH3OSPLJI27UF.npy
+(329, 244, 244)
+Loaded patient-TVCP433TKOVBCQTW.npy
+(347, 268, 268)
+Loaded patient-NUWPDW6HBRTLEYWD.npy
+(357, 225, 225)
+Loaded patient-VGF4YIHDAARLWS7A.npy
+(311, 250, 250)
+Loaded patient-OTIGVYUMMBXDNSHN.npy
+(377, 281, 281)
+Loaded patient-RATVCRHG4ZHLCOV3.npy
+(325, 280, 280)
+Loaded patient-VBPF3M5P5YIFVZ4L.npy
+(326, 250, 250)
+Loaded patient-DXOUKNW7AXCZFUIL.npy
+(350, 264, 264)
+Loaded patient-GONORRCZWHDZV3M5.npy
+(364, 250, 250)
+Loaded patient-UBDRB3DMSB6TJ76N.npy
+(372, 250, 250)
+Loaded patient-SUOA7XPFTTR2O5NQ.npy
+(365, 250, 250)
+Loaded patient-MSZB67BPZ32ILNLK.npy
+(375, 251, 251)
+Loaded patient-KEYZSDHDH2DINCKO.npy
+(285, 280, 280)
+
+14/20 [====================>.........] - ETA: 31:59 - loss: 1.5755 - acc: 0.942015
+Loaded patient-YGJSUAFCVJ52LIRD.npy
+(340, 268, 268)
+Loaded patient-XZUUUC426GUXSCGJ.npy
+(333, 258, 258)
+Loaded patient-TVY4XBCLXJBKK72S.npy
+(302, 289, 289)
+Loaded patient-ZSXFDYQ4ST4Z6SRF.npy
+(309, 211, 211)
+Loaded patient-VZOXMEUK7BN7PQH3.npy
+(302, 280, 280)
+Loaded patient-BNAGD36PDWFHIEOO.npy
+(371, 255, 255)
+Loaded patient-JOJU5LPDDBBP6LYG.npy
+(321, 280, 280)
+Loaded patient-PIORRASXKMO7LEXJ.npy
+(349, 250, 250)
+Loaded patient-ILNTKMBVTXNXURGV.npy
+(330, 231, 231)
+Loaded patient-OAC7JXARELEVVEQW.npy
+(346, 348, 348)
+Loaded patient-RKXO5JUDKMYRUTN5.npy
+(305, 221, 221)
+Loaded patient-ZTFA5BJQHNJIRH4T.npy
+(341, 280, 280)
+Loaded patient-XJLRFX244JGJZUUF.npy
+(351, 289, 289)
+Loaded patient-SUVCYHBWWKNAVUGQ.npy
+(305, 235, 235)
+Loaded patient-ZHLGEIY4UAEIPL33.npy
+(318, 237, 237)
+Loaded patient-EOI25OVG7DHZ6KH2.npy
+(296, 286, 286)
+
+15/20 [=====================>........] - ETA: 26:37 - loss: 1.5661 - acc: 0.945816
+Loaded patient-ENPUI7ZVHUGIXYN7.npy
+(300, 235, 235)
+Loaded patient-XHX3PCDOWEWDB34X.npy
+(315, 280, 280)
+Loaded patient-DJGKDC32BE5NKELX.npy
+(325, 220, 220)
+Loaded patient-XQLUVUDY23UZMYW3.npy
+(303, 287, 287)
+Loaded patient-ASI5JI7DJLB3RKFS.npy
+(336, 250, 250)
+Loaded patient-HIA2VPHI6ABMCQTV.npy
+(333, 261, 261)
+Loaded patient-FCYGZ75WMW6L4PJM.npy
+(361, 262, 262)
+Loaded patient-IWYDKUPY2NSYJGLF.npy
+(356, 235, 235)
+Loaded patient-CRH6GLC3CTD2WACN.npy
+(327, 285, 285)
+Loaded patient-CYIJD3WQ3J3Q67LF.npy
+(351, 280, 280)
+Loaded patient-PCNMFAZL5VWWK7RP.npy
+(349, 258, 258)
+Loaded patient-XJJ3IXEOPNFXBGP7.npy
+(355, 235, 235)
+Loaded patient-EYYSOUW6PR2WMBZS.npy
+(344, 235, 235)
+Loaded patient-LOGIP43ZSLSUA5SZ.npy
+(325, 277, 277)
+Loaded patient-AHNGBFJSTEBO4BJW.npy
+(341, 230, 230)
+Loaded patient-TFLSOP3FLUBQDLL2.npy
+(321, 235, 235)
+
+16/20 [=======================>......] - ETA: 21:16 - loss: 1.5580 - acc: 0.949217
+Loaded patient-TRM3ANQXS7O6Y7OA.npy
+(290, 214, 214)
+Loaded patient-PMUXVQHYYYBOK4RL.npy
+(317, 235, 235)
+Loaded patient-MKIAFF7LDGXTZN4C.npy
+(371, 255, 255)
+Loaded patient-HDQYSVBJ4MPRGYRN.npy
+(341, 280, 280)
+Loaded patient-IEJDGAS52VTH4G74.npy
+(321, 280, 280)
+Loaded patient-SLPTPLSMZYJEUEXK.npy
+(353, 241, 241)
+Loaded patient-MPTG3X65O7O7HYHX.npy
+(323, 263, 263)
+Loaded patient-CQHAXTV5WJLZBRFB.npy
+(300, 280, 280)
+Loaded patient-UKOHM6O57N37U2E2.npy
+(333, 398, 398)
+Loaded patient-CJDXGZHXAGH7QL3C.npy
+(337, 249, 249)
+Loaded patient-AFN5EQGSDERZCTLM.npy
+(341, 280, 280)
+Loaded patient-ROF7JT3SZGBNY3MG.npy
+(341, 280, 280)
+Loaded patient-FBJFYBF7A46A4GIM.npy
+(341, 280, 280)
+Loaded patient-JUOV5YWN6IS7OXIJ.npy
+(350, 325, 325)
+Loaded patient-RHOULE6IWB6KWLE5.npy
+(321, 235, 235)
+Loaded patient-WAP327ZXF6FGV5E4.npy
+(314, 235, 235)
+
+17/20 [========================>.....] - ETA: 15:55 - loss: 1.5493 - acc: 0.952218
+Loaded patient-HIAEQWMTUGATOAVI.npy
+(351, 281, 281)
+Loaded patient-TBNR4PRU7XIL27G6.npy
+(323, 235, 235)
+Loaded patient-DZLYYZNR6M5BZFBT.npy
+(297, 263, 263)
+Loaded patient-FPTFJD4JZA7ZKYQJ.npy
+(332, 235, 235)
+Loaded patient-KFX44Z5T5RWT4LLI.npy
+(353, 229, 229)
+Loaded patient-OAEVXX4IFAX5IYOR.npy
+(337, 278, 278)
+Loaded patient-ECLDQAP52JUWQZHM.npy
+(355, 235, 235)
+Loaded patient-ROMHUDLTCOEXUQCA.npy
+(331, 300, 300)
+Loaded patient-HSKRXAPZ7WNBT2TI.npy
+(341, 488, 488)
+Loaded patient-ZMEGS4G44P6FMONO.npy
+(243, 235, 235)
+Loaded patient-JAANEAKBEZPKV4JV.npy
+(311, 269, 269)
+Loaded patient-JQWIIAADGKE2YMJS.npy
+(330, 235, 235)
+Loaded patient-NJNFVZMSGBGM6H5Y.npy
+(358, 235, 235)
+Loaded patient-UYA5YJUAVC3SE6HV.npy
+(341, 280, 280)
+Loaded patient-UJHKCBMXXLB5QHTP.npy
+(315, 250, 250)
+Loaded patient-QTUPNSXYST53IETT.npy
+(353, 261, 261)
+
+18/20 [==========================>...] - ETA: 10:36 - loss: 1.5401 - acc: 0.954919
+Loaded patient-XSNEILWLDG2HVSVH.npy
+(285, 282, 282)
+Loaded patient-DDWAA4OECH5TXONN.npy
+(301, 304, 304)
+Loaded patient-HBAZOCWOGBJYCEAZ.npy
+(340, 250, 250)
+Loaded patient-JID2LWYOKIWCMT2Z.npy
+(316, 297, 297)
+Loaded patient-SADEJMD27KKWZQ5L.npy
+(348, 250, 250)
+Loaded patient-NHCZX3GOEMPDDHW3.npy
+(343, 272, 272)
+Loaded patient-NMHOGEKTK7LT57ZI.npy
+(331, 251, 251)
+Loaded patient-IBRRD5O4NGVPABDT.npy
+(562, 265, 265)
+Loaded patient-NJPOTXDCGONCOU7C.npy
+(347, 245, 245)
+Loaded patient-ENB4V4BPR4HRCRXW.npy
+(307, 220, 220)
+Loaded patient-TRRYZ5WXYHUMTPCQ.npy
+(314, 250, 250)
+Loaded patient-XPBRBUB6YYHIWHVO.npy
+(310, 280, 280)
+Loaded patient-VDL6YJQYER3CXFOI.npy
+(321, 280, 280)
+Loaded patient-SZXTZ3LQ5MBFDFXR.npy
+(321, 227, 227)
+Loaded patient-XPJH44FSBRVL2WTV.npy
+(312, 259, 259)
+Loaded patient-CJNLJB43ZD3GIUN3.npy
+(339, 250, 250)
+
+19/20 [===========================>..] - ETA: 5:18 - loss: 1.5345 - acc: 0.9572 0
+Loaded patient-TITRFCZEPFJKM3NY.npy
+(285, 271, 271)
+Loaded patient-OPLQZBP3BOBS4LTY.npy
+(347, 235, 235)
+Loaded patient-WUG3VLS7FYXG35LH.npy
+(355, 254, 254)
+Loaded patient-SODFDRR2LWR7JDMN.npy
+(325, 250, 250)
+Loaded patient-NJB6RYF62XWGMSE2.npy
+(311, 235, 235)
+Loaded patient-XGUULATQ6C4ZP3QQ.npy
+(334, 280, 280)
+Loaded patient-NLXOSUXOZZHPFQQX.npy
+(354, 284, 284)
+Loaded patient-NCI33JITLERBTWXI.npy
+(381, 250, 250)
+Loaded patient-VJNCTEEYR7U4HIQU.npy
+(339, 235, 235)
+Loaded patient-ECJB3HH5WPIVOJJW.npy
+(295, 280, 280)
+Loaded patient-PAHYRPTLLQOU2FTB.npy
+(353, 279, 279)
+Loaded patient-IGIIMA3LABMNETMA.npy
+(411, 243, 243)
+Loaded patient-VKMYOQD5A64UFEED.npy
+(358, 231, 231)
+Loaded patient-HAKJSG5CHDGOBP6B.npy
+(309, 280, 280)
+Loaded patient-TNUEVMD3Z4YZFQDG.npy
+(345, 211, 211)
+Loaded patient-JWV4HKJ6OCKS26IR.npy
+(353, 266, 266)
+1
+Loaded patient-ADJYK6PUQSLE2GLN.npy
+(279, 200, 200)
+Loaded patient-EGIAP2GDM33PCW5A.npy
+(498, 235, 235)
+Loaded patient-WPA6WCTE24HGRIXH.npy
+(296, 250, 250)
+Loaded patient-CSCIKXOMNAIB3LUQ.npy
+(291, 250, 250)
+Loaded patient-MLHE2CESZAWQKZVP.npy
+(285, 241, 241)
+Loaded patient-VDO7JNWOEJ5KGJYJ.npy
+(308, 235, 235)
+Loaded patient-ASD2URNKFRN3ZSFL.npy
+(329, 280, 280)
+Loaded patient-RBC423N4RNB3UZ5P.npy
+(341, 250, 250)
+Loaded patient-KJAWMYSKQTYINTNC.npy
+(355, 240, 240)
+Loaded patient-QKBS566N24RMCV5H.npy
+(296, 280, 280)
+Loaded patient-QGEQ4IFSRIA3RBVB.npy
+(316, 346, 346)
+Loaded patient-SGFWUNFEYCKBMF65.npy
+(320, 256, 256)
+Loaded patient-CQARGKFSIVQWNCT6.npy
+(291, 200, 200)
+Loaded patient-MEQKZCRF5TR6MHLY.npy
+(299, 280, 280)
+Loaded patient-CSXRYWJCXJXAJRLP.npy
+(330, 306, 306)
+Loaded patient-JJMENP4QE4CSXSHV.npy
+(320, 250, 250)
+2
+Loaded patient-YEXJFFF2ZK44FYCP.npy
+(278, 280, 280)
+Loaded patient-LOR7YOK3PYHXSHCM.npy
+(358, 235, 235)
+Loaded patient-HXKDQ5I26Z2CRUQB.npy
+(362, 250, 250)
+Loaded patient-ABPO2BORDNF3OVL3.npy
+(325, 225, 225)
+Loaded patient-KQSTLFNPLNP5M43F.npy
+(348, 255, 255)
+Loaded patient-RTC5RXQHUXCSPNLN.npy
+(341, 250, 250)
+Loaded patient-OQNPNGEBR4D54PRA.npy
+(276, 250, 250)
+Loaded patient-BRFHLOM2KPUXSBMI.npy
+(301, 280, 280)
+Loaded patient-DDPQNEBC34XCOF2U.npy
+(281, 201, 201)
+Loaded patient-RXK7K2FPVPLFMID2.npy
+(369, 250, 250)
+Loaded patient-VOPMJMGIDQQ75E6G.npy
+(337, 281, 281)
+Loaded patient-DZTDN47H2IKSYN3Q.npy
+(347, 235, 235)
+Loaded patient-DVYKX4XMBHD57MZJ.npy
+(341, 280, 280)
+Loaded patient-IAX2O3NWENSSH4D5.npy
+(363, 247, 247)
+Loaded patient-FIBU2GYR72UU7E5M.npy
+(315, 219, 219)
+Loaded patient-AJHYOJIG3DZLSIKI.npy
+(317, 222, 222)
+3
+Loaded patient-ALOUY4SF3BQKXQCZ.npy
+(356, 307, 307)
+Loaded patient-TUX27MONFI7VC6M3.npy
+(321, 251, 251)
+Loaded patient-ICWMS7OCXZLUTUFT.npy
+(322, 280, 280)
+Loaded patient-FTAKNRFGOGVS632K.npy
+(326, 215, 215)
+Loaded patient-OCP7EUZJEB7JUL65.npy
+(392, 252, 252)
+Loaded patient-ZIDRKXRWTVGHW7ZD.npy
+(341, 280, 280)
+Loaded patient-VVGO45TQNOASBLZM.npy
+(490, 235, 235)
+Loaded patient-JQVBM4FUT34IUSUB.npy
+(335, 200, 200)
+Loaded patient-TZES7PMHXV4XVJBV.npy
+(397, 255, 255)
+Loaded patient-ESLHGQCGYB7J4DX3.npy
+(319, 250, 250)
+Loaded patient-ZCIMXZ73NFNRDH46.npy
+(322, 250, 250)
+Loaded patient-NHKUCEIIHLJQ25VM.npy
+(280, 280, 280)
+Loaded patient-YSTBBUD35YZBOT2Z.npy
+(356, 287, 287)
+Loaded patient-MSXY2JKZXPEBXR72.npy
+(369, 273, 273)
+Loaded patient-AOTGHQ6S5AD7LOBO.npy
+(296, 280, 280)
+Loaded patient-CWWKNDYG2UERXH7X.npy
+(337, 257, 257)
+4
+Loaded patient-RYNCGNVRZH2LB7BN.npy
+(314, 213, 213)
+Loaded patient-PIKNNHQAI52EI62K.npy
+(324, 271, 271)
+Loaded patient-QBOBDYYD4R7WP37S.npy
+(346, 305, 305)
+Loaded patient-LUVMEPI5JWYL67RF.npy
+(309, 306, 306)
+Loaded patient-UNREF6O6622LZWNN.npy
+(343, 255, 255)
+Loaded patient-KACA7XHWXRM6A3W3.npy
+(336, 259, 259)
+Loaded patient-UMFGGCOJN6GDPQDV.npy
+(279, 250, 250)
+Loaded patient-BJI23MUAPMUMIED2.npy
+(343, 232, 232)
+Loaded patient-ZTGZBI2QX2JQFXIG.npy
+(319, 235, 235)
+Loaded patient-HGJTE6ROVCUFUC4S.npy
+(349, 231, 231)
+Loaded patient-IXBFNU6QB2SEZQ7N.npy
+(303, 293, 293)
+Loaded patient-SXF2FCCYEQLXMQO5.npy
+(368, 336, 336)
+Loaded patient-JWVEP6ZLYCOE5IAE.npy
+(301, 235, 235)
+Loaded patient-RKIZJRFZGCXD4EOL.npy
+(362, 235, 235)
+Loaded patient-LGFNFIWO2ZEQYK36.npy
+(335, 259, 259)
+Loaded patient-MKKOO7NDN26O6RLZ.npy
+(297, 235, 235)
+0
+Loaded patient-MEP2WAB3JNIXJTON.npy
+(352, 235, 235)
+Loaded patient-LIJBIVVBI6TJCT6Z.npy
+(329, 250, 250)
+Loaded patient-VRSBMSXUYCQ3NC5A.npy
+(315, 280, 280)
+Loaded patient-CCVIH3DIM3GF6SLG.npy
+(357, 475, 475)
+Loaded patient-XQBRGW3CYGNUMWHI.npy
+(327, 298, 298)
+Loaded patient-OLCBKEY2WKCWPHJW.npy
+(328, 250, 250)
+Loaded patient-NYR7NWGHIRZDCL66.npy
+(342, 235, 235)
+Loaded patient-DRS5DZGN5PVUZX4Y.npy
+(341, 280, 280)
+Loaded patient-MHL54TPCTOQJ2I4K.npy
+(309, 313, 313)
+Loaded patient-WWEFFBIMLZ3KLQVZ.npy
+(355, 235, 235)
+Loaded patient-JUBFRXRHLG46KY42.npy
+(302, 279, 279)
+Loaded patient-POYYSD3RSJFBKSLQ.npy
+(317, 235, 235)
+Loaded patient-EUNTRXNEDB7VDVIS.npy
+(354, 290, 290)
+Loaded patient-WIPV3EQ34O55HCUI.npy
+(358, 304, 304)
+Loaded patient-POSX6PS6LR34HENB.npy
+(332, 269, 269)
+Loaded patient-RKBSU42WA7AY22E7.npy
+(325, 287, 287)
+1
+Loaded patient-ADJYK6PUQSLE2GLN.npy
+(279, 200, 200)
+Loaded patient-EGIAP2GDM33PCW5A.npy
+(498, 235, 235)
+Loaded patient-WPA6WCTE24HGRIXH.npy
+(296, 250, 250)
+Loaded patient-CSCIKXOMNAIB3LUQ.npy
+(291, 250, 250)
+Loaded patient-MLHE2CESZAWQKZVP.npy
+(285, 241, 241)
+Loaded patient-VDO7JNWOEJ5KGJYJ.npy
+(308, 235, 235)
+Loaded patient-ASD2URNKFRN3ZSFL.npy
+(329, 280, 280)
+Loaded patient-RBC423N4RNB3UZ5P.npy
+(341, 250, 250)
+Loaded patient-KJAWMYSKQTYINTNC.npy
+(355, 240, 240)
+Loaded patient-QKBS566N24RMCV5H.npy
+(296, 280, 280)
+Loaded patient-QGEQ4IFSRIA3RBVB.npy
+(316, 346, 346)
+Loaded patient-SGFWUNFEYCKBMF65.npy
+(320, 256, 256)
+Loaded patient-CQARGKFSIVQWNCT6.npy
+(291, 200, 200)
+Loaded patient-MEQKZCRF5TR6MHLY.npy
+(299, 280, 280)
+Loaded patient-CSXRYWJCXJXAJRLP.npy
+(330, 306, 306)
+Loaded patient-JJMENP4QE4CSXSHV.npy
+(320, 250, 250)
+
+20/20 [==============================] - 6445s 322s/step - loss: 1.5278 - acc: 0.9594 - val_loss: 2.2977 - val_acc: 0.5250
+
+Epoch 00002: saving model to tmp/weights.hdf5
+Epoch 3/10
+1
+Loaded patient-GFRJ7SPGIEJVXVRS.npy
+(879, 360, 360)
+Loaded patient-RFSGSDQ5MWIVM6QV.npy
+(300, 235, 235)
+Loaded patient-OLIQUZ7ERFP4DJVD.npy
+(325, 280, 280)
+Loaded patient-MYTHDP7XSELNJUBQ.npy
+(313, 249, 249)
+Loaded patient-HAYSFX75ACG77ZJE.npy
+(311, 235, 235)
+Loaded patient-BLPHSKRODCJLHZZS.npy
+(333, 233, 233)
+Loaded patient-QJFMNVKKVZXKBROO.npy
+(352, 274, 274)
+Loaded patient-DPSG75LCBZVBTRPO.npy
+(302, 250, 250)
+Loaded patient-ZAJH6DQQBAECJ7AX.npy
+(355, 235, 235)
+Loaded patient-OSO6K4FGNA57I3VJ.npy
+(314, 217, 217)
+Loaded patient-ZASCC2YE27A6IT45.npy
+(342, 258, 258)
+Loaded patient-HLXOSVDF27JWNCMJ.npy
+(323, 273, 273)
+Loaded patient-BSBXPIGXEUV3WWOZ.npy
+(292, 250, 250)
+Loaded patient-TJAPUMPEDA32J5JW.npy
+(374, 287, 287)
+Loaded patient-EPSAH2BCBGV7WQHM.npy
+(378, 235, 235)
+Loaded patient-UOZJSIPCXRA7UJF2.npy
+(317, 250, 250)
+
+ 1/20 [>.............................] - ETA: 1:38:57 - loss: 1.3475 - acc: 1.00002
+Loaded patient-WDIYHNMBALZ4ZP2A.npy
+(286, 213, 213)
+Loaded patient-UGXVSPJLHJL6AHSW.npy
+(345, 220, 220)
+Loaded patient-JWKB7SHIBYWSEVMC.npy
+(295, 325, 325)
+Loaded patient-IAUKV5R644JZFD55.npy
+(292, 224, 224)
+Loaded patient-CRKZOVFXYNXRGJYR.npy
+(337, 281, 281)
+Loaded patient-PMMV7MLZUWJTIMLR.npy
+(286, 250, 250)
+Loaded patient-LQMW3GK5JQEVVFBK.npy
+(339, 235, 235)
+Loaded patient-IAR66U7QVOBXOFQE.npy
+(341, 280, 280)
+Loaded patient-FLSUE7ZIXI6HSJWN.npy
+(318, 280, 280)
+Loaded patient-LQG4BRZPSCMR5XAN.npy
+(349, 235, 235)
+Loaded patient-XJVLT6YE7FKB3T3B.npy
+(369, 250, 250)
+Loaded patient-PNPGGIFOXWJJQ22P.npy
+(378, 250, 250)
+Loaded patient-ZMP6NER3I4ERS2JE.npy
+(347, 235, 235)
+Loaded patient-GBXENHYLRVZ5DTHI.npy
+(329, 236, 236)
+Loaded patient-JCWGEJIJO2LDRY2U.npy
+(339, 305, 305)
+Loaded patient-YRC3D4LSQNDZCXDA.npy
+(335, 261, 261)
+
+ 2/20 [==>...........................] - ETA: 1:33:47 - loss: 1.3341 - acc: 1.00003
+Loaded patient-RODVAIJ6A6P4D54Y.npy
+(374, 283, 283)
+Loaded patient-SVYZISKLZLQKBPX6.npy
+(317, 252, 252)
+Loaded patient-OUM3NFGU5U3TCBBK.npy
+(320, 205, 205)
+Loaded patient-LHMGXWC6J7DRD3CP.npy
+(441, 349, 349)
+Loaded patient-TFXM6VTRLJH2DS7G.npy
+(377, 253, 253)
+Loaded patient-NFG67H47EUPD5URG.npy
+(322, 213, 213)
+Loaded patient-YNLMIJ5S24AYYZXN.npy
+(309, 229, 229)
+Loaded patient-NWO33W453F6ZJ4BU.npy
+(325, 258, 258)
+Loaded patient-COFP4UFH6MWZA7HI.npy
+(313, 251, 251)
+Loaded patient-SQD3UDNZH2Q3ET4V.npy
+(335, 250, 250)
+Loaded patient-BMTJZEMYGJCVHX7N.npy
+(329, 252, 252)
+Loaded patient-RKFD4L7QSBXPHFJU.npy
+(341, 250, 250)
+Loaded patient-NGQAJ2GBHZE2DN5C.npy
+(324, 280, 280)
+Loaded patient-IIAFOQ3HGHU4A6UT.npy
+(343, 259, 259)
+Loaded patient-LZU7NSTDRFX77U7G.npy
+(472, 239, 239)
+Loaded patient-VSJRIEOFJCVJIO2C.npy
+(366, 264, 264)
+
+ 3/20 [===>..........................] - ETA: 1:28:43 - loss: 1.3285 - acc: 1.00004
+Loaded patient-LVOHLK3FOHWE66BP.npy
+(369, 229, 229)
+Loaded patient-DRT3F4ITWPCCBB6T.npy
+(330, 235, 235)
+Loaded patient-OCD6VASBJF4SNZ4U.npy
+(324, 220, 220)
+Loaded patient-EYEDMZ3Z6OIKPERL.npy
+(329, 316, 316)
+Loaded patient-HLQKXLS4OQ2BGQ5C.npy
+(318, 250, 250)
+Loaded patient-JMWZRLKLB5DSSXE3.npy
+(317, 235, 235)
+Loaded patient-UMRXCXFIT4YDD7RQ.npy
+(366, 235, 235)
+Loaded patient-THKULF2KHMNVMTUR.npy
+(457, 235, 235)
+Loaded patient-IPFO2JH7ZZYTQHH2.npy
+(309, 226, 226)
+Loaded patient-FYSSUUSC5XYNLUQW.npy
+(317, 227, 227)
+Loaded patient-RLJSRNLTRUQAVT3L.npy
+(307, 235, 235)
+Loaded patient-HXLMZWH3SFX3SPAN.npy
+(352, 250, 250)
+Loaded patient-XYOD23KJFH7NZXXK.npy
+(316, 250, 250)
+Loaded patient-XXEE333ZVHOJTRJJ.npy
+(325, 253, 253)
+Loaded patient-BHA4CDH32NPSOKTZ.npy
+(304, 228, 228)
+Loaded patient-MRYGCR7462Z7IN2L.npy
+(282, 250, 250)
+
+ 4/20 [=====>........................] - ETA: 1:23:27 - loss: 1.3249 - acc: 1.00005
+Loaded patient-JGNEVHX7BEKLBQJY.npy
+(346, 318, 318)
+Loaded patient-OOAKLUZ2A4XYXC4X.npy
+(309, 211, 211)
+Loaded patient-MZAZFTEIU4NLYXDF.npy
+(343, 250, 250)
+Loaded patient-NIED5UTOZ2JOFCWT.npy
+(318, 280, 280)
+Loaded patient-WIJONRZUXV2SJOMN.npy
+(330, 235, 235)
+Loaded patient-HXBUUFVQBNISYKNU.npy
+(332, 280, 280)
+Loaded patient-BTLLL3I67PYRN7R4.npy
+(341, 280, 280)
+Loaded patient-SWSY42N45J3YWV5I.npy
+(312, 250, 250)
+Loaded patient-ADKFJYDHLE7M3XE6.npy
+(302, 250, 250)
+Loaded patient-MOAADIHO5RHQJEK3.npy
+(335, 250, 250)
+Loaded patient-SBLQEZAZEXCC76C6.npy
+(365, 327, 327)
+Loaded patient-JLHG7VESTU3GH2KX.npy
+(345, 245, 245)
+Loaded patient-ZFMUMZVL6HFQCKSX.npy
+(333, 266, 266)
+Loaded patient-WZPADD37RLXRX3IG.npy
+(337, 255, 255)
+Loaded patient-WHCQX5APWQZHMM3Q.npy
+(349, 302, 302)
+Loaded patient-FYXMPCGHTGJXJBSD.npy
+(329, 234, 234)
+
+ 5/20 [======>.......................] - ETA: 1:18:14 - loss: 1.3211 - acc: 1.00006
+Loaded patient-GKDV3FW4M56I3IKV.npy
+(332, 279, 279)
+Loaded patient-WCSSH2NHDNNZIVML.npy
+(300, 250, 250)
+Loaded patient-VKFW6CO5FV2P3PUE.npy
+(331, 235, 235)
+Loaded patient-EQD7NRTYLRGYENOM.npy
+(307, 231, 231)
+Loaded patient-JSV6UEFKJAVM6OGO.npy
+(319, 235, 235)
+Loaded patient-UAFTPLA47GA7WS27.npy
+(315, 236, 236)
+Loaded patient-RHWTMTHC7HIWZ2YZ.npy
+(350, 409, 409)
+Loaded patient-XVPBCFNYTDI4HHW2.npy
+(323, 214, 214)
+Loaded patient-ZNPFNNZ2DRELKNQ3.npy
+(340, 244, 244)
+Loaded patient-IJBSBL7IRLNRVXUC.npy
+(317, 235, 235)
+Loaded patient-FKHXWQEPTPIWXHBR.npy
+(356, 250, 250)
+Loaded patient-UZFAM45KRI3C7MGB.npy
+(325, 263, 263)
+Loaded patient-ZCMTUATV42LAXACO.npy
+(309, 293, 293)
+Loaded patient-KNKVPM2UV4UFFC5R.npy
+(328, 250, 250)
+Loaded patient-IKLKZYXDYTCCYUAZ.npy
+(349, 279, 279)
+Loaded patient-SEV2GAEFNJBLX3ZJ.npy
+(341, 280, 280)
+
+ 6/20 [========>.....................] - ETA: 1:13:00 - loss: 1.3180 - acc: 1.00007
+Loaded patient-JAS2TYJWKQL65CQT.npy
+(367, 235, 235)
+Loaded patient-EKKECBQEXHI5ME2T.npy
+(335, 213, 213)
+Loaded patient-PCJ6DNFF7XHMUSWE.npy
+(307, 266, 266)
+Loaded patient-AGTDPQEU54ODFAUD.npy
+(333, 464, 464)
+Loaded patient-LCGP6HURGG2XVJ5B.npy
+(327, 235, 235)
+Loaded patient-GET5PY3CH6RJV3UW.npy
+(364, 250, 250)
+Loaded patient-NXSJBZWIQX5RKNO3.npy
+(288, 280, 280)
+Loaded patient-GBA7XJ5E7ITWZW7K.npy
+(341, 280, 280)
+Loaded patient-LRCPYDPZFFC6HR6K.npy
+(306, 250, 250)
+Loaded patient-NHXCOHZ4HH53NLQ6.npy
+(310, 213, 213)
+Loaded patient-SZKV26SJOHXJBPVX.npy
+(315, 269, 269)
+Loaded patient-BIASJO43N3A7Z63W.npy
+(360, 275, 275)
+Loaded patient-GXR5YMJB3PZQNLAC.npy
+(349, 225, 225)
+Loaded patient-VZHXKDEYF7EK4RRP.npy
+(329, 280, 280)
+Loaded patient-IETROE62UNT5QVWS.npy
+(293, 363, 363)
+Loaded patient-ZOROHVT5JZVIBEEX.npy
+(341, 280, 280)
+
+ 7/20 [=========>....................] - ETA: 1:07:48 - loss: 1.3166 - acc: 1.00008
+Loaded patient-BSKAYXMTSEXR6U5K.npy
+(325, 235, 235)
+Loaded patient-RMID4XEKTVEYCSGK.npy
+(354, 243, 243)
+Loaded patient-EURBSIKPYU66GBRW.npy
+(365, 331, 331)
+Loaded patient-NLV36DRLRZY5AKIJ.npy
+(367, 241, 241)
+Loaded patient-JNTL5ESEIA5FWMUQ.npy
+(325, 250, 250)
+Loaded patient-FUVL4PLSUHRCEAHC.npy
+(357, 254, 254)
+Loaded patient-ANCCICBPHIDJ5PJ4.npy
+(383, 259, 259)
+Loaded patient-WHDZVHCOCOTIJLXV.npy
+(349, 235, 235)
+Loaded patient-ENBHS75LQ7FWO5CP.npy
+(374, 263, 263)
+Loaded patient-AUGXT5PI4VY62M6L.npy
+(319, 237, 237)
+Loaded patient-RZVMIO4YX2JHAUQ5.npy
+(327, 220, 220)
+Loaded patient-RRZGAIOEIS6WPXDT.npy
+(367, 269, 269)
+Loaded patient-DSIFGAA3BMQKFE7A.npy
+(306, 274, 274)
+Loaded patient-OLYVZJAPCZJQWGIE.npy
+(321, 268, 268)
+Loaded patient-GCBJDIT55TRGHZIR.npy
+(355, 235, 235)
+Loaded patient-JNLCZIQGTGTFNEKK.npy
+(324, 280, 280)
+
+ 8/20 [===========>..................] - ETA: 1:02:35 - loss: 1.3146 - acc: 1.00009
+Loaded patient-PBR2STY62FZ3MQHZ.npy
+(302, 301, 301)
+Loaded patient-FFVM6VCPRIKK7453.npy
+(316, 235, 235)
+Loaded patient-BVYSR54MKT5SPMSU.npy
+(317, 235, 235)
+Loaded patient-TXOGS5CQ6RZMSV3W.npy
+(327, 235, 235)
+Loaded patient-OXRK4I6CTXCENAZV.npy
+(344, 444, 444)
+Loaded patient-OMR7KPUBB2T7X3QQ.npy
+(349, 235, 235)
+Loaded patient-MTWW42SPCGLHEDKY.npy
+(355, 223, 223)
+Loaded patient-NXDFBWPXYWHEIO2O.npy
+(322, 219, 219)
+Loaded patient-NXLFQLVZRLUEK2UF.npy
+(343, 235, 235)
+Loaded patient-UZQJZEDGVTWFY23U.npy
+(385, 260, 260)
+Loaded patient-ZUEK5YSS7CITVWIP.npy
+(361, 251, 251)
+Loaded patient-YBMFJQLVZENVF6MA.npy
+(327, 304, 304)
+Loaded patient-KGK66IWDH2EX5XNP.npy
+(283, 261, 261)
+Loaded patient-HVPI7QQSXPDHSFME.npy
+(319, 250, 250)
+Loaded patient-SRKOPGCEG62ZJTT2.npy
+(362, 249, 249)
+Loaded patient-LYUO2OPTNYUBCHT2.npy
+(328, 220, 220)
+
+ 9/20 [============>.................] - ETA: 57:28 - loss: 1.3149 - acc: 1.0000  10
+Loaded patient-NWRLBSNF3RVU3MAC.npy
+(367, 246, 246)
+Loaded patient-ZVRO2HKWM7JSS6IA.npy
+(359, 269, 269)
+Loaded patient-CMELUGEVB3ESBIAK.npy
+(356, 245, 245)
+Loaded patient-TEHE4SMNJTXDNW2O.npy
+(341, 280, 280)
+Loaded patient-ATY6WNE6JVYJ2RLN.npy
+(351, 281, 281)
+Loaded patient-GIPUIOSNW2C34HIS.npy
+(306, 222, 222)
+Loaded patient-SSJQF5OU3VSC3HAD.npy
+(352, 250, 250)
+Loaded patient-NEYLUIYPCL6O74O6.npy
+(291, 301, 301)
+Loaded patient-PYZP7WQ4QRH46EFS.npy
+(351, 250, 250)
+Loaded patient-ZCTE57VMPCGWDG75.npy
+(296, 269, 269)
+Loaded patient-XDNEWPTKFLCWWUSV.npy
+(387, 275, 275)
+Loaded patient-JUM3FRXBYLTATYYH.npy
+(341, 250, 250)
+Loaded patient-PYRDN2YA3MWCWKCC.npy
+(315, 250, 250)
+Loaded patient-SZY3J4UTKSCFM2H4.npy
+(370, 215, 215)
+Loaded patient-EGCV7CJ6LF2CACQM.npy
+(298, 250, 250)
+Loaded patient-VFHSASVT4EXZWAOS.npy
+(326, 280, 280)
+
+10/20 [==============>...............] - ETA: 52:20 - loss: 1.3139 - acc: 1.000011
+Loaded patient-GHVG2CNNRZ65UBEU.npy
+(330, 273, 273)
+Loaded patient-KRWJSE7TVM2QLJI7.npy
+(308, 250, 250)
+Loaded patient-BRSZTKDWTB2X5P3W.npy
+(352, 273, 273)
+Loaded patient-RWJZNVFII5INU6Z5.npy
+(367, 246, 246)
+Loaded patient-BNZ2UKOA43BESZGP.npy
+(301, 235, 235)
+Loaded patient-JJEB6MFMSB6UAKHU.npy
+(369, 262, 262)
+Loaded patient-NJZN2TNXUUFRZ3GZ.npy
+(387, 235, 235)
+Loaded patient-RWKA32WBSVFB4MQF.npy
+(327, 235, 235)
+Loaded patient-DENODP22U2Q7E4LM.npy
+(341, 280, 280)
+Loaded patient-AGTRMFUZM2MQUAB4.npy
+(350, 263, 263)
+Loaded patient-RCDAHVLV6QUTDFVD.npy
+(322, 215, 215)
+Loaded patient-BHYZMLL7GBZZLACW.npy
+(311, 302, 302)
+Loaded patient-AFEB6XW5UCQTSYJL.npy
+(322, 250, 250)
+Loaded patient-MJFHYCVEV2GTJD3N.npy
+(341, 265, 265)
+Loaded patient-QPKEZOB3X6B6HMCR.npy
+(303, 341, 341)
+Loaded patient-ARZ7H7BSITHOSSMG.npy
+(327, 233, 233)
+
+11/20 [===============>..............] - ETA: 47:08 - loss: 1.3129 - acc: 1.000012
+Loaded patient-IIOOPK6T2ZWDZMU3.npy
+(319, 250, 250)
+Loaded patient-DNO6CS3YNGFMUWXL.npy
+(284, 250, 250)
+Loaded patient-VUTDS6OC2VUSNQMK.npy
+(348, 280, 280)
+Loaded patient-ADIO4U6QJTXF3YQH.npy
+(350, 230, 230)
+Loaded patient-TNXMNBGRZHPIMJJI.npy
+(371, 272, 272)
+Loaded patient-OAYNHJ5ZLLVYHXCA.npy
+(367, 246, 246)
+Loaded patient-OJC5WXUS4IEGGOYC.npy
+(339, 235, 235)
+Loaded patient-OTIP25YORHBKJPZM.npy
+(353, 269, 269)
+Loaded patient-PQJEIXKIJMZTBZ74.npy
+(316, 261, 261)
+Loaded patient-KPC2RVJBDHQLC5EM.npy
+(302, 250, 250)
+Loaded patient-BWDRAF5ZOQPFOOL7.npy
+(308, 255, 255)
+Loaded patient-DXLPP6QTNOHQRHVG.npy
+(320, 270, 270)
+Loaded patient-SBRRR2SATWOOR5D6.npy
+(476, 243, 243)
+Loaded patient-ANLMZN6NS4S3TCCF.npy
+(293, 250, 250)
+Loaded patient-PVMXD3RZSHEQTYW3.npy
+(311, 280, 280)
+Loaded patient-IDUHFQWVS4WKXPC5.npy
+(340, 250, 250)
+
+12/20 [=================>............] - ETA: 41:54 - loss: 1.3116 - acc: 1.000013
+Loaded patient-ZUR2IKTUC2KQVB2X.npy
+(259, 267, 267)
+Loaded patient-ZANU4GPPZNIFRN6W.npy
+(329, 209, 209)
+Loaded patient-YYNFU45K2WIMXWE4.npy
+(303, 252, 252)
+Loaded patient-WPNYHBQRGJ4NHU3C.npy
+(335, 263, 263)
+Loaded patient-BMFSUHVBPJ7RY56P.npy
+(331, 214, 214)
+Loaded patient-UOSAPEMY76KAGOUR.npy
+(336, 297, 297)
+Loaded patient-NJDN23E34MZVQU66.npy
+(298, 250, 250)
+Loaded patient-UZUCCRJIMUZMQSQE.npy
+(335, 280, 280)
+Loaded patient-TFCLOHN4ROEYF6QY.npy
+(371, 203, 203)
+Loaded patient-CGQFS5PB627OWLL7.npy
+(327, 229, 229)
+Loaded patient-SKBIT57CPAKAGQVB.npy
+(341, 364, 364)
+Loaded patient-QTMN6M3FY3YSJ6ZP.npy
+(276, 279, 279)
+Loaded patient-XKHDNXXCRND47JLF.npy
+(320, 359, 359)
+Loaded patient-UUKSYXBYQQZATBP5.npy
+(349, 250, 250)
+Loaded patient-QLYPHVVU3RG43OZO.npy
+(336, 245, 245)
+Loaded patient-PMEECXFHBLN6KHO7.npy
+(353, 271, 271)
+
+13/20 [==================>...........] - ETA: 36:39 - loss: 1.3103 - acc: 1.000014
+Loaded patient-VKDRQPXRMRRBAHW3.npy
+(348, 229, 229)
+Loaded patient-ZQYME7XWFWQXXOXA.npy
+(314, 500, 500)
+Loaded patient-CFC7SE7TGP55RMUB.npy
+(330, 252, 252)
+Loaded patient-EWYGH3OSPLJI27UF.npy
+(329, 244, 244)
+Loaded patient-TVCP433TKOVBCQTW.npy
+(347, 268, 268)
+Loaded patient-NUWPDW6HBRTLEYWD.npy
+(357, 225, 225)
+Loaded patient-VGF4YIHDAARLWS7A.npy
+(311, 250, 250)
+Loaded patient-OTIGVYUMMBXDNSHN.npy
+(377, 281, 281)
+Loaded patient-RATVCRHG4ZHLCOV3.npy
+(325, 280, 280)
+Loaded patient-VBPF3M5P5YIFVZ4L.npy
+(326, 250, 250)
+Loaded patient-DXOUKNW7AXCZFUIL.npy
+(350, 264, 264)
+Loaded patient-GONORRCZWHDZV3M5.npy
+(364, 250, 250)
+Loaded patient-UBDRB3DMSB6TJ76N.npy
+(372, 250, 250)
+Loaded patient-SUOA7XPFTTR2O5NQ.npy
+(365, 250, 250)
+Loaded patient-MSZB67BPZ32ILNLK.npy
+(375, 251, 251)
+Loaded patient-KEYZSDHDH2DINCKO.npy
+(285, 280, 280)
+
+14/20 [====================>.........] - ETA: 31:25 - loss: 1.3096 - acc: 1.000015
+Loaded patient-YGJSUAFCVJ52LIRD.npy
+(340, 268, 268)
+Loaded patient-XZUUUC426GUXSCGJ.npy
+(333, 258, 258)
+Loaded patient-TVY4XBCLXJBKK72S.npy
+(302, 289, 289)
+Loaded patient-ZSXFDYQ4ST4Z6SRF.npy
+(309, 211, 211)
+Loaded patient-VZOXMEUK7BN7PQH3.npy
+(302, 280, 280)
+Loaded patient-BNAGD36PDWFHIEOO.npy
+(371, 255, 255)
+Loaded patient-JOJU5LPDDBBP6LYG.npy
+(321, 280, 280)
+Loaded patient-PIORRASXKMO7LEXJ.npy
+(349, 250, 250)
+Loaded patient-ILNTKMBVTXNXURGV.npy
+(330, 231, 231)
+Loaded patient-OAC7JXARELEVVEQW.npy
+(346, 348, 348)
+Loaded patient-RKXO5JUDKMYRUTN5.npy
+(305, 221, 221)
+Loaded patient-ZTFA5BJQHNJIRH4T.npy
+(341, 280, 280)
+Loaded patient-XJLRFX244JGJZUUF.npy
+(351, 289, 289)
+Loaded patient-SUVCYHBWWKNAVUGQ.npy
+(305, 235, 235)
+Loaded patient-ZHLGEIY4UAEIPL33.npy
+(318, 237, 237)
+Loaded patient-EOI25OVG7DHZ6KH2.npy
+(296, 286, 286)
+
+15/20 [=====================>........] - ETA: 26:10 - loss: 1.3087 - acc: 1.000016
+Loaded patient-ENPUI7ZVHUGIXYN7.npy
+(300, 235, 235)
+Loaded patient-XHX3PCDOWEWDB34X.npy
+(315, 280, 280)
+Loaded patient-DJGKDC32BE5NKELX.npy
+(325, 220, 220)
+Loaded patient-XQLUVUDY23UZMYW3.npy
+(303, 287, 287)
+Loaded patient-ASI5JI7DJLB3RKFS.npy
+(336, 250, 250)
+Loaded patient-HIA2VPHI6ABMCQTV.npy
+(333, 261, 261)
+Loaded patient-FCYGZ75WMW6L4PJM.npy
+(361, 262, 262)
+Loaded patient-IWYDKUPY2NSYJGLF.npy
+(356, 235, 235)
+Loaded patient-CRH6GLC3CTD2WACN.npy
+(327, 285, 285)
+Loaded patient-CYIJD3WQ3J3Q67LF.npy
+(351, 280, 280)
+Loaded patient-PCNMFAZL5VWWK7RP.npy
+(349, 258, 258)
+Loaded patient-XJJ3IXEOPNFXBGP7.npy
+(355, 235, 235)
+Loaded patient-EYYSOUW6PR2WMBZS.npy
+(344, 235, 235)
+Loaded patient-LOGIP43ZSLSUA5SZ.npy
+(325, 277, 277)
+Loaded patient-AHNGBFJSTEBO4BJW.npy
+(341, 230, 230)
+Loaded patient-TFLSOP3FLUBQDLL2.npy
+(321, 235, 235)
+
+16/20 [=======================>......] - ETA: 20:56 - loss: 1.3077 - acc: 1.000017
+Loaded patient-TRM3ANQXS7O6Y7OA.npy
+(290, 214, 214)
+Loaded patient-PMUXVQHYYYBOK4RL.npy
+(317, 235, 235)
+Loaded patient-MKIAFF7LDGXTZN4C.npy
+(371, 255, 255)
+Loaded patient-HDQYSVBJ4MPRGYRN.npy
+(341, 280, 280)
+Loaded patient-IEJDGAS52VTH4G74.npy
+(321, 280, 280)
+Loaded patient-SLPTPLSMZYJEUEXK.npy
+(353, 241, 241)
+Loaded patient-MPTG3X65O7O7HYHX.npy
+(323, 263, 263)
+Loaded patient-CQHAXTV5WJLZBRFB.npy
+(300, 280, 280)
+Loaded patient-UKOHM6O57N37U2E2.npy
+(333, 398, 398)
+Loaded patient-CJDXGZHXAGH7QL3C.npy
+(337, 249, 249)
+Loaded patient-AFN5EQGSDERZCTLM.npy
+(341, 280, 280)
+Loaded patient-ROF7JT3SZGBNY3MG.npy
+(341, 280, 280)
+Loaded patient-FBJFYBF7A46A4GIM.npy
+(341, 280, 280)
+Loaded patient-JUOV5YWN6IS7OXIJ.npy
+(350, 325, 325)
+Loaded patient-RHOULE6IWB6KWLE5.npy
+(321, 235, 235)
+Loaded patient-WAP327ZXF6FGV5E4.npy
+(314, 235, 235)
+
+17/20 [========================>.....] - ETA: 15:42 - loss: 1.3072 - acc: 1.000018
+Loaded patient-HIAEQWMTUGATOAVI.npy
+(351, 281, 281)
+Loaded patient-TBNR4PRU7XIL27G6.npy
+(323, 235, 235)
+Loaded patient-DZLYYZNR6M5BZFBT.npy
+(297, 263, 263)
+Loaded patient-FPTFJD4JZA7ZKYQJ.npy
+(332, 235, 235)
+Loaded patient-KFX44Z5T5RWT4LLI.npy
+(353, 229, 229)
+Loaded patient-OAEVXX4IFAX5IYOR.npy
+(337, 278, 278)
+Loaded patient-ECLDQAP52JUWQZHM.npy
+(355, 235, 235)
+Loaded patient-ROMHUDLTCOEXUQCA.npy
+(331, 300, 300)
+Loaded patient-HSKRXAPZ7WNBT2TI.npy
+(341, 488, 488)
+Loaded patient-ZMEGS4G44P6FMONO.npy
+(243, 235, 235)
+Loaded patient-JAANEAKBEZPKV4JV.npy
+(311, 269, 269)
+Loaded patient-JQWIIAADGKE2YMJS.npy
+(330, 235, 235)
+Loaded patient-NJNFVZMSGBGM6H5Y.npy
+(358, 235, 235)
+Loaded patient-UYA5YJUAVC3SE6HV.npy
+(341, 280, 280)
+Loaded patient-UJHKCBMXXLB5QHTP.npy
+(315, 250, 250)
+Loaded patient-QTUPNSXYST53IETT.npy
+(353, 261, 261)
+
+18/20 [==========================>...] - ETA: 10:27 - loss: 1.3068 - acc: 1.000019
+Loaded patient-XSNEILWLDG2HVSVH.npy
+(285, 282, 282)
+Loaded patient-DDWAA4OECH5TXONN.npy
+(301, 304, 304)
+Loaded patient-HBAZOCWOGBJYCEAZ.npy
+(340, 250, 250)
+Loaded patient-JID2LWYOKIWCMT2Z.npy
+(316, 297, 297)
+Loaded patient-SADEJMD27KKWZQ5L.npy
+(348, 250, 250)
+Loaded patient-NHCZX3GOEMPDDHW3.npy
+(343, 272, 272)
+Loaded patient-NMHOGEKTK7LT57ZI.npy
+(331, 251, 251)
+Loaded patient-IBRRD5O4NGVPABDT.npy
+(562, 265, 265)
+Loaded patient-NJPOTXDCGONCOU7C.npy
+(347, 245, 245)
+Loaded patient-ENB4V4BPR4HRCRXW.npy
+(307, 220, 220)
+Loaded patient-TRRYZ5WXYHUMTPCQ.npy
+(314, 250, 250)
+Loaded patient-XPBRBUB6YYHIWHVO.npy
+(310, 280, 280)
+Loaded patient-VDL6YJQYER3CXFOI.npy
+(321, 280, 280)
+Loaded patient-SZXTZ3LQ5MBFDFXR.npy
+(321, 227, 227)
+Loaded patient-XPJH44FSBRVL2WTV.npy
+(312, 259, 259)
+Loaded patient-CJNLJB43ZD3GIUN3.npy
+(339, 250, 250)
+
+19/20 [===========================>..] - ETA: 5:13 - loss: 1.3060 - acc: 1.0000 0
+Loaded patient-TITRFCZEPFJKM3NY.npy
+(285, 271, 271)
+Loaded patient-OPLQZBP3BOBS4LTY.npy
+(347, 235, 235)
+Loaded patient-WUG3VLS7FYXG35LH.npy
+(355, 254, 254)
+Loaded patient-SODFDRR2LWR7JDMN.npy
+(325, 250, 250)
+Loaded patient-NJB6RYF62XWGMSE2.npy
+(311, 235, 235)
+Loaded patient-XGUULATQ6C4ZP3QQ.npy
+(334, 280, 280)
+Loaded patient-NLXOSUXOZZHPFQQX.npy
+(354, 284, 284)
+Loaded patient-NCI33JITLERBTWXI.npy
+(381, 250, 250)
+Loaded patient-VJNCTEEYR7U4HIQU.npy
+(339, 235, 235)
+Loaded patient-ECJB3HH5WPIVOJJW.npy
+(295, 280, 280)
+Loaded patient-PAHYRPTLLQOU2FTB.npy
+(353, 279, 279)
+Loaded patient-IGIIMA3LABMNETMA.npy
+(411, 243, 243)
+Loaded patient-VKMYOQD5A64UFEED.npy
+(358, 231, 231)
+Loaded patient-HAKJSG5CHDGOBP6B.npy
+(309, 280, 280)
+Loaded patient-TNUEVMD3Z4YZFQDG.npy
+(345, 211, 211)
+Loaded patient-JWV4HKJ6OCKS26IR.npy
+(353, 266, 266)
+2
+Loaded patient-YEXJFFF2ZK44FYCP.npy
+(278, 280, 280)
+Loaded patient-LOR7YOK3PYHXSHCM.npy
+(358, 235, 235)
+Loaded patient-HXKDQ5I26Z2CRUQB.npy
+(362, 250, 250)
+Loaded patient-ABPO2BORDNF3OVL3.npy
+(325, 225, 225)
+Loaded patient-KQSTLFNPLNP5M43F.npy
+(348, 255, 255)
+Loaded patient-RTC5RXQHUXCSPNLN.npy
+(341, 250, 250)
+Loaded patient-OQNPNGEBR4D54PRA.npy
+(276, 250, 250)
+Loaded patient-BRFHLOM2KPUXSBMI.npy
+(301, 280, 280)
+Loaded patient-DDPQNEBC34XCOF2U.npy
+(281, 201, 201)
+Loaded patient-RXK7K2FPVPLFMID2.npy
+(369, 250, 250)
+Loaded patient-VOPMJMGIDQQ75E6G.npy
+(337, 281, 281)
+Loaded patient-DZTDN47H2IKSYN3Q.npy
+(347, 235, 235)
+Loaded patient-DVYKX4XMBHD57MZJ.npy
+(341, 280, 280)
+Loaded patient-IAX2O3NWENSSH4D5.npy
+(363, 247, 247)
+Loaded patient-FIBU2GYR72UU7E5M.npy
+(315, 219, 219)
+Loaded patient-AJHYOJIG3DZLSIKI.npy
+(317, 222, 222)
+3
+Loaded patient-ALOUY4SF3BQKXQCZ.npy
+(356, 307, 307)
+Loaded patient-TUX27MONFI7VC6M3.npy
+(321, 251, 251)
+Loaded patient-ICWMS7OCXZLUTUFT.npy
+(322, 280, 280)
+Loaded patient-FTAKNRFGOGVS632K.npy
+(326, 215, 215)
+Loaded patient-OCP7EUZJEB7JUL65.npy
+(392, 252, 252)
+Loaded patient-ZIDRKXRWTVGHW7ZD.npy
+(341, 280, 280)
+Loaded patient-VVGO45TQNOASBLZM.npy
+(490, 235, 235)
+Loaded patient-JQVBM4FUT34IUSUB.npy
+(335, 200, 200)
+Loaded patient-TZES7PMHXV4XVJBV.npy
+(397, 255, 255)
+Loaded patient-ESLHGQCGYB7J4DX3.npy
+(319, 250, 250)
+Loaded patient-ZCIMXZ73NFNRDH46.npy
+(322, 250, 250)
+Loaded patient-NHKUCEIIHLJQ25VM.npy
+(280, 280, 280)
+Loaded patient-YSTBBUD35YZBOT2Z.npy
+(356, 287, 287)
+Loaded patient-MSXY2JKZXPEBXR72.npy
+(369, 273, 273)
+Loaded patient-AOTGHQ6S5AD7LOBO.npy
+(296, 280, 280)
+Loaded patient-CWWKNDYG2UERXH7X.npy
+(337, 257, 257)
+4
+Loaded patient-RYNCGNVRZH2LB7BN.npy
+(314, 213, 213)
+Loaded patient-PIKNNHQAI52EI62K.npy
+(324, 271, 271)
+Loaded patient-QBOBDYYD4R7WP37S.npy
+(346, 305, 305)
+Loaded patient-LUVMEPI5JWYL67RF.npy
+(309, 306, 306)
+Loaded patient-UNREF6O6622LZWNN.npy
+(343, 255, 255)
+Loaded patient-KACA7XHWXRM6A3W3.npy
+(336, 259, 259)
+Loaded patient-UMFGGCOJN6GDPQDV.npy
+(279, 250, 250)
+Loaded patient-BJI23MUAPMUMIED2.npy
+(343, 232, 232)
+Loaded patient-ZTGZBI2QX2JQFXIG.npy
+(319, 235, 235)
+Loaded patient-HGJTE6ROVCUFUC4S.npy
+(349, 231, 231)
+Loaded patient-IXBFNU6QB2SEZQ7N.npy
+(303, 293, 293)
+Loaded patient-SXF2FCCYEQLXMQO5.npy
+(368, 336, 336)
+Loaded patient-JWVEP6ZLYCOE5IAE.npy
+(301, 235, 235)
+Loaded patient-RKIZJRFZGCXD4EOL.npy
+(362, 235, 235)
+Loaded patient-LGFNFIWO2ZEQYK36.npy
+(335, 259, 259)
+Loaded patient-MKKOO7NDN26O6RLZ.npy
+(297, 235, 235)
+0
+Loaded patient-MEP2WAB3JNIXJTON.npy
+(352, 235, 235)
+Loaded patient-LIJBIVVBI6TJCT6Z.npy
+(329, 250, 250)
+Loaded patient-VRSBMSXUYCQ3NC5A.npy
+(315, 280, 280)
+Loaded patient-CCVIH3DIM3GF6SLG.npy
+(357, 475, 475)
+Loaded patient-XQBRGW3CYGNUMWHI.npy
+(327, 298, 298)
+Loaded patient-OLCBKEY2WKCWPHJW.npy
+(328, 250, 250)
+Loaded patient-NYR7NWGHIRZDCL66.npy
+(342, 235, 235)
+Loaded patient-DRS5DZGN5PVUZX4Y.npy
+(341, 280, 280)
+Loaded patient-MHL54TPCTOQJ2I4K.npy
+(309, 313, 313)
+Loaded patient-WWEFFBIMLZ3KLQVZ.npy
+(355, 235, 235)
+Loaded patient-JUBFRXRHLG46KY42.npy
+(302, 279, 279)
+Loaded patient-POYYSD3RSJFBKSLQ.npy
+(317, 235, 235)
+Loaded patient-EUNTRXNEDB7VDVIS.npy
+(354, 290, 290)
+Loaded patient-WIPV3EQ34O55HCUI.npy
+(358, 304, 304)
+Loaded patient-POSX6PS6LR34HENB.npy
+(332, 269, 269)
+Loaded patient-RKBSU42WA7AY22E7.npy
+(325, 287, 287)
+1
+Loaded patient-ADJYK6PUQSLE2GLN.npy
+(279, 200, 200)
+Loaded patient-EGIAP2GDM33PCW5A.npy
+(498, 235, 235)
+Loaded patient-WPA6WCTE24HGRIXH.npy
+(296, 250, 250)
+Loaded patient-CSCIKXOMNAIB3LUQ.npy
+(291, 250, 250)
+Loaded patient-MLHE2CESZAWQKZVP.npy
+(285, 241, 241)
+Loaded patient-VDO7JNWOEJ5KGJYJ.npy
+(308, 235, 235)
+Loaded patient-ASD2URNKFRN3ZSFL.npy
+(329, 280, 280)
+Loaded patient-RBC423N4RNB3UZ5P.npy
+(341, 250, 250)
+Loaded patient-KJAWMYSKQTYINTNC.npy
+(355, 240, 240)
+Loaded patient-QKBS566N24RMCV5H.npy
+(296, 280, 280)
+Loaded patient-QGEQ4IFSRIA3RBVB.npy
+(316, 346, 346)
+Loaded patient-SGFWUNFEYCKBMF65.npy
+(320, 256, 256)
+Loaded patient-CQARGKFSIVQWNCT6.npy
+(291, 200, 200)
+Loaded patient-MEQKZCRF5TR6MHLY.npy
+(299, 280, 280)
+Loaded patient-CSXRYWJCXJXAJRLP.npy
+(330, 306, 306)
+Loaded patient-JJMENP4QE4CSXSHV.npy
+(320, 250, 250)
+2
+Loaded patient-YEXJFFF2ZK44FYCP.npy
+(278, 280, 280)
+Loaded patient-LOR7YOK3PYHXSHCM.npy
+(358, 235, 235)
+Loaded patient-HXKDQ5I26Z2CRUQB.npy
+(362, 250, 250)
+Loaded patient-ABPO2BORDNF3OVL3.npy
+(325, 225, 225)
+Loaded patient-KQSTLFNPLNP5M43F.npy
+(348, 255, 255)
+Loaded patient-RTC5RXQHUXCSPNLN.npy
+(341, 250, 250)
+Loaded patient-OQNPNGEBR4D54PRA.npy
+(276, 250, 250)
+Loaded patient-BRFHLOM2KPUXSBMI.npy
+(301, 280, 280)
+Loaded patient-DDPQNEBC34XCOF2U.npy
+(281, 201, 201)
+Loaded patient-RXK7K2FPVPLFMID2.npy
+(369, 250, 250)
+Loaded patient-VOPMJMGIDQQ75E6G.npy
+(337, 281, 281)
+Loaded patient-DZTDN47H2IKSYN3Q.npy
+(347, 235, 235)
+Loaded patient-DVYKX4XMBHD57MZJ.npy
+(341, 280, 280)
+Loaded patient-IAX2O3NWENSSH4D5.npy
+(363, 247, 247)
+Loaded patient-FIBU2GYR72UU7E5M.npy
+(315, 219, 219)
+Loaded patient-AJHYOJIG3DZLSIKI.npy
+(317, 222, 222)
+
+20/20 [==============================] - 6371s 319s/step - loss: 1.3056 - acc: 1.0000 - val_loss: 2.7742 - val_acc: 0.5000
+
+Epoch 00003: saving model to tmp/weights.hdf5
+Epoch 4/10
+1
+Loaded patient-GFRJ7SPGIEJVXVRS.npy
+(879, 360, 360)
+Loaded patient-RFSGSDQ5MWIVM6QV.npy
+(300, 235, 235)
+Loaded patient-OLIQUZ7ERFP4DJVD.npy
+(325, 280, 280)
+Loaded patient-MYTHDP7XSELNJUBQ.npy
+(313, 249, 249)
+Loaded patient-HAYSFX75ACG77ZJE.npy
+(311, 235, 235)
+Loaded patient-BLPHSKRODCJLHZZS.npy
+(333, 233, 233)
+Loaded patient-QJFMNVKKVZXKBROO.npy
+(352, 274, 274)
+Loaded patient-DPSG75LCBZVBTRPO.npy
+(302, 250, 250)
+Loaded patient-ZAJH6DQQBAECJ7AX.npy
+(355, 235, 235)
+Loaded patient-OSO6K4FGNA57I3VJ.npy
+(314, 217, 217)
+Loaded patient-ZASCC2YE27A6IT45.npy
+(342, 258, 258)
+Loaded patient-HLXOSVDF27JWNCMJ.npy
+(323, 273, 273)
+Loaded patient-BSBXPIGXEUV3WWOZ.npy
+(292, 250, 250)
+Loaded patient-TJAPUMPEDA32J5JW.npy
+(374, 287, 287)
+Loaded patient-EPSAH2BCBGV7WQHM.npy
+(378, 235, 235)
+Loaded patient-UOZJSIPCXRA7UJF2.npy
+(317, 250, 250)
+
+ 1/20 [>.............................] - ETA: 1:43:12 - loss: 1.2938 - acc: 1.00002
+Loaded patient-WDIYHNMBALZ4ZP2A.npy
+(286, 213, 213)
+Loaded patient-UGXVSPJLHJL6AHSW.npy
+(345, 220, 220)
+Loaded patient-JWKB7SHIBYWSEVMC.npy
+(295, 325, 325)
+Loaded patient-IAUKV5R644JZFD55.npy
+(292, 224, 224)
+Loaded patient-CRKZOVFXYNXRGJYR.npy
+(337, 281, 281)
+Loaded patient-PMMV7MLZUWJTIMLR.npy
+(286, 250, 250)
+Loaded patient-LQMW3GK5JQEVVFBK.npy
+(339, 235, 235)
+Loaded patient-IAR66U7QVOBXOFQE.npy
+(341, 280, 280)
+Loaded patient-FLSUE7ZIXI6HSJWN.npy
+(318, 280, 280)
+Loaded patient-LQG4BRZPSCMR5XAN.npy
+(349, 235, 235)
+Loaded patient-XJVLT6YE7FKB3T3B.npy
+(369, 250, 250)
+Loaded patient-PNPGGIFOXWJJQ22P.npy
+(378, 250, 250)
+Loaded patient-ZMP6NER3I4ERS2JE.npy
+(347, 235, 235)
+Loaded patient-GBXENHYLRVZ5DTHI.npy
+(329, 236, 236)
+Loaded patient-JCWGEJIJO2LDRY2U.npy
+(339, 305, 305)
+Loaded patient-YRC3D4LSQNDZCXDA.npy
+(335, 261, 261)
+
+ 2/20 [==>...........................] - ETA: 1:37:37 - loss: 1.2889 - acc: 1.00003
+Loaded patient-RODVAIJ6A6P4D54Y.npy
+(374, 283, 283)
+Loaded patient-SVYZISKLZLQKBPX6.npy
+(317, 252, 252)
+Loaded patient-OUM3NFGU5U3TCBBK.npy
+(320, 205, 205)
+Loaded patient-LHMGXWC6J7DRD3CP.npy
+(441, 349, 349)
+Loaded patient-TFXM6VTRLJH2DS7G.npy
+(377, 253, 253)
+Loaded patient-NFG67H47EUPD5URG.npy
+(322, 213, 213)
+Loaded patient-YNLMIJ5S24AYYZXN.npy
+(309, 229, 229)
+Loaded patient-NWO33W453F6ZJ4BU.npy
+(325, 258, 258)
+Loaded patient-COFP4UFH6MWZA7HI.npy
+(313, 251, 251)
+Loaded patient-SQD3UDNZH2Q3ET4V.npy
+(335, 250, 250)
+Loaded patient-BMTJZEMYGJCVHX7N.npy
+(329, 252, 252)
+Loaded patient-RKFD4L7QSBXPHFJU.npy
+(341, 250, 250)
+Loaded patient-NGQAJ2GBHZE2DN5C.npy
+(324, 280, 280)
+Loaded patient-IIAFOQ3HGHU4A6UT.npy
+(343, 259, 259)
+Loaded patient-LZU7NSTDRFX77U7G.npy
+(472, 239, 239)
+Loaded patient-VSJRIEOFJCVJIO2C.npy
+(366, 264, 264)
+
+ 3/20 [===>..........................] - ETA: 1:32:09 - loss: 1.2879 - acc: 1.00004
+Loaded patient-LVOHLK3FOHWE66BP.npy
+(369, 229, 229)
+Loaded patient-DRT3F4ITWPCCBB6T.npy
+(330, 235, 235)
+Loaded patient-OCD6VASBJF4SNZ4U.npy
+(324, 220, 220)
+Loaded patient-EYEDMZ3Z6OIKPERL.npy
+(329, 316, 316)
+Loaded patient-HLQKXLS4OQ2BGQ5C.npy
+(318, 250, 250)
+Loaded patient-JMWZRLKLB5DSSXE3.npy
+(317, 235, 235)
+Loaded patient-UMRXCXFIT4YDD7RQ.npy
+(366, 235, 235)
+Loaded patient-THKULF2KHMNVMTUR.npy
+(457, 235, 235)
+Loaded patient-IPFO2JH7ZZYTQHH2.npy
+(309, 226, 226)
+Loaded patient-FYSSUUSC5XYNLUQW.npy
+(317, 227, 227)
+Loaded patient-RLJSRNLTRUQAVT3L.npy
+(307, 235, 235)
+Loaded patient-HXLMZWH3SFX3SPAN.npy
+(352, 250, 250)
+Loaded patient-XYOD23KJFH7NZXXK.npy
+(316, 250, 250)
+Loaded patient-XXEE333ZVHOJTRJJ.npy
+(325, 253, 253)
+Loaded patient-BHA4CDH32NPSOKTZ.npy
+(304, 228, 228)
+Loaded patient-MRYGCR7462Z7IN2L.npy
+(282, 250, 250)
+
+ 4/20 [=====>........................] - ETA: 1:26:47 - loss: 1.2868 - acc: 1.00005
+Loaded patient-JGNEVHX7BEKLBQJY.npy
+(346, 318, 318)
+Loaded patient-OOAKLUZ2A4XYXC4X.npy
+(309, 211, 211)
+Loaded patient-MZAZFTEIU4NLYXDF.npy
+(343, 250, 250)
+Loaded patient-NIED5UTOZ2JOFCWT.npy
+(318, 280, 280)
+Loaded patient-WIJONRZUXV2SJOMN.npy
+(330, 235, 235)
+Loaded patient-HXBUUFVQBNISYKNU.npy
+(332, 280, 280)
+Loaded patient-BTLLL3I67PYRN7R4.npy
+(341, 280, 280)
+Loaded patient-SWSY42N45J3YWV5I.npy
+(312, 250, 250)
+Loaded patient-ADKFJYDHLE7M3XE6.npy
+(302, 250, 250)
+Loaded patient-MOAADIHO5RHQJEK3.npy
+(335, 250, 250)
+Loaded patient-SBLQEZAZEXCC76C6.npy
+(365, 327, 327)
+Loaded patient-JLHG7VESTU3GH2KX.npy
+(345, 245, 245)
+Loaded patient-ZFMUMZVL6HFQCKSX.npy
+(333, 266, 266)
+Loaded patient-WZPADD37RLXRX3IG.npy
+(337, 255, 255)
+Loaded patient-WHCQX5APWQZHMM3Q.npy
+(349, 302, 302)
+Loaded patient-FYXMPCGHTGJXJBSD.npy
+(329, 234, 234)
+
+ 5/20 [======>.......................] - ETA: 1:21:23 - loss: 1.2859 - acc: 1.00006
+Loaded patient-GKDV3FW4M56I3IKV.npy
+(332, 279, 279)
+Loaded patient-WCSSH2NHDNNZIVML.npy
+(300, 250, 250)
+Loaded patient-VKFW6CO5FV2P3PUE.npy
+(331, 235, 235)
+Loaded patient-EQD7NRTYLRGYENOM.npy
+(307, 231, 231)
+Loaded patient-JSV6UEFKJAVM6OGO.npy
+(319, 235, 235)
+Loaded patient-UAFTPLA47GA7WS27.npy
+(315, 236, 236)
+Loaded patient-RHWTMTHC7HIWZ2YZ.npy
+(350, 409, 409)
+Loaded patient-XVPBCFNYTDI4HHW2.npy
+(323, 214, 214)
+Loaded patient-ZNPFNNZ2DRELKNQ3.npy
+(340, 244, 244)
+Loaded patient-IJBSBL7IRLNRVXUC.npy
+(317, 235, 235)
+Loaded patient-FKHXWQEPTPIWXHBR.npy
+(356, 250, 250)
+Loaded patient-UZFAM45KRI3C7MGB.npy
+(325, 263, 263)
+Loaded patient-ZCMTUATV42LAXACO.npy
+(309, 293, 293)
+Loaded patient-KNKVPM2UV4UFFC5R.npy
+(328, 250, 250)
+Loaded patient-IKLKZYXDYTCCYUAZ.npy
+(349, 279, 279)
+Loaded patient-SEV2GAEFNJBLX3ZJ.npy
+(341, 280, 280)
+
+ 6/20 [========>.....................] - ETA: 1:16:00 - loss: 1.2850 - acc: 1.00007
+Loaded patient-JAS2TYJWKQL65CQT.npy
+(367, 235, 235)
+Loaded patient-EKKECBQEXHI5ME2T.npy
+(335, 213, 213)
+Loaded patient-PCJ6DNFF7XHMUSWE.npy
+(307, 266, 266)
+Loaded patient-AGTDPQEU54ODFAUD.npy
+(333, 464, 464)
+Loaded patient-LCGP6HURGG2XVJ5B.npy
+(327, 235, 235)
+Loaded patient-GET5PY3CH6RJV3UW.npy
+(364, 250, 250)
+Loaded patient-NXSJBZWIQX5RKNO3.npy
+(288, 280, 280)
+Loaded patient-GBA7XJ5E7ITWZW7K.npy
+(341, 280, 280)
+Loaded patient-LRCPYDPZFFC6HR6K.npy
+(306, 250, 250)
+Loaded patient-NHXCOHZ4HH53NLQ6.npy
+(310, 213, 213)
+Loaded patient-SZKV26SJOHXJBPVX.npy
+(315, 269, 269)
+Loaded patient-BIASJO43N3A7Z63W.npy
+(360, 275, 275)
+Loaded patient-GXR5YMJB3PZQNLAC.npy
+(349, 225, 225)
+Loaded patient-VZHXKDEYF7EK4RRP.npy
+(329, 280, 280)
+Loaded patient-IETROE62UNT5QVWS.npy
+(293, 363, 363)
+Loaded patient-ZOROHVT5JZVIBEEX.npy
+(341, 280, 280)
+
+ 7/20 [=========>....................] - ETA: 1:10:33 - loss: 1.2847 - acc: 1.00008
+Loaded patient-BSKAYXMTSEXR6U5K.npy
+(325, 235, 235)
+Loaded patient-RMID4XEKTVEYCSGK.npy
+(354, 243, 243)
+Loaded patient-EURBSIKPYU66GBRW.npy
+(365, 331, 331)
+Loaded patient-NLV36DRLRZY5AKIJ.npy
+(367, 241, 241)
+Loaded patient-JNTL5ESEIA5FWMUQ.npy
+(325, 250, 250)
+Loaded patient-FUVL4PLSUHRCEAHC.npy
+(357, 254, 254)
+Loaded patient-ANCCICBPHIDJ5PJ4.npy
+(383, 259, 259)
+Loaded patient-WHDZVHCOCOTIJLXV.npy
+(349, 235, 235)
+Loaded patient-ENBHS75LQ7FWO5CP.npy
+(374, 263, 263)
+Loaded patient-AUGXT5PI4VY62M6L.npy
+(319, 237, 237)
+Loaded patient-RZVMIO4YX2JHAUQ5.npy
+(327, 220, 220)
+Loaded patient-RRZGAIOEIS6WPXDT.npy
+(367, 269, 269)
+Loaded patient-DSIFGAA3BMQKFE7A.npy
+(306, 274, 274)
+Loaded patient-OLYVZJAPCZJQWGIE.npy
+(321, 268, 268)
+Loaded patient-GCBJDIT55TRGHZIR.npy
+(355, 235, 235)
+Loaded patient-JNLCZIQGTGTFNEKK.npy
+(324, 280, 280)
+
+ 8/20 [===========>..................] - ETA: 1:05:07 - loss: 1.2840 - acc: 1.00009
+Loaded patient-PBR2STY62FZ3MQHZ.npy
+(302, 301, 301)
+Loaded patient-FFVM6VCPRIKK7453.npy
+(316, 235, 235)
+Loaded patient-BVYSR54MKT5SPMSU.npy
+(317, 235, 235)
+Loaded patient-TXOGS5CQ6RZMSV3W.npy
+(327, 235, 235)
+Loaded patient-OXRK4I6CTXCENAZV.npy
+(344, 444, 444)
+Loaded patient-OMR7KPUBB2T7X3QQ.npy
+(349, 235, 235)
+Loaded patient-MTWW42SPCGLHEDKY.npy
+(355, 223, 223)
+Loaded patient-NXDFBWPXYWHEIO2O.npy
+(322, 219, 219)
+Loaded patient-NXLFQLVZRLUEK2UF.npy
+(343, 235, 235)
+Loaded patient-UZQJZEDGVTWFY23U.npy
+(385, 260, 260)
+Loaded patient-ZUEK5YSS7CITVWIP.npy
+(361, 251, 251)
+Loaded patient-YBMFJQLVZENVF6MA.npy
+(327, 304, 304)
+Loaded patient-KGK66IWDH2EX5XNP.npy
+(283, 261, 261)
+Loaded patient-HVPI7QQSXPDHSFME.npy
+(319, 250, 250)
+Loaded patient-SRKOPGCEG62ZJTT2.npy
+(362, 249, 249)
+Loaded patient-LYUO2OPTNYUBCHT2.npy
+(328, 220, 220)
+
+ 9/20 [============>.................] - ETA: 59:42 - loss: 1.2841 - acc: 1.0000  10
+Loaded patient-NWRLBSNF3RVU3MAC.npy
+(367, 246, 246)
+Loaded patient-ZVRO2HKWM7JSS6IA.npy
+(359, 269, 269)
+Loaded patient-CMELUGEVB3ESBIAK.npy
+(356, 245, 245)
+Loaded patient-TEHE4SMNJTXDNW2O.npy
+(341, 280, 280)
+Loaded patient-ATY6WNE6JVYJ2RLN.npy
+(351, 281, 281)
+Loaded patient-GIPUIOSNW2C34HIS.npy
+(306, 222, 222)
+Loaded patient-SSJQF5OU3VSC3HAD.npy
+(352, 250, 250)
+Loaded patient-NEYLUIYPCL6O74O6.npy
+(291, 301, 301)
+Loaded patient-PYZP7WQ4QRH46EFS.npy
+(351, 250, 250)
+Loaded patient-ZCTE57VMPCGWDG75.npy
+(296, 269, 269)
+Loaded patient-XDNEWPTKFLCWWUSV.npy
+(387, 275, 275)
+Loaded patient-JUM3FRXBYLTATYYH.npy
+(341, 250, 250)
+Loaded patient-PYRDN2YA3MWCWKCC.npy
+(315, 250, 250)
+Loaded patient-SZY3J4UTKSCFM2H4.npy
+(370, 215, 215)
+Loaded patient-EGCV7CJ6LF2CACQM.npy
+(298, 250, 250)
+Loaded patient-VFHSASVT4EXZWAOS.npy
+(326, 280, 280)
+
+10/20 [==============>...............] - ETA: 54:16 - loss: 1.2835 - acc: 1.000011
+Loaded patient-GHVG2CNNRZ65UBEU.npy
+(330, 273, 273)
+Loaded patient-KRWJSE7TVM2QLJI7.npy
+(308, 250, 250)
+Loaded patient-BRSZTKDWTB2X5P3W.npy
+(352, 273, 273)
+Loaded patient-RWJZNVFII5INU6Z5.npy
+(367, 246, 246)
+Loaded patient-BNZ2UKOA43BESZGP.npy
+(301, 235, 235)
+Loaded patient-JJEB6MFMSB6UAKHU.npy
+(369, 262, 262)
+Loaded patient-NJZN2TNXUUFRZ3GZ.npy
+(387, 235, 235)
+Loaded patient-RWKA32WBSVFB4MQF.npy
+(327, 235, 235)
+Loaded patient-DENODP22U2Q7E4LM.npy
+(341, 280, 280)
+Loaded patient-AGTRMFUZM2MQUAB4.npy
+(350, 263, 263)
+Loaded patient-RCDAHVLV6QUTDFVD.npy
+(322, 215, 215)
+Loaded patient-BHYZMLL7GBZZLACW.npy
+(311, 302, 302)
+Loaded patient-AFEB6XW5UCQTSYJL.npy
+(322, 250, 250)
+Loaded patient-MJFHYCVEV2GTJD3N.npy
+(341, 265, 265)
+Loaded patient-QPKEZOB3X6B6HMCR.npy
+(303, 341, 341)
+Loaded patient-ARZ7H7BSITHOSSMG.npy
+(327, 233, 233)
+
+11/20 [===============>..............] - ETA: 48:51 - loss: 1.2832 - acc: 1.000012
+Loaded patient-IIOOPK6T2ZWDZMU3.npy
+(319, 250, 250)
+Loaded patient-DNO6CS3YNGFMUWXL.npy
+(284, 250, 250)
+Loaded patient-VUTDS6OC2VUSNQMK.npy
+(348, 280, 280)
+Loaded patient-ADIO4U6QJTXF3YQH.npy
+(350, 230, 230)
+Loaded patient-TNXMNBGRZHPIMJJI.npy
+(371, 272, 272)
+Loaded patient-OAYNHJ5ZLLVYHXCA.npy
+(367, 246, 246)
+Loaded patient-OJC5WXUS4IEGGOYC.npy
+(339, 235, 235)
+Loaded patient-OTIP25YORHBKJPZM.npy
+(353, 269, 269)
+Loaded patient-PQJEIXKIJMZTBZ74.npy
+(316, 261, 261)
+Loaded patient-KPC2RVJBDHQLC5EM.npy
+(302, 250, 250)
+Loaded patient-BWDRAF5ZOQPFOOL7.npy
+(308, 255, 255)
+Loaded patient-DXLPP6QTNOHQRHVG.npy
+(320, 270, 270)
+Loaded patient-SBRRR2SATWOOR5D6.npy
+(476, 243, 243)
+Loaded patient-ANLMZN6NS4S3TCCF.npy
+(293, 250, 250)
+Loaded patient-PVMXD3RZSHEQTYW3.npy
+(311, 280, 280)
+Loaded patient-IDUHFQWVS4WKXPC5.npy
+(340, 250, 250)
+
+12/20 [=================>............] - ETA: 43:25 - loss: 1.2825 - acc: 1.000013
+Loaded patient-ZUR2IKTUC2KQVB2X.npy
+(259, 267, 267)
+Loaded patient-ZANU4GPPZNIFRN6W.npy
+(329, 209, 209)
+Loaded patient-YYNFU45K2WIMXWE4.npy
+(303, 252, 252)
+Loaded patient-WPNYHBQRGJ4NHU3C.npy
+(335, 263, 263)
+Loaded patient-BMFSUHVBPJ7RY56P.npy
+(331, 214, 214)
+Loaded patient-UOSAPEMY76KAGOUR.npy
+(336, 297, 297)
+Loaded patient-NJDN23E34MZVQU66.npy
+(298, 250, 250)
+Loaded patient-UZUCCRJIMUZMQSQE.npy
+(335, 280, 280)
+Loaded patient-TFCLOHN4ROEYF6QY.npy
+(371, 203, 203)
+Loaded patient-CGQFS5PB627OWLL7.npy
+(327, 229, 229)
+Loaded patient-SKBIT57CPAKAGQVB.npy
+(341, 364, 364)
+Loaded patient-QTMN6M3FY3YSJ6ZP.npy
+(276, 279, 279)
+Loaded patient-XKHDNXXCRND47JLF.npy
+(320, 359, 359)
+Loaded patient-UUKSYXBYQQZATBP5.npy
+(349, 250, 250)
+Loaded patient-QLYPHVVU3RG43OZO.npy
+(336, 245, 245)
+Loaded patient-PMEECXFHBLN6KHO7.npy
+(353, 271, 271)
+
+13/20 [==================>...........] - ETA: 37:59 - loss: 1.2819 - acc: 1.000014
+Loaded patient-VKDRQPXRMRRBAHW3.npy
+(348, 229, 229)
+Loaded patient-ZQYME7XWFWQXXOXA.npy
+(314, 500, 500)
+Loaded patient-CFC7SE7TGP55RMUB.npy
+(330, 252, 252)
+Loaded patient-EWYGH3OSPLJI27UF.npy
+(329, 244, 244)
+Loaded patient-TVCP433TKOVBCQTW.npy
+(347, 268, 268)
+Loaded patient-NUWPDW6HBRTLEYWD.npy
+(357, 225, 225)
+Loaded patient-VGF4YIHDAARLWS7A.npy
+(311, 250, 250)
+Loaded patient-OTIGVYUMMBXDNSHN.npy
+(377, 281, 281)
+Loaded patient-RATVCRHG4ZHLCOV3.npy
+(325, 280, 280)
+Loaded patient-VBPF3M5P5YIFVZ4L.npy
+(326, 250, 250)
+Loaded patient-DXOUKNW7AXCZFUIL.npy
+(350, 264, 264)
+Loaded patient-GONORRCZWHDZV3M5.npy
+(364, 250, 250)
+Loaded patient-UBDRB3DMSB6TJ76N.npy
+(372, 250, 250)
+Loaded patient-SUOA7XPFTTR2O5NQ.npy
+(365, 250, 250)
+Loaded patient-MSZB67BPZ32ILNLK.npy
+(375, 251, 251)
+Loaded patient-KEYZSDHDH2DINCKO.npy
+(285, 280, 280)
+
+14/20 [====================>.........] - ETA: 32:33 - loss: 1.2815 - acc: 1.000015
+Loaded patient-YGJSUAFCVJ52LIRD.npy
+(340, 268, 268)
+Loaded patient-XZUUUC426GUXSCGJ.npy
+(333, 258, 258)
+Loaded patient-TVY4XBCLXJBKK72S.npy
+(302, 289, 289)
+Loaded patient-ZSXFDYQ4ST4Z6SRF.npy
+(309, 211, 211)
+Loaded patient-VZOXMEUK7BN7PQH3.npy
+(302, 280, 280)
+Loaded patient-BNAGD36PDWFHIEOO.npy
+(371, 255, 255)
+Loaded patient-JOJU5LPDDBBP6LYG.npy
+(321, 280, 280)
+Loaded patient-PIORRASXKMO7LEXJ.npy
+(349, 250, 250)
+Loaded patient-ILNTKMBVTXNXURGV.npy
+(330, 231, 231)
+Loaded patient-OAC7JXARELEVVEQW.npy
+(346, 348, 348)
+Loaded patient-RKXO5JUDKMYRUTN5.npy
+(305, 221, 221)
+Loaded patient-ZTFA5BJQHNJIRH4T.npy
+(341, 280, 280)
+Loaded patient-XJLRFX244JGJZUUF.npy
+(351, 289, 289)
+Loaded patient-SUVCYHBWWKNAVUGQ.npy
+(305, 235, 235)
+Loaded patient-ZHLGEIY4UAEIPL33.npy
+(318, 237, 237)
+Loaded patient-EOI25OVG7DHZ6KH2.npy
+(296, 286, 286)
+
+15/20 [=====================>........] - ETA: 27:07 - loss: 1.2810 - acc: 1.000016
+Loaded patient-ENPUI7ZVHUGIXYN7.npy
+(300, 235, 235)
+Loaded patient-XHX3PCDOWEWDB34X.npy
+(315, 280, 280)
+Loaded patient-DJGKDC32BE5NKELX.npy
+(325, 220, 220)
+Loaded patient-XQLUVUDY23UZMYW3.npy
+(303, 287, 287)
+Loaded patient-ASI5JI7DJLB3RKFS.npy
+(336, 250, 250)
+Loaded patient-HIA2VPHI6ABMCQTV.npy
+(333, 261, 261)
+Loaded patient-FCYGZ75WMW6L4PJM.npy
+(361, 262, 262)
+Loaded patient-IWYDKUPY2NSYJGLF.npy
+(356, 235, 235)
+Loaded patient-CRH6GLC3CTD2WACN.npy
+(327, 285, 285)
+Loaded patient-CYIJD3WQ3J3Q67LF.npy
+(351, 280, 280)
+Loaded patient-PCNMFAZL5VWWK7RP.npy
+(349, 258, 258)
+Loaded patient-XJJ3IXEOPNFXBGP7.npy
+(355, 235, 235)
+Loaded patient-EYYSOUW6PR2WMBZS.npy
+(344, 235, 235)
+Loaded patient-LOGIP43ZSLSUA5SZ.npy
+(325, 277, 277)
+Loaded patient-AHNGBFJSTEBO4BJW.npy
+(341, 230, 230)
+Loaded patient-TFLSOP3FLUBQDLL2.npy
+(321, 235, 235)
+
+16/20 [=======================>......] - ETA: 21:41 - loss: 1.2804 - acc: 1.000017
+Loaded patient-TRM3ANQXS7O6Y7OA.npy
+(290, 214, 214)
+Loaded patient-PMUXVQHYYYBOK4RL.npy
+(317, 235, 235)
+Loaded patient-MKIAFF7LDGXTZN4C.npy
+(371, 255, 255)
+Loaded patient-HDQYSVBJ4MPRGYRN.npy
+(341, 280, 280)
+Loaded patient-IEJDGAS52VTH4G74.npy
+(321, 280, 280)
+Loaded patient-SLPTPLSMZYJEUEXK.npy
+(353, 241, 241)
+Loaded patient-MPTG3X65O7O7HYHX.npy
+(323, 263, 263)
+Loaded patient-CQHAXTV5WJLZBRFB.npy
+(300, 280, 280)
+Loaded patient-UKOHM6O57N37U2E2.npy
+(333, 398, 398)
+Loaded patient-CJDXGZHXAGH7QL3C.npy
+(337, 249, 249)
+Loaded patient-AFN5EQGSDERZCTLM.npy
+(341, 280, 280)
+Loaded patient-ROF7JT3SZGBNY3MG.npy
+(341, 280, 280)
+Loaded patient-FBJFYBF7A46A4GIM.npy
+(341, 280, 280)
+Loaded patient-JUOV5YWN6IS7OXIJ.npy
+(350, 325, 325)
+Loaded patient-RHOULE6IWB6KWLE5.npy
+(321, 235, 235)
+Loaded patient-WAP327ZXF6FGV5E4.npy
+(314, 235, 235)
+
+17/20 [========================>.....] - ETA: 16:14 - loss: 1.2800 - acc: 1.000018
+Loaded patient-HIAEQWMTUGATOAVI.npy
+(351, 281, 281)
+Loaded patient-TBNR4PRU7XIL27G6.npy
+(323, 235, 235)
+Loaded patient-DZLYYZNR6M5BZFBT.npy
+(297, 263, 263)
+Loaded patient-FPTFJD4JZA7ZKYQJ.npy
+(332, 235, 235)
+Loaded patient-KFX44Z5T5RWT4LLI.npy
+(353, 229, 229)
+Loaded patient-OAEVXX4IFAX5IYOR.npy
+(337, 278, 278)
+Loaded patient-ECLDQAP52JUWQZHM.npy
+(355, 235, 235)
+Loaded patient-ROMHUDLTCOEXUQCA.npy
+(331, 300, 300)
+Loaded patient-HSKRXAPZ7WNBT2TI.npy
+(341, 488, 488)
+Loaded patient-ZMEGS4G44P6FMONO.npy
+(243, 235, 235)
+Loaded patient-JAANEAKBEZPKV4JV.npy
+(311, 269, 269)
+Loaded patient-JQWIIAADGKE2YMJS.npy
+(330, 235, 235)
+Loaded patient-NJNFVZMSGBGM6H5Y.npy
+(358, 235, 235)
+Loaded patient-UYA5YJUAVC3SE6HV.npy
+(341, 280, 280)
+Loaded patient-UJHKCBMXXLB5QHTP.npy
+(315, 250, 250)
+Loaded patient-QTUPNSXYST53IETT.npy
+(353, 261, 261)
+
+18/20 [==========================>...] - ETA: 10:48 - loss: 1.2798 - acc: 1.000019
+Loaded patient-XSNEILWLDG2HVSVH.npy
+(285, 282, 282)
+Loaded patient-DDWAA4OECH5TXONN.npy
+(301, 304, 304)
+Loaded patient-HBAZOCWOGBJYCEAZ.npy
+(340, 250, 250)
+Loaded patient-JID2LWYOKIWCMT2Z.npy
+(316, 297, 297)
+Loaded patient-SADEJMD27KKWZQ5L.npy
+(348, 250, 250)
+Loaded patient-NHCZX3GOEMPDDHW3.npy
+(343, 272, 272)
+Loaded patient-NMHOGEKTK7LT57ZI.npy
+(331, 251, 251)
+Loaded patient-IBRRD5O4NGVPABDT.npy
+(562, 265, 265)
+Loaded patient-NJPOTXDCGONCOU7C.npy
+(347, 245, 245)
+Loaded patient-ENB4V4BPR4HRCRXW.npy
+(307, 220, 220)
+Loaded patient-TRRYZ5WXYHUMTPCQ.npy
+(314, 250, 250)
+Loaded patient-XPBRBUB6YYHIWHVO.npy
+(310, 280, 280)
+Loaded patient-VDL6YJQYER3CXFOI.npy
+(321, 280, 280)
+Loaded patient-SZXTZ3LQ5MBFDFXR.npy
+(321, 227, 227)
+Loaded patient-XPJH44FSBRVL2WTV.npy
+(312, 259, 259)
+Loaded patient-CJNLJB43ZD3GIUN3.npy
+(339, 250, 250)
+
+19/20 [===========================>..] - ETA: 5:23 - loss: 1.2793 - acc: 1.0000 0
+Loaded patient-TITRFCZEPFJKM3NY.npy
+(285, 271, 271)
+Loaded patient-OPLQZBP3BOBS4LTY.npy
+(347, 235, 235)
+Loaded patient-WUG3VLS7FYXG35LH.npy
+(355, 254, 254)
+Loaded patient-SODFDRR2LWR7JDMN.npy
+(325, 250, 250)
+Loaded patient-NJB6RYF62XWGMSE2.npy
+(311, 235, 235)
+Loaded patient-XGUULATQ6C4ZP3QQ.npy
+(334, 280, 280)
+Loaded patient-NLXOSUXOZZHPFQQX.npy
+(354, 284, 284)
+Loaded patient-NCI33JITLERBTWXI.npy
+(381, 250, 250)
+Loaded patient-VJNCTEEYR7U4HIQU.npy
+(339, 235, 235)
+Loaded patient-ECJB3HH5WPIVOJJW.npy
+(295, 280, 280)
+Loaded patient-PAHYRPTLLQOU2FTB.npy
+(353, 279, 279)
+Loaded patient-IGIIMA3LABMNETMA.npy
+(411, 243, 243)
+Loaded patient-VKMYOQD5A64UFEED.npy
+(358, 231, 231)
+Loaded patient-HAKJSG5CHDGOBP6B.npy
+(309, 280, 280)
+Loaded patient-TNUEVMD3Z4YZFQDG.npy
+(345, 211, 211)
+Loaded patient-JWV4HKJ6OCKS26IR.npy
+(353, 266, 266)
+3
+Loaded patient-ALOUY4SF3BQKXQCZ.npy
+(356, 307, 307)
+Loaded patient-TUX27MONFI7VC6M3.npy
+(321, 251, 251)
+Loaded patient-ICWMS7OCXZLUTUFT.npy
+(322, 280, 280)
+Loaded patient-FTAKNRFGOGVS632K.npy
+(326, 215, 215)
+Loaded patient-OCP7EUZJEB7JUL65.npy
+(392, 252, 252)
+Loaded patient-ZIDRKXRWTVGHW7ZD.npy
+(341, 280, 280)
+Loaded patient-VVGO45TQNOASBLZM.npy
+(490, 235, 235)
+Loaded patient-JQVBM4FUT34IUSUB.npy
+(335, 200, 200)
+Loaded patient-TZES7PMHXV4XVJBV.npy
+(397, 255, 255)
+Loaded patient-ESLHGQCGYB7J4DX3.npy
+(319, 250, 250)
+Loaded patient-ZCIMXZ73NFNRDH46.npy
+(322, 250, 250)
+Loaded patient-NHKUCEIIHLJQ25VM.npy
+(280, 280, 280)
+Loaded patient-YSTBBUD35YZBOT2Z.npy
+(356, 287, 287)
+Loaded patient-MSXY2JKZXPEBXR72.npy
+(369, 273, 273)
+Loaded patient-AOTGHQ6S5AD7LOBO.npy
+(296, 280, 280)
+Loaded patient-CWWKNDYG2UERXH7X.npy
+(337, 257, 257)
+4
+Loaded patient-RYNCGNVRZH2LB7BN.npy
+(314, 213, 213)
+Loaded patient-PIKNNHQAI52EI62K.npy
+(324, 271, 271)
+Loaded patient-QBOBDYYD4R7WP37S.npy
+(346, 305, 305)
+Loaded patient-LUVMEPI5JWYL67RF.npy
+(309, 306, 306)
+Loaded patient-UNREF6O6622LZWNN.npy
+(343, 255, 255)
+Loaded patient-KACA7XHWXRM6A3W3.npy
+(336, 259, 259)
+Loaded patient-UMFGGCOJN6GDPQDV.npy
+(279, 250, 250)
+Loaded patient-BJI23MUAPMUMIED2.npy
+(343, 232, 232)
+Loaded patient-ZTGZBI2QX2JQFXIG.npy
+(319, 235, 235)
+Loaded patient-HGJTE6ROVCUFUC4S.npy
+(349, 231, 231)
+Loaded patient-IXBFNU6QB2SEZQ7N.npy
+(303, 293, 293)
+Loaded patient-SXF2FCCYEQLXMQO5.npy
+(368, 336, 336)
+Loaded patient-JWVEP6ZLYCOE5IAE.npy
+(301, 235, 235)
+Loaded patient-RKIZJRFZGCXD4EOL.npy
+(362, 235, 235)
+Loaded patient-LGFNFIWO2ZEQYK36.npy
+(335, 259, 259)
+Loaded patient-MKKOO7NDN26O6RLZ.npy
+(297, 235, 235)
+0
+Loaded patient-MEP2WAB3JNIXJTON.npy
+(352, 235, 235)
+Loaded patient-LIJBIVVBI6TJCT6Z.npy
+(329, 250, 250)
+Loaded patient-VRSBMSXUYCQ3NC5A.npy
+(315, 280, 280)
+Loaded patient-CCVIH3DIM3GF6SLG.npy
+(357, 475, 475)
+Loaded patient-XQBRGW3CYGNUMWHI.npy
+(327, 298, 298)
+Loaded patient-OLCBKEY2WKCWPHJW.npy
+(328, 250, 250)
+Loaded patient-NYR7NWGHIRZDCL66.npy
+(342, 235, 235)
+Loaded patient-DRS5DZGN5PVUZX4Y.npy
+(341, 280, 280)
+Loaded patient-MHL54TPCTOQJ2I4K.npy
+(309, 313, 313)
+Loaded patient-WWEFFBIMLZ3KLQVZ.npy
+(355, 235, 235)
+Loaded patient-JUBFRXRHLG46KY42.npy
+(302, 279, 279)
+Loaded patient-POYYSD3RSJFBKSLQ.npy
+(317, 235, 235)
+Loaded patient-EUNTRXNEDB7VDVIS.npy
+(354, 290, 290)
+Loaded patient-WIPV3EQ34O55HCUI.npy
+(358, 304, 304)
+Loaded patient-POSX6PS6LR34HENB.npy
+(332, 269, 269)
+Loaded patient-RKBSU42WA7AY22E7.npy
+(325, 287, 287)
+1
+Loaded patient-ADJYK6PUQSLE2GLN.npy
+(279, 200, 200)
+Loaded patient-EGIAP2GDM33PCW5A.npy
+(498, 235, 235)
+Loaded patient-WPA6WCTE24HGRIXH.npy
+(296, 250, 250)
+Loaded patient-CSCIKXOMNAIB3LUQ.npy
+(291, 250, 250)
+Loaded patient-MLHE2CESZAWQKZVP.npy
+(285, 241, 241)
+Loaded patient-VDO7JNWOEJ5KGJYJ.npy
+(308, 235, 235)
+Loaded patient-ASD2URNKFRN3ZSFL.npy
+(329, 280, 280)
+Loaded patient-RBC423N4RNB3UZ5P.npy
+(341, 250, 250)
+Loaded patient-KJAWMYSKQTYINTNC.npy
+(355, 240, 240)
+Loaded patient-QKBS566N24RMCV5H.npy
+(296, 280, 280)
+Loaded patient-QGEQ4IFSRIA3RBVB.npy
+(316, 346, 346)
+Loaded patient-SGFWUNFEYCKBMF65.npy
+(320, 256, 256)
+Loaded patient-CQARGKFSIVQWNCT6.npy
+(291, 200, 200)
+Loaded patient-MEQKZCRF5TR6MHLY.npy
+(299, 280, 280)
+Loaded patient-CSXRYWJCXJXAJRLP.npy
+(330, 306, 306)
+Loaded patient-JJMENP4QE4CSXSHV.npy
+(320, 250, 250)
+2
+Loaded patient-YEXJFFF2ZK44FYCP.npy
+(278, 280, 280)
+Loaded patient-LOR7YOK3PYHXSHCM.npy
+(358, 235, 235)
+Loaded patient-HXKDQ5I26Z2CRUQB.npy
+(362, 250, 250)
+Loaded patient-ABPO2BORDNF3OVL3.npy
+(325, 225, 225)
+Loaded patient-KQSTLFNPLNP5M43F.npy
+(348, 255, 255)
+Loaded patient-RTC5RXQHUXCSPNLN.npy
+(341, 250, 250)
+Loaded patient-OQNPNGEBR4D54PRA.npy
+(276, 250, 250)
+Loaded patient-BRFHLOM2KPUXSBMI.npy
+(301, 280, 280)
+Loaded patient-DDPQNEBC34XCOF2U.npy
+(281, 201, 201)
+Loaded patient-RXK7K2FPVPLFMID2.npy
+(369, 250, 250)
+Loaded patient-VOPMJMGIDQQ75E6G.npy
+(337, 281, 281)
+Loaded patient-DZTDN47H2IKSYN3Q.npy
+(347, 235, 235)
+Loaded patient-DVYKX4XMBHD57MZJ.npy
+(341, 280, 280)
+Loaded patient-IAX2O3NWENSSH4D5.npy
+(363, 247, 247)
+Loaded patient-FIBU2GYR72UU7E5M.npy
+(315, 219, 219)
+Loaded patient-AJHYOJIG3DZLSIKI.npy
+(317, 222, 222)
+3
+Loaded patient-ALOUY4SF3BQKXQCZ.npy
+(356, 307, 307)
+Loaded patient-TUX27MONFI7VC6M3.npy
+(321, 251, 251)
+Loaded patient-ICWMS7OCXZLUTUFT.npy
+(322, 280, 280)
+Loaded patient-FTAKNRFGOGVS632K.npy
+(326, 215, 215)
+Loaded patient-OCP7EUZJEB7JUL65.npy
+(392, 252, 252)
+Loaded patient-ZIDRKXRWTVGHW7ZD.npy
+(341, 280, 280)
+Loaded patient-VVGO45TQNOASBLZM.npy
+(490, 235, 235)
+Loaded patient-JQVBM4FUT34IUSUB.npy
+(335, 200, 200)
+Loaded patient-TZES7PMHXV4XVJBV.npy
+(397, 255, 255)
+Loaded patient-ESLHGQCGYB7J4DX3.npy
+(319, 250, 250)
+Loaded patient-ZCIMXZ73NFNRDH46.npy
+(322, 250, 250)
+Loaded patient-NHKUCEIIHLJQ25VM.npy
+(280, 280, 280)
+Loaded patient-YSTBBUD35YZBOT2Z.npy
+(356, 287, 287)
+Loaded patient-MSXY2JKZXPEBXR72.npy
+(369, 273, 273)
+Loaded patient-AOTGHQ6S5AD7LOBO.npy
+(296, 280, 280)
+Loaded patient-CWWKNDYG2UERXH7X.npy
+(337, 257, 257)
+
+20/20 [==============================] - 6557s 328s/step - loss: 1.2789 - acc: 1.0000 - val_loss: 2.7426 - val_acc: 0.5375
+
+Epoch 00004: saving model to tmp/weights.hdf5
+Epoch 5/10
+1
+Loaded patient-GFRJ7SPGIEJVXVRS.npy
+(879, 360, 360)
+Loaded patient-RFSGSDQ5MWIVM6QV.npy
+(300, 235, 235)
+Loaded patient-OLIQUZ7ERFP4DJVD.npy
+(325, 280, 280)
+Loaded patient-MYTHDP7XSELNJUBQ.npy
+(313, 249, 249)
+Loaded patient-HAYSFX75ACG77ZJE.npy
+(311, 235, 235)
+Loaded patient-BLPHSKRODCJLHZZS.npy
+(333, 233, 233)
+Loaded patient-QJFMNVKKVZXKBROO.npy
+(352, 274, 274)
+Loaded patient-DPSG75LCBZVBTRPO.npy
+(302, 250, 250)
+Loaded patient-ZAJH6DQQBAECJ7AX.npy
+(355, 235, 235)
+Loaded patient-OSO6K4FGNA57I3VJ.npy
+(314, 217, 217)
+Loaded patient-ZASCC2YE27A6IT45.npy
+(342, 258, 258)
+Loaded patient-HLXOSVDF27JWNCMJ.npy
+(323, 273, 273)
+Loaded patient-BSBXPIGXEUV3WWOZ.npy
+(292, 250, 250)
+Loaded patient-TJAPUMPEDA32J5JW.npy
+(374, 287, 287)
+Loaded patient-EPSAH2BCBGV7WQHM.npy
+(378, 235, 235)
+Loaded patient-UOZJSIPCXRA7UJF2.npy
+(317, 250, 250)
+
+ 1/20 [>.............................] - ETA: 1:39:01 - loss: 1.2716 - acc: 1.00002
+Loaded patient-WDIYHNMBALZ4ZP2A.npy
+(286, 213, 213)
+Loaded patient-UGXVSPJLHJL6AHSW.npy
+(345, 220, 220)
+Loaded patient-JWKB7SHIBYWSEVMC.npy
+(295, 325, 325)
+Loaded patient-IAUKV5R644JZFD55.npy
+(292, 224, 224)
+Loaded patient-CRKZOVFXYNXRGJYR.npy
+(337, 281, 281)
+Loaded patient-PMMV7MLZUWJTIMLR.npy
+(286, 250, 250)
+Loaded patient-LQMW3GK5JQEVVFBK.npy
+(339, 235, 235)
+Loaded patient-IAR66U7QVOBXOFQE.npy
+(341, 280, 280)
+Loaded patient-FLSUE7ZIXI6HSJWN.npy
+(318, 280, 280)
+Loaded patient-LQG4BRZPSCMR5XAN.npy
+(349, 235, 235)
+Loaded patient-XJVLT6YE7FKB3T3B.npy
+(369, 250, 250)
+Loaded patient-PNPGGIFOXWJJQ22P.npy
+(378, 250, 250)
+Loaded patient-ZMP6NER3I4ERS2JE.npy
+(347, 235, 235)
+Loaded patient-GBXENHYLRVZ5DTHI.npy
+(329, 236, 236)
+Loaded patient-JCWGEJIJO2LDRY2U.npy
+(339, 305, 305)
+Loaded patient-YRC3D4LSQNDZCXDA.npy
+(335, 261, 261)
+
+ 2/20 [==>...........................] - ETA: 1:33:42 - loss: 1.2693 - acc: 1.00003
+Loaded patient-RODVAIJ6A6P4D54Y.npy
+(374, 283, 283)
+Loaded patient-SVYZISKLZLQKBPX6.npy
+(317, 252, 252)
+Loaded patient-OUM3NFGU5U3TCBBK.npy
+(320, 205, 205)
+Loaded patient-LHMGXWC6J7DRD3CP.npy
+(441, 349, 349)
+Loaded patient-TFXM6VTRLJH2DS7G.npy
+(377, 253, 253)
+Loaded patient-NFG67H47EUPD5URG.npy
+(322, 213, 213)
+Loaded patient-YNLMIJ5S24AYYZXN.npy
+(309, 229, 229)
+Loaded patient-NWO33W453F6ZJ4BU.npy
+(325, 258, 258)
+Loaded patient-COFP4UFH6MWZA7HI.npy
+(313, 251, 251)
+Loaded patient-SQD3UDNZH2Q3ET4V.npy
+(335, 250, 250)
+Loaded patient-BMTJZEMYGJCVHX7N.npy
+(329, 252, 252)
+Loaded patient-RKFD4L7QSBXPHFJU.npy
+(341, 250, 250)
+Loaded patient-NGQAJ2GBHZE2DN5C.npy
+(324, 280, 280)
+Loaded patient-IIAFOQ3HGHU4A6UT.npy
+(343, 259, 259)
+Loaded patient-LZU7NSTDRFX77U7G.npy
+(472, 239, 239)
+Loaded patient-VSJRIEOFJCVJIO2C.npy
+(366, 264, 264)
+
+ 3/20 [===>..........................] - ETA: 1:28:33 - loss: 1.2688 - acc: 1.00004
+Loaded patient-LVOHLK3FOHWE66BP.npy
+(369, 229, 229)
+Loaded patient-DRT3F4ITWPCCBB6T.npy
+(330, 235, 235)
+Loaded patient-OCD6VASBJF4SNZ4U.npy
+(324, 220, 220)
+Loaded patient-EYEDMZ3Z6OIKPERL.npy
+(329, 316, 316)
+Loaded patient-HLQKXLS4OQ2BGQ5C.npy
+(318, 250, 250)
+Loaded patient-JMWZRLKLB5DSSXE3.npy
+(317, 235, 235)
+Loaded patient-UMRXCXFIT4YDD7RQ.npy
+(366, 235, 235)
+Loaded patient-THKULF2KHMNVMTUR.npy
+(457, 235, 235)
+Loaded patient-IPFO2JH7ZZYTQHH2.npy
+(309, 226, 226)
+Loaded patient-FYSSUUSC5XYNLUQW.npy
+(317, 227, 227)
+Loaded patient-RLJSRNLTRUQAVT3L.npy
+(307, 235, 235)
+Loaded patient-HXLMZWH3SFX3SPAN.npy
+(352, 250, 250)
+Loaded patient-XYOD23KJFH7NZXXK.npy
+(316, 250, 250)
+Loaded patient-XXEE333ZVHOJTRJJ.npy
+(325, 253, 253)
+Loaded patient-BHA4CDH32NPSOKTZ.npy
+(304, 228, 228)
+Loaded patient-MRYGCR7462Z7IN2L.npy
+(282, 250, 250)
+
+ 4/20 [=====>........................] - ETA: 1:23:26 - loss: 1.2679 - acc: 1.00005
+Loaded patient-JGNEVHX7BEKLBQJY.npy
+(346, 318, 318)
+Loaded patient-OOAKLUZ2A4XYXC4X.npy
+(309, 211, 211)
+Loaded patient-MZAZFTEIU4NLYXDF.npy
+(343, 250, 250)
+Loaded patient-NIED5UTOZ2JOFCWT.npy
+(318, 280, 280)
+Loaded patient-WIJONRZUXV2SJOMN.npy
+(330, 235, 235)
+Loaded patient-HXBUUFVQBNISYKNU.npy
+(332, 280, 280)
+Loaded patient-BTLLL3I67PYRN7R4.npy
+(341, 280, 280)
+Loaded patient-SWSY42N45J3YWV5I.npy
+(312, 250, 250)
+Loaded patient-ADKFJYDHLE7M3XE6.npy
+(302, 250, 250)
+Loaded patient-MOAADIHO5RHQJEK3.npy
+(335, 250, 250)
+Loaded patient-SBLQEZAZEXCC76C6.npy
+(365, 327, 327)
+Loaded patient-JLHG7VESTU3GH2KX.npy
+(345, 245, 245)
+Loaded patient-ZFMUMZVL6HFQCKSX.npy
+(333, 266, 266)
+Loaded patient-WZPADD37RLXRX3IG.npy
+(337, 255, 255)
+Loaded patient-WHCQX5APWQZHMM3Q.npy
+(349, 302, 302)
+Loaded patient-FYXMPCGHTGJXJBSD.npy
+(329, 234, 234)
+
+ 5/20 [======>.......................] - ETA: 1:18:20 - loss: 1.2673 - acc: 1.00006
+Loaded patient-GKDV3FW4M56I3IKV.npy
+(332, 279, 279)
+Loaded patient-WCSSH2NHDNNZIVML.npy
+(300, 250, 250)
+Loaded patient-VKFW6CO5FV2P3PUE.npy
+(331, 235, 235)
+Loaded patient-EQD7NRTYLRGYENOM.npy
+(307, 231, 231)
+Loaded patient-JSV6UEFKJAVM6OGO.npy
+(319, 235, 235)
+Loaded patient-UAFTPLA47GA7WS27.npy
+(315, 236, 236)
+Loaded patient-RHWTMTHC7HIWZ2YZ.npy
+(350, 409, 409)
+Loaded patient-XVPBCFNYTDI4HHW2.npy
+(323, 214, 214)
+Loaded patient-ZNPFNNZ2DRELKNQ3.npy
+(340, 244, 244)
+Loaded patient-IJBSBL7IRLNRVXUC.npy
+(317, 235, 235)
+Loaded patient-FKHXWQEPTPIWXHBR.npy
+(356, 250, 250)
+Loaded patient-UZFAM45KRI3C7MGB.npy
+(325, 263, 263)
+Loaded patient-ZCMTUATV42LAXACO.npy
+(309, 293, 293)
+Loaded patient-KNKVPM2UV4UFFC5R.npy
+(328, 250, 250)
+Loaded patient-IKLKZYXDYTCCYUAZ.npy
+(349, 279, 279)
+Loaded patient-SEV2GAEFNJBLX3ZJ.npy
+(341, 280, 280)
+
+ 6/20 [========>.....................] - ETA: 1:13:10 - loss: 1.2667 - acc: 1.00007
+Loaded patient-JAS2TYJWKQL65CQT.npy
+(367, 235, 235)
+Loaded patient-EKKECBQEXHI5ME2T.npy
+(335, 213, 213)
+Loaded patient-PCJ6DNFF7XHMUSWE.npy
+(307, 266, 266)
+Loaded patient-AGTDPQEU54ODFAUD.npy
+(333, 464, 464)
+Loaded patient-LCGP6HURGG2XVJ5B.npy
+(327, 235, 235)
+Loaded patient-GET5PY3CH6RJV3UW.npy
+(364, 250, 250)
+Loaded patient-NXSJBZWIQX5RKNO3.npy
+(288, 280, 280)
+Loaded patient-GBA7XJ5E7ITWZW7K.npy
+(341, 280, 280)
+Loaded patient-LRCPYDPZFFC6HR6K.npy
+(306, 250, 250)
+Loaded patient-NHXCOHZ4HH53NLQ6.npy
+(310, 213, 213)
+Loaded patient-SZKV26SJOHXJBPVX.npy
+(315, 269, 269)
+Loaded patient-BIASJO43N3A7Z63W.npy
+(360, 275, 275)
+Loaded patient-GXR5YMJB3PZQNLAC.npy
+(349, 225, 225)
+Loaded patient-VZHXKDEYF7EK4RRP.npy
+(329, 280, 280)
+Loaded patient-IETROE62UNT5QVWS.npy
+(293, 363, 363)
+Loaded patient-ZOROHVT5JZVIBEEX.npy
+(341, 280, 280)
+
+ 7/20 [=========>....................] - ETA: 1:08:00 - loss: 1.2664 - acc: 1.00008
+Loaded patient-BSKAYXMTSEXR6U5K.npy
+(325, 235, 235)
+Loaded patient-RMID4XEKTVEYCSGK.npy
+(354, 243, 243)
+Loaded patient-EURBSIKPYU66GBRW.npy
+(365, 331, 331)
+Loaded patient-NLV36DRLRZY5AKIJ.npy
+(367, 241, 241)
+Loaded patient-JNTL5ESEIA5FWMUQ.npy
+(325, 250, 250)
+Loaded patient-FUVL4PLSUHRCEAHC.npy
+(357, 254, 254)
+Loaded patient-ANCCICBPHIDJ5PJ4.npy
+(383, 259, 259)
+Loaded patient-WHDZVHCOCOTIJLXV.npy
+(349, 235, 235)
+Loaded patient-ENBHS75LQ7FWO5CP.npy
+(374, 263, 263)
+Loaded patient-AUGXT5PI4VY62M6L.npy
+(319, 237, 237)
+Loaded patient-RZVMIO4YX2JHAUQ5.npy
+(327, 220, 220)
+Loaded patient-RRZGAIOEIS6WPXDT.npy
+(367, 269, 269)
+Loaded patient-DSIFGAA3BMQKFE7A.npy
+(306, 274, 274)
+Loaded patient-OLYVZJAPCZJQWGIE.npy
+(321, 268, 268)
+Loaded patient-GCBJDIT55TRGHZIR.npy
+(355, 235, 235)
+Loaded patient-JNLCZIQGTGTFNEKK.npy
+(324, 280, 280)
+
+ 8/20 [===========>..................] - ETA: 1:02:45 - loss: 1.2659 - acc: 1.00009
+Loaded patient-PBR2STY62FZ3MQHZ.npy
+(302, 301, 301)
+Loaded patient-FFVM6VCPRIKK7453.npy
+(316, 235, 235)
+Loaded patient-BVYSR54MKT5SPMSU.npy
+(317, 235, 235)
+Loaded patient-TXOGS5CQ6RZMSV3W.npy
+(327, 235, 235)
+Loaded patient-OXRK4I6CTXCENAZV.npy
+(344, 444, 444)
+Loaded patient-OMR7KPUBB2T7X3QQ.npy
+(349, 235, 235)
+Loaded patient-MTWW42SPCGLHEDKY.npy
+(355, 223, 223)
+Loaded patient-NXDFBWPXYWHEIO2O.npy
+(322, 219, 219)
+Loaded patient-NXLFQLVZRLUEK2UF.npy
+(343, 235, 235)
+Loaded patient-UZQJZEDGVTWFY23U.npy
+(385, 260, 260)
+Loaded patient-ZUEK5YSS7CITVWIP.npy
+(361, 251, 251)
+Loaded patient-YBMFJQLVZENVF6MA.npy
+(327, 304, 304)
+Loaded patient-KGK66IWDH2EX5XNP.npy
+(283, 261, 261)
+Loaded patient-HVPI7QQSXPDHSFME.npy
+(319, 250, 250)
+Loaded patient-SRKOPGCEG62ZJTT2.npy
+(362, 249, 249)
+Loaded patient-LYUO2OPTNYUBCHT2.npy
+(328, 220, 220)
+
+ 9/20 [============>.................] - ETA: 57:30 - loss: 1.2658 - acc: 1.0000  10
+Loaded patient-NWRLBSNF3RVU3MAC.npy
+(367, 246, 246)
+Loaded patient-ZVRO2HKWM7JSS6IA.npy
+(359, 269, 269)
+Loaded patient-CMELUGEVB3ESBIAK.npy
+(356, 245, 245)
+Loaded patient-TEHE4SMNJTXDNW2O.npy
+(341, 280, 280)
+Loaded patient-ATY6WNE6JVYJ2RLN.npy
+(351, 281, 281)
+Loaded patient-GIPUIOSNW2C34HIS.npy
+(306, 222, 222)
+Loaded patient-SSJQF5OU3VSC3HAD.npy
+(352, 250, 250)
+Loaded patient-NEYLUIYPCL6O74O6.npy
+(291, 301, 301)
+Loaded patient-PYZP7WQ4QRH46EFS.npy
+(351, 250, 250)
+Loaded patient-ZCTE57VMPCGWDG75.npy
+(296, 269, 269)
+Loaded patient-XDNEWPTKFLCWWUSV.npy
+(387, 275, 275)
+Loaded patient-JUM3FRXBYLTATYYH.npy
+(341, 250, 250)
+Loaded patient-PYRDN2YA3MWCWKCC.npy
+(315, 250, 250)
+Loaded patient-SZY3J4UTKSCFM2H4.npy
+(370, 215, 215)
+Loaded patient-EGCV7CJ6LF2CACQM.npy
+(298, 250, 250)
+Loaded patient-VFHSASVT4EXZWAOS.npy
+(326, 280, 280)
+
+10/20 [==============>...............] - ETA: 52:16 - loss: 1.2653 - acc: 1.000011
+Loaded patient-GHVG2CNNRZ65UBEU.npy
+(330, 273, 273)
+Loaded patient-KRWJSE7TVM2QLJI7.npy
+(308, 250, 250)
+Loaded patient-BRSZTKDWTB2X5P3W.npy
+(352, 273, 273)
+Loaded patient-RWJZNVFII5INU6Z5.npy
+(367, 246, 246)
+Loaded patient-BNZ2UKOA43BESZGP.npy
+(301, 235, 235)
+Loaded patient-JJEB6MFMSB6UAKHU.npy
+(369, 262, 262)
+Loaded patient-NJZN2TNXUUFRZ3GZ.npy
+(387, 235, 235)
+Loaded patient-RWKA32WBSVFB4MQF.npy
+(327, 235, 235)
+Loaded patient-DENODP22U2Q7E4LM.npy
+(341, 280, 280)
+Loaded patient-AGTRMFUZM2MQUAB4.npy
+(350, 263, 263)
+Loaded patient-RCDAHVLV6QUTDFVD.npy
+(322, 215, 215)
+Loaded patient-BHYZMLL7GBZZLACW.npy
+(311, 302, 302)
+Loaded patient-AFEB6XW5UCQTSYJL.npy
+(322, 250, 250)
+Loaded patient-MJFHYCVEV2GTJD3N.npy
+(341, 265, 265)
+Loaded patient-QPKEZOB3X6B6HMCR.npy
+(303, 341, 341)
+Loaded patient-ARZ7H7BSITHOSSMG.npy
+(327, 233, 233)
+
+11/20 [===============>..............] - ETA: 47:01 - loss: 1.2649 - acc: 1.000012
+Loaded patient-IIOOPK6T2ZWDZMU3.npy
+(319, 250, 250)
+Loaded patient-DNO6CS3YNGFMUWXL.npy
+(284, 250, 250)
+Loaded patient-VUTDS6OC2VUSNQMK.npy
+(348, 280, 280)
+Loaded patient-ADIO4U6QJTXF3YQH.npy
+(350, 230, 230)
+Loaded patient-TNXMNBGRZHPIMJJI.npy
+(371, 272, 272)
+Loaded patient-OAYNHJ5ZLLVYHXCA.npy
+(367, 246, 246)
+Loaded patient-OJC5WXUS4IEGGOYC.npy
+(339, 235, 235)
+Loaded patient-OTIP25YORHBKJPZM.npy
+(353, 269, 269)
+Loaded patient-PQJEIXKIJMZTBZ74.npy
+(316, 261, 261)
+Loaded patient-KPC2RVJBDHQLC5EM.npy
+(302, 250, 250)
+Loaded patient-BWDRAF5ZOQPFOOL7.npy
+(308, 255, 255)
+Loaded patient-DXLPP6QTNOHQRHVG.npy
+(320, 270, 270)
+Loaded patient-SBRRR2SATWOOR5D6.npy
+(476, 243, 243)
+Loaded patient-ANLMZN6NS4S3TCCF.npy
+(293, 250, 250)
+Loaded patient-PVMXD3RZSHEQTYW3.npy
+(311, 280, 280)
+Loaded patient-IDUHFQWVS4WKXPC5.npy
+(340, 250, 250)
+
+12/20 [=================>............] - ETA: 41:47 - loss: 1.2644 - acc: 1.000013
+Loaded patient-ZUR2IKTUC2KQVB2X.npy
+(259, 267, 267)
+Loaded patient-ZANU4GPPZNIFRN6W.npy
+(329, 209, 209)
+Loaded patient-YYNFU45K2WIMXWE4.npy
+(303, 252, 252)
+Loaded patient-WPNYHBQRGJ4NHU3C.npy
+(335, 263, 263)
+Loaded patient-BMFSUHVBPJ7RY56P.npy
+(331, 214, 214)
+Loaded patient-UOSAPEMY76KAGOUR.npy
+(336, 297, 297)
+Loaded patient-NJDN23E34MZVQU66.npy
+(298, 250, 250)
+Loaded patient-UZUCCRJIMUZMQSQE.npy
+(335, 280, 280)
+Loaded patient-TFCLOHN4ROEYF6QY.npy
+(371, 203, 203)
+Loaded patient-CGQFS5PB627OWLL7.npy
+(327, 229, 229)
+Loaded patient-SKBIT57CPAKAGQVB.npy
+(341, 364, 364)
+Loaded patient-QTMN6M3FY3YSJ6ZP.npy
+(276, 279, 279)
+Loaded patient-XKHDNXXCRND47JLF.npy
+(320, 359, 359)
+Loaded patient-UUKSYXBYQQZATBP5.npy
+(349, 250, 250)
+Loaded patient-QLYPHVVU3RG43OZO.npy
+(336, 245, 245)
+Loaded patient-PMEECXFHBLN6KHO7.npy
+(353, 271, 271)
+
+13/20 [==================>...........] - ETA: 36:33 - loss: 1.2638 - acc: 1.000014
+Loaded patient-VKDRQPXRMRRBAHW3.npy
+(348, 229, 229)
+Loaded patient-ZQYME7XWFWQXXOXA.npy
+(314, 500, 500)
+Loaded patient-CFC7SE7TGP55RMUB.npy
+(330, 252, 252)
+Loaded patient-EWYGH3OSPLJI27UF.npy
+(329, 244, 244)
+Loaded patient-TVCP433TKOVBCQTW.npy
+(347, 268, 268)
+Loaded patient-NUWPDW6HBRTLEYWD.npy
+(357, 225, 225)
+Loaded patient-VGF4YIHDAARLWS7A.npy
+(311, 250, 250)
+Loaded patient-OTIGVYUMMBXDNSHN.npy
+(377, 281, 281)
+Loaded patient-RATVCRHG4ZHLCOV3.npy
+(325, 280, 280)
+Loaded patient-VBPF3M5P5YIFVZ4L.npy
+(326, 250, 250)
+Loaded patient-DXOUKNW7AXCZFUIL.npy
+(350, 264, 264)
+Loaded patient-GONORRCZWHDZV3M5.npy
+(364, 250, 250)
+Loaded patient-UBDRB3DMSB6TJ76N.npy
+(372, 250, 250)
+Loaded patient-SUOA7XPFTTR2O5NQ.npy
+(365, 250, 250)
+Loaded patient-MSZB67BPZ32ILNLK.npy
+(375, 251, 251)
+Loaded patient-KEYZSDHDH2DINCKO.npy
+(285, 280, 280)
+
+14/20 [====================>.........] - ETA: 31:20 - loss: 1.2634 - acc: 1.000015
+Loaded patient-YGJSUAFCVJ52LIRD.npy
+(340, 268, 268)
+Loaded patient-XZUUUC426GUXSCGJ.npy
+(333, 258, 258)
+Loaded patient-TVY4XBCLXJBKK72S.npy
+(302, 289, 289)
+Loaded patient-ZSXFDYQ4ST4Z6SRF.npy
+(309, 211, 211)
+Loaded patient-VZOXMEUK7BN7PQH3.npy
+(302, 280, 280)
+Loaded patient-BNAGD36PDWFHIEOO.npy
+(371, 255, 255)
+Loaded patient-JOJU5LPDDBBP6LYG.npy
+(321, 280, 280)
+Loaded patient-PIORRASXKMO7LEXJ.npy
+(349, 250, 250)
+Loaded patient-ILNTKMBVTXNXURGV.npy
+(330, 231, 231)
+Loaded patient-OAC7JXARELEVVEQW.npy
+(346, 348, 348)
+Loaded patient-RKXO5JUDKMYRUTN5.npy
+(305, 221, 221)
+Loaded patient-ZTFA5BJQHNJIRH4T.npy
+(341, 280, 280)
+Loaded patient-XJLRFX244JGJZUUF.npy
+(351, 289, 289)
+Loaded patient-SUVCYHBWWKNAVUGQ.npy
+(305, 235, 235)
+Loaded patient-ZHLGEIY4UAEIPL33.npy
+(318, 237, 237)
+Loaded patient-EOI25OVG7DHZ6KH2.npy
+(296, 286, 286)
+
+15/20 [=====================>........] - ETA: 26:06 - loss: 1.2629 - acc: 1.000016
+Loaded patient-ENPUI7ZVHUGIXYN7.npy
+(300, 235, 235)
+Loaded patient-XHX3PCDOWEWDB34X.npy
+(315, 280, 280)
+Loaded patient-DJGKDC32BE5NKELX.npy
+(325, 220, 220)
+Loaded patient-XQLUVUDY23UZMYW3.npy
+(303, 287, 287)
+Loaded patient-ASI5JI7DJLB3RKFS.npy
+(336, 250, 250)
+Loaded patient-HIA2VPHI6ABMCQTV.npy
+(333, 261, 261)
+Loaded patient-FCYGZ75WMW6L4PJM.npy
+(361, 262, 262)
+Loaded patient-IWYDKUPY2NSYJGLF.npy
+(356, 235, 235)
+Loaded patient-CRH6GLC3CTD2WACN.npy
+(327, 285, 285)
+Loaded patient-CYIJD3WQ3J3Q67LF.npy
+(351, 280, 280)
+Loaded patient-PCNMFAZL5VWWK7RP.npy
+(349, 258, 258)
+Loaded patient-XJJ3IXEOPNFXBGP7.npy
+(355, 235, 235)
+Loaded patient-EYYSOUW6PR2WMBZS.npy
+(344, 235, 235)
+Loaded patient-LOGIP43ZSLSUA5SZ.npy
+(325, 277, 277)
+Loaded patient-AHNGBFJSTEBO4BJW.npy
+(341, 230, 230)
+Loaded patient-TFLSOP3FLUBQDLL2.npy
+(321, 235, 235)
+
+16/20 [=======================>......] - ETA: 20:53 - loss: 1.2624 - acc: 1.000017
+Loaded patient-TRM3ANQXS7O6Y7OA.npy
+(290, 214, 214)
+Loaded patient-PMUXVQHYYYBOK4RL.npy
+(317, 235, 235)
+Loaded patient-MKIAFF7LDGXTZN4C.npy
+(371, 255, 255)
+Loaded patient-HDQYSVBJ4MPRGYRN.npy
+(341, 280, 280)
+Loaded patient-IEJDGAS52VTH4G74.npy
+(321, 280, 280)
+Loaded patient-SLPTPLSMZYJEUEXK.npy
+(353, 241, 241)
+Loaded patient-MPTG3X65O7O7HYHX.npy
+(323, 263, 263)
+Loaded patient-CQHAXTV5WJLZBRFB.npy
+(300, 280, 280)
+Loaded patient-UKOHM6O57N37U2E2.npy
+(333, 398, 398)
+Loaded patient-CJDXGZHXAGH7QL3C.npy
+(337, 249, 249)
+Loaded patient-AFN5EQGSDERZCTLM.npy
+(341, 280, 280)
+Loaded patient-ROF7JT3SZGBNY3MG.npy
+(341, 280, 280)
+Loaded patient-FBJFYBF7A46A4GIM.npy
+(341, 280, 280)
+Loaded patient-JUOV5YWN6IS7OXIJ.npy
+(350, 325, 325)
+Loaded patient-RHOULE6IWB6KWLE5.npy
+(321, 235, 235)
+Loaded patient-WAP327ZXF6FGV5E4.npy
+(314, 235, 235)
+
+17/20 [========================>.....] - ETA: 15:40 - loss: 1.2619 - acc: 1.000018
+Loaded patient-HIAEQWMTUGATOAVI.npy
+(351, 281, 281)
+Loaded patient-TBNR4PRU7XIL27G6.npy
+(323, 235, 235)
+Loaded patient-DZLYYZNR6M5BZFBT.npy
+(297, 263, 263)
+Loaded patient-FPTFJD4JZA7ZKYQJ.npy
+(332, 235, 235)
+Loaded patient-KFX44Z5T5RWT4LLI.npy
+(353, 229, 229)
+Loaded patient-OAEVXX4IFAX5IYOR.npy
+(337, 278, 278)
+Loaded patient-ECLDQAP52JUWQZHM.npy
+(355, 235, 235)
+Loaded patient-ROMHUDLTCOEXUQCA.npy
+(331, 300, 300)
+Loaded patient-HSKRXAPZ7WNBT2TI.npy
+(341, 488, 488)
+Loaded patient-ZMEGS4G44P6FMONO.npy
+(243, 235, 235)
+Loaded patient-JAANEAKBEZPKV4JV.npy
+(311, 269, 269)
+Loaded patient-JQWIIAADGKE2YMJS.npy
+(330, 235, 235)
+Loaded patient-NJNFVZMSGBGM6H5Y.npy
+(358, 235, 235)
+Loaded patient-UYA5YJUAVC3SE6HV.npy
+(341, 280, 280)
+Loaded patient-UJHKCBMXXLB5QHTP.npy
+(315, 250, 250)
+Loaded patient-QTUPNSXYST53IETT.npy
+(353, 261, 261)
+
+18/20 [==========================>...] - ETA: 10:27 - loss: 1.2616 - acc: 1.000019
+Loaded patient-XSNEILWLDG2HVSVH.npy
+(285, 282, 282)
+Loaded patient-DDWAA4OECH5TXONN.npy
+(301, 304, 304)
+Loaded patient-HBAZOCWOGBJYCEAZ.npy
+(340, 250, 250)
+Loaded patient-JID2LWYOKIWCMT2Z.npy
+(316, 297, 297)
+Loaded patient-SADEJMD27KKWZQ5L.npy
+(348, 250, 250)
+Loaded patient-NHCZX3GOEMPDDHW3.npy
+(343, 272, 272)
+Loaded patient-NMHOGEKTK7LT57ZI.npy
+(331, 251, 251)
+Loaded patient-IBRRD5O4NGVPABDT.npy
+(562, 265, 265)
+Loaded patient-NJPOTXDCGONCOU7C.npy
+(347, 245, 245)
+Loaded patient-ENB4V4BPR4HRCRXW.npy
+(307, 220, 220)
+Loaded patient-TRRYZ5WXYHUMTPCQ.npy
+(314, 250, 250)
+Loaded patient-XPBRBUB6YYHIWHVO.npy
+(310, 280, 280)
+Loaded patient-VDL6YJQYER3CXFOI.npy
+(321, 280, 280)
+Loaded patient-SZXTZ3LQ5MBFDFXR.npy
+(321, 227, 227)
+Loaded patient-XPJH44FSBRVL2WTV.npy
+(312, 259, 259)
+Loaded patient-CJNLJB43ZD3GIUN3.npy
+(339, 250, 250)
+
+19/20 [===========================>..] - ETA: 5:13 - loss: 1.2611 - acc: 1.0000 0
+Loaded patient-TITRFCZEPFJKM3NY.npy
+(285, 271, 271)
+Loaded patient-OPLQZBP3BOBS4LTY.npy
+(347, 235, 235)
+Loaded patient-WUG3VLS7FYXG35LH.npy
+(355, 254, 254)
+Loaded patient-SODFDRR2LWR7JDMN.npy
+(325, 250, 250)
+Loaded patient-NJB6RYF62XWGMSE2.npy
+(311, 235, 235)
+Loaded patient-XGUULATQ6C4ZP3QQ.npy
+(334, 280, 280)
+Loaded patient-NLXOSUXOZZHPFQQX.npy
+(354, 284, 284)
+Loaded patient-NCI33JITLERBTWXI.npy
+(381, 250, 250)
+Loaded patient-VJNCTEEYR7U4HIQU.npy
+(339, 235, 235)
+Loaded patient-ECJB3HH5WPIVOJJW.npy
+(295, 280, 280)
+Loaded patient-PAHYRPTLLQOU2FTB.npy
+(353, 279, 279)
+Loaded patient-IGIIMA3LABMNETMA.npy
+(411, 243, 243)
+Loaded patient-VKMYOQD5A64UFEED.npy
+(358, 231, 231)
+Loaded patient-HAKJSG5CHDGOBP6B.npy
+(309, 280, 280)
+Loaded patient-TNUEVMD3Z4YZFQDG.npy
+(345, 211, 211)
+Loaded patient-JWV4HKJ6OCKS26IR.npy
+(353, 266, 266)
+4
+Loaded patient-RYNCGNVRZH2LB7BN.npy
+(314, 213, 213)
+Loaded patient-PIKNNHQAI52EI62K.npy
+(324, 271, 271)
+Loaded patient-QBOBDYYD4R7WP37S.npy
+(346, 305, 305)
+Loaded patient-LUVMEPI5JWYL67RF.npy
+(309, 306, 306)
+Loaded patient-UNREF6O6622LZWNN.npy
+(343, 255, 255)
+Loaded patient-KACA7XHWXRM6A3W3.npy
+(336, 259, 259)
+Loaded patient-UMFGGCOJN6GDPQDV.npy
+(279, 250, 250)
+Loaded patient-BJI23MUAPMUMIED2.npy
+(343, 232, 232)
+Loaded patient-ZTGZBI2QX2JQFXIG.npy
+(319, 235, 235)
+Loaded patient-HGJTE6ROVCUFUC4S.npy
+(349, 231, 231)
+Loaded patient-IXBFNU6QB2SEZQ7N.npy
+(303, 293, 293)
+Loaded patient-SXF2FCCYEQLXMQO5.npy
+(368, 336, 336)
+Loaded patient-JWVEP6ZLYCOE5IAE.npy
+(301, 235, 235)
+Loaded patient-RKIZJRFZGCXD4EOL.npy
+(362, 235, 235)
+Loaded patient-LGFNFIWO2ZEQYK36.npy
+(335, 259, 259)
+Loaded patient-MKKOO7NDN26O6RLZ.npy
+(297, 235, 235)
+0
+Loaded patient-MEP2WAB3JNIXJTON.npy
+(352, 235, 235)
+Loaded patient-LIJBIVVBI6TJCT6Z.npy
+(329, 250, 250)
+Loaded patient-VRSBMSXUYCQ3NC5A.npy
+(315, 280, 280)
+Loaded patient-CCVIH3DIM3GF6SLG.npy
+(357, 475, 475)
+Loaded patient-XQBRGW3CYGNUMWHI.npy
+(327, 298, 298)
+Loaded patient-OLCBKEY2WKCWPHJW.npy
+(328, 250, 250)
+Loaded patient-NYR7NWGHIRZDCL66.npy
+(342, 235, 235)
+Loaded patient-DRS5DZGN5PVUZX4Y.npy
+(341, 280, 280)
+Loaded patient-MHL54TPCTOQJ2I4K.npy
+(309, 313, 313)
+Loaded patient-WWEFFBIMLZ3KLQVZ.npy
+(355, 235, 235)
+Loaded patient-JUBFRXRHLG46KY42.npy
+(302, 279, 279)
+Loaded patient-POYYSD3RSJFBKSLQ.npy
+(317, 235, 235)
+Loaded patient-EUNTRXNEDB7VDVIS.npy
+(354, 290, 290)
+Loaded patient-WIPV3EQ34O55HCUI.npy
+(358, 304, 304)
+Loaded patient-POSX6PS6LR34HENB.npy
+(332, 269, 269)
+Loaded patient-RKBSU42WA7AY22E7.npy
+(325, 287, 287)
+1
+Loaded patient-ADJYK6PUQSLE2GLN.npy
+(279, 200, 200)
+Loaded patient-EGIAP2GDM33PCW5A.npy
+(498, 235, 235)
+Loaded patient-WPA6WCTE24HGRIXH.npy
+(296, 250, 250)
+Loaded patient-CSCIKXOMNAIB3LUQ.npy
+(291, 250, 250)
+Loaded patient-MLHE2CESZAWQKZVP.npy
+(285, 241, 241)
+Loaded patient-VDO7JNWOEJ5KGJYJ.npy
+(308, 235, 235)
+Loaded patient-ASD2URNKFRN3ZSFL.npy
+(329, 280, 280)
+Loaded patient-RBC423N4RNB3UZ5P.npy
+(341, 250, 250)
+Loaded patient-KJAWMYSKQTYINTNC.npy
+(355, 240, 240)
+Loaded patient-QKBS566N24RMCV5H.npy
+(296, 280, 280)
+Loaded patient-QGEQ4IFSRIA3RBVB.npy
+(316, 346, 346)
+Loaded patient-SGFWUNFEYCKBMF65.npy
+(320, 256, 256)
+Loaded patient-CQARGKFSIVQWNCT6.npy
+(291, 200, 200)
+Loaded patient-MEQKZCRF5TR6MHLY.npy
+(299, 280, 280)
+Loaded patient-CSXRYWJCXJXAJRLP.npy
+(330, 306, 306)
+Loaded patient-JJMENP4QE4CSXSHV.npy
+(320, 250, 250)
+2
+Loaded patient-YEXJFFF2ZK44FYCP.npy
+(278, 280, 280)
+Loaded patient-LOR7YOK3PYHXSHCM.npy
+(358, 235, 235)
+Loaded patient-HXKDQ5I26Z2CRUQB.npy
+(362, 250, 250)
+Loaded patient-ABPO2BORDNF3OVL3.npy
+(325, 225, 225)
+Loaded patient-KQSTLFNPLNP5M43F.npy
+(348, 255, 255)
+Loaded patient-RTC5RXQHUXCSPNLN.npy
+(341, 250, 250)
+Loaded patient-OQNPNGEBR4D54PRA.npy
+(276, 250, 250)
+Loaded patient-BRFHLOM2KPUXSBMI.npy
+(301, 280, 280)
+Loaded patient-DDPQNEBC34XCOF2U.npy
+(281, 201, 201)
+Loaded patient-RXK7K2FPVPLFMID2.npy
+(369, 250, 250)
+Loaded patient-VOPMJMGIDQQ75E6G.npy
+(337, 281, 281)
+Loaded patient-DZTDN47H2IKSYN3Q.npy
+(347, 235, 235)
+Loaded patient-DVYKX4XMBHD57MZJ.npy
+(341, 280, 280)
+Loaded patient-IAX2O3NWENSSH4D5.npy
+(363, 247, 247)
+Loaded patient-FIBU2GYR72UU7E5M.npy
+(315, 219, 219)
+Loaded patient-AJHYOJIG3DZLSIKI.npy
+(317, 222, 222)
+3
+Loaded patient-ALOUY4SF3BQKXQCZ.npy
+(356, 307, 307)
+Loaded patient-TUX27MONFI7VC6M3.npy
+(321, 251, 251)
+Loaded patient-ICWMS7OCXZLUTUFT.npy
+(322, 280, 280)
+Loaded patient-FTAKNRFGOGVS632K.npy
+(326, 215, 215)
+Loaded patient-OCP7EUZJEB7JUL65.npy
+(392, 252, 252)
+Loaded patient-ZIDRKXRWTVGHW7ZD.npy
+(341, 280, 280)
+Loaded patient-VVGO45TQNOASBLZM.npy
+(490, 235, 235)
+Loaded patient-JQVBM4FUT34IUSUB.npy
+(335, 200, 200)
+Loaded patient-TZES7PMHXV4XVJBV.npy
+(397, 255, 255)
+Loaded patient-ESLHGQCGYB7J4DX3.npy
+(319, 250, 250)
+Loaded patient-ZCIMXZ73NFNRDH46.npy
+(322, 250, 250)
+Loaded patient-NHKUCEIIHLJQ25VM.npy
+(280, 280, 280)
+Loaded patient-YSTBBUD35YZBOT2Z.npy
+(356, 287, 287)
+Loaded patient-MSXY2JKZXPEBXR72.npy
+(369, 273, 273)
+Loaded patient-AOTGHQ6S5AD7LOBO.npy
+(296, 280, 280)
+Loaded patient-CWWKNDYG2UERXH7X.npy
+(337, 257, 257)
+4
+Loaded patient-RYNCGNVRZH2LB7BN.npy
+(314, 213, 213)
+Loaded patient-PIKNNHQAI52EI62K.npy
+(324, 271, 271)
+Loaded patient-QBOBDYYD4R7WP37S.npy
+(346, 305, 305)
+Loaded patient-LUVMEPI5JWYL67RF.npy
+(309, 306, 306)
+Loaded patient-UNREF6O6622LZWNN.npy
+(343, 255, 255)
+Loaded patient-KACA7XHWXRM6A3W3.npy
+(336, 259, 259)
+Loaded patient-UMFGGCOJN6GDPQDV.npy
+(279, 250, 250)
+Loaded patient-BJI23MUAPMUMIED2.npy
+(343, 232, 232)
+Loaded patient-ZTGZBI2QX2JQFXIG.npy
+(319, 235, 235)
+Loaded patient-HGJTE6ROVCUFUC4S.npy
+(349, 231, 231)
+Loaded patient-IXBFNU6QB2SEZQ7N.npy
+(303, 293, 293)
+Loaded patient-SXF2FCCYEQLXMQO5.npy
+(368, 336, 336)
+Loaded patient-JWVEP6ZLYCOE5IAE.npy
+(301, 235, 235)
+Loaded patient-RKIZJRFZGCXD4EOL.npy
+(362, 235, 235)
+Loaded patient-LGFNFIWO2ZEQYK36.npy
+(335, 259, 259)
+Loaded patient-MKKOO7NDN26O6RLZ.npy
+(297, 235, 235)
+
+20/20 [==============================] - 6361s 318s/step - loss: 1.2607 - acc: 1.0000 - val_loss: 2.6037 - val_acc: 0.5500
+
+Epoch 00005: saving model to tmp/weights.hdf5
+Epoch 6/10
+1
+Loaded patient-GFRJ7SPGIEJVXVRS.npy
+(879, 360, 360)
+Loaded patient-RFSGSDQ5MWIVM6QV.npy
+(300, 235, 235)
+Loaded patient-OLIQUZ7ERFP4DJVD.npy
+(325, 280, 280)
+Loaded patient-MYTHDP7XSELNJUBQ.npy
+(313, 249, 249)
+Loaded patient-HAYSFX75ACG77ZJE.npy
+(311, 235, 235)
+Loaded patient-BLPHSKRODCJLHZZS.npy
+(333, 233, 233)
+Loaded patient-QJFMNVKKVZXKBROO.npy
+(352, 274, 274)
+Loaded patient-DPSG75LCBZVBTRPO.npy
+(302, 250, 250)
+Loaded patient-ZAJH6DQQBAECJ7AX.npy
+(355, 235, 235)
+Loaded patient-OSO6K4FGNA57I3VJ.npy
+(314, 217, 217)
+Loaded patient-ZASCC2YE27A6IT45.npy
+(342, 258, 258)
+Loaded patient-HLXOSVDF27JWNCMJ.npy
+(323, 273, 273)
+Loaded patient-BSBXPIGXEUV3WWOZ.npy
+(292, 250, 250)
+Loaded patient-TJAPUMPEDA32J5JW.npy
+(374, 287, 287)
+Loaded patient-EPSAH2BCBGV7WQHM.npy
+(378, 235, 235)
+Loaded patient-UOZJSIPCXRA7UJF2.npy
+(317, 250, 250)
+
+ 1/20 [>.............................] - ETA: 1:39:08 - loss: 1.2522 - acc: 1.00002
+Loaded patient-WDIYHNMBALZ4ZP2A.npy
+(286, 213, 213)
+Loaded patient-UGXVSPJLHJL6AHSW.npy
+(345, 220, 220)
+Loaded patient-JWKB7SHIBYWSEVMC.npy
+(295, 325, 325)
+Loaded patient-IAUKV5R644JZFD55.npy
+(292, 224, 224)
+Loaded patient-CRKZOVFXYNXRGJYR.npy
+(337, 281, 281)
+Loaded patient-PMMV7MLZUWJTIMLR.npy
+(286, 250, 250)
+Loaded patient-LQMW3GK5JQEVVFBK.npy
+(339, 235, 235)
+Loaded patient-IAR66U7QVOBXOFQE.npy
+(341, 280, 280)
+Loaded patient-FLSUE7ZIXI6HSJWN.npy
+(318, 280, 280)
+Loaded patient-LQG4BRZPSCMR5XAN.npy
+(349, 235, 235)
+Loaded patient-XJVLT6YE7FKB3T3B.npy
+(369, 250, 250)
+Loaded patient-PNPGGIFOXWJJQ22P.npy
+(378, 250, 250)
+Loaded patient-ZMP6NER3I4ERS2JE.npy
+(347, 235, 235)
+Loaded patient-GBXENHYLRVZ5DTHI.npy
+(329, 236, 236)
+Loaded patient-JCWGEJIJO2LDRY2U.npy
+(339, 305, 305)
+Loaded patient-YRC3D4LSQNDZCXDA.npy
+(335, 261, 261)
+
+ 2/20 [==>...........................] - ETA: 1:33:53 - loss: 1.2509 - acc: 1.00003
+Loaded patient-RODVAIJ6A6P4D54Y.npy
+(374, 283, 283)
+Loaded patient-SVYZISKLZLQKBPX6.npy
+(317, 252, 252)
+Loaded patient-OUM3NFGU5U3TCBBK.npy
+(320, 205, 205)
+Loaded patient-LHMGXWC6J7DRD3CP.npy
+(441, 349, 349)
+Loaded patient-TFXM6VTRLJH2DS7G.npy
+(377, 253, 253)
+Loaded patient-NFG67H47EUPD5URG.npy
+(322, 213, 213)
+Loaded patient-YNLMIJ5S24AYYZXN.npy
+(309, 229, 229)
+Loaded patient-NWO33W453F6ZJ4BU.npy
+(325, 258, 258)
+Loaded patient-COFP4UFH6MWZA7HI.npy
+(313, 251, 251)
+Loaded patient-SQD3UDNZH2Q3ET4V.npy
+(335, 250, 250)
+Loaded patient-BMTJZEMYGJCVHX7N.npy
+(329, 252, 252)
+Loaded patient-RKFD4L7QSBXPHFJU.npy
+(341, 250, 250)
+Loaded patient-NGQAJ2GBHZE2DN5C.npy
+(324, 280, 280)
+Loaded patient-IIAFOQ3HGHU4A6UT.npy
+(343, 259, 259)
+Loaded patient-LZU7NSTDRFX77U7G.npy
+(472, 239, 239)
+Loaded patient-VSJRIEOFJCVJIO2C.npy
+(366, 264, 264)
+
+ 3/20 [===>..........................] - ETA: 1:28:36 - loss: 1.2506 - acc: 1.00004
+Loaded patient-LVOHLK3FOHWE66BP.npy
+(369, 229, 229)
+Loaded patient-DRT3F4ITWPCCBB6T.npy
+(330, 235, 235)
+Loaded patient-OCD6VASBJF4SNZ4U.npy
+(324, 220, 220)
+Loaded patient-EYEDMZ3Z6OIKPERL.npy
+(329, 316, 316)
+Loaded patient-HLQKXLS4OQ2BGQ5C.npy
+(318, 250, 250)
+Loaded patient-JMWZRLKLB5DSSXE3.npy
+(317, 235, 235)
+Loaded patient-UMRXCXFIT4YDD7RQ.npy
+(366, 235, 235)
+Loaded patient-THKULF2KHMNVMTUR.npy
+(457, 235, 235)
+Loaded patient-IPFO2JH7ZZYTQHH2.npy
+(309, 226, 226)
+Loaded patient-FYSSUUSC5XYNLUQW.npy
+(317, 227, 227)
+Loaded patient-RLJSRNLTRUQAVT3L.npy
+(307, 235, 235)
+Loaded patient-HXLMZWH3SFX3SPAN.npy
+(352, 250, 250)
+Loaded patient-XYOD23KJFH7NZXXK.npy
+(316, 250, 250)
+Loaded patient-XXEE333ZVHOJTRJJ.npy
+(325, 253, 253)
+Loaded patient-BHA4CDH32NPSOKTZ.npy
+(304, 228, 228)
+Loaded patient-MRYGCR7462Z7IN2L.npy
+(282, 250, 250)
+
+ 4/20 [=====>........................] - ETA: 1:23:21 - loss: 1.2500 - acc: 1.00005
+Loaded patient-JGNEVHX7BEKLBQJY.npy
+(346, 318, 318)
+Loaded patient-OOAKLUZ2A4XYXC4X.npy
+(309, 211, 211)
+Loaded patient-MZAZFTEIU4NLYXDF.npy
+(343, 250, 250)
+Loaded patient-NIED5UTOZ2JOFCWT.npy
+(318, 280, 280)
+Loaded patient-WIJONRZUXV2SJOMN.npy
+(330, 235, 235)
+Loaded patient-HXBUUFVQBNISYKNU.npy
+(332, 280, 280)
+Loaded patient-BTLLL3I67PYRN7R4.npy
+(341, 280, 280)
+Loaded patient-SWSY42N45J3YWV5I.npy
+(312, 250, 250)
+Loaded patient-ADKFJYDHLE7M3XE6.npy
+(302, 250, 250)
+Loaded patient-MOAADIHO5RHQJEK3.npy
+(335, 250, 250)
+Loaded patient-SBLQEZAZEXCC76C6.npy
+(365, 327, 327)
+Loaded patient-JLHG7VESTU3GH2KX.npy
+(345, 245, 245)
+Loaded patient-ZFMUMZVL6HFQCKSX.npy
+(333, 266, 266)
+Loaded patient-WZPADD37RLXRX3IG.npy
+(337, 255, 255)
+Loaded patient-WHCQX5APWQZHMM3Q.npy
+(349, 302, 302)
+Loaded patient-FYXMPCGHTGJXJBSD.npy
+(329, 234, 234)
+
+ 5/20 [======>.......................] - ETA: 1:18:10 - loss: 1.2495 - acc: 1.00006
+Loaded patient-GKDV3FW4M56I3IKV.npy
+(332, 279, 279)
+Loaded patient-WCSSH2NHDNNZIVML.npy
+(300, 250, 250)
+Loaded patient-VKFW6CO5FV2P3PUE.npy
+(331, 235, 235)
+Loaded patient-EQD7NRTYLRGYENOM.npy
+(307, 231, 231)
+Loaded patient-JSV6UEFKJAVM6OGO.npy
+(319, 235, 235)
+Loaded patient-UAFTPLA47GA7WS27.npy
+(315, 236, 236)
+Loaded patient-RHWTMTHC7HIWZ2YZ.npy
+(350, 409, 409)
+Loaded patient-XVPBCFNYTDI4HHW2.npy
+(323, 214, 214)
+Loaded patient-ZNPFNNZ2DRELKNQ3.npy
+(340, 244, 244)
+Loaded patient-IJBSBL7IRLNRVXUC.npy
+(317, 235, 235)
+Loaded patient-FKHXWQEPTPIWXHBR.npy
+(356, 250, 250)
+Loaded patient-UZFAM45KRI3C7MGB.npy
+(325, 263, 263)
+Loaded patient-ZCMTUATV42LAXACO.npy
+(309, 293, 293)
+Loaded patient-KNKVPM2UV4UFFC5R.npy
+(328, 250, 250)
+Loaded patient-IKLKZYXDYTCCYUAZ.npy
+(349, 279, 279)
+Loaded patient-SEV2GAEFNJBLX3ZJ.npy
+(341, 280, 280)
+
+ 6/20 [========>.....................] - ETA: 1:12:58 - loss: 1.2489 - acc: 1.00007
+Loaded patient-JAS2TYJWKQL65CQT.npy
+(367, 235, 235)
+Loaded patient-EKKECBQEXHI5ME2T.npy
+(335, 213, 213)
+Loaded patient-PCJ6DNFF7XHMUSWE.npy
+(307, 266, 266)
+Loaded patient-AGTDPQEU54ODFAUD.npy
+(333, 464, 464)
+Loaded patient-LCGP6HURGG2XVJ5B.npy
+(327, 235, 235)
+Loaded patient-GET5PY3CH6RJV3UW.npy
+(364, 250, 250)
+Loaded patient-NXSJBZWIQX5RKNO3.npy
+(288, 280, 280)
+Loaded patient-GBA7XJ5E7ITWZW7K.npy
+(341, 280, 280)
+Loaded patient-LRCPYDPZFFC6HR6K.npy
+(306, 250, 250)
+Loaded patient-NHXCOHZ4HH53NLQ6.npy
+(310, 213, 213)
+Loaded patient-SZKV26SJOHXJBPVX.npy
+(315, 269, 269)
+Loaded patient-BIASJO43N3A7Z63W.npy
+(360, 275, 275)
+Loaded patient-GXR5YMJB3PZQNLAC.npy
+(349, 225, 225)
+Loaded patient-VZHXKDEYF7EK4RRP.npy
+(329, 280, 280)
+Loaded patient-IETROE62UNT5QVWS.npy
+(293, 363, 363)
+Loaded patient-ZOROHVT5JZVIBEEX.npy
+(341, 280, 280)
+
+ 7/20 [=========>....................] - ETA: 1:07:51 - loss: 1.2487 - acc: 1.00008
+Loaded patient-BSKAYXMTSEXR6U5K.npy
+(325, 235, 235)
+Loaded patient-RMID4XEKTVEYCSGK.npy
+(354, 243, 243)
+Loaded patient-EURBSIKPYU66GBRW.npy
+(365, 331, 331)
+Loaded patient-NLV36DRLRZY5AKIJ.npy
+(367, 241, 241)
+Loaded patient-JNTL5ESEIA5FWMUQ.npy
+(325, 250, 250)
+Loaded patient-FUVL4PLSUHRCEAHC.npy
+(357, 254, 254)
+Loaded patient-ANCCICBPHIDJ5PJ4.npy
+(383, 259, 259)
+Loaded patient-WHDZVHCOCOTIJLXV.npy
+(349, 235, 235)
+Loaded patient-ENBHS75LQ7FWO5CP.npy
+(374, 263, 263)
+Loaded patient-AUGXT5PI4VY62M6L.npy
+(319, 237, 237)
+Loaded patient-RZVMIO4YX2JHAUQ5.npy
+(327, 220, 220)
+Loaded patient-RRZGAIOEIS6WPXDT.npy
+(367, 269, 269)
+Loaded patient-DSIFGAA3BMQKFE7A.npy
+(306, 274, 274)
+Loaded patient-OLYVZJAPCZJQWGIE.npy
+(321, 268, 268)
+Loaded patient-GCBJDIT55TRGHZIR.npy
+(355, 235, 235)
+Loaded patient-JNLCZIQGTGTFNEKK.npy
+(324, 280, 280)
+
+ 8/20 [===========>..................] - ETA: 1:02:44 - loss: 1.2481 - acc: 1.00009
+Loaded patient-PBR2STY62FZ3MQHZ.npy
+(302, 301, 301)
+Loaded patient-FFVM6VCPRIKK7453.npy
+(316, 235, 235)
+Loaded patient-BVYSR54MKT5SPMSU.npy
+(317, 235, 235)
+Loaded patient-TXOGS5CQ6RZMSV3W.npy
+(327, 235, 235)
+Loaded patient-OXRK4I6CTXCENAZV.npy
+(344, 444, 444)
+Loaded patient-OMR7KPUBB2T7X3QQ.npy
+(349, 235, 235)
+Loaded patient-MTWW42SPCGLHEDKY.npy
+(355, 223, 223)
+Loaded patient-NXDFBWPXYWHEIO2O.npy
+(322, 219, 219)
+Loaded patient-NXLFQLVZRLUEK2UF.npy
+(343, 235, 235)
+Loaded patient-UZQJZEDGVTWFY23U.npy
+(385, 260, 260)
+Loaded patient-ZUEK5YSS7CITVWIP.npy
+(361, 251, 251)
+Loaded patient-YBMFJQLVZENVF6MA.npy
+(327, 304, 304)
+Loaded patient-KGK66IWDH2EX5XNP.npy
+(283, 261, 261)
+Loaded patient-HVPI7QQSXPDHSFME.npy
+(319, 250, 250)
+Loaded patient-SRKOPGCEG62ZJTT2.npy
+(362, 249, 249)
+Loaded patient-LYUO2OPTNYUBCHT2.npy
+(328, 220, 220)
+
+ 9/20 [============>.................] - ETA: 57:32 - loss: 1.2478 - acc: 1.0000  10
+Loaded patient-NWRLBSNF3RVU3MAC.npy
+(367, 246, 246)
+Loaded patient-ZVRO2HKWM7JSS6IA.npy
+(359, 269, 269)
+Loaded patient-CMELUGEVB3ESBIAK.npy
+(356, 245, 245)
+Loaded patient-TEHE4SMNJTXDNW2O.npy
+(341, 280, 280)
+Loaded patient-ATY6WNE6JVYJ2RLN.npy
+(351, 281, 281)
+Loaded patient-GIPUIOSNW2C34HIS.npy
+(306, 222, 222)
+Loaded patient-SSJQF5OU3VSC3HAD.npy
+(352, 250, 250)
+Loaded patient-NEYLUIYPCL6O74O6.npy
+(291, 301, 301)
+Loaded patient-PYZP7WQ4QRH46EFS.npy
+(351, 250, 250)
+Loaded patient-ZCTE57VMPCGWDG75.npy
+(296, 269, 269)
+Loaded patient-XDNEWPTKFLCWWUSV.npy
+(387, 275, 275)
+Loaded patient-JUM3FRXBYLTATYYH.npy
+(341, 250, 250)
+Loaded patient-PYRDN2YA3MWCWKCC.npy
+(315, 250, 250)
+Loaded patient-SZY3J4UTKSCFM2H4.npy
+(370, 215, 215)
+Loaded patient-EGCV7CJ6LF2CACQM.npy
+(298, 250, 250)
+Loaded patient-VFHSASVT4EXZWAOS.npy
+(326, 280, 280)
+
+10/20 [==============>...............] - ETA: 52:20 - loss: 1.2473 - acc: 1.000011
+Loaded patient-GHVG2CNNRZ65UBEU.npy
+(330, 273, 273)
+Loaded patient-KRWJSE7TVM2QLJI7.npy
+(308, 250, 250)
+Loaded patient-BRSZTKDWTB2X5P3W.npy
+(352, 273, 273)
+Loaded patient-RWJZNVFII5INU6Z5.npy
+(367, 246, 246)
+Loaded patient-BNZ2UKOA43BESZGP.npy
+(301, 235, 235)
+Loaded patient-JJEB6MFMSB6UAKHU.npy
+(369, 262, 262)
+Loaded patient-NJZN2TNXUUFRZ3GZ.npy
+(387, 235, 235)
+Loaded patient-RWKA32WBSVFB4MQF.npy
+(327, 235, 235)
+Loaded patient-DENODP22U2Q7E4LM.npy
+(341, 280, 280)
+Loaded patient-AGTRMFUZM2MQUAB4.npy
+(350, 263, 263)
+Loaded patient-RCDAHVLV6QUTDFVD.npy
+(322, 215, 215)
+Loaded patient-BHYZMLL7GBZZLACW.npy
+(311, 302, 302)
+Loaded patient-AFEB6XW5UCQTSYJL.npy
+(322, 250, 250)
+Loaded patient-MJFHYCVEV2GTJD3N.npy
+(341, 265, 265)
+Loaded patient-QPKEZOB3X6B6HMCR.npy
+(303, 341, 341)
+Loaded patient-ARZ7H7BSITHOSSMG.npy
+(327, 233, 233)
+
+11/20 [===============>..............] - ETA: 47:08 - loss: 1.2470 - acc: 1.000012
+Loaded patient-IIOOPK6T2ZWDZMU3.npy
+(319, 250, 250)
+Loaded patient-DNO6CS3YNGFMUWXL.npy
+(284, 250, 250)
+Loaded patient-VUTDS6OC2VUSNQMK.npy
+(348, 280, 280)
+Loaded patient-ADIO4U6QJTXF3YQH.npy
+(350, 230, 230)
+Loaded patient-TNXMNBGRZHPIMJJI.npy
+(371, 272, 272)
+Loaded patient-OAYNHJ5ZLLVYHXCA.npy
+(367, 246, 246)
+Loaded patient-OJC5WXUS4IEGGOYC.npy
+(339, 235, 235)
+Loaded patient-OTIP25YORHBKJPZM.npy
+(353, 269, 269)
+Loaded patient-PQJEIXKIJMZTBZ74.npy
+(316, 261, 261)
+Loaded patient-KPC2RVJBDHQLC5EM.npy
+(302, 250, 250)
+Loaded patient-BWDRAF5ZOQPFOOL7.npy
+(308, 255, 255)
+Loaded patient-DXLPP6QTNOHQRHVG.npy
+(320, 270, 270)
+Loaded patient-SBRRR2SATWOOR5D6.npy
+(476, 243, 243)
+Loaded patient-ANLMZN6NS4S3TCCF.npy
+(293, 250, 250)
+Loaded patient-PVMXD3RZSHEQTYW3.npy
+(311, 280, 280)
+Loaded patient-IDUHFQWVS4WKXPC5.npy
+(340, 250, 250)
+
+12/20 [=================>............] - ETA: 41:55 - loss: 1.2464 - acc: 1.000013
+Loaded patient-ZUR2IKTUC2KQVB2X.npy
+(259, 267, 267)
+Loaded patient-ZANU4GPPZNIFRN6W.npy
+(329, 209, 209)
+Loaded patient-YYNFU45K2WIMXWE4.npy
+(303, 252, 252)
+Loaded patient-WPNYHBQRGJ4NHU3C.npy
+(335, 263, 263)
+Loaded patient-BMFSUHVBPJ7RY56P.npy
+(331, 214, 214)
+Loaded patient-UOSAPEMY76KAGOUR.npy
+(336, 297, 297)
+Loaded patient-NJDN23E34MZVQU66.npy
+(298, 250, 250)
+Loaded patient-UZUCCRJIMUZMQSQE.npy
+(335, 280, 280)
+Loaded patient-TFCLOHN4ROEYF6QY.npy
+(371, 203, 203)
+Loaded patient-CGQFS5PB627OWLL7.npy
+(327, 229, 229)
+Loaded patient-SKBIT57CPAKAGQVB.npy
+(341, 364, 364)
+Loaded patient-QTMN6M3FY3YSJ6ZP.npy
+(276, 279, 279)
+Loaded patient-XKHDNXXCRND47JLF.npy
+(320, 359, 359)
+Loaded patient-UUKSYXBYQQZATBP5.npy
+(349, 250, 250)
+Loaded patient-QLYPHVVU3RG43OZO.npy
+(336, 245, 245)
+Loaded patient-PMEECXFHBLN6KHO7.npy
+(353, 271, 271)
+
+13/20 [==================>...........] - ETA: 36:41 - loss: 1.2459 - acc: 1.000014
+Loaded patient-VKDRQPXRMRRBAHW3.npy
+(348, 229, 229)
+Loaded patient-ZQYME7XWFWQXXOXA.npy
+(314, 500, 500)
+Loaded patient-CFC7SE7TGP55RMUB.npy
+(330, 252, 252)
+Loaded patient-EWYGH3OSPLJI27UF.npy
+(329, 244, 244)
+Loaded patient-TVCP433TKOVBCQTW.npy
+(347, 268, 268)
+Loaded patient-NUWPDW6HBRTLEYWD.npy
+(357, 225, 225)
+Loaded patient-VGF4YIHDAARLWS7A.npy
+(311, 250, 250)
+Loaded patient-OTIGVYUMMBXDNSHN.npy
+(377, 281, 281)
+Loaded patient-RATVCRHG4ZHLCOV3.npy
+(325, 280, 280)
+Loaded patient-VBPF3M5P5YIFVZ4L.npy
+(326, 250, 250)
+Loaded patient-DXOUKNW7AXCZFUIL.npy
+(350, 264, 264)
+Loaded patient-GONORRCZWHDZV3M5.npy
+(364, 250, 250)
+Loaded patient-UBDRB3DMSB6TJ76N.npy
+(372, 250, 250)
+Loaded patient-SUOA7XPFTTR2O5NQ.npy
+(365, 250, 250)
+Loaded patient-MSZB67BPZ32ILNLK.npy
+(375, 251, 251)
+Loaded patient-KEYZSDHDH2DINCKO.npy
+(285, 280, 280)
+
+14/20 [====================>.........] - ETA: 31:34 - loss: 1.2455 - acc: 1.000015
+Loaded patient-YGJSUAFCVJ52LIRD.npy
+(340, 268, 268)
+Loaded patient-XZUUUC426GUXSCGJ.npy
+(333, 258, 258)
+Loaded patient-TVY4XBCLXJBKK72S.npy
+(302, 289, 289)
+Loaded patient-ZSXFDYQ4ST4Z6SRF.npy
+(309, 211, 211)
+Loaded patient-VZOXMEUK7BN7PQH3.npy
+(302, 280, 280)
+Loaded patient-BNAGD36PDWFHIEOO.npy
+(371, 255, 255)
+Loaded patient-JOJU5LPDDBBP6LYG.npy
+(321, 280, 280)
+Loaded patient-PIORRASXKMO7LEXJ.npy
+(349, 250, 250)
+Loaded patient-ILNTKMBVTXNXURGV.npy
+(330, 231, 231)
+Loaded patient-OAC7JXARELEVVEQW.npy
+(346, 348, 348)
+Loaded patient-RKXO5JUDKMYRUTN5.npy
+(305, 221, 221)
+Loaded patient-ZTFA5BJQHNJIRH4T.npy
+(341, 280, 280)
+Loaded patient-XJLRFX244JGJZUUF.npy
+(351, 289, 289)
+Loaded patient-SUVCYHBWWKNAVUGQ.npy
+(305, 235, 235)
+Loaded patient-ZHLGEIY4UAEIPL33.npy
+(318, 237, 237)
+Loaded patient-EOI25OVG7DHZ6KH2.npy
+(296, 286, 286)
+
+15/20 [=====================>........] - ETA: 26:23 - loss: 1.2450 - acc: 1.000016
+Loaded patient-ENPUI7ZVHUGIXYN7.npy
+(300, 235, 235)
+Loaded patient-XHX3PCDOWEWDB34X.npy
+(315, 280, 280)
+Loaded patient-DJGKDC32BE5NKELX.npy
+(325, 220, 220)
+Loaded patient-XQLUVUDY23UZMYW3.npy
+(303, 287, 287)
+Loaded patient-ASI5JI7DJLB3RKFS.npy
+(336, 250, 250)
+Loaded patient-HIA2VPHI6ABMCQTV.npy
+(333, 261, 261)
+Loaded patient-FCYGZ75WMW6L4PJM.npy
+(361, 262, 262)
+Loaded patient-IWYDKUPY2NSYJGLF.npy
+(356, 235, 235)
+Loaded patient-CRH6GLC3CTD2WACN.npy
+(327, 285, 285)
+Loaded patient-CYIJD3WQ3J3Q67LF.npy
+(351, 280, 280)
+Loaded patient-PCNMFAZL5VWWK7RP.npy
+(349, 258, 258)
+Loaded patient-XJJ3IXEOPNFXBGP7.npy
+(355, 235, 235)
+Loaded patient-EYYSOUW6PR2WMBZS.npy
+(344, 235, 235)
+Loaded patient-LOGIP43ZSLSUA5SZ.npy
+(325, 277, 277)
+Loaded patient-AHNGBFJSTEBO4BJW.npy
+(341, 230, 230)
+Loaded patient-TFLSOP3FLUBQDLL2.npy
+(321, 235, 235)
