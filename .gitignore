@@ -5,7 +5,11 @@ __pycache__/
 
 RI Hospital ELVO Data/
 ELVOS/
+logs/
+tmp/
 data*/
 *.npy
 
 preprocessing.log
+nohup.out
+*.zip
