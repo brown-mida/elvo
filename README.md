@@ -39,5 +39,3 @@ Type in `jupyter notebook` into the console to start the notebook.
 Mary Dong
 
 Andrew Kim
-
-Matt Stib
