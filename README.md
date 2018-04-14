@@ -36,4 +36,6 @@ Type in `jupyter notebook` into the console to start the notebook.
 * Create a contribution guide
 * Make sure that the data is anonymized.
 
+## Contributors
 
+* Luke Zhu
