@@ -35,7 +35,3 @@ Type in `jupyter notebook` into the console to start the notebook.
 * Write better instructions for how to get started with the code
 * Create a contribution guide
 * Make sure that the data is anonymized.
-
-## Contributors
-
-* Luke Zhu
