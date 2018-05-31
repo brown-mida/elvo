@@ -1,22 +1,14 @@
 import logging
-import os
 import time
 
-import numpy as np
-import pandas as pd
-import scipy.ndimage
-from keras.callbacks import TensorBoard, ModelCheckpoint
+from keras.callbacks import ModelCheckpoint
 from keras.optimizers import Adam
 
-from preprocessors import preprocessor, parsers, transforms
-
-from generators.resnet_generator import ResnetGenerator
-from generators.cad_generator import CadGenerator
 from generators.augmented_generator import AugmentedGenerator
-
-from models.resnet3d import Resnet3DBuilder
-from models.autoencoder import Cad3dBuilder
+from generators.cad_generator import CadGenerator
 from models.alexnet2d import AlexNet2DBuilder
+from models.autoencoder import Cad3dBuilder
+from models.resnet3d import Resnet3DBuilder
 
 
 def train_resnet():
@@ -111,7 +103,7 @@ def train_cad():
                                   validation=True)
 
     # Build and run model
-    model = Cad3dBuilder.build((200, 200, 200,  1),
+    model = Cad3dBuilder.build((200, 200, 200, 1),
                                filters=(8, 8, 8))
     model.compile(optimizer='adam',
                   loss='mse',

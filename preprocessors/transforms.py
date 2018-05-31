@@ -2,11 +2,8 @@
 # https://www.kaggle.com/gzuidhof/full-preprocessing-tutorial/notebook
 
 import numpy as np
-import scipy.misc
-import scipy.ndimage
-import scipy.stats
-from scipy.ndimage.interpolation import rotate, zoom, shift
 from scipy.ndimage.filters import gaussian_filter
+from scipy.ndimage.interpolation import rotate, zoom, shift
 
 
 def get_pixels_hu(slices):
