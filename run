@@ -1,0 +1,9 @@
+logfile=$1
+
+if [ "$#" -ne 1 ]; then
+    echo "Specify a filename. e.g. ./run test.txt"
+    exit 1
+fi
+
+nohup python -u main.py > results/$logfile &
+

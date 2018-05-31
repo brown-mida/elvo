@@ -1,0 +1,2848 @@
+/home/lukezhu/anaconda3/lib/python3.6/site-packages/h5py/__init__.py:36: FutureWarning: Conversion of the second argument of issubdtype from `float` to `np.floating` is deprecated. In future, it will be treated as `np.float64 == np.dtype(float).type`.
+  from ._conv import register_converters as _register_converters
+Using TensorFlow backend.
+Model has been compiled.
+Epoch 1/10
+0
+Loaded patient-KPC2RVJBDHQLC5EM.npy
+Loaded patient-HAYSFX75ACG77ZJE.npy
+2018-04-02 00:37:39.913617: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+1
+Loaded patient-RCDAHVLV6QUTDFVD.npy
+Loaded patient-KRWJSE7TVM2QLJI7.npy
+
+  1/132 [..............................] - ETA: 8:47:36 - loss: 1.2439 - mean_squared_error: 1.24202
+Loaded patient-PMEECXFHBLN6KHO7.npy
+Loaded patient-MYTHDP7XSELNJUBQ.npy
+
+  2/132 [..............................] - ETA: 8:42:02 - loss: 1.2428 - mean_squared_error: 1.24183
+Loaded patient-XPBRBUB6YYHIWHVO.npy
+Loaded patient-JCWGEJIJO2LDRY2U.npy
+
+  3/132 [..............................] - ETA: 8:37:35 - loss: 1.2413 - mean_squared_error: 1.24004
+Loaded patient-SWSY42N45J3YWV5I.npy
+Loaded patient-UZFAM45KRI3C7MGB.npy
+
+  4/132 [..............................] - ETA: 8:32:46 - loss: 1.2404 - mean_squared_error: 1.23825
+Loaded patient-TNUEVMD3Z4YZFQDG.npy
+Loaded patient-BTLLL3I67PYRN7R4.npy
+
+  5/132 [>.............................] - ETA: 8:28:47 - loss: 1.2398 - mean_squared_error: 1.23836
+Loaded patient-NJNFVZMSGBGM6H5Y.npy
+Loaded patient-ENB4V4BPR4HRCRXW.npy
+
+  6/132 [>.............................] - ETA: 8:24:29 - loss: 1.2386 - mean_squared_error: 1.23727
+Loaded patient-PBR2STY62FZ3MQHZ.npy
+Loaded patient-DXOUKNW7AXCZFUIL.npy
+
+  7/132 [>.............................] - ETA: 8:20:28 - loss: 1.2383 - mean_squared_error: 1.23708
+Loaded patient-WPNYHBQRGJ4NHU3C.npy
+Loaded patient-IGIIMA3LABMNETMA.npy
+
+  8/132 [>.............................] - ETA: 8:16:19 - loss: 1.2371 - mean_squared_error: 1.23579
+Loaded patient-OTIP25YORHBKJPZM.npy
+Loaded patient-YNLMIJ5S24AYYZXN.npy
+
+  9/132 [=>............................] - ETA: 8:12:13 - loss: 1.2364 - mean_squared_error: 1.235110
+Loaded patient-ZAJH6DQQBAECJ7AX.npy
+Loaded patient-LOGIP43ZSLSUA5SZ.npy
+
+ 10/132 [=>............................] - ETA: 8:08:01 - loss: 1.2350 - mean_squared_error: 1.233711
+Loaded patient-RKXO5JUDKMYRUTN5.npy
+Loaded patient-NWO33W453F6ZJ4BU.npy
+
+ 11/132 [=>............................] - ETA: 8:03:50 - loss: 1.2329 - mean_squared_error: 1.231412
+Loaded patient-XDNEWPTKFLCWWUSV.npy
+Loaded patient-JUOV5YWN6IS7OXIJ.npy
+
+ 12/132 [=>............................] - ETA: 7:59:47 - loss: 1.2316 - mean_squared_error: 1.230213
+Loaded patient-GFRJ7SPGIEJVXVRS.npy
+Loaded patient-HBAZOCWOGBJYCEAZ.npy
+
+ 13/132 [=>............................] - ETA: 7:55:48 - loss: 1.2301 - mean_squared_error: 1.228714
+Loaded patient-JLHG7VESTU3GH2KX.npy
+Loaded patient-JQWIIAADGKE2YMJS.npy
+
+ 14/132 [==>...........................] - ETA: 7:51:45 - loss: 1.2274 - mean_squared_error: 1.226015
+Loaded patient-HSKRXAPZ7WNBT2TI.npy
+Loaded patient-BMFSUHVBPJ7RY56P.npy
+
+ 15/132 [==>...........................] - ETA: 7:47:39 - loss: 1.2258 - mean_squared_error: 1.224316
+Loaded patient-TJAPUMPEDA32J5JW.npy
+Loaded patient-TNXMNBGRZHPIMJJI.npy
+
+ 16/132 [==>...........................] - ETA: 7:43:31 - loss: 1.2235 - mean_squared_error: 1.222117
+Loaded patient-LQG4BRZPSCMR5XAN.npy
+Loaded patient-IAR66U7QVOBXOFQE.npy
+
+ 17/132 [==>...........................] - ETA: 7:39:36 - loss: 1.2206 - mean_squared_error: 1.219218
+Loaded patient-SRKOPGCEG62ZJTT2.npy
+Loaded patient-NLXOSUXOZZHPFQQX.npy
+
+ 18/132 [===>..........................] - ETA: 7:35:38 - loss: 1.2175 - mean_squared_error: 1.216219
+Loaded patient-YRC3D4LSQNDZCXDA.npy
+Loaded patient-RKFD4L7QSBXPHFJU.npy
+
+ 19/132 [===>..........................] - ETA: 7:31:34 - loss: 1.2133 - mean_squared_error: 1.211920
+Loaded patient-CGQFS5PB627OWLL7.npy
+Loaded patient-GHVG2CNNRZ65UBEU.npy
+
+ 20/132 [===>..........................] - ETA: 7:27:28 - loss: 1.2104 - mean_squared_error: 1.209021
+Loaded patient-ANLMZN6NS4S3TCCF.npy
+Loaded patient-CJNLJB43ZD3GIUN3.npy
+
+ 21/132 [===>..........................] - ETA: 7:23:26 - loss: 1.2062 - mean_squared_error: 1.204822
+Loaded patient-IDUHFQWVS4WKXPC5.npy
+Loaded patient-VFHSASVT4EXZWAOS.npy
+
+ 22/132 [====>.........................] - ETA: 7:19:22 - loss: 1.2028 - mean_squared_error: 1.201423
+Loaded patient-EQD7NRTYLRGYENOM.npy
+Loaded patient-ZMP6NER3I4ERS2JE.npy
+
+ 23/132 [====>.........................] - ETA: 7:15:22 - loss: 1.1981 - mean_squared_error: 1.196724
+Loaded patient-SSJQF5OU3VSC3HAD.npy
+Loaded patient-CQHAXTV5WJLZBRFB.npy
+
+ 24/132 [====>.........................] - ETA: 7:11:20 - loss: 1.1929 - mean_squared_error: 1.191525
+Loaded patient-LZU7NSTDRFX77U7G.npy
+Loaded patient-ANCCICBPHIDJ5PJ4.npy
+
+ 25/132 [====>.........................] - ETA: 7:07:23 - loss: 1.1873 - mean_squared_error: 1.185926
+Loaded patient-JAS2TYJWKQL65CQT.npy
+Loaded patient-JAANEAKBEZPKV4JV.npy
+
+ 26/132 [====>.........................] - ETA: 7:03:23 - loss: 1.1823 - mean_squared_error: 1.180927
+Loaded patient-IIAFOQ3HGHU4A6UT.npy
+Loaded patient-BMTJZEMYGJCVHX7N.npy
+
+ 27/132 [=====>........................] - ETA: 6:59:22 - loss: 1.1762 - mean_squared_error: 1.174928
+Loaded patient-NUWPDW6HBRTLEYWD.npy
+Loaded patient-JUM3FRXBYLTATYYH.npy
+
+ 28/132 [=====>........................] - ETA: 6:55:25 - loss: 1.1703 - mean_squared_error: 1.169029
+Loaded patient-OLIQUZ7ERFP4DJVD.npy
+Loaded patient-LCGP6HURGG2XVJ5B.npy
+
+ 29/132 [=====>........................] - ETA: 6:51:25 - loss: 1.1649 - mean_squared_error: 1.163730
+Loaded patient-NJB6RYF62XWGMSE2.npy
+Loaded patient-NXLFQLVZRLUEK2UF.npy
+
+ 30/132 [=====>........................] - ETA: 6:47:28 - loss: 1.1588 - mean_squared_error: 1.157631
+Loaded patient-OSO6K4FGNA57I3VJ.npy
+Loaded patient-ENPUI7ZVHUGIXYN7.npy
+
+ 31/132 [======>.......................] - ETA: 6:43:34 - loss: 1.1523 - mean_squared_error: 1.151032
+Loaded patient-OPLQZBP3BOBS4LTY.npy
+Loaded patient-MRYGCR7462Z7IN2L.npy
+
+ 32/132 [======>.......................] - ETA: 6:39:34 - loss: 1.1468 - mean_squared_error: 1.145633
+Loaded patient-AFN5EQGSDERZCTLM.npy
+Loaded patient-HLQKXLS4OQ2BGQ5C.npy
+
+ 33/132 [======>.......................] - ETA: 6:35:33 - loss: 1.1403 - mean_squared_error: 1.139234
+Loaded patient-DZLYYZNR6M5BZFBT.npy
+Loaded patient-HAKJSG5CHDGOBP6B.npy
+
+ 34/132 [======>.......................] - ETA: 6:31:33 - loss: 1.1332 - mean_squared_error: 1.132135
+Loaded patient-FCYGZ75WMW6L4PJM.npy
+Loaded patient-VJNCTEEYR7U4HIQU.npy
+
+ 35/132 [======>.......................] - ETA: 6:27:34 - loss: 1.1272 - mean_squared_error: 1.126036
+Loaded patient-XQLUVUDY23UZMYW3.npy
+Loaded patient-OOAKLUZ2A4XYXC4X.npy
+
+ 36/132 [=======>......................] - ETA: 6:23:32 - loss: 1.1203 - mean_squared_error: 1.119237
+Loaded patient-RRZNNMZTLY4BJK7C.npy
+Loaded patient-TEHE4SMNJTXDNW2O.npy
+
+ 37/132 [=======>......................] - ETA: 6:19:32 - loss: 1.1143 - mean_squared_error: 1.113138
+Loaded patient-YYNFU45K2WIMXWE4.npy
+Loaded patient-DNO6CS3YNGFMUWXL.npy
+
+ 38/132 [=======>......................] - ETA: 6:15:32 - loss: 1.1078 - mean_squared_error: 1.106639
+Loaded patient-GOXKSLNERTQ7DSPQ.npy
+Loaded patient-LVOHLK3FOHWE66BP.npy
+
+ 39/132 [=======>......................] - ETA: 6:11:31 - loss: 1.1019 - mean_squared_error: 1.100840
+Loaded patient-ROF7JT3SZGBNY3MG.npy
+Loaded patient-WUG3VLS7FYXG35LH.npy
+
+ 40/132 [========>.....................] - ETA: 6:07:34 - loss: 1.0958 - mean_squared_error: 1.094741
+Loaded patient-YGJSUAFCVJ52LIRD.npy
+Loaded patient-MKIAFF7LDGXTZN4C.npy
+
+ 41/132 [========>.....................] - ETA: 6:03:33 - loss: 1.0900 - mean_squared_error: 1.088942
+Loaded patient-KFX44Z5T5RWT4LLI.npy
+Loaded patient-EYEDMZ3Z6OIKPERL.npy
+
+ 42/132 [========>.....................] - ETA: 5:59:36 - loss: 1.0845 - mean_squared_error: 1.083443
+Loaded patient-JMWZRLKLB5DSSXE3.npy
+Loaded patient-TRRYZ5WXYHUMTPCQ.npy
+
+ 43/132 [========>.....................] - ETA: 5:55:35 - loss: 1.0791 - mean_squared_error: 1.078044
+Loaded patient-TFXM6VTRLJH2DS7G.npy
+Loaded patient-BSBXPIGXEUV3WWOZ.npy
+
+ 44/132 [=========>....................] - ETA: 5:51:38 - loss: 1.0741 - mean_squared_error: 1.073145
+Loaded patient-AHNGBFJSTEBO4BJW.npy
+Loaded patient-GONORRCZWHDZV3M5.npy
+
+ 45/132 [=========>....................] - ETA: 5:47:38 - loss: 1.0690 - mean_squared_error: 1.068046
+Loaded patient-NJPOTXDCGONCOU7C.npy
+Loaded patient-RHWTMTHC7HIWZ2YZ.npy
+
+ 46/132 [=========>....................] - ETA: 5:43:37 - loss: 1.0639 - mean_squared_error: 1.063047
+Loaded patient-ZUR2IKTUC2KQVB2X.npy
+Loaded patient-UJHKCBMXXLB5QHTP.npy
+
+ 47/132 [=========>....................] - ETA: 5:39:37 - loss: 1.0592 - mean_squared_error: 1.058248
+Loaded patient-XSSFSN7XYAV4E3OA.npy
+Loaded patient-FFVM6VCPRIKK7453.npy
+
+ 48/132 [=========>....................] - ETA: 5:35:37 - loss: 1.0548 - mean_squared_error: 1.053949
+Loaded patient-CFC7SE7TGP55RMUB.npy
+Loaded patient-NEYLUIYPCL6O74O6.npy
+
+ 49/132 [==========>...................] - ETA: 5:31:35 - loss: 1.0504 - mean_squared_error: 1.049550
+Loaded patient-QKBS566N24RMCV5H.npy
+Loaded patient-CRH6GLC3CTD2WACN.npy
+
+ 50/132 [==========>...................] - ETA: 5:27:34 - loss: 1.0463 - mean_squared_error: 1.045451
+Loaded patient-CUM2CZJVM5H5ZKFE.npy
+Loaded patient-NJDN23E34MZVQU66.npy
+
+ 51/132 [==========>...................] - ETA: 5:23:34 - loss: 1.0426 - mean_squared_error: 1.041752
+Loaded patient-RMID4XEKTVEYCSGK.npy
+Loaded patient-TVY4XBCLXJBKK72S.npy
+
+ 52/132 [==========>...................] - ETA: 5:19:33 - loss: 1.0386 - mean_squared_error: 1.037753
+Loaded patient-PCNMFAZL5VWWK7RP.npy
+Loaded patient-SBRRR2SATWOOR5D6.npy
+
+ 53/132 [===========>..................] - ETA: 5:15:33 - loss: 1.0346 - mean_squared_error: 1.033754
+Loaded patient-OAC7JXARELEVVEQW.npy
+Loaded patient-HXBUUFVQBNISYKNU.npy
+
+ 54/132 [===========>..................] - ETA: 5:11:33 - loss: 1.0312 - mean_squared_error: 1.030355
+Loaded patient-DENODP22U2Q7E4LM.npy
+Loaded patient-MTWW42SPCGLHEDKY.npy
+
+ 55/132 [===========>..................] - ETA: 5:07:33 - loss: 1.0271 - mean_squared_error: 1.026256
+Loaded patient-SUOA7XPFTTR2O5NQ.npy
+Loaded patient-PCJ6DNFF7XHMUSWE.npy
+
+ 56/132 [===========>..................] - ETA: 5:03:33 - loss: 1.0229 - mean_squared_error: 1.022057
+Loaded patient-QPKEZOB3X6B6HMCR.npy
+Loaded patient-UAFTPLA47GA7WS27.npy
+
+ 57/132 [===========>..................] - ETA: 4:59:33 - loss: 1.0195 - mean_squared_error: 1.018558
+Loaded patient-JWKB7SHIBYWSEVMC.npy
+Loaded patient-GBXENHYLRVZ5DTHI.npy
+
+ 58/132 [============>.................] - ETA: 4:55:34 - loss: 1.0162 - mean_squared_error: 1.015359
+Loaded patient-AGTRMFUZM2MQUAB4.npy
+Loaded patient-SZY3J4UTKSCFM2H4.npy
+
+ 59/132 [============>.................] - ETA: 4:51:33 - loss: 1.0131 - mean_squared_error: 1.012260
+Loaded patient-ZMEGS4G44P6FMONO.npy
+Loaded patient-ZNPFNNZ2DRELKNQ3.npy
+
+ 60/132 [============>.................] - ETA: 4:47:34 - loss: 1.0097 - mean_squared_error: 1.008861
+Loaded patient-OXRK4I6CTXCENAZV.npy
+Loaded patient-DRT3F4ITWPCCBB6T.npy
+
+ 61/132 [============>.................] - ETA: 4:43:34 - loss: 1.0065 - mean_squared_error: 1.005762
+Loaded patient-XJLRFX244JGJZUUF.npy
+Loaded patient-FYXMPCGHTGJXJBSD.npy
+
+ 62/132 [=============>................] - ETA: 4:39:34 - loss: 1.0033 - mean_squared_error: 1.002463
+Loaded patient-ILNTKMBVTXNXURGV.npy
+Loaded patient-AFEB6XW5UCQTSYJL.npy
+
+ 63/132 [=============>................] - ETA: 4:35:34 - loss: 1.0001 - mean_squared_error: 0.999364
+Loaded patient-TBNR4PRU7XIL27G6.npy
+Loaded patient-PVMXD3RZSHEQTYW3.npy
+
+ 64/132 [=============>................] - ETA: 4:31:35 - loss: 0.9973 - mean_squared_error: 0.996465
+Loaded patient-UKOHM6O57N37U2E2.npy
+Loaded patient-OUM3NFGU5U3TCBBK.npy
+
+ 65/132 [=============>................] - ETA: 4:27:34 - loss: 0.9944 - mean_squared_error: 0.993666
+Loaded patient-ADIO4U6QJTXF3YQH.npy
+Loaded patient-AUGXT5PI4VY62M6L.npy
+
+ 66/132 [==============>...............] - ETA: 4:23:35 - loss: 0.9913 - mean_squared_error: 0.990567
+Loaded patient-HXLMZWH3SFX3SPAN.npy
+Loaded patient-ZUEK5YSS7CITVWIP.npy
+
+ 67/132 [==============>...............] - ETA: 4:19:35 - loss: 0.9885 - mean_squared_error: 0.987668
+Loaded patient-WZPADD37RLXRX3IG.npy
+Loaded patient-XYOD23KJFH7NZXXK.npy
+
+ 68/132 [==============>...............] - ETA: 4:15:36 - loss: 0.9856 - mean_squared_error: 0.984769
+Loaded patient-IETROE62UNT5QVWS.npy
+Loaded patient-OAEVXX4IFAX5IYOR.npy
+
+ 69/132 [==============>...............] - ETA: 4:11:37 - loss: 0.9828 - mean_squared_error: 0.981970
+Loaded patient-GET5PY3CH6RJV3UW.npy
+Loaded patient-QLYPHVVU3RG43OZO.npy
+
+ 70/132 [==============>...............] - ETA: 4:07:38 - loss: 0.9801 - mean_squared_error: 0.979371
+Loaded patient-TITRFCZEPFJKM3NY.npy
+Loaded patient-IKLKZYXDYTCCYUAZ.npy
+
+ 71/132 [===============>..............] - ETA: 4:03:38 - loss: 0.9778 - mean_squared_error: 0.976972
+Loaded patient-IWYDKUPY2NSYJGLF.npy
+Loaded patient-RWJZNVFII5INU6Z5.npy
+
+ 72/132 [===============>..............] - ETA: 3:59:38 - loss: 0.9752 - mean_squared_error: 0.974373
+Loaded patient-UGXVSPJLHJL6AHSW.npy
+Loaded patient-ECLDQAP52JUWQZHM.npy
+
+ 73/132 [===============>..............] - ETA: 3:55:41 - loss: 0.9727 - mean_squared_error: 0.971874
+Loaded patient-FLSUE7ZIXI6HSJWN.npy
+Loaded patient-ADKFJYDHLE7M3XE6.npy
+
+ 74/132 [===============>..............] - ETA: 3:51:46 - loss: 0.9702 - mean_squared_error: 0.969375
+Loaded patient-HLXOSVDF27JWNCMJ.npy
+Loaded patient-YEXJFFF2ZK44FYCP.npy
+
+ 75/132 [================>.............] - ETA: 3:47:52 - loss: 0.9679 - mean_squared_error: 0.967076
+Loaded patient-SZKV26SJOHXJBPVX.npy
+Loaded patient-TRM3ANQXS7O6Y7OA.npy
+
+ 76/132 [================>.............] - ETA: 3:43:57 - loss: 0.9654 - mean_squared_error: 0.964577
+Loaded patient-VZOXMEUK7BN7PQH3.npy
+Loaded patient-ZQYME7XWFWQXXOXA.npy
+
+ 77/132 [================>.............] - ETA: 3:40:02 - loss: 0.9631 - mean_squared_error: 0.962378
+Loaded patient-VSJRIEOFJCVJIO2C.npy
+Loaded patient-ZVRO2HKWM7JSS6IA.npy
+
+ 78/132 [================>.............] - ETA: 3:36:12 - loss: 0.9610 - mean_squared_error: 0.960279
+Loaded patient-VOPMJMGIDQQ75E6G.npy
+Loaded patient-DSIFGAA3BMQKFE7A.npy
+
+ 79/132 [================>.............] - ETA: 3:32:26 - loss: 0.9585 - mean_squared_error: 0.957680
+Loaded patient-QTUPNSXYST53IETT.npy
+Loaded patient-BHYZMLL7GBZZLACW.npy
+
+ 80/132 [=================>............] - ETA: 3:29:13 - loss: 0.9561 - mean_squared_error: 0.955381
+Loaded patient-AGTDPQEU54ODFAUD.npy
+Loaded patient-BNZ2UKOA43BESZGP.npy
+
+ 81/132 [=================>............] - ETA: 3:26:20 - loss: 0.9537 - mean_squared_error: 0.952882
+Loaded patient-JSV6UEFKJAVM6OGO.npy
+Loaded patient-NLV36DRLRZY5AKIJ.npy
+
+ 82/132 [=================>............] - ETA: 3:23:23 - loss: 0.9514 - mean_squared_error: 0.950583
+Loaded patient-RHOULE6IWB6KWLE5.npy
+Loaded patient-FUVL4PLSUHRCEAHC.npy
+
+ 83/132 [=================>............] - ETA: 3:20:27 - loss: 0.9500 - mean_squared_error: 0.949284
+Loaded patient-BSKAYXMTSEXR6U5K.npy
+Loaded patient-WAP327ZXF6FGV5E4.npy
+
+ 84/132 [==================>...........] - ETA: 3:17:08 - loss: 0.9476 - mean_squared_error: 0.946885
+Loaded patient-ENBHS75LQ7FWO5CP.npy
+Loaded patient-WHDZVHCOCOTIJLXV.npy
+
+ 85/132 [==================>...........] - ETA: 3:14:00 - loss: 0.9454 - mean_squared_error: 0.944686
+Loaded patient-NHXCOHZ4HH53NLQ6.npy
+Loaded patient-XZUUUC426GUXSCGJ.npy
+
+ 86/132 [==================>...........] - ETA: 3:10:33 - loss: 0.9434 - mean_squared_error: 0.942687
+Loaded patient-WHCQX5APWQZHMM3Q.npy
+Loaded patient-EYYSOUW6PR2WMBZS.npy
+
+ 87/132 [==================>...........] - ETA: 3:07:06 - loss: 0.9413 - mean_squared_error: 0.940488
+Loaded patient-CJDXGZHXAGH7QL3C.npy
+Loaded patient-NWRLBSNF3RVU3MAC.npy
+
+ 88/132 [===================>..........] - ETA: 3:03:55 - loss: 0.9393 - mean_squared_error: 0.938589
+Loaded patient-MOAADIHO5RHQJEK3.npy
+Loaded patient-LYUO2OPTNYUBCHT2.npy
+
+ 89/132 [===================>..........] - ETA: 2:59:54 - loss: 0.9373 - mean_squared_error: 0.936490
+Loaded patient-CMELUGEVB3ESBIAK.npy
+Loaded patient-XPJH44FSBRVL2WTV.npy
+
+ 90/132 [===================>..........] - ETA: 2:55:47 - loss: 0.9351 - mean_squared_error: 0.934391
+Loaded patient-DJGKDC32BE5NKELX.npy
+Loaded patient-SODFDRR2LWR7JDMN.npy
+
+ 91/132 [===================>..........] - ETA: 2:51:41 - loss: 0.9333 - mean_squared_error: 0.932492
+Loaded patient-TXOGS5CQ6RZMSV3W.npy
+Loaded patient-COFP4UFH6MWZA7HI.npy
+
+ 92/132 [===================>..........] - ETA: 2:47:35 - loss: 0.9312 - mean_squared_error: 0.930393
+Loaded patient-BHA4CDH32NPSOKTZ.npy
+Loaded patient-NFG67H47EUPD5URG.npy
+
+ 93/132 [====================>.........] - ETA: 2:44:06 - loss: 0.9293 - mean_squared_error: 0.928594
+Loaded patient-VKFW6CO5FV2P3PUE.npy
+Loaded patient-SBLQEZAZEXCC76C6.npy
+
+ 94/132 [====================>.........] - ETA: 2:40:06 - loss: 0.9273 - mean_squared_error: 0.926495
+Loaded patient-RATVCRHG4ZHLCOV3.npy
+Loaded patient-UBDRB3DMSB6TJ76N.npy
+
+ 95/132 [====================>.........] - ETA: 2:36:05 - loss: 0.9254 - mean_squared_error: 0.924696
+Loaded patient-SLPTPLSMZYJEUEXK.npy
+Loaded patient-IAUKV5R644JZFD55.npy
+
+ 96/132 [====================>.........] - ETA: 2:32:32 - loss: 0.9234 - mean_squared_error: 0.922697
+Loaded patient-MPTG3X65O7O7HYHX.npy
+Loaded patient-RODVAIJ6A6P4D54Y.npy
+
+ 97/132 [=====================>........] - ETA: 2:28:55 - loss: 0.9215 - mean_squared_error: 0.920798
+Loaded patient-WDIYHNMBALZ4ZP2A.npy
+Loaded patient-RLJSRNLTRUQAVT3L.npy
+
+ 98/132 [=====================>........] - ETA: 2:25:10 - loss: 0.9198 - mean_squared_error: 0.919099
+Loaded patient-EGCV7CJ6LF2CACQM.npy
+Loaded patient-GKDV3FW4M56I3IKV.npy
+
+ 99/132 [=====================>........] - ETA: 2:20:58 - loss: 0.9179 - mean_squared_error: 0.9171100
+Loaded patient-ZHLGEIY4UAEIPL33.npy
+Loaded patient-PMMV7MLZUWJTIMLR.npy
+
+100/132 [=====================>........] - ETA: 2:16:44 - loss: 0.9162 - mean_squared_error: 0.9154101
+Loaded patient-HHM4X4CF7WXJXSCT.npy
+Loaded patient-NMHOGEKTK7LT57ZI.npy
+
+101/132 [=====================>........] - ETA: 2:12:31 - loss: 0.9143 - mean_squared_error: 0.9136102
+Loaded patient-IBRRD5O4NGVPABDT.npy
+Loaded patient-ZCMTUATV42LAXACO.npy
+
+102/132 [======================>.......] - ETA: 2:08:17 - loss: 0.9128 - mean_squared_error: 0.9120103
+Loaded patient-ZANU4GPPZNIFRN6W.npy
+Loaded patient-HVPI7QQSXPDHSFME.npy
+
+103/132 [======================>.......] - ETA: 2:04:04 - loss: 0.9111 - mean_squared_error: 0.9103104
+Loaded patient-XHX3PCDOWEWDB34X.npy
+Loaded patient-VGF4YIHDAARLWS7A.npy
+
+104/132 [======================>.......] - ETA: 1:59:50 - loss: 0.9093 - mean_squared_error: 0.9085105
+Loaded patient-IPFO2JH7ZZYTQHH2.npy
+Loaded patient-OLYVZJAPCZJQWGIE.npy
+
+105/132 [======================>.......] - ETA: 1:55:38 - loss: 0.9074 - mean_squared_error: 0.9066106
+Loaded patient-SVYZISKLZLQKBPX6.npy
+Loaded patient-KNKVPM2UV4UFFC5R.npy
+
+106/132 [=======================>......] - ETA: 1:51:23 - loss: 0.9057 - mean_squared_error: 0.9049107
+Loaded patient-DDWAA4OECH5TXONN.npy
+Loaded patient-ROMHUDLTCOEXUQCA.npy
+
+107/132 [=======================>......] - ETA: 1:47:07 - loss: 0.9046 - mean_squared_error: 0.9038108
+Loaded patient-GBA7XJ5E7ITWZW7K.npy
+Loaded patient-DPSG75LCBZVBTRPO.npy
+
+108/132 [=======================>......] - ETA: 1:42:52 - loss: 0.9033 - mean_squared_error: 0.9024109
+Loaded patient-JID2LWYOKIWCMT2Z.npy
+Loaded patient-SEV2GAEFNJBLX3ZJ.npy
+
+109/132 [=======================>......] - ETA: 1:38:36 - loss: 0.9015 - mean_squared_error: 0.9007110
+Loaded patient-MJFHYCVEV2GTJD3N.npy
+Loaded patient-IIOOPK6T2ZWDZMU3.npy
+
+110/132 [========================>.....] - ETA: 1:34:21 - loss: 0.9002 - mean_squared_error: 0.8994111
+Loaded patient-TFCLOHN4ROEYF6QY.npy
+Loaded patient-UMRXCXFIT4YDD7RQ.npy
+
+111/132 [========================>.....] - ETA: 1:30:05 - loss: 0.8985 - mean_squared_error: 0.8977112
+Loaded patient-QJFMNVKKVZXKBROO.npy
+Loaded patient-RFSGSDQ5MWIVM6QV.npy
+
+112/132 [========================>.....] - ETA: 1:25:49 - loss: 0.8969 - mean_squared_error: 0.8961113
+Loaded patient-ARZ7H7BSITHOSSMG.npy
+Loaded patient-SZXTZ3LQ5MBFDFXR.npy
+
+113/132 [========================>.....] - ETA: 1:21:34 - loss: 0.8957 - mean_squared_error: 0.8949114
+Loaded patient-BIASJO43N3A7Z63W.npy
+Loaded patient-BWDRAF5ZOQPFOOL7.npy
+
+114/132 [========================>.....] - ETA: 1:17:18 - loss: 0.8943 - mean_squared_error: 0.8935115
+Loaded patient-JNLCZIQGTGTFNEKK.npy
+Loaded patient-OCD6VASBJF4SNZ4U.npy
+
+115/132 [=========================>....] - ETA: 1:13:00 - loss: 0.8927 - mean_squared_error: 0.8919116
+Loaded patient-PMUXVQHYYYBOK4RL.npy
+Loaded patient-FPTFJD4JZA7ZKYQJ.npy
+
+116/132 [=========================>....] - ETA: 1:08:44 - loss: 0.8912 - mean_squared_error: 0.8904117
+Loaded patient-WCSSH2NHDNNZIVML.npy
+Loaded patient-GCBJDIT55TRGHZIR.npy
+
+117/132 [=========================>....] - ETA: 1:04:27 - loss: 0.8897 - mean_squared_error: 0.8889118
+Loaded patient-TVCP433TKOVBCQTW.npy
+Loaded patient-HIAEQWMTUGATOAVI.npy
+
+118/132 [=========================>....] - ETA: 1:00:09 - loss: 0.8888 - mean_squared_error: 0.8879119
+Loaded patient-BVYSR54MKT5SPMSU.npy
+Loaded patient-LQMW3GK5JQEVVFBK.npy
+
+119/132 [==========================>...] - ETA: 55:52 - loss: 0.8883 - mean_squared_error: 0.8874  120
+Loaded patient-NCI33JITLERBTWXI.npy
+Loaded patient-BLPHSKRODCJLHZZS.npy
+
+120/132 [==========================>...] - ETA: 51:35 - loss: 0.8870 - mean_squared_error: 0.8862121
+Loaded patient-RRZGAIOEIS6WPXDT.npy
+Loaded patient-MSZB67BPZ32ILNLK.npy
+
+121/132 [==========================>...] - ETA: 47:18 - loss: 0.8859 - mean_squared_error: 0.8850122
+Loaded patient-RWKA32WBSVFB4MQF.npy
+Loaded patient-ZSXFDYQ4ST4Z6SRF.npy
+
+122/132 [==========================>...] - ETA: 43:00 - loss: 0.8845 - mean_squared_error: 0.8836123
+Loaded patient-VKDRQPXRMRRBAHW3.npy
+Loaded patient-UUKSYXBYQQZATBP5.npy
+
+123/132 [==========================>...] - ETA: 38:42 - loss: 0.8831 - mean_squared_error: 0.8822124
+Loaded patient-SADEJMD27KKWZQ5L.npy
+Loaded patient-IEJDGAS52VTH4G74.npy
+
+124/132 [===========================>..] - ETA: 34:25 - loss: 0.8816 - mean_squared_error: 0.8807125
+Loaded patient-XVPBCFNYTDI4HHW2.npy
+Loaded patient-EPSAH2BCBGV7WQHM.npy
+
+125/132 [===========================>..] - ETA: 30:07 - loss: 0.8800 - mean_squared_error: 0.8792126
+Loaded patient-LHMGXWC6J7DRD3CP.npy
+Loaded patient-XJJ3IXEOPNFXBGP7.npy
+
+126/132 [===========================>..] - ETA: 25:49 - loss: 0.8787 - mean_squared_error: 0.8778127
+Loaded patient-ZCTE57VMPCGWDG75.npy
+Loaded patient-ASI5JI7DJLB3RKFS.npy
+
+127/132 [===========================>..] - ETA: 21:31 - loss: 0.8777 - mean_squared_error: 0.8768128
+Loaded patient-FKHXWQEPTPIWXHBR.npy
+Loaded patient-ZFMUMZVL6HFQCKSX.npy
+
+128/132 [============================>.] - ETA: 17:14 - loss: 0.8767 - mean_squared_error: 0.8758129
+Loaded patient-THKULF2KHMNVMTUR.npy
+Loaded patient-VUTDS6OC2VUSNQMK.npy
+
+129/132 [============================>.] - ETA: 12:55 - loss: 0.8750 - mean_squared_error: 0.8741130
+Loaded patient-HDQYSVBJ4MPRGYRN.npy
+Loaded patient-SQD3UDNZH2Q3ET4V.npy
+
+130/132 [============================>.] - ETA: 8:37 - loss: 0.8735 - mean_squared_error: 0.8726 131
+Loaded patient-HIA2VPHI6ABMCQTV.npy
+Loaded patient-EWYGH3OSPLJI27UF.npy
+
+131/132 [============================>.] - ETA: 4:18 - loss: 0.8719 - mean_squared_error: 0.87110
+Loaded patient-KPC2RVJBDHQLC5EM.npy
+Loaded patient-HAYSFX75ACG77ZJE.npy
+0
+Loaded patient-SGFWUNFEYCKBMF65.npy
+Loaded patient-DZTDN47H2IKSYN3Q.npy
+1
+Loaded patient-DRS5DZGN5PVUZX4Y.npy
+Loaded patient-WWEFFBIMLZ3KLQVZ.npy
+2
+Loaded patient-UNREF6O6622LZWNN.npy
+Loaded patient-HXKDQ5I26Z2CRUQB.npy
+3
+Loaded patient-TUX27MONFI7VC6M3.npy
+Loaded patient-CSCIKXOMNAIB3LUQ.npy
+4
+Loaded patient-TZES7PMHXV4XVJBV.npy
+Loaded patient-EUNTRXNEDB7VDVIS.npy
+5
+Loaded patient-LGFNFIWO2ZEQYK36.npy
+Loaded patient-EGIAP2GDM33PCW5A.npy
+6
+Loaded patient-ALOUY4SF3BQKXQCZ.npy
+Loaded patient-MKKOO7NDN26O6RLZ.npy
+7
+Loaded patient-OLCBKEY2WKCWPHJW.npy
+Loaded patient-CWWKNDYG2UERXH7X.npy
+8
+Loaded patient-CSXRYWJCXJXAJRLP.npy
+Loaded patient-MEQKZCRF5TR6MHLY.npy
+9
+Loaded patient-POSX6PS6LR34HENB.npy
+Loaded patient-LOR7YOK3PYHXSHCM.npy
+10
+Loaded patient-AJHYOJIG3DZLSIKI.npy
+Loaded patient-FTAKNRFGOGVS632K.npy
+11
+Loaded patient-RYNCGNVRZH2LB7BN.npy
+Loaded patient-UMFGGCOJN6GDPQDV.npy
+12
+Loaded patient-DDPQNEBC34XCOF2U.npy
+Loaded patient-KQSTLFNPLNP5M43F.npy
+13
+Loaded patient-RBC423N4RNB3UZ5P.npy
+Loaded patient-LIJBIVVBI6TJCT6Z.npy
+14
+Loaded patient-XQBRGW3CYGNUMWHI.npy
+Loaded patient-OCP7EUZJEB7JUL65.npy
+15
+Loaded patient-AOTGHQ6S5AD7LOBO.npy
+Loaded patient-VDO7JNWOEJ5KGJYJ.npy
+16
+Loaded patient-JJMENP4QE4CSXSHV.npy
+Loaded patient-KJAWMYSKQTYINTNC.npy
+17
+Loaded patient-HGJTE6ROVCUFUC4S.npy
+Loaded patient-MEP2WAB3JNIXJTON.npy
+18
+Loaded patient-POYYSD3RSJFBKSLQ.npy
+Loaded patient-ABPO2BORDNF3OVL3.npy
+19
+Loaded patient-RTC5RXQHUXCSPNLN.npy
+Loaded patient-PIKNNHQAI52EI62K.npy
+20
+Loaded patient-RKIZJRFZGCXD4EOL.npy
+Loaded patient-YSTBBUD35YZBOT2Z.npy
+21
+Loaded patient-ZTGZBI2QX2JQFXIG.npy
+Loaded patient-MHL54TPCTOQJ2I4K.npy
+22
+Loaded patient-NYR7NWGHIRZDCL66.npy
+Loaded patient-MLHE2CESZAWQKZVP.npy
+23
+Loaded patient-JUBFRXRHLG46KY42.npy
+Loaded patient-ASD2URNKFRN3ZSFL.npy
+24
+Loaded patient-FIBU2GYR72UU7E5M.npy
+Loaded patient-RXK7K2FPVPLFMID2.npy
+25
+Loaded patient-NHKUCEIIHLJQ25VM.npy
+Loaded patient-ESLHGQCGYB7J4DX3.npy
+26
+Loaded patient-LUVMEPI5JWYL67RF.npy
+Loaded patient-KACA7XHWXRM6A3W3.npy
+27
+Loaded patient-ZCIMXZ73NFNRDH46.npy
+Loaded patient-JWVEP6ZLYCOE5IAE.npy
+28
+Loaded patient-RKBSU42WA7AY22E7.npy
+Loaded patient-MSXY2JKZXPEBXR72.npy
+29
+Loaded patient-WPA6WCTE24HGRIXH.npy
+Loaded patient-WIPV3EQ34O55HCUI.npy
+30
+Loaded patient-SXF2FCCYEQLXMQO5.npy
+Loaded patient-ICWMS7OCXZLUTUFT.npy
+31
+Loaded patient-VVGO45TQNOASBLZM.npy
+Loaded patient-IAX2O3NWENSSH4D5.npy
+0
+Loaded patient-SGFWUNFEYCKBMF65.npy
+Loaded patient-DZTDN47H2IKSYN3Q.npy
+
+132/132 [==============================] - 36207s 274s/step - loss: 0.8703 - mean_squared_error: 0.8694 - val_loss: 0.6926 - val_mean_squared_error: 0.6915
+
+Epoch 00001: saving model to tmp/cad_weights.hdf5
+Epoch 2/10
+1
+Loaded patient-RCDAHVLV6QUTDFVD.npy
+Loaded patient-KRWJSE7TVM2QLJI7.npy
+
+  1/132 [..............................] - ETA: 9:18:31 - loss: 0.6755 - mean_squared_error: 0.67432
+Loaded patient-PMEECXFHBLN6KHO7.npy
+Loaded patient-MYTHDP7XSELNJUBQ.npy
+
+  2/132 [..............................] - ETA: 9:08:45 - loss: 0.6626 - mean_squared_error: 0.66163
+Loaded patient-XPBRBUB6YYHIWHVO.npy
+Loaded patient-JCWGEJIJO2LDRY2U.npy
+
+  3/132 [..............................] - ETA: 9:12:34 - loss: 0.6747 - mean_squared_error: 0.67404
+Loaded patient-SWSY42N45J3YWV5I.npy
+Loaded patient-UZFAM45KRI3C7MGB.npy
+
+  4/132 [..............................] - ETA: 9:04:52 - loss: 0.6786 - mean_squared_error: 0.67785
+Loaded patient-TNUEVMD3Z4YZFQDG.npy
+Loaded patient-BTLLL3I67PYRN7R4.npy
+
+  5/132 [>.............................] - ETA: 9:39:52 - loss: 0.6714 - mean_squared_error: 0.67076
+Loaded patient-NJNFVZMSGBGM6H5Y.npy
+Loaded patient-ENB4V4BPR4HRCRXW.npy
+
+  6/132 [>.............................] - ETA: 9:31:24 - loss: 0.6736 - mean_squared_error: 0.67297
+Loaded patient-PBR2STY62FZ3MQHZ.npy
+Loaded patient-DXOUKNW7AXCZFUIL.npy
+
+  7/132 [>.............................] - ETA: 9:17:23 - loss: 0.6671 - mean_squared_error: 0.66648
+Loaded patient-WPNYHBQRGJ4NHU3C.npy
+Loaded patient-IGIIMA3LABMNETMA.npy
+
+  8/132 [>.............................] - ETA: 9:05:58 - loss: 0.6643 - mean_squared_error: 0.66369
+Loaded patient-OTIP25YORHBKJPZM.npy
+Loaded patient-YNLMIJ5S24AYYZXN.npy
+
+  9/132 [=>............................] - ETA: 8:55:59 - loss: 0.6547 - mean_squared_error: 0.654010
+Loaded patient-ZAJH6DQQBAECJ7AX.npy
+Loaded patient-LOGIP43ZSLSUA5SZ.npy
+
+ 10/132 [=>............................] - ETA: 8:47:12 - loss: 0.6543 - mean_squared_error: 0.653611
+Loaded patient-RKXO5JUDKMYRUTN5.npy
+Loaded patient-NWO33W453F6ZJ4BU.npy
+
+ 11/132 [=>............................] - ETA: 8:39:19 - loss: 0.6649 - mean_squared_error: 0.664212
+Loaded patient-XDNEWPTKFLCWWUSV.npy
+Loaded patient-JUOV5YWN6IS7OXIJ.npy
+
+ 12/132 [=>............................] - ETA: 8:32:02 - loss: 0.6628 - mean_squared_error: 0.662013
+Loaded patient-GFRJ7SPGIEJVXVRS.npy
+Loaded patient-HBAZOCWOGBJYCEAZ.npy
+
+ 13/132 [=>............................] - ETA: 8:25:21 - loss: 0.6587 - mean_squared_error: 0.657914
+Loaded patient-JLHG7VESTU3GH2KX.npy
+Loaded patient-JQWIIAADGKE2YMJS.npy
+
+ 14/132 [==>...........................] - ETA: 8:18:56 - loss: 0.6634 - mean_squared_error: 0.662515
+Loaded patient-HSKRXAPZ7WNBT2TI.npy
+Loaded patient-BMFSUHVBPJ7RY56P.npy
+
+ 15/132 [==>...........................] - ETA: 8:12:56 - loss: 0.6612 - mean_squared_error: 0.660316
+Loaded patient-TJAPUMPEDA32J5JW.npy
+Loaded patient-TNXMNBGRZHPIMJJI.npy
+
+ 16/132 [==>...........................] - ETA: 8:07:22 - loss: 0.6594 - mean_squared_error: 0.658517
+Loaded patient-LQG4BRZPSCMR5XAN.npy
+Loaded patient-IAR66U7QVOBXOFQE.npy
+
+ 17/132 [==>...........................] - ETA: 8:01:46 - loss: 0.6582 - mean_squared_error: 0.657318
+Loaded patient-SRKOPGCEG62ZJTT2.npy
+Loaded patient-NLXOSUXOZZHPFQQX.npy
+
+ 18/132 [===>..........................] - ETA: 7:56:33 - loss: 0.6574 - mean_squared_error: 0.656519
+Loaded patient-YRC3D4LSQNDZCXDA.npy
+Loaded patient-RKFD4L7QSBXPHFJU.npy
+
+ 19/132 [===>..........................] - ETA: 7:51:19 - loss: 0.6607 - mean_squared_error: 0.659820
+Loaded patient-CGQFS5PB627OWLL7.npy
+Loaded patient-GHVG2CNNRZ65UBEU.npy
+
+ 20/132 [===>..........................] - ETA: 7:46:08 - loss: 0.6574 - mean_squared_error: 0.656521
+Loaded patient-ANLMZN6NS4S3TCCF.npy
+Loaded patient-CJNLJB43ZD3GIUN3.npy
+
+ 21/132 [===>..........................] - ETA: 7:41:07 - loss: 0.6594 - mean_squared_error: 0.658522
+Loaded patient-IDUHFQWVS4WKXPC5.npy
+Loaded patient-VFHSASVT4EXZWAOS.npy
+
+ 22/132 [====>.........................] - ETA: 7:36:09 - loss: 0.6563 - mean_squared_error: 0.655323
+Loaded patient-EQD7NRTYLRGYENOM.npy
+Loaded patient-ZMP6NER3I4ERS2JE.npy
+
+ 23/132 [====>.........................] - ETA: 7:31:18 - loss: 0.6559 - mean_squared_error: 0.655024
+Loaded patient-SSJQF5OU3VSC3HAD.npy
+Loaded patient-CQHAXTV5WJLZBRFB.npy
+
+ 24/132 [====>.........................] - ETA: 7:26:30 - loss: 0.6591 - mean_squared_error: 0.658225
+Loaded patient-LZU7NSTDRFX77U7G.npy
+Loaded patient-ANCCICBPHIDJ5PJ4.npy
+
+ 25/132 [====>.........................] - ETA: 7:21:43 - loss: 0.6605 - mean_squared_error: 0.659526
+Loaded patient-JAS2TYJWKQL65CQT.npy
+Loaded patient-JAANEAKBEZPKV4JV.npy
+
+ 26/132 [====>.........................] - ETA: 7:17:01 - loss: 0.6580 - mean_squared_error: 0.657127
+Loaded patient-IIAFOQ3HGHU4A6UT.npy
+Loaded patient-BMTJZEMYGJCVHX7N.npy
+
+ 27/132 [=====>........................] - ETA: 7:12:25 - loss: 0.6588 - mean_squared_error: 0.657928
+Loaded patient-NUWPDW6HBRTLEYWD.npy
+Loaded patient-JUM3FRXBYLTATYYH.npy
+
+ 28/132 [=====>........................] - ETA: 7:07:49 - loss: 0.6587 - mean_squared_error: 0.657829
+Loaded patient-OLIQUZ7ERFP4DJVD.npy
+Loaded patient-LCGP6HURGG2XVJ5B.npy
+
+ 29/132 [=====>........................] - ETA: 7:03:27 - loss: 0.6565 - mean_squared_error: 0.655630
+Loaded patient-NJB6RYF62XWGMSE2.npy
+Loaded patient-NXLFQLVZRLUEK2UF.npy
+
+ 30/132 [=====>........................] - ETA: 6:58:55 - loss: 0.6551 - mean_squared_error: 0.654231
+Loaded patient-OSO6K4FGNA57I3VJ.npy
+Loaded patient-ENPUI7ZVHUGIXYN7.npy
+
+ 31/132 [======>.......................] - ETA: 6:54:26 - loss: 0.6581 - mean_squared_error: 0.657332
+Loaded patient-OPLQZBP3BOBS4LTY.npy
+Loaded patient-MRYGCR7462Z7IN2L.npy
+
+ 32/132 [======>.......................] - ETA: 6:50:00 - loss: 0.6560 - mean_squared_error: 0.655133
+Loaded patient-AFN5EQGSDERZCTLM.npy
+Loaded patient-HLQKXLS4OQ2BGQ5C.npy
+
+ 33/132 [======>.......................] - ETA: 6:45:41 - loss: 0.6559 - mean_squared_error: 0.655034
+Loaded patient-DZLYYZNR6M5BZFBT.npy
+Loaded patient-HAKJSG5CHDGOBP6B.npy
+
+ 34/132 [======>.......................] - ETA: 6:41:19 - loss: 0.6582 - mean_squared_error: 0.657435
+Loaded patient-FCYGZ75WMW6L4PJM.npy
+Loaded patient-VJNCTEEYR7U4HIQU.npy
+
+ 35/132 [======>.......................] - ETA: 6:36:55 - loss: 0.6569 - mean_squared_error: 0.656036
+Loaded patient-XQLUVUDY23UZMYW3.npy
+Loaded patient-OOAKLUZ2A4XYXC4X.npy
+
+ 36/132 [=======>......................] - ETA: 6:32:32 - loss: 0.6587 - mean_squared_error: 0.657837
+Loaded patient-RRZNNMZTLY4BJK7C.npy
+Loaded patient-TEHE4SMNJTXDNW2O.npy
+
+ 37/132 [=======>......................] - ETA: 6:28:11 - loss: 0.6583 - mean_squared_error: 0.657438
+Loaded patient-YYNFU45K2WIMXWE4.npy
+Loaded patient-DNO6CS3YNGFMUWXL.npy
+
+ 38/132 [=======>......................] - ETA: 6:23:53 - loss: 0.6574 - mean_squared_error: 0.656539
+Loaded patient-GOXKSLNERTQ7DSPQ.npy
+Loaded patient-LVOHLK3FOHWE66BP.npy
+
+ 39/132 [=======>......................] - ETA: 6:19:37 - loss: 0.6599 - mean_squared_error: 0.659140
+Loaded patient-ROF7JT3SZGBNY3MG.npy
+Loaded patient-WUG3VLS7FYXG35LH.npy
+
+ 40/132 [========>.....................] - ETA: 6:15:20 - loss: 0.6595 - mean_squared_error: 0.658641
+Loaded patient-YGJSUAFCVJ52LIRD.npy
+Loaded patient-MKIAFF7LDGXTZN4C.npy
+
+ 41/132 [========>.....................] - ETA: 6:11:02 - loss: 0.6603 - mean_squared_error: 0.659542
+Loaded patient-KFX44Z5T5RWT4LLI.npy
+Loaded patient-EYEDMZ3Z6OIKPERL.npy
+
+ 42/132 [========>.....................] - ETA: 6:06:45 - loss: 0.6598 - mean_squared_error: 0.659043
+Loaded patient-JMWZRLKLB5DSSXE3.npy
+Loaded patient-TRRYZ5WXYHUMTPCQ.npy
+
+ 43/132 [========>.....................] - ETA: 6:02:31 - loss: 0.6607 - mean_squared_error: 0.659944
+Loaded patient-TFXM6VTRLJH2DS7G.npy
+Loaded patient-BSBXPIGXEUV3WWOZ.npy
+
+ 44/132 [=========>....................] - ETA: 5:58:17 - loss: 0.6600 - mean_squared_error: 0.659245
+Loaded patient-AHNGBFJSTEBO4BJW.npy
+Loaded patient-GONORRCZWHDZV3M5.npy
+
+ 45/132 [=========>....................] - ETA: 5:54:04 - loss: 0.6590 - mean_squared_error: 0.658146
+Loaded patient-NJPOTXDCGONCOU7C.npy
+Loaded patient-RHWTMTHC7HIWZ2YZ.npy
+
+ 46/132 [=========>....................] - ETA: 5:49:50 - loss: 0.6575 - mean_squared_error: 0.656747
+Loaded patient-ZUR2IKTUC2KQVB2X.npy
+Loaded patient-UJHKCBMXXLB5QHTP.npy
+
+ 47/132 [=========>....................] - ETA: 5:45:37 - loss: 0.6575 - mean_squared_error: 0.656748
+Loaded patient-XSSFSN7XYAV4E3OA.npy
+Loaded patient-FFVM6VCPRIKK7453.npy
+
+ 48/132 [=========>....................] - ETA: 5:41:25 - loss: 0.6578 - mean_squared_error: 0.657049
+Loaded patient-CFC7SE7TGP55RMUB.npy
+Loaded patient-NEYLUIYPCL6O74O6.npy
+
+ 49/132 [==========>...................] - ETA: 5:37:12 - loss: 0.6566 - mean_squared_error: 0.655850
+Loaded patient-QKBS566N24RMCV5H.npy
+Loaded patient-CRH6GLC3CTD2WACN.npy
+
+ 50/132 [==========>...................] - ETA: 5:33:03 - loss: 0.6567 - mean_squared_error: 0.655951
+Loaded patient-CUM2CZJVM5H5ZKFE.npy
+Loaded patient-NJDN23E34MZVQU66.npy
+
+ 51/132 [==========>...................] - ETA: 5:28:53 - loss: 0.6577 - mean_squared_error: 0.657052
+Loaded patient-RMID4XEKTVEYCSGK.npy
+Loaded patient-TVY4XBCLXJBKK72S.npy
+
+ 52/132 [==========>...................] - ETA: 5:24:44 - loss: 0.6568 - mean_squared_error: 0.656053
+Loaded patient-PCNMFAZL5VWWK7RP.npy
+Loaded patient-SBRRR2SATWOOR5D6.npy
+
+ 53/132 [===========>..................] - ETA: 5:20:35 - loss: 0.6565 - mean_squared_error: 0.655854
+Loaded patient-OAC7JXARELEVVEQW.npy
+Loaded patient-HXBUUFVQBNISYKNU.npy
+
+ 54/132 [===========>..................] - ETA: 5:16:27 - loss: 0.6583 - mean_squared_error: 0.657555
+Loaded patient-DENODP22U2Q7E4LM.npy
+Loaded patient-MTWW42SPCGLHEDKY.npy
+
+ 55/132 [===========>..................] - ETA: 5:12:17 - loss: 0.6574 - mean_squared_error: 0.656656
+Loaded patient-SUOA7XPFTTR2O5NQ.npy
+Loaded patient-PCJ6DNFF7XHMUSWE.npy
+
+ 56/132 [===========>..................] - ETA: 5:08:10 - loss: 0.6560 - mean_squared_error: 0.655257
+Loaded patient-QPKEZOB3X6B6HMCR.npy
+Loaded patient-UAFTPLA47GA7WS27.npy
+
+ 57/132 [===========>..................] - ETA: 5:04:02 - loss: 0.6561 - mean_squared_error: 0.655358
+Loaded patient-JWKB7SHIBYWSEVMC.npy
+Loaded patient-GBXENHYLRVZ5DTHI.npy
+
+ 58/132 [============>.................] - ETA: 4:59:56 - loss: 0.6559 - mean_squared_error: 0.655159
+Loaded patient-AGTRMFUZM2MQUAB4.npy
+Loaded patient-SZY3J4UTKSCFM2H4.npy
+
+ 59/132 [============>.................] - ETA: 4:55:48 - loss: 0.6550 - mean_squared_error: 0.654260
+Loaded patient-ZMEGS4G44P6FMONO.npy
+Loaded patient-ZNPFNNZ2DRELKNQ3.npy
+
+ 60/132 [============>.................] - ETA: 4:51:41 - loss: 0.6537 - mean_squared_error: 0.652961
+Loaded patient-OXRK4I6CTXCENAZV.npy
+Loaded patient-DRT3F4ITWPCCBB6T.npy
+
+ 61/132 [============>.................] - ETA: 4:47:34 - loss: 0.6530 - mean_squared_error: 0.652262
+Loaded patient-XJLRFX244JGJZUUF.npy
+Loaded patient-FYXMPCGHTGJXJBSD.npy
+
+ 62/132 [=============>................] - ETA: 4:43:26 - loss: 0.6527 - mean_squared_error: 0.651963
+Loaded patient-ILNTKMBVTXNXURGV.npy
+Loaded patient-AFEB6XW5UCQTSYJL.npy
+
+ 63/132 [=============>................] - ETA: 4:39:18 - loss: 0.6528 - mean_squared_error: 0.652064
+Loaded patient-TBNR4PRU7XIL27G6.npy
+Loaded patient-PVMXD3RZSHEQTYW3.npy
+
+ 64/132 [=============>................] - ETA: 4:35:11 - loss: 0.6537 - mean_squared_error: 0.652965
+Loaded patient-UKOHM6O57N37U2E2.npy
+Loaded patient-OUM3NFGU5U3TCBBK.npy
+
+ 65/132 [=============>................] - ETA: 4:31:05 - loss: 0.6541 - mean_squared_error: 0.653366
+Loaded patient-ADIO4U6QJTXF3YQH.npy
+Loaded patient-AUGXT5PI4VY62M6L.npy
+
+ 66/132 [==============>...............] - ETA: 4:27:00 - loss: 0.6530 - mean_squared_error: 0.652267
+Loaded patient-HXLMZWH3SFX3SPAN.npy
+Loaded patient-ZUEK5YSS7CITVWIP.npy
+
+ 67/132 [==============>...............] - ETA: 4:22:55 - loss: 0.6534 - mean_squared_error: 0.652668
+Loaded patient-WZPADD37RLXRX3IG.npy
+Loaded patient-XYOD23KJFH7NZXXK.npy
+
+ 68/132 [==============>...............] - ETA: 4:18:49 - loss: 0.6538 - mean_squared_error: 0.653069
+Loaded patient-IETROE62UNT5QVWS.npy
+Loaded patient-OAEVXX4IFAX5IYOR.npy
+
+ 69/132 [==============>...............] - ETA: 4:14:44 - loss: 0.6531 - mean_squared_error: 0.652470
+Loaded patient-GET5PY3CH6RJV3UW.npy
+Loaded patient-QLYPHVVU3RG43OZO.npy
+
+ 70/132 [==============>...............] - ETA: 4:10:39 - loss: 0.6530 - mean_squared_error: 0.652271
+Loaded patient-TITRFCZEPFJKM3NY.npy
+Loaded patient-IKLKZYXDYTCCYUAZ.npy
+
+ 71/132 [===============>..............] - ETA: 4:06:34 - loss: 0.6539 - mean_squared_error: 0.653172
+Loaded patient-IWYDKUPY2NSYJGLF.npy
+Loaded patient-RWJZNVFII5INU6Z5.npy
+
+ 72/132 [===============>..............] - ETA: 4:02:29 - loss: 0.6542 - mean_squared_error: 0.653573
+Loaded patient-UGXVSPJLHJL6AHSW.npy
+Loaded patient-ECLDQAP52JUWQZHM.npy
+
+ 73/132 [===============>..............] - ETA: 3:58:26 - loss: 0.6542 - mean_squared_error: 0.653474
+Loaded patient-FLSUE7ZIXI6HSJWN.npy
+Loaded patient-ADKFJYDHLE7M3XE6.npy
+
+ 74/132 [===============>..............] - ETA: 3:54:21 - loss: 0.6544 - mean_squared_error: 0.653675
+Loaded patient-HLXOSVDF27JWNCMJ.npy
+Loaded patient-YEXJFFF2ZK44FYCP.npy
+
+ 75/132 [================>.............] - ETA: 3:50:17 - loss: 0.6551 - mean_squared_error: 0.654376
+Loaded patient-SZKV26SJOHXJBPVX.npy
+Loaded patient-TRM3ANQXS7O6Y7OA.npy
+
+ 76/132 [================>.............] - ETA: 3:46:13 - loss: 0.6548 - mean_squared_error: 0.654077
+Loaded patient-VZOXMEUK7BN7PQH3.npy
+Loaded patient-ZQYME7XWFWQXXOXA.npy
+
+ 77/132 [================>.............] - ETA: 3:42:09 - loss: 0.6554 - mean_squared_error: 0.654678
+Loaded patient-VSJRIEOFJCVJIO2C.npy
+Loaded patient-ZVRO2HKWM7JSS6IA.npy
+
+ 78/132 [================>.............] - ETA: 3:38:05 - loss: 0.6564 - mean_squared_error: 0.655679
+Loaded patient-VOPMJMGIDQQ75E6G.npy
+Loaded patient-DSIFGAA3BMQKFE7A.npy
+
+ 79/132 [================>.............] - ETA: 3:34:00 - loss: 0.6560 - mean_squared_error: 0.655280
+Loaded patient-QTUPNSXYST53IETT.npy
+Loaded patient-BHYZMLL7GBZZLACW.npy
+
+ 80/132 [=================>............] - ETA: 3:29:56 - loss: 0.6561 - mean_squared_error: 0.655481
+Loaded patient-AGTDPQEU54ODFAUD.npy
+Loaded patient-BNZ2UKOA43BESZGP.npy
+
+ 81/132 [=================>............] - ETA: 3:25:52 - loss: 0.6555 - mean_squared_error: 0.654782
+Loaded patient-JSV6UEFKJAVM6OGO.npy
+Loaded patient-NLV36DRLRZY5AKIJ.npy
+
+ 82/132 [=================>............] - ETA: 3:21:49 - loss: 0.6554 - mean_squared_error: 0.654683
+Loaded patient-RHOULE6IWB6KWLE5.npy
+Loaded patient-FUVL4PLSUHRCEAHC.npy
+
+ 83/132 [=================>............] - ETA: 3:17:45 - loss: 0.6572 - mean_squared_error: 0.656484
+Loaded patient-BSKAYXMTSEXR6U5K.npy
+Loaded patient-WAP327ZXF6FGV5E4.npy
+
+ 84/132 [==================>...........] - ETA: 3:13:42 - loss: 0.6567 - mean_squared_error: 0.655985
+Loaded patient-ENBHS75LQ7FWO5CP.npy
+Loaded patient-WHDZVHCOCOTIJLXV.npy
+
+ 85/132 [==================>...........] - ETA: 3:09:38 - loss: 0.6563 - mean_squared_error: 0.655686
+Loaded patient-NHXCOHZ4HH53NLQ6.npy
+Loaded patient-XZUUUC426GUXSCGJ.npy
+
+ 86/132 [==================>...........] - ETA: 3:05:35 - loss: 0.6569 - mean_squared_error: 0.656287
+Loaded patient-WHCQX5APWQZHMM3Q.npy
+Loaded patient-EYYSOUW6PR2WMBZS.npy
+
+ 87/132 [==================>...........] - ETA: 3:01:32 - loss: 0.6569 - mean_squared_error: 0.656288
+Loaded patient-CJDXGZHXAGH7QL3C.npy
+Loaded patient-NWRLBSNF3RVU3MAC.npy
+
+ 88/132 [===================>..........] - ETA: 2:57:28 - loss: 0.6575 - mean_squared_error: 0.656889
+Loaded patient-MOAADIHO5RHQJEK3.npy
+Loaded patient-LYUO2OPTNYUBCHT2.npy
+
+ 89/132 [===================>..........] - ETA: 2:53:25 - loss: 0.6572 - mean_squared_error: 0.656590
+Loaded patient-CMELUGEVB3ESBIAK.npy
+Loaded patient-XPJH44FSBRVL2WTV.npy
+
+ 90/132 [===================>..........] - ETA: 2:49:22 - loss: 0.6568 - mean_squared_error: 0.656191
+Loaded patient-DJGKDC32BE5NKELX.npy
+Loaded patient-SODFDRR2LWR7JDMN.npy
+
+ 91/132 [===================>..........] - ETA: 2:45:19 - loss: 0.6571 - mean_squared_error: 0.656392
+Loaded patient-TXOGS5CQ6RZMSV3W.npy
+Loaded patient-COFP4UFH6MWZA7HI.npy
+
+ 92/132 [===================>..........] - ETA: 2:41:16 - loss: 0.6566 - mean_squared_error: 0.655993
+Loaded patient-BHA4CDH32NPSOKTZ.npy
+Loaded patient-NFG67H47EUPD5URG.npy
+
+ 93/132 [====================>.........] - ETA: 2:37:13 - loss: 0.6569 - mean_squared_error: 0.656194
+Loaded patient-VKFW6CO5FV2P3PUE.npy
+Loaded patient-SBLQEZAZEXCC76C6.npy
+
+ 94/132 [====================>.........] - ETA: 2:33:10 - loss: 0.6564 - mean_squared_error: 0.655795
+Loaded patient-RATVCRHG4ZHLCOV3.npy
+Loaded patient-UBDRB3DMSB6TJ76N.npy
+
+ 95/132 [====================>.........] - ETA: 2:29:08 - loss: 0.6563 - mean_squared_error: 0.655696
+Loaded patient-SLPTPLSMZYJEUEXK.npy
+Loaded patient-IAUKV5R644JZFD55.npy
+
+ 96/132 [====================>.........] - ETA: 2:25:05 - loss: 0.6562 - mean_squared_error: 0.655497
+Loaded patient-MPTG3X65O7O7HYHX.npy
+Loaded patient-RODVAIJ6A6P4D54Y.npy
+
+ 97/132 [=====================>........] - ETA: 2:21:02 - loss: 0.6559 - mean_squared_error: 0.655298
+Loaded patient-WDIYHNMBALZ4ZP2A.npy
+Loaded patient-RLJSRNLTRUQAVT3L.npy
+
+ 98/132 [=====================>........] - ETA: 2:17:00 - loss: 0.6563 - mean_squared_error: 0.655699
+Loaded patient-EGCV7CJ6LF2CACQM.npy
+Loaded patient-GKDV3FW4M56I3IKV.npy
+
+ 99/132 [=====================>........] - ETA: 2:12:59 - loss: 0.6556 - mean_squared_error: 0.6549100
+Loaded patient-ZHLGEIY4UAEIPL33.npy
+Loaded patient-PMMV7MLZUWJTIMLR.npy
+
+100/132 [=====================>........] - ETA: 2:08:56 - loss: 0.6559 - mean_squared_error: 0.6552101
+Loaded patient-HHM4X4CF7WXJXSCT.npy
+Loaded patient-NMHOGEKTK7LT57ZI.npy
+
+101/132 [=====================>........] - ETA: 2:04:54 - loss: 0.6556 - mean_squared_error: 0.6548102
+Loaded patient-IBRRD5O4NGVPABDT.npy
+Loaded patient-ZCMTUATV42LAXACO.npy
+
+102/132 [======================>.......] - ETA: 2:00:52 - loss: 0.6561 - mean_squared_error: 0.6553103
+Loaded patient-ZANU4GPPZNIFRN6W.npy
+Loaded patient-HVPI7QQSXPDHSFME.npy
+
+103/132 [======================>.......] - ETA: 1:56:49 - loss: 0.6560 - mean_squared_error: 0.6553104
+Loaded patient-XHX3PCDOWEWDB34X.npy
+Loaded patient-VGF4YIHDAARLWS7A.npy
+
+104/132 [======================>.......] - ETA: 1:52:47 - loss: 0.6556 - mean_squared_error: 0.6548105
+Loaded patient-IPFO2JH7ZZYTQHH2.npy
+Loaded patient-OLYVZJAPCZJQWGIE.npy
+
+105/132 [======================>.......] - ETA: 1:48:45 - loss: 0.6549 - mean_squared_error: 0.6542106
+Loaded patient-SVYZISKLZLQKBPX6.npy
+Loaded patient-KNKVPM2UV4UFFC5R.npy
+
+106/132 [=======================>......] - ETA: 1:44:43 - loss: 0.6546 - mean_squared_error: 0.6539107
+Loaded patient-DDWAA4OECH5TXONN.npy
+Loaded patient-ROMHUDLTCOEXUQCA.npy
+
+107/132 [=======================>......] - ETA: 1:40:41 - loss: 0.6556 - mean_squared_error: 0.6549108
+Loaded patient-GBA7XJ5E7ITWZW7K.npy
+Loaded patient-DPSG75LCBZVBTRPO.npy
+
+108/132 [=======================>......] - ETA: 1:36:39 - loss: 0.6560 - mean_squared_error: 0.6553109
+Loaded patient-JID2LWYOKIWCMT2Z.npy
+Loaded patient-SEV2GAEFNJBLX3ZJ.npy
+
+109/132 [=======================>......] - ETA: 1:32:37 - loss: 0.6557 - mean_squared_error: 0.6550110
+Loaded patient-MJFHYCVEV2GTJD3N.npy
+Loaded patient-IIOOPK6T2ZWDZMU3.npy
+
+110/132 [========================>.....] - ETA: 1:28:35 - loss: 0.6563 - mean_squared_error: 0.6556111
+Loaded patient-TFCLOHN4ROEYF6QY.npy
+Loaded patient-UMRXCXFIT4YDD7RQ.npy
+
+111/132 [========================>.....] - ETA: 1:24:33 - loss: 0.6559 - mean_squared_error: 0.6551112
+Loaded patient-QJFMNVKKVZXKBROO.npy
+Loaded patient-RFSGSDQ5MWIVM6QV.npy
+
+112/132 [========================>.....] - ETA: 1:20:31 - loss: 0.6555 - mean_squared_error: 0.6547113
+Loaded patient-ARZ7H7BSITHOSSMG.npy
+Loaded patient-SZXTZ3LQ5MBFDFXR.npy
+
+113/132 [========================>.....] - ETA: 1:16:29 - loss: 0.6559 - mean_squared_error: 0.6552114
+Loaded patient-BIASJO43N3A7Z63W.npy
+Loaded patient-BWDRAF5ZOQPFOOL7.npy
+
+114/132 [========================>.....] - ETA: 1:12:27 - loss: 0.6560 - mean_squared_error: 0.6553115
+Loaded patient-JNLCZIQGTGTFNEKK.npy
+Loaded patient-OCD6VASBJF4SNZ4U.npy
+
+115/132 [=========================>....] - ETA: 1:08:25 - loss: 0.6558 - mean_squared_error: 0.6551116
+Loaded patient-PMUXVQHYYYBOK4RL.npy
+Loaded patient-FPTFJD4JZA7ZKYQJ.npy
+
+116/132 [=========================>....] - ETA: 1:04:24 - loss: 0.6557 - mean_squared_error: 0.6549117
+Loaded patient-WCSSH2NHDNNZIVML.npy
+Loaded patient-GCBJDIT55TRGHZIR.npy
+
+117/132 [=========================>....] - ETA: 1:00:22 - loss: 0.6555 - mean_squared_error: 0.6548118
+Loaded patient-TVCP433TKOVBCQTW.npy
+Loaded patient-HIAEQWMTUGATOAVI.npy
+
+118/132 [=========================>....] - ETA: 56:20 - loss: 0.6564 - mean_squared_error: 0.6556  119
+Loaded patient-BVYSR54MKT5SPMSU.npy
+Loaded patient-LQMW3GK5JQEVVFBK.npy
+
+119/132 [==========================>...] - ETA: 52:18 - loss: 0.6579 - mean_squared_error: 0.6572120
+Loaded patient-NCI33JITLERBTWXI.npy
+Loaded patient-BLPHSKRODCJLHZZS.npy
+
+120/132 [==========================>...] - ETA: 48:17 - loss: 0.6582 - mean_squared_error: 0.6575121
+Loaded patient-RRZGAIOEIS6WPXDT.npy
+Loaded patient-MSZB67BPZ32ILNLK.npy
+
+121/132 [==========================>...] - ETA: 44:15 - loss: 0.6587 - mean_squared_error: 0.6580122
+Loaded patient-RWKA32WBSVFB4MQF.npy
+Loaded patient-ZSXFDYQ4ST4Z6SRF.npy
+
+122/132 [==========================>...] - ETA: 40:13 - loss: 0.6587 - mean_squared_error: 0.6579123
+Loaded patient-VKDRQPXRMRRBAHW3.npy
+Loaded patient-UUKSYXBYQQZATBP5.npy
+
+123/132 [==========================>...] - ETA: 36:12 - loss: 0.6584 - mean_squared_error: 0.6577124
+Loaded patient-SADEJMD27KKWZQ5L.npy
+Loaded patient-IEJDGAS52VTH4G74.npy
+
+124/132 [===========================>..] - ETA: 32:10 - loss: 0.6583 - mean_squared_error: 0.6575125
+Loaded patient-XVPBCFNYTDI4HHW2.npy
+Loaded patient-EPSAH2BCBGV7WQHM.npy
+
+125/132 [===========================>..] - ETA: 28:09 - loss: 0.6579 - mean_squared_error: 0.6572126
+Loaded patient-LHMGXWC6J7DRD3CP.npy
+Loaded patient-XJJ3IXEOPNFXBGP7.npy
+
+126/132 [===========================>..] - ETA: 24:07 - loss: 0.6579 - mean_squared_error: 0.6572127
+Loaded patient-ZCTE57VMPCGWDG75.npy
+Loaded patient-ASI5JI7DJLB3RKFS.npy
+
+127/132 [===========================>..] - ETA: 20:06 - loss: 0.6585 - mean_squared_error: 0.6578128
+Loaded patient-FKHXWQEPTPIWXHBR.npy
+Loaded patient-ZFMUMZVL6HFQCKSX.npy
+
+128/132 [============================>.] - ETA: 16:05 - loss: 0.6590 - mean_squared_error: 0.6582129
+Loaded patient-THKULF2KHMNVMTUR.npy
+Loaded patient-VUTDS6OC2VUSNQMK.npy
+
+129/132 [============================>.] - ETA: 12:03 - loss: 0.6584 - mean_squared_error: 0.6577130
+Loaded patient-HDQYSVBJ4MPRGYRN.npy
+Loaded patient-SQD3UDNZH2Q3ET4V.npy
+
+130/132 [============================>.] - ETA: 8:02 - loss: 0.6581 - mean_squared_error: 0.6573 131
+Loaded patient-HIA2VPHI6ABMCQTV.npy
+Loaded patient-EWYGH3OSPLJI27UF.npy
+
+131/132 [============================>.] - ETA: 4:01 - loss: 0.6579 - mean_squared_error: 0.65710
+Loaded patient-KPC2RVJBDHQLC5EM.npy
+Loaded patient-HAYSFX75ACG77ZJE.npy
+1
+Loaded patient-DRS5DZGN5PVUZX4Y.npy
+Loaded patient-WWEFFBIMLZ3KLQVZ.npy
+2
+Loaded patient-UNREF6O6622LZWNN.npy
+Loaded patient-HXKDQ5I26Z2CRUQB.npy
+3
+Loaded patient-TUX27MONFI7VC6M3.npy
+Loaded patient-CSCIKXOMNAIB3LUQ.npy
+4
+Loaded patient-TZES7PMHXV4XVJBV.npy
+Loaded patient-EUNTRXNEDB7VDVIS.npy
+5
+Loaded patient-LGFNFIWO2ZEQYK36.npy
+Loaded patient-EGIAP2GDM33PCW5A.npy
+6
+Loaded patient-ALOUY4SF3BQKXQCZ.npy
+Loaded patient-MKKOO7NDN26O6RLZ.npy
+7
+Loaded patient-OLCBKEY2WKCWPHJW.npy
+Loaded patient-CWWKNDYG2UERXH7X.npy
+8
+Loaded patient-CSXRYWJCXJXAJRLP.npy
+Loaded patient-MEQKZCRF5TR6MHLY.npy
+9
+Loaded patient-POSX6PS6LR34HENB.npy
+Loaded patient-LOR7YOK3PYHXSHCM.npy
+10
+Loaded patient-AJHYOJIG3DZLSIKI.npy
+Loaded patient-FTAKNRFGOGVS632K.npy
+11
+Loaded patient-RYNCGNVRZH2LB7BN.npy
+Loaded patient-UMFGGCOJN6GDPQDV.npy
+12
+Loaded patient-DDPQNEBC34XCOF2U.npy
+Loaded patient-KQSTLFNPLNP5M43F.npy
+13
+Loaded patient-RBC423N4RNB3UZ5P.npy
+Loaded patient-LIJBIVVBI6TJCT6Z.npy
+14
+Loaded patient-XQBRGW3CYGNUMWHI.npy
+Loaded patient-OCP7EUZJEB7JUL65.npy
+15
+Loaded patient-AOTGHQ6S5AD7LOBO.npy
+Loaded patient-VDO7JNWOEJ5KGJYJ.npy
+16
+Loaded patient-JJMENP4QE4CSXSHV.npy
+Loaded patient-KJAWMYSKQTYINTNC.npy
+17
+Loaded patient-HGJTE6ROVCUFUC4S.npy
+Loaded patient-MEP2WAB3JNIXJTON.npy
+18
+Loaded patient-POYYSD3RSJFBKSLQ.npy
+Loaded patient-ABPO2BORDNF3OVL3.npy
+19
+Loaded patient-RTC5RXQHUXCSPNLN.npy
+Loaded patient-PIKNNHQAI52EI62K.npy
+20
+Loaded patient-RKIZJRFZGCXD4EOL.npy
+Loaded patient-YSTBBUD35YZBOT2Z.npy
+21
+Loaded patient-ZTGZBI2QX2JQFXIG.npy
+Loaded patient-MHL54TPCTOQJ2I4K.npy
+22
+Loaded patient-NYR7NWGHIRZDCL66.npy
+Loaded patient-MLHE2CESZAWQKZVP.npy
+23
+Loaded patient-JUBFRXRHLG46KY42.npy
+Loaded patient-ASD2URNKFRN3ZSFL.npy
+24
+Loaded patient-FIBU2GYR72UU7E5M.npy
+Loaded patient-RXK7K2FPVPLFMID2.npy
+25
+Loaded patient-NHKUCEIIHLJQ25VM.npy
+Loaded patient-ESLHGQCGYB7J4DX3.npy
+26
+Loaded patient-LUVMEPI5JWYL67RF.npy
+Loaded patient-KACA7XHWXRM6A3W3.npy
+27
+Loaded patient-ZCIMXZ73NFNRDH46.npy
+Loaded patient-JWVEP6ZLYCOE5IAE.npy
+28
+Loaded patient-RKBSU42WA7AY22E7.npy
+Loaded patient-MSXY2JKZXPEBXR72.npy
+29
+Loaded patient-WPA6WCTE24HGRIXH.npy
+Loaded patient-WIPV3EQ34O55HCUI.npy
+30
+Loaded patient-SXF2FCCYEQLXMQO5.npy
+Loaded patient-ICWMS7OCXZLUTUFT.npy
+31
+Loaded patient-VVGO45TQNOASBLZM.npy
+Loaded patient-IAX2O3NWENSSH4D5.npy
+0
+Loaded patient-SGFWUNFEYCKBMF65.npy
+Loaded patient-DZTDN47H2IKSYN3Q.npy
+1
+Loaded patient-DRS5DZGN5PVUZX4Y.npy
+Loaded patient-WWEFFBIMLZ3KLQVZ.npy
+
+132/132 [==============================] - 33663s 255s/step - loss: 0.6574 - mean_squared_error: 0.6566 - val_loss: 0.6585 - val_mean_squared_error: 0.6577
+
+Epoch 00002: saving model to tmp/cad_weights.hdf5
+Epoch 3/10
+1
+Loaded patient-RCDAHVLV6QUTDFVD.npy
+Loaded patient-KRWJSE7TVM2QLJI7.npy
+
+  1/132 [..............................] - ETA: 8:45:27 - loss: 0.6342 - mean_squared_error: 0.63312
+Loaded patient-PMEECXFHBLN6KHO7.npy
+Loaded patient-MYTHDP7XSELNJUBQ.npy
+
+  2/132 [..............................] - ETA: 8:39:46 - loss: 0.6165 - mean_squared_error: 0.61543
+Loaded patient-XPBRBUB6YYHIWHVO.npy
+Loaded patient-JCWGEJIJO2LDRY2U.npy
+
+  3/132 [..............................] - ETA: 8:35:02 - loss: 0.6370 - mean_squared_error: 0.63634
+Loaded patient-SWSY42N45J3YWV5I.npy
+Loaded patient-UZFAM45KRI3C7MGB.npy
+
+  4/132 [..............................] - ETA: 8:30:48 - loss: 0.6439 - mean_squared_error: 0.64335
+Loaded patient-TNUEVMD3Z4YZFQDG.npy
+Loaded patient-BTLLL3I67PYRN7R4.npy
+
+  5/132 [>.............................] - ETA: 8:26:51 - loss: 0.6344 - mean_squared_error: 0.63386
+Loaded patient-NJNFVZMSGBGM6H5Y.npy
+Loaded patient-ENB4V4BPR4HRCRXW.npy
+
+  6/132 [>.............................] - ETA: 8:22:56 - loss: 0.6400 - mean_squared_error: 0.63947
+Loaded patient-PBR2STY62FZ3MQHZ.npy
+Loaded patient-DXOUKNW7AXCZFUIL.npy
+
+  7/132 [>.............................] - ETA: 8:18:50 - loss: 0.6332 - mean_squared_error: 0.63258
+Loaded patient-WPNYHBQRGJ4NHU3C.npy
+Loaded patient-IGIIMA3LABMNETMA.npy
+
+  8/132 [>.............................] - ETA: 8:14:47 - loss: 0.6313 - mean_squared_error: 0.63079
+Loaded patient-OTIP25YORHBKJPZM.npy
+Loaded patient-YNLMIJ5S24AYYZXN.npy
+
+  9/132 [=>............................] - ETA: 8:10:53 - loss: 0.6217 - mean_squared_error: 0.621110
+Loaded patient-ZAJH6DQQBAECJ7AX.npy
+Loaded patient-LOGIP43ZSLSUA5SZ.npy
+
+ 10/132 [=>............................] - ETA: 8:06:52 - loss: 0.6230 - mean_squared_error: 0.622411
+Loaded patient-RKXO5JUDKMYRUTN5.npy
+Loaded patient-NWO33W453F6ZJ4BU.npy
+
+ 11/132 [=>............................] - ETA: 8:02:56 - loss: 0.6365 - mean_squared_error: 0.635812
+Loaded patient-XDNEWPTKFLCWWUSV.npy
+Loaded patient-JUOV5YWN6IS7OXIJ.npy
+
+ 12/132 [=>............................] - ETA: 7:59:03 - loss: 0.6352 - mean_squared_error: 0.634513
+Loaded patient-GFRJ7SPGIEJVXVRS.npy
+Loaded patient-HBAZOCWOGBJYCEAZ.npy
+
+ 13/132 [=>............................] - ETA: 7:55:06 - loss: 0.6321 - mean_squared_error: 0.631414
+Loaded patient-JLHG7VESTU3GH2KX.npy
+Loaded patient-JQWIIAADGKE2YMJS.npy
+
+ 14/132 [==>...........................] - ETA: 7:51:11 - loss: 0.6360 - mean_squared_error: 0.635215
+Loaded patient-HSKRXAPZ7WNBT2TI.npy
+Loaded patient-BMFSUHVBPJ7RY56P.npy
+
+ 15/132 [==>...........................] - ETA: 7:47:21 - loss: 0.6348 - mean_squared_error: 0.633916
+Loaded patient-TJAPUMPEDA32J5JW.npy
+Loaded patient-TNXMNBGRZHPIMJJI.npy
+
+ 16/132 [==>...........................] - ETA: 7:43:25 - loss: 0.6338 - mean_squared_error: 0.632917
+Loaded patient-LQG4BRZPSCMR5XAN.npy
+Loaded patient-IAR66U7QVOBXOFQE.npy
+
+ 17/132 [==>...........................] - ETA: 7:39:30 - loss: 0.6331 - mean_squared_error: 0.632218
+Loaded patient-SRKOPGCEG62ZJTT2.npy
+Loaded patient-NLXOSUXOZZHPFQQX.npy
+
+ 18/132 [===>..........................] - ETA: 7:35:26 - loss: 0.6330 - mean_squared_error: 0.632219
+Loaded patient-YRC3D4LSQNDZCXDA.npy
+Loaded patient-RKFD4L7QSBXPHFJU.npy
+
+ 19/132 [===>..........................] - ETA: 7:31:35 - loss: 0.6370 - mean_squared_error: 0.636220
+Loaded patient-CGQFS5PB627OWLL7.npy
+Loaded patient-GHVG2CNNRZ65UBEU.npy
+
+ 20/132 [===>..........................] - ETA: 7:27:36 - loss: 0.6343 - mean_squared_error: 0.633421
+Loaded patient-ANLMZN6NS4S3TCCF.npy
+Loaded patient-CJNLJB43ZD3GIUN3.npy
+
+ 21/132 [===>..........................] - ETA: 7:23:32 - loss: 0.6368 - mean_squared_error: 0.635922
+Loaded patient-IDUHFQWVS4WKXPC5.npy
+Loaded patient-VFHSASVT4EXZWAOS.npy
+
+ 22/132 [====>.........................] - ETA: 7:19:32 - loss: 0.6340 - mean_squared_error: 0.633123
+Loaded patient-EQD7NRTYLRGYENOM.npy
+Loaded patient-ZMP6NER3I4ERS2JE.npy
+
+ 23/132 [====>.........................] - ETA: 7:15:35 - loss: 0.6341 - mean_squared_error: 0.633224
+Loaded patient-SSJQF5OU3VSC3HAD.npy
+Loaded patient-CQHAXTV5WJLZBRFB.npy
+
+ 24/132 [====>.........................] - ETA: 7:11:36 - loss: 0.6376 - mean_squared_error: 0.636725
+Loaded patient-LZU7NSTDRFX77U7G.npy
+Loaded patient-ANCCICBPHIDJ5PJ4.npy
+
+ 25/132 [====>.........................] - ETA: 7:07:33 - loss: 0.6393 - mean_squared_error: 0.638426
+Loaded patient-JAS2TYJWKQL65CQT.npy
+Loaded patient-JAANEAKBEZPKV4JV.npy
+
+ 26/132 [====>.........................] - ETA: 7:03:33 - loss: 0.6372 - mean_squared_error: 0.636427
+Loaded patient-IIAFOQ3HGHU4A6UT.npy
+Loaded patient-BMTJZEMYGJCVHX7N.npy
+
+ 27/132 [=====>........................] - ETA: 6:59:31 - loss: 0.6383 - mean_squared_error: 0.637428
+Loaded patient-NUWPDW6HBRTLEYWD.npy
+Loaded patient-JUM3FRXBYLTATYYH.npy
+
+ 28/132 [=====>........................] - ETA: 6:55:30 - loss: 0.6384 - mean_squared_error: 0.637629
+Loaded patient-OLIQUZ7ERFP4DJVD.npy
+Loaded patient-LCGP6HURGG2XVJ5B.npy
+
+ 29/132 [=====>........................] - ETA: 6:51:32 - loss: 0.6365 - mean_squared_error: 0.635630
+Loaded patient-NJB6RYF62XWGMSE2.npy
+Loaded patient-NXLFQLVZRLUEK2UF.npy
+
+ 30/132 [=====>........................] - ETA: 6:47:31 - loss: 0.6354 - mean_squared_error: 0.634531
+Loaded patient-OSO6K4FGNA57I3VJ.npy
+Loaded patient-ENPUI7ZVHUGIXYN7.npy
+
+ 31/132 [======>.......................] - ETA: 6:43:28 - loss: 0.6386 - mean_squared_error: 0.637832
+Loaded patient-OPLQZBP3BOBS4LTY.npy
+Loaded patient-MRYGCR7462Z7IN2L.npy
+
+ 32/132 [======>.......................] - ETA: 6:39:29 - loss: 0.6367 - mean_squared_error: 0.635933
+Loaded patient-AFN5EQGSDERZCTLM.npy
+Loaded patient-HLQKXLS4OQ2BGQ5C.npy
+
+ 33/132 [======>.......................] - ETA: 6:35:30 - loss: 0.6367 - mean_squared_error: 0.635934
+Loaded patient-DZLYYZNR6M5BZFBT.npy
+Loaded patient-HAKJSG5CHDGOBP6B.npy
+
+ 34/132 [======>.......................] - ETA: 6:31:30 - loss: 0.6393 - mean_squared_error: 0.638535
+Loaded patient-FCYGZ75WMW6L4PJM.npy
+Loaded patient-VJNCTEEYR7U4HIQU.npy
+
+ 35/132 [======>.......................] - ETA: 6:27:33 - loss: 0.6381 - mean_squared_error: 0.637236
+Loaded patient-XQLUVUDY23UZMYW3.npy
+Loaded patient-OOAKLUZ2A4XYXC4X.npy
+
+ 36/132 [=======>......................] - ETA: 6:23:31 - loss: 0.6400 - mean_squared_error: 0.639237
+Loaded patient-RRZNNMZTLY4BJK7C.npy
+Loaded patient-TEHE4SMNJTXDNW2O.npy
+
+ 37/132 [=======>......................] - ETA: 6:19:34 - loss: 0.6398 - mean_squared_error: 0.638938
+Loaded patient-YYNFU45K2WIMXWE4.npy
+Loaded patient-DNO6CS3YNGFMUWXL.npy
+
+ 38/132 [=======>......................] - ETA: 6:15:33 - loss: 0.6389 - mean_squared_error: 0.638139
+Loaded patient-GOXKSLNERTQ7DSPQ.npy
+Loaded patient-LVOHLK3FOHWE66BP.npy
+
+ 39/132 [=======>......................] - ETA: 6:11:32 - loss: 0.6416 - mean_squared_error: 0.640840
+Loaded patient-ROF7JT3SZGBNY3MG.npy
+Loaded patient-WUG3VLS7FYXG35LH.npy
+
+ 40/132 [========>.....................] - ETA: 6:07:33 - loss: 0.6413 - mean_squared_error: 0.640541
+Loaded patient-YGJSUAFCVJ52LIRD.npy
+Loaded patient-MKIAFF7LDGXTZN4C.npy
+
+ 41/132 [========>.....................] - ETA: 6:03:32 - loss: 0.6424 - mean_squared_error: 0.641642
+Loaded patient-KFX44Z5T5RWT4LLI.npy
+Loaded patient-EYEDMZ3Z6OIKPERL.npy
+
+ 42/132 [========>.....................] - ETA: 5:59:33 - loss: 0.6419 - mean_squared_error: 0.641143
+Loaded patient-JMWZRLKLB5DSSXE3.npy
+Loaded patient-TRRYZ5WXYHUMTPCQ.npy
+
+ 43/132 [========>.....................] - ETA: 5:55:31 - loss: 0.6429 - mean_squared_error: 0.642144
+Loaded patient-TFXM6VTRLJH2DS7G.npy
+Loaded patient-BSBXPIGXEUV3WWOZ.npy
+
+ 44/132 [=========>....................] - ETA: 5:51:31 - loss: 0.6424 - mean_squared_error: 0.641645
+Loaded patient-AHNGBFJSTEBO4BJW.npy
+Loaded patient-GONORRCZWHDZV3M5.npy
+
+ 45/132 [=========>....................] - ETA: 5:47:31 - loss: 0.6414 - mean_squared_error: 0.640646
+Loaded patient-NJPOTXDCGONCOU7C.npy
+Loaded patient-RHWTMTHC7HIWZ2YZ.npy
+
+ 46/132 [=========>....................] - ETA: 5:43:34 - loss: 0.6401 - mean_squared_error: 0.639347
+Loaded patient-ZUR2IKTUC2KQVB2X.npy
+Loaded patient-UJHKCBMXXLB5QHTP.npy
+
+ 47/132 [=========>....................] - ETA: 5:39:34 - loss: 0.6403 - mean_squared_error: 0.639548
+Loaded patient-XSSFSN7XYAV4E3OA.npy
+Loaded patient-FFVM6VCPRIKK7453.npy
+
+ 48/132 [=========>....................] - ETA: 5:35:38 - loss: 0.6407 - mean_squared_error: 0.639949
+Loaded patient-CFC7SE7TGP55RMUB.npy
+Loaded patient-NEYLUIYPCL6O74O6.npy
+
+ 49/132 [==========>...................] - ETA: 5:31:41 - loss: 0.6397 - mean_squared_error: 0.638950
+Loaded patient-QKBS566N24RMCV5H.npy
+Loaded patient-CRH6GLC3CTD2WACN.npy
+
+ 50/132 [==========>...................] - ETA: 5:27:40 - loss: 0.6398 - mean_squared_error: 0.639051
+Loaded patient-CUM2CZJVM5H5ZKFE.npy
+Loaded patient-NJDN23E34MZVQU66.npy
+
+ 51/132 [==========>...................] - ETA: 5:23:39 - loss: 0.6410 - mean_squared_error: 0.640252
+Loaded patient-RMID4XEKTVEYCSGK.npy
+Loaded patient-TVY4XBCLXJBKK72S.npy
+
+ 52/132 [==========>...................] - ETA: 5:19:40 - loss: 0.6401 - mean_squared_error: 0.639453
+Loaded patient-PCNMFAZL5VWWK7RP.npy
+Loaded patient-SBRRR2SATWOOR5D6.npy
+
+ 53/132 [===========>..................] - ETA: 5:15:40 - loss: 0.6400 - mean_squared_error: 0.639254
+Loaded patient-OAC7JXARELEVVEQW.npy
+Loaded patient-HXBUUFVQBNISYKNU.npy
+
+ 54/132 [===========>..................] - ETA: 5:11:40 - loss: 0.6419 - mean_squared_error: 0.641155
+Loaded patient-DENODP22U2Q7E4LM.npy
+Loaded patient-MTWW42SPCGLHEDKY.npy
+
+ 55/132 [===========>..................] - ETA: 5:07:39 - loss: 0.6410 - mean_squared_error: 0.640256
+Loaded patient-SUOA7XPFTTR2O5NQ.npy
+Loaded patient-PCJ6DNFF7XHMUSWE.npy
+
+ 56/132 [===========>..................] - ETA: 5:03:41 - loss: 0.6397 - mean_squared_error: 0.638957
+Loaded patient-QPKEZOB3X6B6HMCR.npy
+Loaded patient-UAFTPLA47GA7WS27.npy
+
+ 57/132 [===========>..................] - ETA: 4:59:42 - loss: 0.6399 - mean_squared_error: 0.639158
+Loaded patient-JWKB7SHIBYWSEVMC.npy
+Loaded patient-GBXENHYLRVZ5DTHI.npy
+
+ 58/132 [============>.................] - ETA: 4:55:44 - loss: 0.6398 - mean_squared_error: 0.639059
+Loaded patient-AGTRMFUZM2MQUAB4.npy
+Loaded patient-SZY3J4UTKSCFM2H4.npy
+
+ 59/132 [============>.................] - ETA: 4:51:44 - loss: 0.6389 - mean_squared_error: 0.638160
+Loaded patient-ZMEGS4G44P6FMONO.npy
+Loaded patient-ZNPFNNZ2DRELKNQ3.npy
+
+ 60/132 [============>.................] - ETA: 4:47:44 - loss: 0.6377 - mean_squared_error: 0.636961
+Loaded patient-OXRK4I6CTXCENAZV.npy
+Loaded patient-DRT3F4ITWPCCBB6T.npy
+
+ 61/132 [============>.................] - ETA: 4:43:44 - loss: 0.6370 - mean_squared_error: 0.636262
+Loaded patient-XJLRFX244JGJZUUF.npy
+Loaded patient-FYXMPCGHTGJXJBSD.npy
+
+ 62/132 [=============>................] - ETA: 4:39:44 - loss: 0.6368 - mean_squared_error: 0.636063
+Loaded patient-ILNTKMBVTXNXURGV.npy
+Loaded patient-AFEB6XW5UCQTSYJL.npy
+
+ 63/132 [=============>................] - ETA: 4:35:44 - loss: 0.6370 - mean_squared_error: 0.636264
+Loaded patient-TBNR4PRU7XIL27G6.npy
+Loaded patient-PVMXD3RZSHEQTYW3.npy
+
+ 64/132 [=============>................] - ETA: 4:31:45 - loss: 0.6380 - mean_squared_error: 0.637265
+Loaded patient-UKOHM6O57N37U2E2.npy
+Loaded patient-OUM3NFGU5U3TCBBK.npy
+
+ 65/132 [=============>................] - ETA: 4:27:44 - loss: 0.6385 - mean_squared_error: 0.637766
+Loaded patient-ADIO4U6QJTXF3YQH.npy
+Loaded patient-AUGXT5PI4VY62M6L.npy
+
+ 66/132 [==============>...............] - ETA: 4:23:45 - loss: 0.6375 - mean_squared_error: 0.636767
+Loaded patient-HXLMZWH3SFX3SPAN.npy
+Loaded patient-ZUEK5YSS7CITVWIP.npy
+
+ 67/132 [==============>...............] - ETA: 4:19:45 - loss: 0.6379 - mean_squared_error: 0.637168
+Loaded patient-WZPADD37RLXRX3IG.npy
+Loaded patient-XYOD23KJFH7NZXXK.npy
+
+ 68/132 [==============>...............] - ETA: 4:15:46 - loss: 0.6384 - mean_squared_error: 0.637669
+Loaded patient-IETROE62UNT5QVWS.npy
+Loaded patient-OAEVXX4IFAX5IYOR.npy
+
+ 69/132 [==============>...............] - ETA: 4:11:47 - loss: 0.6378 - mean_squared_error: 0.637170
+Loaded patient-GET5PY3CH6RJV3UW.npy
+Loaded patient-QLYPHVVU3RG43OZO.npy
+
+ 70/132 [==============>...............] - ETA: 4:07:47 - loss: 0.6377 - mean_squared_error: 0.636971
+Loaded patient-TITRFCZEPFJKM3NY.npy
+Loaded patient-IKLKZYXDYTCCYUAZ.npy
+
+ 71/132 [===============>..............] - ETA: 4:03:47 - loss: 0.6387 - mean_squared_error: 0.637972
+Loaded patient-IWYDKUPY2NSYJGLF.npy
+Loaded patient-RWJZNVFII5INU6Z5.npy
+
+ 72/132 [===============>..............] - ETA: 3:59:49 - loss: 0.6391 - mean_squared_error: 0.638473
+Loaded patient-UGXVSPJLHJL6AHSW.npy
+Loaded patient-ECLDQAP52JUWQZHM.npy
+
+ 73/132 [===============>..............] - ETA: 3:55:49 - loss: 0.6391 - mean_squared_error: 0.638474
+Loaded patient-FLSUE7ZIXI6HSJWN.npy
+Loaded patient-ADKFJYDHLE7M3XE6.npy
+
+ 74/132 [===============>..............] - ETA: 3:51:49 - loss: 0.6394 - mean_squared_error: 0.638675
+Loaded patient-HLXOSVDF27JWNCMJ.npy
+Loaded patient-YEXJFFF2ZK44FYCP.npy
+
+ 75/132 [================>.............] - ETA: 3:47:49 - loss: 0.6402 - mean_squared_error: 0.639476
+Loaded patient-SZKV26SJOHXJBPVX.npy
+Loaded patient-TRM3ANQXS7O6Y7OA.npy
+
+ 76/132 [================>.............] - ETA: 3:43:50 - loss: 0.6400 - mean_squared_error: 0.639277
+Loaded patient-VZOXMEUK7BN7PQH3.npy
+Loaded patient-ZQYME7XWFWQXXOXA.npy
+
+ 77/132 [================>.............] - ETA: 3:39:50 - loss: 0.6407 - mean_squared_error: 0.639978
+Loaded patient-VSJRIEOFJCVJIO2C.npy
+Loaded patient-ZVRO2HKWM7JSS6IA.npy
+
+ 78/132 [================>.............] - ETA: 3:35:50 - loss: 0.6417 - mean_squared_error: 0.641079
+Loaded patient-VOPMJMGIDQQ75E6G.npy
+Loaded patient-DSIFGAA3BMQKFE7A.npy
+
+ 79/132 [================>.............] - ETA: 3:31:51 - loss: 0.6413 - mean_squared_error: 0.640680
+Loaded patient-QTUPNSXYST53IETT.npy
+Loaded patient-BHYZMLL7GBZZLACW.npy
+
+ 80/132 [=================>............] - ETA: 3:27:51 - loss: 0.6416 - mean_squared_error: 0.640881
+Loaded patient-AGTDPQEU54ODFAUD.npy
+Loaded patient-BNZ2UKOA43BESZGP.npy
+
+ 81/132 [=================>............] - ETA: 3:23:51 - loss: 0.6410 - mean_squared_error: 0.640282
+Loaded patient-JSV6UEFKJAVM6OGO.npy
+Loaded patient-NLV36DRLRZY5AKIJ.npy
+
+ 82/132 [=================>............] - ETA: 3:19:51 - loss: 0.6409 - mean_squared_error: 0.640283
+Loaded patient-RHOULE6IWB6KWLE5.npy
+Loaded patient-FUVL4PLSUHRCEAHC.npy
+
+ 83/132 [=================>............] - ETA: 3:15:52 - loss: 0.6428 - mean_squared_error: 0.642084
+Loaded patient-BSKAYXMTSEXR6U5K.npy
+Loaded patient-WAP327ZXF6FGV5E4.npy
+
+ 84/132 [==================>...........] - ETA: 3:11:52 - loss: 0.6423 - mean_squared_error: 0.641685
+Loaded patient-ENBHS75LQ7FWO5CP.npy
+Loaded patient-WHDZVHCOCOTIJLXV.npy
+
+ 85/132 [==================>...........] - ETA: 3:07:52 - loss: 0.6420 - mean_squared_error: 0.641386
+Loaded patient-NHXCOHZ4HH53NLQ6.npy
+Loaded patient-XZUUUC426GUXSCGJ.npy
+
+ 86/132 [==================>...........] - ETA: 3:03:53 - loss: 0.6427 - mean_squared_error: 0.641987
+Loaded patient-WHCQX5APWQZHMM3Q.npy
+Loaded patient-EYYSOUW6PR2WMBZS.npy
+
+ 87/132 [==================>...........] - ETA: 2:59:53 - loss: 0.6428 - mean_squared_error: 0.642088
+Loaded patient-CJDXGZHXAGH7QL3C.npy
+Loaded patient-NWRLBSNF3RVU3MAC.npy
+
+ 88/132 [===================>..........] - ETA: 2:55:53 - loss: 0.6434 - mean_squared_error: 0.642789
+Loaded patient-MOAADIHO5RHQJEK3.npy
+Loaded patient-LYUO2OPTNYUBCHT2.npy
+
+ 89/132 [===================>..........] - ETA: 2:51:53 - loss: 0.6432 - mean_squared_error: 0.642490
+Loaded patient-CMELUGEVB3ESBIAK.npy
+Loaded patient-XPJH44FSBRVL2WTV.npy
+
+ 90/132 [===================>..........] - ETA: 2:47:54 - loss: 0.6428 - mean_squared_error: 0.642091
+Loaded patient-DJGKDC32BE5NKELX.npy
+Loaded patient-SODFDRR2LWR7JDMN.npy
+
+ 91/132 [===================>..........] - ETA: 2:43:54 - loss: 0.6431 - mean_squared_error: 0.642492
+Loaded patient-TXOGS5CQ6RZMSV3W.npy
+Loaded patient-COFP4UFH6MWZA7HI.npy
+
+ 92/132 [===================>..........] - ETA: 2:39:54 - loss: 0.6427 - mean_squared_error: 0.642093
+Loaded patient-BHA4CDH32NPSOKTZ.npy
+Loaded patient-NFG67H47EUPD5URG.npy
+
+ 93/132 [====================>.........] - ETA: 2:35:54 - loss: 0.6430 - mean_squared_error: 0.642294
+Loaded patient-VKFW6CO5FV2P3PUE.npy
+Loaded patient-SBLQEZAZEXCC76C6.npy
+
+ 94/132 [====================>.........] - ETA: 2:31:54 - loss: 0.6426 - mean_squared_error: 0.641995
+Loaded patient-RATVCRHG4ZHLCOV3.npy
+Loaded patient-UBDRB3DMSB6TJ76N.npy
+
+ 95/132 [====================>.........] - ETA: 2:27:54 - loss: 0.6426 - mean_squared_error: 0.641896
+Loaded patient-SLPTPLSMZYJEUEXK.npy
+Loaded patient-IAUKV5R644JZFD55.npy
+
+ 96/132 [====================>.........] - ETA: 2:23:54 - loss: 0.6424 - mean_squared_error: 0.641797
+Loaded patient-MPTG3X65O7O7HYHX.npy
+Loaded patient-RODVAIJ6A6P4D54Y.npy
+
+ 97/132 [=====================>........] - ETA: 2:19:54 - loss: 0.6422 - mean_squared_error: 0.641598
+Loaded patient-WDIYHNMBALZ4ZP2A.npy
+Loaded patient-RLJSRNLTRUQAVT3L.npy
+
+ 98/132 [=====================>........] - ETA: 2:15:54 - loss: 0.6426 - mean_squared_error: 0.641999
+Loaded patient-EGCV7CJ6LF2CACQM.npy
+Loaded patient-GKDV3FW4M56I3IKV.npy
+
+ 99/132 [=====================>........] - ETA: 2:11:55 - loss: 0.6420 - mean_squared_error: 0.6412100
+Loaded patient-ZHLGEIY4UAEIPL33.npy
+Loaded patient-PMMV7MLZUWJTIMLR.npy
+
+100/132 [=====================>........] - ETA: 2:07:55 - loss: 0.6423 - mean_squared_error: 0.6415101
+Loaded patient-HHM4X4CF7WXJXSCT.npy
+Loaded patient-NMHOGEKTK7LT57ZI.npy
+
+101/132 [=====================>........] - ETA: 2:03:55 - loss: 0.6419 - mean_squared_error: 0.6412102
+Loaded patient-IBRRD5O4NGVPABDT.npy
+Loaded patient-ZCMTUATV42LAXACO.npy
+
+102/132 [======================>.......] - ETA: 1:59:55 - loss: 0.6425 - mean_squared_error: 0.6418103
+Loaded patient-ZANU4GPPZNIFRN6W.npy
+Loaded patient-HVPI7QQSXPDHSFME.npy
+
+103/132 [======================>.......] - ETA: 1:55:55 - loss: 0.6425 - mean_squared_error: 0.6418104
+Loaded patient-XHX3PCDOWEWDB34X.npy
+Loaded patient-VGF4YIHDAARLWS7A.npy
+
+104/132 [======================>.......] - ETA: 1:51:55 - loss: 0.6421 - mean_squared_error: 0.6414105
+Loaded patient-IPFO2JH7ZZYTQHH2.npy
+Loaded patient-OLYVZJAPCZJQWGIE.npy
+
+105/132 [======================>.......] - ETA: 1:47:55 - loss: 0.6414 - mean_squared_error: 0.6407106
+Loaded patient-SVYZISKLZLQKBPX6.npy
+Loaded patient-KNKVPM2UV4UFFC5R.npy
+
+106/132 [=======================>......] - ETA: 1:43:55 - loss: 0.6412 - mean_squared_error: 0.6404107
+Loaded patient-DDWAA4OECH5TXONN.npy
+Loaded patient-ROMHUDLTCOEXUQCA.npy
+
+107/132 [=======================>......] - ETA: 1:39:55 - loss: 0.6422 - mean_squared_error: 0.6415108
+Loaded patient-GBA7XJ5E7ITWZW7K.npy
+Loaded patient-DPSG75LCBZVBTRPO.npy
+
+108/132 [=======================>......] - ETA: 1:35:56 - loss: 0.6427 - mean_squared_error: 0.6420109
+Loaded patient-JID2LWYOKIWCMT2Z.npy
+Loaded patient-SEV2GAEFNJBLX3ZJ.npy
+
+109/132 [=======================>......] - ETA: 1:31:56 - loss: 0.6425 - mean_squared_error: 0.6418110
+Loaded patient-MJFHYCVEV2GTJD3N.npy
+Loaded patient-IIOOPK6T2ZWDZMU3.npy
+
+110/132 [========================>.....] - ETA: 1:27:56 - loss: 0.6431 - mean_squared_error: 0.6424111
+Loaded patient-TFCLOHN4ROEYF6QY.npy
+Loaded patient-UMRXCXFIT4YDD7RQ.npy
+
+111/132 [========================>.....] - ETA: 1:23:56 - loss: 0.6427 - mean_squared_error: 0.6419112
+Loaded patient-QJFMNVKKVZXKBROO.npy
+Loaded patient-RFSGSDQ5MWIVM6QV.npy
+
+112/132 [========================>.....] - ETA: 1:19:56 - loss: 0.6423 - mean_squared_error: 0.6415113
+Loaded patient-ARZ7H7BSITHOSSMG.npy
+Loaded patient-SZXTZ3LQ5MBFDFXR.npy
+
+113/132 [========================>.....] - ETA: 1:15:56 - loss: 0.6428 - mean_squared_error: 0.6420114
+Loaded patient-BIASJO43N3A7Z63W.npy
+Loaded patient-BWDRAF5ZOQPFOOL7.npy
+
+114/132 [========================>.....] - ETA: 1:11:57 - loss: 0.6429 - mean_squared_error: 0.6422115
+Loaded patient-JNLCZIQGTGTFNEKK.npy
+Loaded patient-OCD6VASBJF4SNZ4U.npy
+
+115/132 [=========================>....] - ETA: 1:07:57 - loss: 0.6428 - mean_squared_error: 0.6420116
+Loaded patient-PMUXVQHYYYBOK4RL.npy
+Loaded patient-FPTFJD4JZA7ZKYQJ.npy
+
+116/132 [=========================>....] - ETA: 1:03:57 - loss: 0.6427 - mean_squared_error: 0.6419117
+Loaded patient-WCSSH2NHDNNZIVML.npy
+Loaded patient-GCBJDIT55TRGHZIR.npy
+
+117/132 [=========================>....] - ETA: 59:57 - loss: 0.6425 - mean_squared_error: 0.6418  118
+Loaded patient-TVCP433TKOVBCQTW.npy
+Loaded patient-HIAEQWMTUGATOAVI.npy
+
+118/132 [=========================>....] - ETA: 55:57 - loss: 0.6434 - mean_squared_error: 0.6427119
+Loaded patient-BVYSR54MKT5SPMSU.npy
+Loaded patient-LQMW3GK5JQEVVFBK.npy
+
+119/132 [==========================>...] - ETA: 51:57 - loss: 0.6450 - mean_squared_error: 0.6443120
+Loaded patient-NCI33JITLERBTWXI.npy
+Loaded patient-BLPHSKRODCJLHZZS.npy
+
+120/132 [==========================>...] - ETA: 47:58 - loss: 0.6454 - mean_squared_error: 0.6446121
+Loaded patient-RRZGAIOEIS6WPXDT.npy
+Loaded patient-MSZB67BPZ32ILNLK.npy
+
+121/132 [==========================>...] - ETA: 43:58 - loss: 0.6459 - mean_squared_error: 0.6452122
+Loaded patient-RWKA32WBSVFB4MQF.npy
+Loaded patient-ZSXFDYQ4ST4Z6SRF.npy
+
+122/132 [==========================>...] - ETA: 39:58 - loss: 0.6459 - mean_squared_error: 0.6452123
+Loaded patient-VKDRQPXRMRRBAHW3.npy
+Loaded patient-UUKSYXBYQQZATBP5.npy
+
+123/132 [==========================>...] - ETA: 35:58 - loss: 0.6457 - mean_squared_error: 0.6449124
+Loaded patient-SADEJMD27KKWZQ5L.npy
+Loaded patient-IEJDGAS52VTH4G74.npy
+
+124/132 [===========================>..] - ETA: 31:58 - loss: 0.6456 - mean_squared_error: 0.6448125
+Loaded patient-XVPBCFNYTDI4HHW2.npy
+Loaded patient-EPSAH2BCBGV7WQHM.npy
+
+125/132 [===========================>..] - ETA: 27:58 - loss: 0.6453 - mean_squared_error: 0.6445126
+Loaded patient-LHMGXWC6J7DRD3CP.npy
+Loaded patient-XJJ3IXEOPNFXBGP7.npy
+
+126/132 [===========================>..] - ETA: 23:58 - loss: 0.6453 - mean_squared_error: 0.6445127
+Loaded patient-ZCTE57VMPCGWDG75.npy
+Loaded patient-ASI5JI7DJLB3RKFS.npy
+
+127/132 [===========================>..] - ETA: 19:59 - loss: 0.6460 - mean_squared_error: 0.6452128
+Loaded patient-FKHXWQEPTPIWXHBR.npy
+Loaded patient-ZFMUMZVL6HFQCKSX.npy
+
+128/132 [============================>.] - ETA: 15:59 - loss: 0.6465 - mean_squared_error: 0.6457129
+Loaded patient-THKULF2KHMNVMTUR.npy
+Loaded patient-VUTDS6OC2VUSNQMK.npy
+
+129/132 [============================>.] - ETA: 11:59 - loss: 0.6459 - mean_squared_error: 0.6451130
+Loaded patient-HDQYSVBJ4MPRGYRN.npy
+Loaded patient-SQD3UDNZH2Q3ET4V.npy
+
+130/132 [============================>.] - ETA: 7:59 - loss: 0.6456 - mean_squared_error: 0.6449 131
+Loaded patient-HIA2VPHI6ABMCQTV.npy
+Loaded patient-EWYGH3OSPLJI27UF.npy
+
+131/132 [============================>.] - ETA: 3:59 - loss: 0.6454 - mean_squared_error: 0.64460
+Loaded patient-KPC2RVJBDHQLC5EM.npy
+Loaded patient-HAYSFX75ACG77ZJE.npy
+2
+Loaded patient-UNREF6O6622LZWNN.npy
+Loaded patient-HXKDQ5I26Z2CRUQB.npy
+3
+Loaded patient-TUX27MONFI7VC6M3.npy
+Loaded patient-CSCIKXOMNAIB3LUQ.npy
+4
+Loaded patient-TZES7PMHXV4XVJBV.npy
+Loaded patient-EUNTRXNEDB7VDVIS.npy
+5
+Loaded patient-LGFNFIWO2ZEQYK36.npy
+Loaded patient-EGIAP2GDM33PCW5A.npy
+6
+Loaded patient-ALOUY4SF3BQKXQCZ.npy
+Loaded patient-MKKOO7NDN26O6RLZ.npy
+7
+Loaded patient-OLCBKEY2WKCWPHJW.npy
+Loaded patient-CWWKNDYG2UERXH7X.npy
+8
+Loaded patient-CSXRYWJCXJXAJRLP.npy
+Loaded patient-MEQKZCRF5TR6MHLY.npy
+9
+Loaded patient-POSX6PS6LR34HENB.npy
+Loaded patient-LOR7YOK3PYHXSHCM.npy
+10
+Loaded patient-AJHYOJIG3DZLSIKI.npy
+Loaded patient-FTAKNRFGOGVS632K.npy
+11
+Loaded patient-RYNCGNVRZH2LB7BN.npy
+Loaded patient-UMFGGCOJN6GDPQDV.npy
+12
+Loaded patient-DDPQNEBC34XCOF2U.npy
+Loaded patient-KQSTLFNPLNP5M43F.npy
+13
+Loaded patient-RBC423N4RNB3UZ5P.npy
+Loaded patient-LIJBIVVBI6TJCT6Z.npy
+14
+Loaded patient-XQBRGW3CYGNUMWHI.npy
+Loaded patient-OCP7EUZJEB7JUL65.npy
+15
+Loaded patient-AOTGHQ6S5AD7LOBO.npy
+Loaded patient-VDO7JNWOEJ5KGJYJ.npy
+16
+Loaded patient-JJMENP4QE4CSXSHV.npy
+Loaded patient-KJAWMYSKQTYINTNC.npy
+17
+Loaded patient-HGJTE6ROVCUFUC4S.npy
+Loaded patient-MEP2WAB3JNIXJTON.npy
+18
+Loaded patient-POYYSD3RSJFBKSLQ.npy
+Loaded patient-ABPO2BORDNF3OVL3.npy
+19
+Loaded patient-RTC5RXQHUXCSPNLN.npy
+Loaded patient-PIKNNHQAI52EI62K.npy
+20
+Loaded patient-RKIZJRFZGCXD4EOL.npy
+Loaded patient-YSTBBUD35YZBOT2Z.npy
+21
+Loaded patient-ZTGZBI2QX2JQFXIG.npy
+Loaded patient-MHL54TPCTOQJ2I4K.npy
+22
+Loaded patient-NYR7NWGHIRZDCL66.npy
+Loaded patient-MLHE2CESZAWQKZVP.npy
+23
+Loaded patient-JUBFRXRHLG46KY42.npy
+Loaded patient-ASD2URNKFRN3ZSFL.npy
+24
+Loaded patient-FIBU2GYR72UU7E5M.npy
+Loaded patient-RXK7K2FPVPLFMID2.npy
+25
+Loaded patient-NHKUCEIIHLJQ25VM.npy
+Loaded patient-ESLHGQCGYB7J4DX3.npy
+26
+Loaded patient-LUVMEPI5JWYL67RF.npy
+Loaded patient-KACA7XHWXRM6A3W3.npy
+27
+Loaded patient-ZCIMXZ73NFNRDH46.npy
+Loaded patient-JWVEP6ZLYCOE5IAE.npy
+28
+Loaded patient-RKBSU42WA7AY22E7.npy
+Loaded patient-MSXY2JKZXPEBXR72.npy
+29
+Loaded patient-WPA6WCTE24HGRIXH.npy
+Loaded patient-WIPV3EQ34O55HCUI.npy
+30
+Loaded patient-SXF2FCCYEQLXMQO5.npy
+Loaded patient-ICWMS7OCXZLUTUFT.npy
+31
+Loaded patient-VVGO45TQNOASBLZM.npy
+Loaded patient-IAX2O3NWENSSH4D5.npy
+0
+Loaded patient-SGFWUNFEYCKBMF65.npy
+Loaded patient-DZTDN47H2IKSYN3Q.npy
+1
+Loaded patient-DRS5DZGN5PVUZX4Y.npy
+Loaded patient-WWEFFBIMLZ3KLQVZ.npy
+2
+Loaded patient-UNREF6O6622LZWNN.npy
+Loaded patient-HXKDQ5I26Z2CRUQB.npy
+
+132/132 [==============================] - 33474s 254s/step - loss: 0.6450 - mean_squared_error: 0.6442 - val_loss: 0.6505 - val_mean_squared_error: 0.6497
+
+Epoch 00003: saving model to tmp/cad_weights.hdf5
+Epoch 4/10
+1
+Loaded patient-RCDAHVLV6QUTDFVD.npy
+Loaded patient-KRWJSE7TVM2QLJI7.npy
+
+  1/132 [..............................] - ETA: 8:43:50 - loss: 0.6262 - mean_squared_error: 0.62512
+Loaded patient-PMEECXFHBLN6KHO7.npy
+Loaded patient-MYTHDP7XSELNJUBQ.npy
+
+  2/132 [..............................] - ETA: 8:38:43 - loss: 0.6078 - mean_squared_error: 0.60673
+Loaded patient-XPBRBUB6YYHIWHVO.npy
+Loaded patient-JCWGEJIJO2LDRY2U.npy
+
+  3/132 [..............................] - ETA: 8:34:54 - loss: 0.6287 - mean_squared_error: 0.62804
+Loaded patient-SWSY42N45J3YWV5I.npy
+Loaded patient-UZFAM45KRI3C7MGB.npy
+
+  4/132 [..............................] - ETA: 8:30:47 - loss: 0.6357 - mean_squared_error: 0.63505
+Loaded patient-TNUEVMD3Z4YZFQDG.npy
+Loaded patient-BTLLL3I67PYRN7R4.npy
+
+  5/132 [>.............................] - ETA: 8:27:07 - loss: 0.6253 - mean_squared_error: 0.62476
+Loaded patient-NJNFVZMSGBGM6H5Y.npy
+Loaded patient-ENB4V4BPR4HRCRXW.npy
+
+  6/132 [>.............................] - ETA: 8:23:00 - loss: 0.6312 - mean_squared_error: 0.63067
+Loaded patient-PBR2STY62FZ3MQHZ.npy
+Loaded patient-DXOUKNW7AXCZFUIL.npy
+
+  7/132 [>.............................] - ETA: 8:19:10 - loss: 0.6237 - mean_squared_error: 0.62318
+Loaded patient-WPNYHBQRGJ4NHU3C.npy
+Loaded patient-IGIIMA3LABMNETMA.npy
+
+  8/132 [>.............................] - ETA: 8:15:11 - loss: 0.6217 - mean_squared_error: 0.62119
+Loaded patient-OTIP25YORHBKJPZM.npy
+Loaded patient-YNLMIJ5S24AYYZXN.npy
+
+  9/132 [=>............................] - ETA: 8:11:17 - loss: 0.6117 - mean_squared_error: 0.611110
+Loaded patient-ZAJH6DQQBAECJ7AX.npy
+Loaded patient-LOGIP43ZSLSUA5SZ.npy
+
+ 10/132 [=>............................] - ETA: 8:07:31 - loss: 0.6132 - mean_squared_error: 0.612611
+Loaded patient-RKXO5JUDKMYRUTN5.npy
+Loaded patient-NWO33W453F6ZJ4BU.npy
+
+ 11/132 [=>............................] - ETA: 8:03:30 - loss: 0.6272 - mean_squared_error: 0.626512
+Loaded patient-XDNEWPTKFLCWWUSV.npy
+Loaded patient-JUOV5YWN6IS7OXIJ.npy
+
+ 12/132 [=>............................] - ETA: 7:59:46 - loss: 0.6259 - mean_squared_error: 0.625213
+Loaded patient-GFRJ7SPGIEJVXVRS.npy
+Loaded patient-HBAZOCWOGBJYCEAZ.npy
+
+ 13/132 [=>............................] - ETA: 7:56:03 - loss: 0.6229 - mean_squared_error: 0.622214
+Loaded patient-JLHG7VESTU3GH2KX.npy
+Loaded patient-JQWIIAADGKE2YMJS.npy
+
+ 14/132 [==>...........................] - ETA: 7:51:58 - loss: 0.6264 - mean_squared_error: 0.625615
+Loaded patient-HSKRXAPZ7WNBT2TI.npy
+Loaded patient-BMFSUHVBPJ7RY56P.npy
+
+ 15/132 [==>...........................] - ETA: 7:47:49 - loss: 0.6253 - mean_squared_error: 0.624516
+Loaded patient-TJAPUMPEDA32J5JW.npy
+Loaded patient-TNXMNBGRZHPIMJJI.npy
+
+ 16/132 [==>...........................] - ETA: 7:43:44 - loss: 0.6243 - mean_squared_error: 0.623517
+Loaded patient-LQG4BRZPSCMR5XAN.npy
+Loaded patient-IAR66U7QVOBXOFQE.npy
+
+ 17/132 [==>...........................] - ETA: 7:39:54 - loss: 0.6236 - mean_squared_error: 0.622818
+Loaded patient-SRKOPGCEG62ZJTT2.npy
+Loaded patient-NLXOSUXOZZHPFQQX.npy
+
+ 18/132 [===>..........................] - ETA: 7:35:53 - loss: 0.6237 - mean_squared_error: 0.622919
+Loaded patient-YRC3D4LSQNDZCXDA.npy
+Loaded patient-RKFD4L7QSBXPHFJU.npy
+
+ 19/132 [===>..........................] - ETA: 7:31:50 - loss: 0.6280 - mean_squared_error: 0.627220
+Loaded patient-CGQFS5PB627OWLL7.npy
+Loaded patient-GHVG2CNNRZ65UBEU.npy
+
+ 20/132 [===>..........................] - ETA: 7:27:47 - loss: 0.6252 - mean_squared_error: 0.624421
+Loaded patient-ANLMZN6NS4S3TCCF.npy
+Loaded patient-CJNLJB43ZD3GIUN3.npy
+
+ 21/132 [===>..........................] - ETA: 7:23:44 - loss: 0.6279 - mean_squared_error: 0.627022
+Loaded patient-IDUHFQWVS4WKXPC5.npy
+Loaded patient-VFHSASVT4EXZWAOS.npy
+
+ 22/132 [====>.........................] - ETA: 7:19:43 - loss: 0.6250 - mean_squared_error: 0.624223
+Loaded patient-EQD7NRTYLRGYENOM.npy
+Loaded patient-ZMP6NER3I4ERS2JE.npy
+
+ 23/132 [====>.........................] - ETA: 7:15:42 - loss: 0.6252 - mean_squared_error: 0.624324
+Loaded patient-SSJQF5OU3VSC3HAD.npy
+Loaded patient-CQHAXTV5WJLZBRFB.npy
+
+ 24/132 [====>.........................] - ETA: 7:11:52 - loss: 0.6289 - mean_squared_error: 0.628025
+Loaded patient-LZU7NSTDRFX77U7G.npy
+Loaded patient-ANCCICBPHIDJ5PJ4.npy
+
+ 25/132 [====>.........................] - ETA: 7:07:50 - loss: 0.6306 - mean_squared_error: 0.629726
+Loaded patient-JAS2TYJWKQL65CQT.npy
+Loaded patient-JAANEAKBEZPKV4JV.npy
+
+ 26/132 [====>.........................] - ETA: 7:03:52 - loss: 0.6286 - mean_squared_error: 0.627727
+Loaded patient-IIAFOQ3HGHU4A6UT.npy
+Loaded patient-BMTJZEMYGJCVHX7N.npy
+
+ 27/132 [=====>........................] - ETA: 6:59:53 - loss: 0.6296 - mean_squared_error: 0.628828
+Loaded patient-NUWPDW6HBRTLEYWD.npy
+Loaded patient-JUM3FRXBYLTATYYH.npy
+
+ 28/132 [=====>........................] - ETA: 6:55:50 - loss: 0.6298 - mean_squared_error: 0.628929
+Loaded patient-OLIQUZ7ERFP4DJVD.npy
+Loaded patient-LCGP6HURGG2XVJ5B.npy
+
+ 29/132 [=====>........................] - ETA: 6:52:24 - loss: 0.6278 - mean_squared_error: 0.627030
+Loaded patient-NJB6RYF62XWGMSE2.npy
+Loaded patient-NXLFQLVZRLUEK2UF.npy
+
+ 30/132 [=====>........................] - ETA: 6:49:42 - loss: 0.6268 - mean_squared_error: 0.625931
+Loaded patient-OSO6K4FGNA57I3VJ.npy
+Loaded patient-ENPUI7ZVHUGIXYN7.npy
+
+ 31/132 [======>.......................] - ETA: 6:46:22 - loss: 0.6299 - mean_squared_error: 0.629132
+Loaded patient-OPLQZBP3BOBS4LTY.npy
+Loaded patient-MRYGCR7462Z7IN2L.npy
+
+ 32/132 [======>.......................] - ETA: 6:43:41 - loss: 0.6280 - mean_squared_error: 0.627233
+Loaded patient-AFN5EQGSDERZCTLM.npy
+Loaded patient-HLQKXLS4OQ2BGQ5C.npy
+
+ 33/132 [======>.......................] - ETA: 6:42:30 - loss: 0.6281 - mean_squared_error: 0.627334
+Loaded patient-DZLYYZNR6M5BZFBT.npy
+Loaded patient-HAKJSG5CHDGOBP6B.npy
+
+ 34/132 [======>.......................] - ETA: 6:38:48 - loss: 0.6308 - mean_squared_error: 0.630035
+Loaded patient-FCYGZ75WMW6L4PJM.npy
+Loaded patient-VJNCTEEYR7U4HIQU.npy
+
+ 35/132 [======>.......................] - ETA: 6:35:08 - loss: 0.6295 - mean_squared_error: 0.628736
+Loaded patient-XQLUVUDY23UZMYW3.npy
+Loaded patient-OOAKLUZ2A4XYXC4X.npy
+
+ 36/132 [=======>......................] - ETA: 6:31:21 - loss: 0.6314 - mean_squared_error: 0.630637
+Loaded patient-RRZNNMZTLY4BJK7C.npy
+Loaded patient-TEHE4SMNJTXDNW2O.npy
+
+ 37/132 [=======>......................] - ETA: 6:27:28 - loss: 0.6312 - mean_squared_error: 0.630438
+Loaded patient-YYNFU45K2WIMXWE4.npy
+Loaded patient-DNO6CS3YNGFMUWXL.npy
+
+ 38/132 [=======>......................] - ETA: 6:23:26 - loss: 0.6304 - mean_squared_error: 0.629639
+Loaded patient-GOXKSLNERTQ7DSPQ.npy
+Loaded patient-LVOHLK3FOHWE66BP.npy
+
+ 39/132 [=======>......................] - ETA: 6:20:08 - loss: 0.6331 - mean_squared_error: 0.632340
+Loaded patient-ROF7JT3SZGBNY3MG.npy
+Loaded patient-WUG3VLS7FYXG35LH.npy
+
+ 40/132 [========>.....................] - ETA: 6:16:21 - loss: 0.6328 - mean_squared_error: 0.632041
+Loaded patient-YGJSUAFCVJ52LIRD.npy
+Loaded patient-MKIAFF7LDGXTZN4C.npy
+
+ 41/132 [========>.....................] - ETA: 6:12:28 - loss: 0.6339 - mean_squared_error: 0.633242
+Loaded patient-KFX44Z5T5RWT4LLI.npy
+Loaded patient-EYEDMZ3Z6OIKPERL.npy
+
+ 42/132 [========>.....................] - ETA: 6:08:33 - loss: 0.6334 - mean_squared_error: 0.632643
+Loaded patient-JMWZRLKLB5DSSXE3.npy
+Loaded patient-TRRYZ5WXYHUMTPCQ.npy
+
+ 43/132 [========>.....................] - ETA: 6:05:04 - loss: 0.6344 - mean_squared_error: 0.633644
+Loaded patient-TFXM6VTRLJH2DS7G.npy
+Loaded patient-BSBXPIGXEUV3WWOZ.npy
+
+ 44/132 [=========>....................] - ETA: 6:01:35 - loss: 0.6339 - mean_squared_error: 0.633245
+Loaded patient-AHNGBFJSTEBO4BJW.npy
+Loaded patient-GONORRCZWHDZV3M5.npy
+
+ 45/132 [=========>....................] - ETA: 5:58:09 - loss: 0.6330 - mean_squared_error: 0.632246
+Loaded patient-NJPOTXDCGONCOU7C.npy
+Loaded patient-RHWTMTHC7HIWZ2YZ.npy
+
+ 46/132 [=========>....................] - ETA: 5:55:32 - loss: 0.6317 - mean_squared_error: 0.630947
+Loaded patient-ZUR2IKTUC2KQVB2X.npy
+Loaded patient-UJHKCBMXXLB5QHTP.npy
+
+ 47/132 [=========>....................] - ETA: 5:53:36 - loss: 0.6319 - mean_squared_error: 0.631248
+Loaded patient-XSSFSN7XYAV4E3OA.npy
+Loaded patient-FFVM6VCPRIKK7453.npy
+
+ 48/132 [=========>....................] - ETA: 5:49:29 - loss: 0.6324 - mean_squared_error: 0.631649
+Loaded patient-CFC7SE7TGP55RMUB.npy
+Loaded patient-NEYLUIYPCL6O74O6.npy
+
+ 49/132 [==========>...................] - ETA: 5:45:18 - loss: 0.6314 - mean_squared_error: 0.630650
+Loaded patient-QKBS566N24RMCV5H.npy
+Loaded patient-CRH6GLC3CTD2WACN.npy
+
+ 50/132 [==========>...................] - ETA: 5:41:04 - loss: 0.6315 - mean_squared_error: 0.630751
+Loaded patient-CUM2CZJVM5H5ZKFE.npy
+Loaded patient-NJDN23E34MZVQU66.npy
+
+ 51/132 [==========>...................] - ETA: 5:36:56 - loss: 0.6328 - mean_squared_error: 0.632052
+Loaded patient-RMID4XEKTVEYCSGK.npy
+Loaded patient-TVY4XBCLXJBKK72S.npy
+
+ 52/132 [==========>...................] - ETA: 5:32:50 - loss: 0.6319 - mean_squared_error: 0.631153
+Loaded patient-PCNMFAZL5VWWK7RP.npy
+Loaded patient-SBRRR2SATWOOR5D6.npy
+
+ 53/132 [===========>..................] - ETA: 5:28:47 - loss: 0.6318 - mean_squared_error: 0.631054
+Loaded patient-OAC7JXARELEVVEQW.npy
+Loaded patient-HXBUUFVQBNISYKNU.npy
+
+ 54/132 [===========>..................] - ETA: 5:25:08 - loss: 0.6336 - mean_squared_error: 0.632855
+Loaded patient-DENODP22U2Q7E4LM.npy
+Loaded patient-MTWW42SPCGLHEDKY.npy
+
+ 55/132 [===========>..................] - ETA: 5:21:06 - loss: 0.6328 - mean_squared_error: 0.632056
+Loaded patient-SUOA7XPFTTR2O5NQ.npy
+Loaded patient-PCJ6DNFF7XHMUSWE.npy
+
+ 56/132 [===========>..................] - ETA: 5:17:43 - loss: 0.6314 - mean_squared_error: 0.630657
+Loaded patient-QPKEZOB3X6B6HMCR.npy
+Loaded patient-UAFTPLA47GA7WS27.npy
+
+ 57/132 [===========>..................] - ETA: 5:13:32 - loss: 0.6316 - mean_squared_error: 0.630958
+Loaded patient-JWKB7SHIBYWSEVMC.npy
+Loaded patient-GBXENHYLRVZ5DTHI.npy
+
+ 58/132 [============>.................] - ETA: 5:09:50 - loss: 0.6315 - mean_squared_error: 0.630759
+Loaded patient-AGTRMFUZM2MQUAB4.npy
+Loaded patient-SZY3J4UTKSCFM2H4.npy
+
+ 59/132 [============>.................] - ETA: 5:06:57 - loss: 0.6307 - mean_squared_error: 0.629960
+Loaded patient-ZMEGS4G44P6FMONO.npy
+Loaded patient-ZNPFNNZ2DRELKNQ3.npy
+
+ 60/132 [============>.................] - ETA: 5:02:38 - loss: 0.6294 - mean_squared_error: 0.628761
+Loaded patient-OXRK4I6CTXCENAZV.npy
+Loaded patient-DRT3F4ITWPCCBB6T.npy
+
+ 61/132 [============>.................] - ETA: 4:59:03 - loss: 0.6287 - mean_squared_error: 0.627962
+Loaded patient-XJLRFX244JGJZUUF.npy
+Loaded patient-FYXMPCGHTGJXJBSD.npy
+
+ 62/132 [=============>................] - ETA: 4:54:43 - loss: 0.6285 - mean_squared_error: 0.627763
+Loaded patient-ILNTKMBVTXNXURGV.npy
+Loaded patient-AFEB6XW5UCQTSYJL.npy
+
+ 63/132 [=============>................] - ETA: 4:50:46 - loss: 0.6288 - mean_squared_error: 0.628064
+Loaded patient-TBNR4PRU7XIL27G6.npy
+Loaded patient-PVMXD3RZSHEQTYW3.npy
+
+ 64/132 [=============>................] - ETA: 4:46:37 - loss: 0.6298 - mean_squared_error: 0.629065
+Loaded patient-UKOHM6O57N37U2E2.npy
+Loaded patient-OUM3NFGU5U3TCBBK.npy
+
+ 65/132 [=============>................] - ETA: 4:42:53 - loss: 0.6304 - mean_squared_error: 0.629666
+Loaded patient-ADIO4U6QJTXF3YQH.npy
+Loaded patient-AUGXT5PI4VY62M6L.npy
+
+ 66/132 [==============>...............] - ETA: 4:39:03 - loss: 0.6293 - mean_squared_error: 0.628567
+Loaded patient-HXLMZWH3SFX3SPAN.npy
+Loaded patient-ZUEK5YSS7CITVWIP.npy
+
+ 67/132 [==============>...............] - ETA: 4:34:46 - loss: 0.6298 - mean_squared_error: 0.629068
+Loaded patient-WZPADD37RLXRX3IG.npy
+Loaded patient-XYOD23KJFH7NZXXK.npy
+
+ 68/132 [==============>...............] - ETA: 4:31:36 - loss: 0.6303 - mean_squared_error: 0.629669
+Loaded patient-IETROE62UNT5QVWS.npy
+Loaded patient-OAEVXX4IFAX5IYOR.npy
+
+ 69/132 [==============>...............] - ETA: 4:27:20 - loss: 0.6297 - mean_squared_error: 0.629070
+Loaded patient-GET5PY3CH6RJV3UW.npy
+Loaded patient-QLYPHVVU3RG43OZO.npy
+
+ 70/132 [==============>...............] - ETA: 4:22:59 - loss: 0.6296 - mean_squared_error: 0.628871
+Loaded patient-TITRFCZEPFJKM3NY.npy
+Loaded patient-IKLKZYXDYTCCYUAZ.npy
+
+ 71/132 [===============>..............] - ETA: 4:18:40 - loss: 0.6306 - mean_squared_error: 0.629972
+Loaded patient-IWYDKUPY2NSYJGLF.npy
+Loaded patient-RWJZNVFII5INU6Z5.npy
+
+ 72/132 [===============>..............] - ETA: 4:14:56 - loss: 0.6310 - mean_squared_error: 0.630373
+Loaded patient-UGXVSPJLHJL6AHSW.npy
+Loaded patient-ECLDQAP52JUWQZHM.npy
+
+ 73/132 [===============>..............] - ETA: 4:10:36 - loss: 0.6311 - mean_squared_error: 0.630374
+Loaded patient-FLSUE7ZIXI6HSJWN.npy
+Loaded patient-ADKFJYDHLE7M3XE6.npy
+
+ 74/132 [===============>..............] - ETA: 4:06:54 - loss: 0.6313 - mean_squared_error: 0.630675
+Loaded patient-HLXOSVDF27JWNCMJ.npy
+Loaded patient-YEXJFFF2ZK44FYCP.npy
+
+ 75/132 [================>.............] - ETA: 4:03:37 - loss: 0.6321 - mean_squared_error: 0.631476
+Loaded patient-SZKV26SJOHXJBPVX.npy
+Loaded patient-TRM3ANQXS7O6Y7OA.npy
+
+ 76/132 [================>.............] - ETA: 3:59:53 - loss: 0.6319 - mean_squared_error: 0.631277
+Loaded patient-VZOXMEUK7BN7PQH3.npy
+Loaded patient-ZQYME7XWFWQXXOXA.npy
+
+ 77/132 [================>.............] - ETA: 3:55:30 - loss: 0.6326 - mean_squared_error: 0.631978
+Loaded patient-VSJRIEOFJCVJIO2C.npy
+Loaded patient-ZVRO2HKWM7JSS6IA.npy
+
+ 78/132 [================>.............] - ETA: 3:51:12 - loss: 0.6337 - mean_squared_error: 0.632979
+Loaded patient-VOPMJMGIDQQ75E6G.npy
+Loaded patient-DSIFGAA3BMQKFE7A.npy
+
+ 79/132 [================>.............] - ETA: 3:47:06 - loss: 0.6333 - mean_squared_error: 0.632680
+Loaded patient-QTUPNSXYST53IETT.npy
+Loaded patient-BHYZMLL7GBZZLACW.npy
+
+ 80/132 [=================>............] - ETA: 3:43:17 - loss: 0.6336 - mean_squared_error: 0.632881
+Loaded patient-AGTDPQEU54ODFAUD.npy
+Loaded patient-BNZ2UKOA43BESZGP.npy
+
+ 81/132 [=================>............] - ETA: 3:38:54 - loss: 0.6330 - mean_squared_error: 0.632382
+Loaded patient-JSV6UEFKJAVM6OGO.npy
+Loaded patient-NLV36DRLRZY5AKIJ.npy
+
+ 82/132 [=================>............] - ETA: 3:34:30 - loss: 0.6330 - mean_squared_error: 0.632283
+Loaded patient-RHOULE6IWB6KWLE5.npy
+Loaded patient-FUVL4PLSUHRCEAHC.npy
+
+ 83/132 [=================>............] - ETA: 3:30:45 - loss: 0.6347 - mean_squared_error: 0.634084
+Loaded patient-BSKAYXMTSEXR6U5K.npy
+Loaded patient-WAP327ZXF6FGV5E4.npy
+
+ 84/132 [==================>...........] - ETA: 3:26:22 - loss: 0.6343 - mean_squared_error: 0.633685
+Loaded patient-ENBHS75LQ7FWO5CP.npy
+Loaded patient-WHDZVHCOCOTIJLXV.npy
+
+ 85/132 [==================>...........] - ETA: 3:22:11 - loss: 0.6341 - mean_squared_error: 0.633386
+Loaded patient-NHXCOHZ4HH53NLQ6.npy
+Loaded patient-XZUUUC426GUXSCGJ.npy
+
+ 86/132 [==================>...........] - ETA: 3:17:48 - loss: 0.6347 - mean_squared_error: 0.634087
+Loaded patient-WHCQX5APWQZHMM3Q.npy
+Loaded patient-EYYSOUW6PR2WMBZS.npy
+
+ 87/132 [==================>...........] - ETA: 3:13:48 - loss: 0.6348 - mean_squared_error: 0.634188
+Loaded patient-CJDXGZHXAGH7QL3C.npy
+Loaded patient-NWRLBSNF3RVU3MAC.npy
+
+ 88/132 [===================>..........] - ETA: 3:09:25 - loss: 0.6355 - mean_squared_error: 0.634789
+Loaded patient-MOAADIHO5RHQJEK3.npy
+Loaded patient-LYUO2OPTNYUBCHT2.npy
+
+ 89/132 [===================>..........] - ETA: 3:05:02 - loss: 0.6352 - mean_squared_error: 0.634590
+Loaded patient-CMELUGEVB3ESBIAK.npy
+Loaded patient-XPJH44FSBRVL2WTV.npy
+
+ 90/132 [===================>..........] - ETA: 3:00:40 - loss: 0.6349 - mean_squared_error: 0.634191
+Loaded patient-DJGKDC32BE5NKELX.npy
+Loaded patient-SODFDRR2LWR7JDMN.npy
+
+ 91/132 [===================>..........] - ETA: 2:56:19 - loss: 0.6352 - mean_squared_error: 0.634592
+Loaded patient-TXOGS5CQ6RZMSV3W.npy
+Loaded patient-COFP4UFH6MWZA7HI.npy
+
+ 92/132 [===================>..........] - ETA: 2:52:06 - loss: 0.6348 - mean_squared_error: 0.634193
+Loaded patient-BHA4CDH32NPSOKTZ.npy
+Loaded patient-NFG67H47EUPD5URG.npy
+
+ 93/132 [====================>.........] - ETA: 2:47:40 - loss: 0.6351 - mean_squared_error: 0.634394
+Loaded patient-VKFW6CO5FV2P3PUE.npy
+Loaded patient-SBLQEZAZEXCC76C6.npy
+
+ 94/132 [====================>.........] - ETA: 2:43:15 - loss: 0.6347 - mean_squared_error: 0.634095
+Loaded patient-RATVCRHG4ZHLCOV3.npy
+Loaded patient-UBDRB3DMSB6TJ76N.npy
+
+ 95/132 [====================>.........] - ETA: 2:38:50 - loss: 0.6347 - mean_squared_error: 0.633996
+Loaded patient-SLPTPLSMZYJEUEXK.npy
+Loaded patient-IAUKV5R644JZFD55.npy
+
+ 96/132 [====================>.........] - ETA: 2:34:26 - loss: 0.6346 - mean_squared_error: 0.633897
+Loaded patient-MPTG3X65O7O7HYHX.npy
+Loaded patient-RODVAIJ6A6P4D54Y.npy
+
+ 97/132 [=====================>........] - ETA: 2:30:02 - loss: 0.6344 - mean_squared_error: 0.633798
+Loaded patient-WDIYHNMBALZ4ZP2A.npy
+Loaded patient-RLJSRNLTRUQAVT3L.npy
+
+ 98/132 [=====================>........] - ETA: 2:25:39 - loss: 0.6348 - mean_squared_error: 0.634199
+Loaded patient-EGCV7CJ6LF2CACQM.npy
+Loaded patient-GKDV3FW4M56I3IKV.npy
+
+ 99/132 [=====================>........] - ETA: 2:21:16 - loss: 0.6341 - mean_squared_error: 0.6334100
+Loaded patient-ZHLGEIY4UAEIPL33.npy
+Loaded patient-PMMV7MLZUWJTIMLR.npy
+
+100/132 [=====================>........] - ETA: 2:16:54 - loss: 0.6344 - mean_squared_error: 0.6337101
+Loaded patient-HHM4X4CF7WXJXSCT.npy
+Loaded patient-NMHOGEKTK7LT57ZI.npy
+
+101/132 [=====================>........] - ETA: 2:12:32 - loss: 0.6341 - mean_squared_error: 0.6334102
+Loaded patient-IBRRD5O4NGVPABDT.npy
+Loaded patient-ZCMTUATV42LAXACO.npy
+
+102/132 [======================>.......] - ETA: 2:08:11 - loss: 0.6347 - mean_squared_error: 0.6340103
+Loaded patient-ZANU4GPPZNIFRN6W.npy
+Loaded patient-HVPI7QQSXPDHSFME.npy
+
+103/132 [======================>.......] - ETA: 2:03:49 - loss: 0.6347 - mean_squared_error: 0.6340104
+Loaded patient-XHX3PCDOWEWDB34X.npy
+Loaded patient-VGF4YIHDAARLWS7A.npy
+
+104/132 [======================>.......] - ETA: 1:59:29 - loss: 0.6343 - mean_squared_error: 0.6336105
+Loaded patient-IPFO2JH7ZZYTQHH2.npy
+Loaded patient-OLYVZJAPCZJQWGIE.npy
+
+105/132 [======================>.......] - ETA: 1:55:09 - loss: 0.6337 - mean_squared_error: 0.6329106
+Loaded patient-SVYZISKLZLQKBPX6.npy
+Loaded patient-KNKVPM2UV4UFFC5R.npy
+
+106/132 [=======================>......] - ETA: 1:50:49 - loss: 0.6334 - mean_squared_error: 0.6326107
+Loaded patient-DDWAA4OECH5TXONN.npy
+Loaded patient-ROMHUDLTCOEXUQCA.npy
+
+107/132 [=======================>......] - ETA: 1:46:29 - loss: 0.6345 - mean_squared_error: 0.6337108
+Loaded patient-GBA7XJ5E7ITWZW7K.npy
+Loaded patient-DPSG75LCBZVBTRPO.npy
+
+108/132 [=======================>......] - ETA: 1:42:10 - loss: 0.6350 - mean_squared_error: 0.6342109
+Loaded patient-JID2LWYOKIWCMT2Z.npy
+Loaded patient-SEV2GAEFNJBLX3ZJ.npy
+
+109/132 [=======================>......] - ETA: 1:37:51 - loss: 0.6348 - mean_squared_error: 0.6340110
+Loaded patient-MJFHYCVEV2GTJD3N.npy
+Loaded patient-IIOOPK6T2ZWDZMU3.npy
+
+110/132 [========================>.....] - ETA: 1:33:33 - loss: 0.6354 - mean_squared_error: 0.6347111
+Loaded patient-TFCLOHN4ROEYF6QY.npy
+Loaded patient-UMRXCXFIT4YDD7RQ.npy
+
+111/132 [========================>.....] - ETA: 1:29:15 - loss: 0.6350 - mean_squared_error: 0.6342112
+Loaded patient-QJFMNVKKVZXKBROO.npy
+Loaded patient-RFSGSDQ5MWIVM6QV.npy
+
+112/132 [========================>.....] - ETA: 1:24:57 - loss: 0.6345 - mean_squared_error: 0.6338113
+Loaded patient-ARZ7H7BSITHOSSMG.npy
+Loaded patient-SZXTZ3LQ5MBFDFXR.npy
+
+113/132 [========================>.....] - ETA: 1:20:40 - loss: 0.6351 - mean_squared_error: 0.6343114
+Loaded patient-BIASJO43N3A7Z63W.npy
+Loaded patient-BWDRAF5ZOQPFOOL7.npy
+
+114/132 [========================>.....] - ETA: 1:16:23 - loss: 0.6352 - mean_squared_error: 0.6345115
+Loaded patient-JNLCZIQGTGTFNEKK.npy
+Loaded patient-OCD6VASBJF4SNZ4U.npy
+
+115/132 [=========================>....] - ETA: 1:12:06 - loss: 0.6351 - mean_squared_error: 0.6343116
+Loaded patient-PMUXVQHYYYBOK4RL.npy
+Loaded patient-FPTFJD4JZA7ZKYQJ.npy
+
+116/132 [=========================>....] - ETA: 1:07:49 - loss: 0.6350 - mean_squared_error: 0.6342117
+Loaded patient-WCSSH2NHDNNZIVML.npy
+Loaded patient-GCBJDIT55TRGHZIR.npy
+
+117/132 [=========================>....] - ETA: 1:03:33 - loss: 0.6349 - mean_squared_error: 0.6341118
+Loaded patient-TVCP433TKOVBCQTW.npy
+Loaded patient-HIAEQWMTUGATOAVI.npy
+
+118/132 [=========================>....] - ETA: 59:17 - loss: 0.6358 - mean_squared_error: 0.6350  119
+Loaded patient-BVYSR54MKT5SPMSU.npy
+Loaded patient-LQMW3GK5JQEVVFBK.npy
+
+119/132 [==========================>...] - ETA: 55:01 - loss: 0.6373 - mean_squared_error: 0.6365120
+Loaded patient-NCI33JITLERBTWXI.npy
+Loaded patient-BLPHSKRODCJLHZZS.npy
+
+120/132 [==========================>...] - ETA: 50:46 - loss: 0.6376 - mean_squared_error: 0.6368121
+Loaded patient-RRZGAIOEIS6WPXDT.npy
+Loaded patient-MSZB67BPZ32ILNLK.npy
+
+121/132 [==========================>...] - ETA: 46:31 - loss: 0.6381 - mean_squared_error: 0.6374122
+Loaded patient-RWKA32WBSVFB4MQF.npy
+Loaded patient-ZSXFDYQ4ST4Z6SRF.npy
+
+122/132 [==========================>...] - ETA: 42:16 - loss: 0.6382 - mean_squared_error: 0.6374123
+Loaded patient-VKDRQPXRMRRBAHW3.npy
+Loaded patient-UUKSYXBYQQZATBP5.npy
+
+123/132 [==========================>...] - ETA: 38:01 - loss: 0.6380 - mean_squared_error: 0.6372124
+Loaded patient-SADEJMD27KKWZQ5L.npy
+Loaded patient-IEJDGAS52VTH4G74.npy
+
+124/132 [===========================>..] - ETA: 33:47 - loss: 0.6379 - mean_squared_error: 0.6371125
+Loaded patient-XVPBCFNYTDI4HHW2.npy
+Loaded patient-EPSAH2BCBGV7WQHM.npy
+
+125/132 [===========================>..] - ETA: 29:33 - loss: 0.6376 - mean_squared_error: 0.6369126
+Loaded patient-LHMGXWC6J7DRD3CP.npy
+Loaded patient-XJJ3IXEOPNFXBGP7.npy
+
+126/132 [===========================>..] - ETA: 25:19 - loss: 0.6377 - mean_squared_error: 0.6369127
+Loaded patient-ZCTE57VMPCGWDG75.npy
+Loaded patient-ASI5JI7DJLB3RKFS.npy
+
+127/132 [===========================>..] - ETA: 21:05 - loss: 0.6383 - mean_squared_error: 0.6375128
+Loaded patient-FKHXWQEPTPIWXHBR.npy
+Loaded patient-ZFMUMZVL6HFQCKSX.npy
+
+128/132 [============================>.] - ETA: 16:51 - loss: 0.6388 - mean_squared_error: 0.6380129
+Loaded patient-THKULF2KHMNVMTUR.npy
+Loaded patient-VUTDS6OC2VUSNQMK.npy
+
+129/132 [============================>.] - ETA: 12:38 - loss: 0.6383 - mean_squared_error: 0.6375130
+Loaded patient-HDQYSVBJ4MPRGYRN.npy
+Loaded patient-SQD3UDNZH2Q3ET4V.npy
+
+130/132 [============================>.] - ETA: 8:25 - loss: 0.6380 - mean_squared_error: 0.6372 131
+Loaded patient-HIA2VPHI6ABMCQTV.npy
+Loaded patient-EWYGH3OSPLJI27UF.npy
+
+131/132 [============================>.] - ETA: 4:12 - loss: 0.6378 - mean_squared_error: 0.63700
+Loaded patient-KPC2RVJBDHQLC5EM.npy
+Loaded patient-HAYSFX75ACG77ZJE.npy
+3
+Loaded patient-TUX27MONFI7VC6M3.npy
+Loaded patient-CSCIKXOMNAIB3LUQ.npy
+4
+Loaded patient-TZES7PMHXV4XVJBV.npy
+Loaded patient-EUNTRXNEDB7VDVIS.npy
+5
+Loaded patient-LGFNFIWO2ZEQYK36.npy
+Loaded patient-EGIAP2GDM33PCW5A.npy
+6
+Loaded patient-ALOUY4SF3BQKXQCZ.npy
+Loaded patient-MKKOO7NDN26O6RLZ.npy
+7
+Loaded patient-OLCBKEY2WKCWPHJW.npy
+Loaded patient-CWWKNDYG2UERXH7X.npy
+8
+Loaded patient-CSXRYWJCXJXAJRLP.npy
+Loaded patient-MEQKZCRF5TR6MHLY.npy
+9
+Loaded patient-POSX6PS6LR34HENB.npy
+Loaded patient-LOR7YOK3PYHXSHCM.npy
+10
+Loaded patient-AJHYOJIG3DZLSIKI.npy
+Loaded patient-FTAKNRFGOGVS632K.npy
+11
+Loaded patient-RYNCGNVRZH2LB7BN.npy
+Loaded patient-UMFGGCOJN6GDPQDV.npy
+12
+Loaded patient-DDPQNEBC34XCOF2U.npy
+Loaded patient-KQSTLFNPLNP5M43F.npy
+13
+Loaded patient-RBC423N4RNB3UZ5P.npy
+Loaded patient-LIJBIVVBI6TJCT6Z.npy
+14
+Loaded patient-XQBRGW3CYGNUMWHI.npy
+Loaded patient-OCP7EUZJEB7JUL65.npy
+15
+Loaded patient-AOTGHQ6S5AD7LOBO.npy
+Loaded patient-VDO7JNWOEJ5KGJYJ.npy
+16
+Loaded patient-JJMENP4QE4CSXSHV.npy
+Loaded patient-KJAWMYSKQTYINTNC.npy
+17
+Loaded patient-HGJTE6ROVCUFUC4S.npy
+Loaded patient-MEP2WAB3JNIXJTON.npy
+18
+Loaded patient-POYYSD3RSJFBKSLQ.npy
+Loaded patient-ABPO2BORDNF3OVL3.npy
+19
+Loaded patient-RTC5RXQHUXCSPNLN.npy
+Loaded patient-PIKNNHQAI52EI62K.npy
+20
+Loaded patient-RKIZJRFZGCXD4EOL.npy
+Loaded patient-YSTBBUD35YZBOT2Z.npy
+21
+Loaded patient-ZTGZBI2QX2JQFXIG.npy
+Loaded patient-MHL54TPCTOQJ2I4K.npy
+22
+Loaded patient-NYR7NWGHIRZDCL66.npy
+Loaded patient-MLHE2CESZAWQKZVP.npy
+23
+Loaded patient-JUBFRXRHLG46KY42.npy
+Loaded patient-ASD2URNKFRN3ZSFL.npy
+24
+Loaded patient-FIBU2GYR72UU7E5M.npy
+Loaded patient-RXK7K2FPVPLFMID2.npy
+25
+Loaded patient-NHKUCEIIHLJQ25VM.npy
+Loaded patient-ESLHGQCGYB7J4DX3.npy
+26
+Loaded patient-LUVMEPI5JWYL67RF.npy
+Loaded patient-KACA7XHWXRM6A3W3.npy
+27
+Loaded patient-ZCIMXZ73NFNRDH46.npy
+Loaded patient-JWVEP6ZLYCOE5IAE.npy
+28
+Loaded patient-RKBSU42WA7AY22E7.npy
+Loaded patient-MSXY2JKZXPEBXR72.npy
+29
+Loaded patient-WPA6WCTE24HGRIXH.npy
+Loaded patient-WIPV3EQ34O55HCUI.npy
+30
+Loaded patient-SXF2FCCYEQLXMQO5.npy
+Loaded patient-ICWMS7OCXZLUTUFT.npy
+31
+Loaded patient-VVGO45TQNOASBLZM.npy
+Loaded patient-IAX2O3NWENSSH4D5.npy
+0
+Loaded patient-SGFWUNFEYCKBMF65.npy
+Loaded patient-DZTDN47H2IKSYN3Q.npy
+1
+Loaded patient-DRS5DZGN5PVUZX4Y.npy
+Loaded patient-WWEFFBIMLZ3KLQVZ.npy
+2
+Loaded patient-UNREF6O6622LZWNN.npy
+Loaded patient-HXKDQ5I26Z2CRUQB.npy
+3
+Loaded patient-TUX27MONFI7VC6M3.npy
+Loaded patient-CSCIKXOMNAIB3LUQ.npy
+
+132/132 [==============================] - 35161s 266s/step - loss: 0.6374 - mean_squared_error: 0.6366 - val_loss: 0.6443 - val_mean_squared_error: 0.6435
+
+Epoch 00004: saving model to tmp/cad_weights.hdf5
+Epoch 5/10
+1
+Loaded patient-RCDAHVLV6QUTDFVD.npy
+Loaded patient-KRWJSE7TVM2QLJI7.npy
+
+  1/132 [..............................] - ETA: 8:47:00 - loss: 0.6202 - mean_squared_error: 0.61902
+Loaded patient-PMEECXFHBLN6KHO7.npy
+Loaded patient-MYTHDP7XSELNJUBQ.npy
+
+  2/132 [..............................] - ETA: 8:46:58 - loss: 0.6009 - mean_squared_error: 0.59993
+Loaded patient-XPBRBUB6YYHIWHVO.npy
+Loaded patient-JCWGEJIJO2LDRY2U.npy
+
+  3/132 [..............................] - ETA: 8:48:12 - loss: 0.6226 - mean_squared_error: 0.62194
+Loaded patient-SWSY42N45J3YWV5I.npy
+Loaded patient-UZFAM45KRI3C7MGB.npy
+
+  4/132 [..............................] - ETA: 8:45:59 - loss: 0.6297 - mean_squared_error: 0.62915
+Loaded patient-TNUEVMD3Z4YZFQDG.npy
+Loaded patient-BTLLL3I67PYRN7R4.npy
+
+  5/132 [>.............................] - ETA: 8:42:51 - loss: 0.6187 - mean_squared_error: 0.61816
+Loaded patient-NJNFVZMSGBGM6H5Y.npy
+Loaded patient-ENB4V4BPR4HRCRXW.npy
+
+  6/132 [>.............................] - ETA: 8:41:03 - loss: 0.6249 - mean_squared_error: 0.62447
+Loaded patient-PBR2STY62FZ3MQHZ.npy
+Loaded patient-DXOUKNW7AXCZFUIL.npy
+
+  7/132 [>.............................] - ETA: 8:53:54 - loss: 0.6172 - mean_squared_error: 0.61668
+Loaded patient-WPNYHBQRGJ4NHU3C.npy
+Loaded patient-IGIIMA3LABMNETMA.npy
+
+  8/132 [>.............................] - ETA: 9:05:33 - loss: 0.6153 - mean_squared_error: 0.61479
+Loaded patient-OTIP25YORHBKJPZM.npy
+Loaded patient-YNLMIJ5S24AYYZXN.npy
+
+  9/132 [=>............................] - ETA: 8:58:19 - loss: 0.6050 - mean_squared_error: 0.604410
+Loaded patient-ZAJH6DQQBAECJ7AX.npy
+Loaded patient-LOGIP43ZSLSUA5SZ.npy
+
+ 10/132 [=>............................] - ETA: 8:53:23 - loss: 0.6067 - mean_squared_error: 0.606111
+Loaded patient-RKXO5JUDKMYRUTN5.npy
+Loaded patient-NWO33W453F6ZJ4BU.npy
+
+ 11/132 [=>............................] - ETA: 8:47:53 - loss: 0.6207 - mean_squared_error: 0.620012
+Loaded patient-XDNEWPTKFLCWWUSV.npy
+Loaded patient-JUOV5YWN6IS7OXIJ.npy
+
+ 12/132 [=>............................] - ETA: 8:39:55 - loss: 0.6195 - mean_squared_error: 0.618813
+Loaded patient-GFRJ7SPGIEJVXVRS.npy
+Loaded patient-HBAZOCWOGBJYCEAZ.npy
+
+ 13/132 [=>............................] - ETA: 8:32:24 - loss: 0.6166 - mean_squared_error: 0.615914
+Loaded patient-JLHG7VESTU3GH2KX.npy
+Loaded patient-JQWIIAADGKE2YMJS.npy
+
+ 14/132 [==>...........................] - ETA: 8:25:36 - loss: 0.6200 - mean_squared_error: 0.619315
+Loaded patient-HSKRXAPZ7WNBT2TI.npy
+Loaded patient-BMFSUHVBPJ7RY56P.npy
+
+ 15/132 [==>...........................] - ETA: 8:19:05 - loss: 0.6190 - mean_squared_error: 0.618216
+Loaded patient-TJAPUMPEDA32J5JW.npy
+Loaded patient-TNXMNBGRZHPIMJJI.npy
+
+ 16/132 [==>...........................] - ETA: 8:12:48 - loss: 0.6180 - mean_squared_error: 0.617217
+Loaded patient-LQG4BRZPSCMR5XAN.npy
+Loaded patient-IAR66U7QVOBXOFQE.npy
+
+ 17/132 [==>...........................] - ETA: 8:06:52 - loss: 0.6174 - mean_squared_error: 0.616618
+Loaded patient-SRKOPGCEG62ZJTT2.npy
+Loaded patient-NLXOSUXOZZHPFQQX.npy
+
+ 18/132 [===>..........................] - ETA: 8:01:08 - loss: 0.6175 - mean_squared_error: 0.616719
+Loaded patient-YRC3D4LSQNDZCXDA.npy
+Loaded patient-RKFD4L7QSBXPHFJU.npy
+
+ 19/132 [===>..........................] - ETA: 7:55:33 - loss: 0.6217 - mean_squared_error: 0.620920
+Loaded patient-CGQFS5PB627OWLL7.npy
+Loaded patient-GHVG2CNNRZ65UBEU.npy
+
+ 20/132 [===>..........................] - ETA: 7:50:16 - loss: 0.6191 - mean_squared_error: 0.618321
+Loaded patient-ANLMZN6NS4S3TCCF.npy
+Loaded patient-CJNLJB43ZD3GIUN3.npy
+
+ 21/132 [===>..........................] - ETA: 7:44:59 - loss: 0.6217 - mean_squared_error: 0.620822
+Loaded patient-IDUHFQWVS4WKXPC5.npy
+Loaded patient-VFHSASVT4EXZWAOS.npy
+
+ 22/132 [====>.........................] - ETA: 7:39:45 - loss: 0.6189 - mean_squared_error: 0.618023
+Loaded patient-EQD7NRTYLRGYENOM.npy
+Loaded patient-ZMP6NER3I4ERS2JE.npy
+
+ 23/132 [====>.........................] - ETA: 7:34:39 - loss: 0.6191 - mean_squared_error: 0.618224
+Loaded patient-SSJQF5OU3VSC3HAD.npy
+Loaded patient-CQHAXTV5WJLZBRFB.npy
+
+ 24/132 [====>.........................] - ETA: 7:29:39 - loss: 0.6226 - mean_squared_error: 0.621825
+Loaded patient-LZU7NSTDRFX77U7G.npy
+Loaded patient-ANCCICBPHIDJ5PJ4.npy
+
+ 25/132 [====>.........................] - ETA: 7:24:48 - loss: 0.6244 - mean_squared_error: 0.623526
+Loaded patient-JAS2TYJWKQL65CQT.npy
+Loaded patient-JAANEAKBEZPKV4JV.npy
+
+ 26/132 [====>.........................] - ETA: 7:19:58 - loss: 0.6224 - mean_squared_error: 0.621627
+Loaded patient-IIAFOQ3HGHU4A6UT.npy
+Loaded patient-BMTJZEMYGJCVHX7N.npy
+
+ 27/132 [=====>........................] - ETA: 7:15:15 - loss: 0.6235 - mean_squared_error: 0.622628
+Loaded patient-NUWPDW6HBRTLEYWD.npy
+Loaded patient-JUM3FRXBYLTATYYH.npy
+
+ 28/132 [=====>........................] - ETA: 7:10:34 - loss: 0.6236 - mean_squared_error: 0.622829
+Loaded patient-OLIQUZ7ERFP4DJVD.npy
+Loaded patient-LCGP6HURGG2XVJ5B.npy
+
+ 29/132 [=====>........................] - ETA: 7:05:53 - loss: 0.6217 - mean_squared_error: 0.620930
+Loaded patient-NJB6RYF62XWGMSE2.npy
+Loaded patient-NXLFQLVZRLUEK2UF.npy
+
+ 30/132 [=====>........................] - ETA: 7:01:17 - loss: 0.6208 - mean_squared_error: 0.619931
+Loaded patient-OSO6K4FGNA57I3VJ.npy
+Loaded patient-ENPUI7ZVHUGIXYN7.npy
+
+ 31/132 [======>.......................] - ETA: 6:56:45 - loss: 0.6238 - mean_squared_error: 0.623032
+Loaded patient-OPLQZBP3BOBS4LTY.npy
+Loaded patient-MRYGCR7462Z7IN2L.npy
+
+ 32/132 [======>.......................] - ETA: 6:52:12 - loss: 0.6220 - mean_squared_error: 0.621233
+Loaded patient-AFN5EQGSDERZCTLM.npy
+Loaded patient-HLQKXLS4OQ2BGQ5C.npy
+
+ 33/132 [======>.......................] - ETA: 6:47:41 - loss: 0.6221 - mean_squared_error: 0.621334
+Loaded patient-DZLYYZNR6M5BZFBT.npy
+Loaded patient-HAKJSG5CHDGOBP6B.npy
+
+ 34/132 [======>.......................] - ETA: 6:43:10 - loss: 0.6247 - mean_squared_error: 0.623935
+Loaded patient-FCYGZ75WMW6L4PJM.npy
+Loaded patient-VJNCTEEYR7U4HIQU.npy
+
+ 35/132 [======>.......................] - ETA: 6:38:42 - loss: 0.6235 - mean_squared_error: 0.622736
+Loaded patient-XQLUVUDY23UZMYW3.npy
+Loaded patient-OOAKLUZ2A4XYXC4X.npy
+
+ 36/132 [=======>......................] - ETA: 6:34:17 - loss: 0.6254 - mean_squared_error: 0.624637
+Loaded patient-RRZNNMZTLY4BJK7C.npy
+Loaded patient-TEHE4SMNJTXDNW2O.npy
+
+ 37/132 [=======>......................] - ETA: 6:29:55 - loss: 0.6252 - mean_squared_error: 0.624438
+Loaded patient-YYNFU45K2WIMXWE4.npy
+Loaded patient-DNO6CS3YNGFMUWXL.npy
+
+ 38/132 [=======>......................] - ETA: 6:25:37 - loss: 0.6244 - mean_squared_error: 0.623639
+Loaded patient-GOXKSLNERTQ7DSPQ.npy
+Loaded patient-LVOHLK3FOHWE66BP.npy
+
+ 39/132 [=======>......................] - ETA: 6:21:15 - loss: 0.6270 - mean_squared_error: 0.626240
+Loaded patient-ROF7JT3SZGBNY3MG.npy
+Loaded patient-WUG3VLS7FYXG35LH.npy
+
+ 40/132 [========>.....................] - ETA: 6:16:53 - loss: 0.6268 - mean_squared_error: 0.626041
+Loaded patient-YGJSUAFCVJ52LIRD.npy
+Loaded patient-MKIAFF7LDGXTZN4C.npy
+
+ 41/132 [========>.....................] - ETA: 6:12:37 - loss: 0.6280 - mean_squared_error: 0.627242
+Loaded patient-KFX44Z5T5RWT4LLI.npy
+Loaded patient-EYEDMZ3Z6OIKPERL.npy
+
+ 42/132 [========>.....................] - ETA: 6:08:18 - loss: 0.6275 - mean_squared_error: 0.626743
+Loaded patient-JMWZRLKLB5DSSXE3.npy
+Loaded patient-TRRYZ5WXYHUMTPCQ.npy
+
+ 43/132 [========>.....................] - ETA: 6:04:00 - loss: 0.6285 - mean_squared_error: 0.627744
+Loaded patient-TFXM6VTRLJH2DS7G.npy
+Loaded patient-BSBXPIGXEUV3WWOZ.npy
+
+ 44/132 [=========>....................] - ETA: 5:59:45 - loss: 0.6280 - mean_squared_error: 0.627345
+Loaded patient-AHNGBFJSTEBO4BJW.npy
+Loaded patient-GONORRCZWHDZV3M5.npy
+
+ 45/132 [=========>....................] - ETA: 5:55:30 - loss: 0.6271 - mean_squared_error: 0.626346
+Loaded patient-NJPOTXDCGONCOU7C.npy
+Loaded patient-RHWTMTHC7HIWZ2YZ.npy
+
+ 46/132 [=========>....................] - ETA: 5:51:15 - loss: 0.6258 - mean_squared_error: 0.625047
+Loaded patient-ZUR2IKTUC2KQVB2X.npy
+Loaded patient-UJHKCBMXXLB5QHTP.npy
+
+ 47/132 [=========>....................] - ETA: 5:47:02 - loss: 0.6261 - mean_squared_error: 0.625348
+Loaded patient-XSSFSN7XYAV4E3OA.npy
+Loaded patient-FFVM6VCPRIKK7453.npy
+
+ 48/132 [=========>....................] - ETA: 5:42:49 - loss: 0.6265 - mean_squared_error: 0.625849
+Loaded patient-CFC7SE7TGP55RMUB.npy
+Loaded patient-NEYLUIYPCL6O74O6.npy
+
+ 49/132 [==========>...................] - ETA: 5:38:34 - loss: 0.6255 - mean_squared_error: 0.624750
+Loaded patient-QKBS566N24RMCV5H.npy
+Loaded patient-CRH6GLC3CTD2WACN.npy
+
+ 50/132 [==========>...................] - ETA: 5:34:22 - loss: 0.6257 - mean_squared_error: 0.624951
+Loaded patient-CUM2CZJVM5H5ZKFE.npy
+Loaded patient-NJDN23E34MZVQU66.npy
+
+ 51/132 [==========>...................] - ETA: 5:30:10 - loss: 0.6269 - mean_squared_error: 0.626252
+Loaded patient-RMID4XEKTVEYCSGK.npy
+Loaded patient-TVY4XBCLXJBKK72S.npy
+
+ 52/132 [==========>...................] - ETA: 5:25:58 - loss: 0.6260 - mean_squared_error: 0.625353
+Loaded patient-PCNMFAZL5VWWK7RP.npy
+Loaded patient-SBRRR2SATWOOR5D6.npy
+
+ 53/132 [===========>..................] - ETA: 5:21:46 - loss: 0.6260 - mean_squared_error: 0.625254
+Loaded patient-OAC7JXARELEVVEQW.npy
+Loaded patient-HXBUUFVQBNISYKNU.npy
+
+ 54/132 [===========>..................] - ETA: 5:17:35 - loss: 0.6277 - mean_squared_error: 0.626955
+Loaded patient-DENODP22U2Q7E4LM.npy
+Loaded patient-MTWW42SPCGLHEDKY.npy
+
+ 55/132 [===========>..................] - ETA: 5:13:25 - loss: 0.6269 - mean_squared_error: 0.626156
+Loaded patient-SUOA7XPFTTR2O5NQ.npy
+Loaded patient-PCJ6DNFF7XHMUSWE.npy
+
+ 56/132 [===========>..................] - ETA: 5:09:15 - loss: 0.6256 - mean_squared_error: 0.624857
+Loaded patient-QPKEZOB3X6B6HMCR.npy
+Loaded patient-UAFTPLA47GA7WS27.npy
+
+ 57/132 [===========>..................] - ETA: 5:05:04 - loss: 0.6259 - mean_squared_error: 0.625158
+Loaded patient-JWKB7SHIBYWSEVMC.npy
+Loaded patient-GBXENHYLRVZ5DTHI.npy
+
+ 58/132 [============>.................] - ETA: 5:00:55 - loss: 0.6258 - mean_squared_error: 0.625059
+Loaded patient-AGTRMFUZM2MQUAB4.npy
+Loaded patient-SZY3J4UTKSCFM2H4.npy
+
+ 59/132 [============>.................] - ETA: 4:56:46 - loss: 0.6249 - mean_squared_error: 0.624160
+Loaded patient-ZMEGS4G44P6FMONO.npy
+Loaded patient-ZNPFNNZ2DRELKNQ3.npy
+
+ 60/132 [============>.................] - ETA: 4:52:37 - loss: 0.6237 - mean_squared_error: 0.622961
+Loaded patient-OXRK4I6CTXCENAZV.npy
+Loaded patient-DRT3F4ITWPCCBB6T.npy
+
+ 61/132 [============>.................] - ETA: 4:48:28 - loss: 0.6230 - mean_squared_error: 0.622262
+Loaded patient-XJLRFX244JGJZUUF.npy
+Loaded patient-FYXMPCGHTGJXJBSD.npy
+
+ 62/132 [=============>................] - ETA: 4:44:19 - loss: 0.6228 - mean_squared_error: 0.622063
+Loaded patient-ILNTKMBVTXNXURGV.npy
+Loaded patient-AFEB6XW5UCQTSYJL.npy
+
+ 63/132 [=============>................] - ETA: 4:40:12 - loss: 0.6231 - mean_squared_error: 0.622364
+Loaded patient-TBNR4PRU7XIL27G6.npy
+Loaded patient-PVMXD3RZSHEQTYW3.npy
+
+ 64/132 [=============>................] - ETA: 4:36:04 - loss: 0.6241 - mean_squared_error: 0.623365
+Loaded patient-UKOHM6O57N37U2E2.npy
+Loaded patient-OUM3NFGU5U3TCBBK.npy
+
+ 65/132 [=============>................] - ETA: 4:31:56 - loss: 0.6247 - mean_squared_error: 0.623966
+Loaded patient-ADIO4U6QJTXF3YQH.npy
+Loaded patient-AUGXT5PI4VY62M6L.npy
+
+ 66/132 [==============>...............] - ETA: 4:27:48 - loss: 0.6237 - mean_squared_error: 0.622967
+Loaded patient-HXLMZWH3SFX3SPAN.npy
+Loaded patient-ZUEK5YSS7CITVWIP.npy
+
+ 67/132 [==============>...............] - ETA: 4:23:41 - loss: 0.6241 - mean_squared_error: 0.623368
+Loaded patient-WZPADD37RLXRX3IG.npy
+Loaded patient-XYOD23KJFH7NZXXK.npy
+
+ 68/132 [==============>...............] - ETA: 4:19:34 - loss: 0.6247 - mean_squared_error: 0.623969
+Loaded patient-IETROE62UNT5QVWS.npy
+Loaded patient-OAEVXX4IFAX5IYOR.npy
+
+ 69/132 [==============>...............] - ETA: 4:15:28 - loss: 0.6241 - mean_squared_error: 0.623370
+Loaded patient-GET5PY3CH6RJV3UW.npy
+Loaded patient-QLYPHVVU3RG43OZO.npy
+
+ 70/132 [==============>...............] - ETA: 4:11:21 - loss: 0.6240 - mean_squared_error: 0.623271
+Loaded patient-TITRFCZEPFJKM3NY.npy
+Loaded patient-IKLKZYXDYTCCYUAZ.npy
+
+ 71/132 [===============>..............] - ETA: 4:07:15 - loss: 0.6250 - mean_squared_error: 0.624272
+Loaded patient-IWYDKUPY2NSYJGLF.npy
+Loaded patient-RWJZNVFII5INU6Z5.npy
+
+ 72/132 [===============>..............] - ETA: 4:03:10 - loss: 0.6254 - mean_squared_error: 0.624673
+Loaded patient-UGXVSPJLHJL6AHSW.npy
+Loaded patient-ECLDQAP52JUWQZHM.npy
+
+ 73/132 [===============>..............] - ETA: 3:59:03 - loss: 0.6255 - mean_squared_error: 0.624774
+Loaded patient-FLSUE7ZIXI6HSJWN.npy
+Loaded patient-ADKFJYDHLE7M3XE6.npy
+
+ 74/132 [===============>..............] - ETA: 3:54:57 - loss: 0.6257 - mean_squared_error: 0.625075
+Loaded patient-HLXOSVDF27JWNCMJ.npy
+Loaded patient-YEXJFFF2ZK44FYCP.npy
+
+ 75/132 [================>.............] - ETA: 3:50:51 - loss: 0.6265 - mean_squared_error: 0.625776
+Loaded patient-SZKV26SJOHXJBPVX.npy
+Loaded patient-TRM3ANQXS7O6Y7OA.npy
+
+ 76/132 [================>.............] - ETA: 3:46:46 - loss: 0.6264 - mean_squared_error: 0.625677
+Loaded patient-VZOXMEUK7BN7PQH3.npy
+Loaded patient-ZQYME7XWFWQXXOXA.npy
+
+ 77/132 [================>.............] - ETA: 3:42:40 - loss: 0.6270 - mean_squared_error: 0.626378
+Loaded patient-VSJRIEOFJCVJIO2C.npy
+Loaded patient-ZVRO2HKWM7JSS6IA.npy
+
+ 78/132 [================>.............] - ETA: 3:38:35 - loss: 0.6281 - mean_squared_error: 0.627379
+Loaded patient-VOPMJMGIDQQ75E6G.npy
+Loaded patient-DSIFGAA3BMQKFE7A.npy

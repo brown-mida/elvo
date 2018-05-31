@@ -1,4 +1,4 @@
-import parsers
+from preprocessors import parsers
 
 
 def test_parse_bounding_box():

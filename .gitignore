@@ -2,12 +2,14 @@
 .ipynb_checkpoints/
 venv/
 __pycache__/
+.pytest_cache/
 
 RI Hospital ELVO Data/
 ELVOS/
 logs/
 tmp/
 data*/
+results/
 *.npy
 
 preprocessing.log
