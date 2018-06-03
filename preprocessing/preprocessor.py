@@ -10,7 +10,7 @@ import preprocessing.parsers as parsers
 import preprocessing.transforms as transforms
 
 
-def preprocess(bucket_name, roi_dir, output_dir):
+def preprocess(bucket_name: str, roi_dir: str, output_dir: str):
     """Loads the data from the input directory and saves
     normalized, zero-centered, 200 x 200 x 200 3D renderings
     in output_dir.
@@ -61,7 +61,9 @@ def preprocess(bucket_name, roi_dir, output_dir):
     _save_info(df['PatientID'], roi_dir, output_dir)
 
 
-def _download_blob(bucket_name, source_blob_name, destination_file_name):
+def _download_blob(bucket_name: str,
+                   source_blob_name: str,
+                   destination_file_name: str):
     """Downloads a blob from the bucket."""
     storage_client = storage.Client()
     bucket = storage_client.get_bucket(bucket_name)

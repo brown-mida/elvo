@@ -6,7 +6,7 @@ import shutil
 import pydicom
 
 
-def load_scan(dirpath):
+def load_scan(dirpath: str):
     """Takes in the path of a directory containing scans and
     returns a list of dicom dataset objects. Each dicom dataset
     contains a single image slice.
@@ -24,7 +24,7 @@ def _parse_id(dirpath: str, input_dir: str) -> str:
     return dirpath[len(input_dir) + 1:].split()[0]
 
 
-def load_patient_infos(input_dir):
+def load_patient_infos(input_dir: str):
     """Returns a mapping of patient ids to the directory of scans"""
     patient_ids = {}
     for dirpath, dirnames, filenames in os.walk(input_dir):
@@ -34,7 +34,7 @@ def load_patient_infos(input_dir):
     return patient_ids
 
 
-def load_scans(input_dir):
+def load_scans(input_dir: str):
     id_pattern = re.compile(r'\d+')
     patient_ids = []
     preprocessed_scans = []
@@ -46,7 +46,7 @@ def load_scans(input_dir):
     return patient_ids, preprocessed_scans
 
 
-def unzip_scans(input_dir, remove_zip=True):
+def unzip_scans(input_dir: str, remove_zip=True):
     """Unzips the zip files in the directory, writing to folders in
     input_dir with the same name.
     """
