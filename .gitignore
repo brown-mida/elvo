@@ -15,3 +15,5 @@ results/
 preprocessing.log
 nohup.out
 *.zip
+
+secrets/
