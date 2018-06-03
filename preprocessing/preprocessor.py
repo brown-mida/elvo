@@ -6,8 +6,8 @@ import numpy as np
 import pandas as pd
 from google.cloud import storage
 
-import preprocessors.parsers as parsers
-import preprocessors.transforms as transforms
+import preprocessing.parsers as parsers
+import preprocessing.transforms as transforms
 
 
 def preprocess(bucket_name, roi_dir, output_dir):

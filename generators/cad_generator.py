@@ -3,7 +3,7 @@ import random
 import numpy as np
 import pandas as pd
 
-from preprocessors import transforms
+from preprocessing import transforms
 
 
 class CadGenerator(object):

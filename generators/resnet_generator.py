@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import scipy.ndimage
 
-from preprocessors import transforms
+from preprocessing import transforms
 
 
 class ResnetGenerator(object):

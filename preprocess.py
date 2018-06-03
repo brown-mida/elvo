@@ -1,6 +1,6 @@
 from argparse import ArgumentParser
 
-from preprocessors.preprocessor import preprocess
+from preprocessing.preprocessor import preprocess
 
 # TODO: This doesn't work
 if __name__ == '__main__':

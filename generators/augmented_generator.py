@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from scipy.ndimage.interpolation import zoom
 
-from preprocessors import transforms
+from preprocessing import transforms
 
 
 class AugmentedGenerator(object):
