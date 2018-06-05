@@ -1,7 +1,4 @@
-To contribute, clone the repository
-(`git clone https://github.com/elvoai/elvo-analysis.git`)
-and then open the folder `elvo-analysis` in PyCharm.
-
+To contribute, clone the repository with PyCharm.
 
 Run the following commands while
 in the root directory of the repo.
@@ -13,9 +10,6 @@ python3 main.py
 
 Note: We are using Anaconda >4.4 (for Python 3.6)
 
-## Project organization
-
-```
-    generators/ # The
-    pre
-```
+### Contributing
+Get the unit test data (data.zip) from the slack channel and keep it
+in a folder called `data/`
