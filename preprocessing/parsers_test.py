@@ -1,11 +1,13 @@
+from pathlib import Path
+
 from preprocessing import parsers
 
+DATA_DIR = '../data'
 
-def test_parse_bounding_box():
-    # TODO(luke): Make sure that this path works on Windows
-    path = 'RI Hospital ELVO Data/51456445/AnnotationROI.acsv'
-    point = parsers.parse_bounding_box(path)
-    assert point == (
-        (-14.7493, 177.584, -91.7008),
-        (20.0315, 8.17094, 8.05191),
-    )
+
+def test_load_scan_no_error():
+    rel_path = 'AGTRMFUZM2MQUAB4 ALOE GABRIEL T/' \
+               '642d0e0395789b1d78fe8cb82650f238 CTA ELVO Head and Neck/' \
+               'CT axial brain neck cta'
+    abs_path = Path(DATA_DIR) / rel_path
+    assert parsers.load_scan(str(abs_path)) is not None
