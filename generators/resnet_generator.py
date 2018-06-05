@@ -14,7 +14,7 @@ class ResnetGenerator(object):
         self.loc = loc
         self.dim_length = dim_length
         self.batch_size = batch_size
-        
+
         filenames = []
         for filename in os.listdir(loc):
             if 'npy' in filename:
@@ -53,7 +53,6 @@ class ResnetGenerator(object):
     def get_steps_per_epoch(self):
         return len(self.filenames) // self.batch_size
 
-
     def __data_generation(self, i):
         bsz = self.batch_size
         filenames = self.filenames[i * bsz:(i + 1) * bsz]
@@ -65,14 +64,12 @@ class ResnetGenerator(object):
         images = self.__transform_images(images, self.dim_length)
         return images, labels
 
-    def __transform_images(self,images, dim_length):
-        resized = np.stack([scipy.ndimage.interpolation.zoom(arr, dim_length / 200)
-                    for arr in images])
+    def __transform_images(self, images, dim_length):
+        resized = np.stack(
+            [scipy.ndimage.interpolation.zoom(arr, dim_length / 200)
+             for arr in images]
+        )
         normalized = transforms.normalize(resized)
         normalized = normalized[:, :32]
         print(np.shape(normalized))
         return np.expand_dims(normalized, axis=4)
-
-
-
-

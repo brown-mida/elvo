@@ -31,8 +31,7 @@ def preprocess(bucket_name: str, roi_dir: str, output_dir: str):
             # For some reason, we need to go two levels deep
             scans_path_root = [
                 path for path in os.listdir('.')
-                if path.startswith(id_)
-                   and not path.endswith('.zip')
+                if path.startswith(id_) and not path.endswith('.zip')
             ][0]
             scans_path = scans_path_root
             scans_path += '/' + os.listdir(scans_path_root)[0]

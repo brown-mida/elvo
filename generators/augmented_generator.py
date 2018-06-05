@@ -125,7 +125,3 @@ class AugmentedGenerator(object):
         if self.extend_dims:
             image = np.expand_dims(image, axis=-1)
         return image
-
-
-
-
