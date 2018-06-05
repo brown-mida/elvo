@@ -10,3 +10,6 @@ python3 main.py
 
 Note: We are using Anaconda >4.4 (for Python 3.6)
 
+### Contributing
+Get the unit test data (data.zip) from the slack channel and keep it
+in a folder called `data/`
