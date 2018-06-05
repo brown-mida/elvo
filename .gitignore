@@ -8,7 +8,6 @@ RI Hospital ELVO Data/
 ELVOS/
 logs/
 tmp/
-data*/
 results/
 *.npy
 
@@ -17,3 +16,6 @@ nohup.out
 *.zip
 
 secrets/
+data/*
+!data/ABCDE\ SAMPLE
+!data/DEFGH\ SAMPLE2
