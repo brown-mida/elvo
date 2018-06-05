@@ -6,3 +6,4 @@ pydicom==1.0.2
 scipy==0.19.1
 tensorflow==1.0.0
 pytest==3.5.1
+pytest-cov==2.5.1

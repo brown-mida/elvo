@@ -10,7 +10,7 @@ def test_load_scan_no_error():
     abs_path = Path(DATA_DIR) / rel_path
     assert parsers.load_scan(str(abs_path)) is not None
 
-def test_load_patient_infos_2():
+def test_load_patient_infos():
    path = str(Path(DATA_DIR))
    rel_path_1 = 'ABCDE SAMPLE'
    abs_path_1 = Path(DATA_DIR) / rel_path_1
