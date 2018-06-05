@@ -2,6 +2,7 @@ import logging
 import os
 import re
 import shutil
+import numpy as np
 
 import pydicom
 
@@ -13,7 +14,16 @@ def load_scan(dirpath: str):
     """
     slices = [pydicom.read_file(dirpath + '/' + filename)
               for filename in os.listdir(dirpath)]
-    return sorted(slices, key=lambda x: float(x.ImagePositionPatient[2]))
+    slices = sorted(slices, key=lambda x: float(x.ImagePositionPatient[2]))
+    try:
+        slice_thickness = np.abs(slices[0].ImagePositionPatient[2] - slices[1].ImagePositionPatient[2])
+    except:
+        slice_thickness = np.abs(slices[0].SliceLocation - slices[1].SliceLocation)
+
+    for s in slices:
+        s.SliceThickness = slice_thickness
+
+    return slices
 
 
 def _parse_id(dirpath: str, input_dir: str) -> str:

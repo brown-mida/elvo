@@ -23,7 +23,7 @@ def test_get_pixels_hu():
     assert image.shape == (350, 512, 512)
 
 
-def test_standarize_spacing():
+def test_standardize_spacing():
     # load the DICOM images and get the scan in an array format
     rel_path = 'AHNGBFJSTEBO4BJW ADAS HORACE N/' \
                 '5ae5ca5c99037e80991199f75c7a5002 CTA ELVO Head and Neck/' \
