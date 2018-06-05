@@ -1,21 +1,15 @@
 from preprocessing import transforms
 from preprocessing import parsers
+from pathlib import Path
+
+DATA_DIR = '../data'
 
 def test_get_pixels_hu():
-    print("hi")
-    dicom_scan1 = parsers.load_scan(
-        "/Users/haltriedman/PycharmProjects/elvo-analysis/data/AGTRMFUZM2MQUAB4 ALOE GABRIEL T")
-    image1 = transforms.get_pixels_hu(dicom_scan1)
-    print(image1.shape)
-    assert image1
+    rel_path = 'AGTRMFUZM2MQUAB4 ALOE GABRIEL T/' \
+               '642d0e0395789b1d78fe8cb82650f238 CTA ELVO Head and Neck/' \
+               'CT axial brain neck cta'
+    abs_path = Path(DATA_DIR) / rel_path
 
-    dicom_scan2 = parsers.load_scan(
-        "/Users/haltriedman/PycharmProjects/elvo-analysis/data/AHNGBFJSTEBO4BJW ADAS HORACE N")
-    image2 = transforms.get_pixels_hu(dicom_scan2)
-    print(image2.shape)
-
-def main():
-    test_get_pixels_hu()
-
-if __name__ == "__main__":
-    main()
+    dicom_scan = parsers.load_scan(abs_path)
+    image = transforms.get_pixels_hu(dicom_scan)
+    print(image.shape)
