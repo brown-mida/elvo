@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/elvoai/elvo-analysis.svg?branch=master)](https://travis-ci.org/elvoai/elvo-analysis)
+
 To contribute, clone the repository with PyCharm.
 
 Run the following commands while
