@@ -19,3 +19,4 @@ secrets/
 data/*
 !data/ABCDE\ SAMPLE
 !data/DEFGH\ SAMPLE2
+data-*/*
