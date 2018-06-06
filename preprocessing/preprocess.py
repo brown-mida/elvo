@@ -8,6 +8,7 @@ import logging
 import os
 import shutil
 import subprocess
+import tempfile
 from typing import List
 
 import pandas as pd
@@ -56,9 +57,7 @@ def process_cab(blob: storage.Blob, patient_id: str) -> None:
     os.chdir('..')
     shutil.rmtree('tmp')
 
-    outpath = f'{patient_id}.npy'
-    np.save(outpath, processed_scan)
-    logging.info(f'saving dicom data to {outpath}')
+    save_to_gcs(processed_scan, patient_id, blob.bucket)
 
 
 def process_zip(blob: storage.Blob, patient_id: str) -> None:
@@ -72,15 +71,22 @@ def process_zip(blob: storage.Blob, patient_id: str) -> None:
     dirpath = list(os.walk('.'))[3][0]
     logging.info(f'loading scans from {dirpath}')
     scan = load_scan(dirpath)
-    processed = preprocess_scan(scan)
+    processed_scan = preprocess_scan(scan)
     logging.info(f'processing dicom data')
 
     os.chdir('..')
     shutil.rmtree('tmp')
+    save_to_gcs(processed_scan, patient_id, blob.bucket)
 
-    outpath = f'{patient_id}.npy'
-    np.save(outpath, processed)
-    logging.info(f'saving dicom data to {outpath}')
+
+def save_to_gcs(processed_scan, patient_id, bucket):
+    outpath = f'numpy/{patient_id}.npy'
+    stream = io.BytesIO()
+    np.save(stream, processed_scan)
+    processed_blob = storage.Blob(outpath, bucket=bucket)
+    stream.seek(0)
+    processed_blob.upload_from_file(stream)
+    logging.info(f'saving dicom data to GCS in {outpath}')
 
 
 def create_labels_csv(input_bucket, positives_df, negatives_df) -> None:
@@ -105,7 +111,7 @@ def create_labels_csv(input_bucket, positives_df, negatives_df) -> None:
             labels.append((patient_id, 0))
     labels_df = pd.DataFrame(labels, columns=['patient_id', 'label'])
     labels_df.to_csv('labels.csv')
-    logging.info(f'label value counts {labels_df["label"].value_counts}')
+    logging.info(f'label value counts {labels_df["label"].value_counts()}')
 
 
 def preprocess_scan(slices: List[pydicom.FileDataset]) -> np.array:
@@ -141,9 +147,6 @@ def main():
                 logging.info(f'file extension must be .cab or .zip,'
                              f' got {blob.name}')
         except Exception as e:
-            # Reset the working directory, tmp files for the next dataset
-            os.chdir('..')
-            shutil.rmtree('tmp')
             logging.error(e)
 
 
