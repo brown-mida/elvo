@@ -15,8 +15,8 @@ import pandas as pd
 import pydicom
 from google.cloud import storage
 
-from preprocessing import transforms as transforms
-from preprocessing.parsers import load_scan
+import parsers
+import transforms
 
 ELVOS_ANON = 'ELVOs_anon'
 EXTENSION_LENGTH = len('.cab')  # == 4
@@ -47,7 +47,7 @@ def process_cab(blob: storage.Blob, patient_id: str) -> None:
 
     dirpath = list(os.walk('.'))[2][0]
     logging.info(f'loading scans from {dirpath}')
-    scan = load_scan(dirpath)
+    scan = parsers.load_scan(dirpath)
     processed_scan = preprocess_scan(scan)
     logging.info('processing dicom data')
 
@@ -67,7 +67,7 @@ def process_zip(blob: storage.Blob, patient_id: str) -> None:
 
     dirpath = list(os.walk('.'))[3][0]
     logging.info(f'loading scans from {dirpath}')
-    scan = load_scan(dirpath)
+    scan = parsers.load_scan(dirpath)
     processed_scan = preprocess_scan(scan)
     logging.info(f'processing dicom data')
 
