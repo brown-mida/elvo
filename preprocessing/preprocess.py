@@ -8,14 +8,11 @@ import logging
 import os
 import shutil
 import subprocess
-import tempfile
 from typing import List
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 import pydicom
-import pyunpack
-
 from google.cloud import storage
 
 from preprocessing import transforms as transforms
@@ -131,7 +128,7 @@ def main():
     create_labels_csv(input_bucket, positives_df, negatives_df)
 
     blob: storage.Blob
-    for blob in list(input_bucket.list_blobs(prefix=ELVOS_ANON + '/'))[0:5]:
+    for blob in input_bucket.list_blobs(prefix=ELVOS_ANON + '/'):
         if blob.name.endswith('.csv'):
             continue  # Ignore the metadata CSV
 
