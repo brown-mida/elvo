@@ -110,7 +110,7 @@ def create_labels_csv(input_bucket, positives_df, negatives_df) -> None:
                             f' the metadata CSVs, defaulting to negative')
             labels.append((patient_id, 0))
     labels_df = pd.DataFrame(labels, columns=['patient_id', 'label'])
-    labels_df.to_csv('labels.csv')
+    labels_df.to_csv('labels.csv', index=False)
     logging.info(f'label value counts {labels_df["label"].value_counts()}')
 
 
