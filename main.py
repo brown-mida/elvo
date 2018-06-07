@@ -6,7 +6,7 @@ from keras.optimizers import Adam
 
 from generators.augmented_generator import AugmentedGenerator
 from generators.cad_generator import CadGenerator
-from models.alexnet2d import AlexNet2DBuilder
+from models.alexnet3d import AlexNet3DBuilder
 from models.autoencoder import Cad3dBuilder
 from models.resnet3d import Resnet3DBuilder
 
@@ -50,29 +50,26 @@ def train_resnet():
     print('Model has been fit.')
 
 
-def train_alexnet2d():
+def train_alexnet3d():
     # Parameters
     dim_len = 200
     top_len = 24
     epochs = 10
     batch_size = 32
 
-    data_loc = '/home/shared/data/data-20180405'
-    label_loc = '/home/shared/data/elvos_meta_drop1.xls'
-
     # Generators
-    training_gen = AugmentedGenerator(data_loc, label_loc,
-                                      dims=(dim_len, dim_len, top_len),
-                                      batch_size=batch_size,
-                                      extend_dims=False)
-    validation_gen = AugmentedGenerator(data_loc, label_loc,
-                                        dims=(dim_len, dim_len, top_len),
-                                        batch_size=batch_size,
-                                        extend_dims=False,
-                                        validation=True)
+    training_gen = AugmentedGenerator(
+        dims=(dim_len, dim_len, top_len),
+        batch_size=batch_size,
+    )
+    validation_gen = AugmentedGenerator(
+        dims=(dim_len, dim_len, top_len),
+        batch_size=batch_size,
+        validation=True
+    )
 
     # Build and run model
-    model = AlexNet2DBuilder.build((dim_len, dim_len, top_len))
+    model = AlexNet3DBuilder.build((dim_len, dim_len, top_len))
     model.compile(optimizer=Adam(lr=0.0001),
                   loss='sparse_categorical_crossentropy',
                   metrics=['accuracy'])
@@ -127,17 +124,4 @@ def train_cad():
 
 
 if __name__ == '__main__':
-    # TODO (Make separate loggers)
-    # TODO (Split this file into separate scripts)
-    logging.basicConfig(filename='logs/preprocessing.log', level=logging.DEBUG)
-    start = int(time.time())
-    OUTPUT_DIR = 'data-{}'.format(start)
-    logging.debug('Saving processed data to {}'.format(OUTPUT_DIR))
-    # preprocess('RI Hospital ELVO Data', 'RI Hospital ELVO Data', OUTPUT_DIR)
-    # preprocess('ELVOS/anon', 'ELVOS/ROI_cropped', OUTPUT_DIR)
-    # preprocess('../data/ELVOS/anon', '../data/ELVOS/ROI_cropped', OUTPUT_DIR)
-    # train_resnet()
-    train_alexnet2d()
-    # train_cad()
-    end = int(time.time())
-    # logging.debug('Preprocessing took {} seconds'.format(end - start))
+    train_alexnet3d()
