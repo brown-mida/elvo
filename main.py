@@ -1,9 +1,7 @@
-import logging
-import time
-
 from keras.callbacks import ModelCheckpoint
 from keras.optimizers import Adam
 
+from generators.generator import Generator
 from generators.augmented_generator import AugmentedGenerator
 from generators.cad_generator import CadGenerator
 from models.alexnet3d import AlexNet3DBuilder
@@ -58,11 +56,11 @@ def train_alexnet3d():
     batch_size = 32
 
     # Generators
-    training_gen = AugmentedGenerator(
+    training_gen = Generator(
         dims=(dim_len, dim_len, top_len),
         batch_size=batch_size,
     )
-    validation_gen = AugmentedGenerator(
+    validation_gen = Generator(
         dims=(dim_len, dim_len, top_len),
         batch_size=batch_size,
         validation=True
