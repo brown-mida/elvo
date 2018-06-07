@@ -249,7 +249,7 @@ VALIDATION_LIST = ['IWYDKUPY2NSYJGLF.npy', 'YBMFJQLVZENVF6MA.npy', '6FQBJ7LCRC0C
 def preprocess():
     for filename in TRAINING_LIST:
         try:
-            logging.info('processing' + filename)
+            logging.info('processing ' + filename)
             subprocess.call(['scp',
                              'thingumy:/home/lzhu7/data/numpy/' + filename,
                              filename])
