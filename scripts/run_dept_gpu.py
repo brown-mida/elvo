@@ -1,4 +1,6 @@
 """Trains a model on a department machine.
+
+Make sure to copy the data from thingumy to here first.
 """
 import logging
 import os
@@ -49,8 +51,8 @@ def load_validation_data() -> np.array:
 
 
 def load_labels() -> (np.array, np.array):
-    training_df = pd.read_csv('/home/data/training_labels.csv')
-    validation_df = pd.read_csv('/home/data/validation_labels.csv')
+    training_df = pd.read_csv('/home/lzhu7/data/training_labels.csv')
+    validation_df = pd.read_csv('/home/lzhu7/data/validation_labels.csv')
     training_labels = training_df.sort_values('patient_id')['label'].values
     validation_labels = validation_df.sort_values('patient_id')['label'].values
     return training_labels, validation_labels
