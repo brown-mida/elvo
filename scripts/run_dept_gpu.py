@@ -27,7 +27,9 @@ def load_training_data() -> np.array:
     training_filenames = sorted(os.listdir(
         '/home/lzhu7/data/numpy_split/training'))[:10]  # TODO: Remove limit
     for filename in training_filenames:
-        arrays.append(np.load('/home/lzhu7/data/numpy_split/training/' + filename))
+        arr = np.load('/home/lzhu7/data/numpy_split/training/' + filename)
+        print(arr.shape)
+        arrays.append(arr)
     return np.stack(arrays)
 
 
@@ -41,7 +43,8 @@ def load_validation_data() -> np.array:
     validation_filenames = sorted(os.listdir(
         '/home/lzhu7/data/numpy_split/validation'))
     for filename in validation_filenames:
-        arrays.append('/home/lzhu7/data/numpy_split/validation/' + np.load(filename))
+        arr = np.load('/home/lzhu7/data/numpy_split/validation/' + filename)
+        arrays.append(arr)
     return np.stack(arrays)
 
 
