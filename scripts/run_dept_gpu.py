@@ -28,7 +28,7 @@ def load_training_data() -> np.array:
         '/home/lzhu7/data/numpy_split/training'))[:10]  # TODO: Remove limit
     for filename in training_filenames:
         arrays.append(np.load('/home/lzhu7/data/numpy_split/training/' + filename))
-    return arrays
+    return np.stack(arrays)
 
 
 def load_validation_data() -> np.array:
@@ -42,7 +42,7 @@ def load_validation_data() -> np.array:
         '/home/lzhu7/data/numpy_split/validation'))
     for filename in validation_filenames:
         arrays.append('/home/lzhu7/data/numpy_split/validation/' + np.load(filename))
-    return arrays
+    return np.stack(arrays)
 
 
 def load_labels() -> (np.array, np.array):
