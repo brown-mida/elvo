@@ -3,42 +3,71 @@ import sys
 from pathlib import Path
 
 # This allows us to import from models and generators
-from keras import Sequential
-from keras.layers import Conv3D, Flatten, Dense, MaxPool3D
+import keras
+from keras import layers
 
 root_dir = str(Path(__file__).parent.parent.absolute())
 sys.path.append(root_dir)
 
 
-class MyGenerator:
-    pass
+class TrainingGenerator(object):
+
+    def __next__(self):
+        pass
+
+
+class ValidationGenerator(object):
+
+    def __next__(self):
+        pass
 
 
 if __name__ == '__main__':
+    """
+    Preprocessing:
+    1. Split the numpy arrays to train and test data.
+    2. Convert the arrays to (L, W, H) shape
+    3. Crop the arrays to L, W, H.
+    4. Bound the hounsfield units.
+    4. Map the pixels to the [0, 1] range
+    5. Save the data into directories.
+    
+    5. Feed a couple samples through the model
+    
+    Training:
+    Implement the generator.
+    """
     BATCH_SIZE = 32
-    model = Sequential()
-    # Input shape ??
-    model.add(Conv3D(filters=32,
-                     kernel_size=5,
-                     strides=(2, 2, 2),
-                     activation='relu',
-                     input_shape=(BATCH_SIZE, 128, 128, 32, 1)))
-    model.add(MaxPool3D())
-    model.add(Conv3D(filters=64,
-                     kernel_size=5,
-                     strides=(2, 2, 2),
-                     activation='relu'))
-    model.add(MaxPool3D())
-    model.add(Conv3D(filters=64,
-                     kernel_size=5,
-                     strides=(2, 2, 2),
-                     activation='relu'))
-    model.add(MaxPool3D())
-    model.add(Flatten())
-    model.add(Dense(1024))
-    model.add(Dense(512))
-    model.add(Dense(1))
+    LENGTH, WIDTH, HEIGHT = (150, 150, 64)  # TODO
+
+    model = keras.Sequential()
+    model.add(layers.Conv2D(256,
+                            (3, 3),
+                            activation='relu',
+                            input_shape=(LENGTH, WIDTH, HEIGHT)))
+    model.add(layers.MaxPool2D())
+    model.add(layers.Conv2D(256, (3, 3), activation='relu'))
+    model.add(layers.MaxPool2D())
+    model.add(layers.Conv2D(512, (3, 3), activation='relu'))
+    model.add(layers.MaxPool2D())
+    model.add(layers.Conv2D(512, (3, 3), activation='relu'))
+    model.add(layers.MaxPool2D())
+    model.add(layers.Flatten())
+    model.add(layers.Dense(1024))
+    model.add(layers.Dense(1024))
+    model.add(layers.Dense(1))
+
     model.compile(optimizer='rmsprop',
                   loss='binary_crossentropy',
                   metrics=['accuracy'])
-    model.fit()
+
+    print(model.summary())
+
+    training_generator = TrainingGenerator()
+    validation_generator = ValidationGenerator()
+
+    model.fit_generator(training_generator,
+                        steps_per_epoch=100,
+                        epochs=30,
+                        validation_data=validation_generator,
+                        validation_steps=50)
