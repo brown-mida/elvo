@@ -271,7 +271,7 @@ def preprocess():
             subprocess.call(['scp',
                              'thingumy:/home/lzhu7/data/numpy/' + filename,
                              filename])
-            image3d = np.load('/home/lzhu7/data/numpy/' + filename)
+            image3d = np.load(filename)
             image3d = crop(image3d)
             image3d = image3d.transpose((2, 1, 0))
             image3d = standardize(image3d)
