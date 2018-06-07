@@ -1,4 +1,7 @@
-"""TODO add documentation to here and the google doc"""
+"""Preprocesses the data in thingumy:/home/lzhu7/data/numpy and
+outputs (150 x 150 x 64) cropped, bounded, and standardized images
+to thingumy:/home/lzhu7/data/numpy_split
+"""
 import logging
 import os
 import subprocess
@@ -7,7 +10,8 @@ import numpy as np
 import pandas as pd
 
 
-def crop(image3d: np.array):
+def crop(image3d: np.array) -> np.array:
+    """Returns a (150, 150, 64) part of the input image."""
     lw_center = image3d.shape[0] // 2
     lw_min = lw_center - 75
     lw_max = lw_center + 75
@@ -19,7 +23,7 @@ def crop(image3d: np.array):
     raise ValueError('Maximum pixel value is less than 1000. Could not crop.')
 
 
-def standardize(image3d, min_bound=-1000, max_bound=400):
+def standardize(image3d: np.array, min_bound=-1000, max_bound=400) -> np.array:
     image3d = (image3d - min_bound) / (max_bound - min_bound)
     image3d[image3d > 1] = 1.
     image3d[image3d < 0] = 0.
@@ -250,14 +254,12 @@ VALIDATION_LIST = ['IWYDKUPY2NSYJGLF.npy', 'YBMFJQLVZENVF6MA.npy', '6FQBJ7LCRC0C
 
 def preprocess():
     for filename in TRAINING_LIST:
-        # TODO: Remove duplication
         try:
             preprocess_file(filename, 'training')
         except Exception as e:
             logging.error(f'failed to process {filename} with error {e}')
 
     for filename in VALIDATION_LIST:
-        # TODO: Remove duplication
         try:
             preprocess_file(filename, 'validation')
         except Exception as e:
@@ -283,7 +285,11 @@ def preprocess_file(filename, split_type):
     os.remove(filename)
 
 
-def split_labels():
+def process_labels() -> None:
+    """Splits the labels into training/validation.
+
+    Note: this function saves the data locally, not to thingumy.
+    """
     df = pd.read_csv('/home/lzhu7/data/labels.csv', index_col='patient_id')
     deduped = df[~df.index.duplicated()]
     training_names = [name[:-len('.npy')] for name in TRAINING_LIST]
@@ -296,7 +302,6 @@ def split_labels():
 
 if __name__ == '__main__':
     # TODO: Remove duplication of logger code
-    # TODO: labels.csv contains duplicates
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.INFO)
     handler = logging.StreamHandler()
@@ -306,3 +311,4 @@ if __name__ == '__main__':
     root_logger.addHandler(handler)
 
     preprocess()
+    process_labels()

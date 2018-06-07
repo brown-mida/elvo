@@ -1,4 +1,5 @@
-"""Loads data from GCS"""
+"""Trains a model on a department machine.
+"""
 import logging
 import os
 import sys
