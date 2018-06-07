@@ -10,7 +10,7 @@ from pathlib import Path
 import keras
 import numpy as np
 import pandas as pd
-from keras import layers
+from keras import layers, optimizers
 
 # This allows us to import from models and generators
 root_dir = str(Path(__file__).parent.parent.absolute())
@@ -90,7 +90,7 @@ def build_model() -> keras.Model:
     model.add(layers.Dense(1024, activation='relu'))
     model.add(layers.Dense(1, activation='sigmoid'))
 
-    model.compile(optimizer='rmsprop',
+    model.compile(optimizer=optimizers.RMSprop(lr=1e-6),
                   loss='binary_crossentropy',
                   metrics=['accuracy'])
     return model
