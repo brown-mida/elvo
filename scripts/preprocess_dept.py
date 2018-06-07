@@ -3,6 +3,7 @@ import os
 import subprocess
 
 import numpy as np
+import pandas as pd
 
 
 def crop(image3d: np.array):
@@ -248,6 +249,7 @@ VALIDATION_LIST = ['IWYDKUPY2NSYJGLF.npy', 'YBMFJQLVZENVF6MA.npy', '6FQBJ7LCRC0C
 
 def preprocess():
     for filename in TRAINING_LIST:
+        # TODO: Remove duplication
         try:
             logging.info('processing ' + filename)
             subprocess.call(['scp',
@@ -266,6 +268,7 @@ def preprocess():
             logging.error(f'failed to process {filename} with error {e}')
 
     for filename in VALIDATION_LIST:
+        # TODO: Remove duplication
         try:
             logging.info('processing ' + filename)
             subprocess.call(['scp',
@@ -286,7 +289,16 @@ def preprocess():
             logging.error(f'failed to process {filename} with error {e}')
 
 
+def split_labels():
+    df = pd.read_csv('/home/lzhu7/data/labels.csv', index_col='patient_id')
+    training_df = df[TRAINING_LIST]
+    training_df.to_csv('/home/lzhu7/data/training_labels.csv')
+    validation_df = df[VALIDATION_LIST]
+    validation_df.to_csv('/home/lzhu7/data/validation_labels.csv')
+
+
 if __name__ == '__main__':
+    # TODO: Remove duplication of logger code
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.INFO)
     handler = logging.StreamHandler()

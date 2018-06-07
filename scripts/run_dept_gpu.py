@@ -1,45 +1,59 @@
 """Loads data from GCS"""
+import logging
+import os
 import sys
 from pathlib import Path
 
-# This allows us to import from models and generators
 import keras
+import numpy as np
+import pandas as pd
 from keras import layers
 
+# This allows us to import from models and generators
 root_dir = str(Path(__file__).parent.parent.absolute())
 sys.path.append(root_dir)
 
-
-class TrainingGenerator(object):
-
-    def __next__(self):
-        pass
+BATCH_SIZE = 32
+LENGTH, WIDTH, HEIGHT = (150, 150, 64)  # TODO
 
 
-class ValidationGenerator(object):
+def load_training_data() -> np.array:
+    """Returns a 4D matrix of the training data.
 
-    def __next__(self):
-        pass
+     The data is in the form (n_samples, l, w, h). The samples
+     are sorted by patient ID.
+     """
+    arrays = []
+    training_filenames = sorted(os.listdir(
+        '/home/lzhu7/data/numpy_split/training'))[:10]  # TODO: Remove limit
+    for filename in training_filenames:
+        arrays.append(np.load(filename))
+    return arrays
 
 
-if __name__ == '__main__':
+def load_validation_data() -> np.array:
+    """Returns a 4D matrix of the validation data.
+
+     The data is in the form (n_samples, l, w, h). The samples
+     are sorted by patient ID.
     """
-    Preprocessing:
-    1. Split the numpy arrays to train and test data.
-    2. Convert the arrays to (L, W, H) shape
-    3. Crop the arrays to L, W, H.
-    4. Bound the hounsfield units.
-    4. Map the pixels to the [0, 1] range
-    5. Save the data into directories.
-    
-    5. Feed a couple samples through the model
-    
-    Training:
-    Implement the generator.
-    """
-    BATCH_SIZE = 32
-    LENGTH, WIDTH, HEIGHT = (150, 150, 64)  # TODO
+    arrays = []
+    validation_filenames = sorted(os.listdir(
+        '/home/lzhu7/data/numpy_split/training'))
+    for filename in validation_filenames:
+        arrays.append(np.load(filename))
+    return arrays
 
+
+def load_labels() -> np.array:
+    df = pd.read_csv('/home/data/labels.csv')
+    sorted_series = df.sort_values('patient_id')['label']
+    return sorted_series.values
+
+
+def build_model() -> keras.Model:
+    """Returns a compiled model.
+    """
     model = keras.Sequential()
     model.add(layers.Conv2D(256,
                             (3, 3),
@@ -60,14 +74,23 @@ if __name__ == '__main__':
     model.compile(optimizer='rmsprop',
                   loss='binary_crossentropy',
                   metrics=['accuracy'])
+    return model
 
+
+def configure_logger():
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.INFO)
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter(
+        fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    root_logger.addHandler(handler)
+
+
+if __name__ == '__main__':
+    X = load_training_data()
+    y = load_labels()
+
+    model = build_model()
     print(model.summary())
-
-    training_generator = TrainingGenerator()
-    validation_generator = ValidationGenerator()
-
-    model.fit_generator(training_generator,
-                        steps_per_epoch=100,
-                        epochs=30,
-                        validation_data=validation_generator,
-                        validation_steps=50)
+    model.fit(X, y)
