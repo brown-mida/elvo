@@ -493,11 +493,11 @@ def preprocess_file(filename, split_type):
                      'thingumy:/home/lzhu7/data/numpy/' + filename,
                      filename])
     image3d = np.load(filename)
-    logging.info(f'loaded image has shape {image.shape}')
+    logging.info(f'loaded image has shape {image3d.shape}')
     image3d = crop(image3d)
-    logging.info(f'cropped image has shape {image.shape}')
+    logging.info(f'cropped image has shape {image3d.shape}')
     image3d = image3d.transpose((2, 1, 0))
-    logging.info(f'transposed image has shape {image.shape}')
+    logging.info(f'transposed image has shape {image3d.shape}')
     # TODO: Plot the image at this step
     image3d = standardize(image3d)
     image3d.dump(filename)
