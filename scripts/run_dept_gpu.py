@@ -45,10 +45,12 @@ def load_validation_data() -> np.array:
     return arrays
 
 
-def load_labels() -> np.array:
-    df = pd.read_csv('/home/data/labels.csv')
-    sorted_series = df.sort_values('patient_id')['label']
-    return sorted_series.values
+def load_labels() -> (np.array, np.array):
+    training_df = pd.read_csv('/home/data/training_labels.csv')
+    validation_df = pd.read_csv('/home/data/validation_labels.csv')
+    training_labels = training_df.sort_values('patient_id')['label'].values
+    validation_labels = validation_df.sort_values('patient_id')['label'].values
+    return training_labels, validation_labels
 
 
 def build_model() -> keras.Model:
@@ -88,9 +90,9 @@ def configure_logger():
 
 
 if __name__ == '__main__':
-    X = load_training_data()
-    y = load_labels()
+    X_train_first_10 = load_training_data()
+    y_train, y_valid = load_labels()
 
     model = build_model()
     print(model.summary())
-    model.fit(X, y)
+    model.fit(X_train_first_10, y_train[:10])
