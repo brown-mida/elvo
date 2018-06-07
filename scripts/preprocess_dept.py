@@ -252,42 +252,35 @@ def preprocess():
     for filename in TRAINING_LIST:
         # TODO: Remove duplication
         try:
-            logging.info('processing ' + filename)
-            subprocess.call(['scp',
-                             'thingumy:/home/lzhu7/data/numpy/' + filename,
-                             filename])
-            image3d = np.load(filename)
-            image3d = crop(image3d)
-            image3d = image3d.transpose((2, 1, 0))
-            image3d = standardize(image3d)
-            image3d.dump(filename)
-            subprocess.call(['scp',
-                             filename,
-                             'thingumy:/home/lzhu7/data/numpy_split/training/' + filename])
-            os.remove(filename)
+            preprocess_file(filename, 'training')
         except Exception as e:
             logging.error(f'failed to process {filename} with error {e}')
 
     for filename in VALIDATION_LIST:
         # TODO: Remove duplication
         try:
-            logging.info('processing ' + filename)
-            subprocess.call(['scp',
-                             'thingumy:/home/lzhu7/data/numpy/' + filename,
-                             filename])
-            image3d = np.load(filename)
-            image3d = crop(image3d)
-            image3d = image3d.transpose((2, 1, 0))
-            # TODO: Plot the image at this step
-            image3d: np.array = standardize(image3d)
-            logging.info(f'saving {filename} to thingumy')
-            image3d.dump(filename)
-            subprocess.call(['scp',
-                             filename,
-                             'thingumy:/home/lzhu7/data/numpy_split/validation/' + filename])
-            os.remove(filename)
+            preprocess_file(filename, 'validation')
         except Exception as e:
             logging.error(f'failed to process {filename} with error {e}')
+
+
+def preprocess_file(filename, split_type):
+    """split_type is one of 'training' and 'validation'"""
+    logging.info('processing ' + filename)
+    subprocess.call(['scp',
+                     'thingumy:/home/lzhu7/data/numpy/' + filename,
+                     filename])
+    image3d = np.load(filename)
+    image3d = crop(image3d)
+    image3d = image3d.transpose((2, 1, 0))
+    # TODO: Plot the image at this step
+    image3d = standardize(image3d)
+    image3d.dump(filename)
+    subprocess.call(['scp',
+                     filename,
+                     f'thingumy:/home/lzhu7/data/numpy_split/{split_type}/' + filename])
+    logging.info(f'saving {filename} to thingumy')
+    os.remove(filename)
 
 
 def split_labels():
