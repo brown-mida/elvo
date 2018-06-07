@@ -88,6 +88,7 @@ def build_model() -> keras.Model:
     model.add(layers.Flatten())
     model.add(layers.Dense(1024, activation='relu'))
     model.add(layers.Dense(1024, activation='relu'))
+    model.add(layers.Dropout(0.5))
     model.add(layers.Dense(1, activation='sigmoid'))
 
     model.compile(optimizer=optimizers.RMSprop(lr=1e-6),
