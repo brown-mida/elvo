@@ -27,7 +27,7 @@ def load_training_data() -> np.array:
     training_filenames = sorted(os.listdir(
         '/home/lzhu7/data/numpy_split/training'))[:10]  # TODO: Remove limit
     for filename in training_filenames:
-        arrays.append(np.load(filename))
+        arrays.append(np.load('/home/lzhu7/data/numpy_split/training' + filename))
     return arrays
 
 
@@ -39,9 +39,9 @@ def load_validation_data() -> np.array:
     """
     arrays = []
     validation_filenames = sorted(os.listdir(
-        '/home/lzhu7/data/numpy_split/training'))
+        '/home/lzhu7/data/numpy_split/validation'))
     for filename in validation_filenames:
-        arrays.append(np.load(filename))
+        arrays.append('/home/lzhu7/data/numpy_split/validation' + np.load(filename))
     return arrays
 
 
@@ -91,7 +91,10 @@ def configure_logger():
 
 if __name__ == '__main__':
     X_train_first_10 = load_training_data()
+    logging.info(f'loaded training data with shape {X_train_first_10.shape}')
     y_train, y_valid = load_labels()
+    logging.info(f'loaded training label data with shape {y_train.shape}')
+    logging.info(f'loaded validation label data with shape {y_valid.shape}')
 
     model = build_model()
     print(model.summary())
