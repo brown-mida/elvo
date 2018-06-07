@@ -16,7 +16,6 @@ from keras import layers
 root_dir = str(Path(__file__).parent.parent.absolute())
 sys.path.append(root_dir)
 
-BATCH_SIZE = 32
 LENGTH, WIDTH, HEIGHT = (150, 150, 64)  # TODO
 
 
@@ -28,7 +27,7 @@ def load_training_data() -> np.array:
      """
     arrays = []
     training_filenames = sorted(os.listdir(
-        '/home/lzhu7/data/numpy_split/training'))[:10]  # TODO: Remove limit
+        '/home/lzhu7/data/numpy_split/training'))  # TODO: Remove limit
     for filename in training_filenames:
         arr = np.load('/home/lzhu7/data/numpy_split/training/' + filename)
         arrays.append(arr)
@@ -103,4 +102,4 @@ if __name__ == '__main__':
 
     model = build_model()
     print(model.summary())
-    model.fit(X_train_first_10, y_train[:10])
+    model.fit(X_train_first_10, y_train, batch_size=32, epochs=10)
