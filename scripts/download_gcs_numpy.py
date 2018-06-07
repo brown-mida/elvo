@@ -1,6 +1,6 @@
 """Downloads the data from gs://elvos/numpy to thingumy.
 
-The data will be outputted to ~/data/numpy/.
+The data will be outputted to /home/lzhu7/data/numpy/
 """
 import logging
 import os
@@ -26,7 +26,7 @@ if __name__ == '__main__':
             filename = blob.name[len('numpy/'):]
             logging.info(f'downloading {filename}')
             blob.download_to_filename(filename)
-            subprocess.call(['scp', filename, 'thingumy:~/data/numpy'])
+            subprocess.call(['scp', filename, 'thingumy:/home/lzhu7/data/numpy'])
             os.remove(filename)
         except Exception as e:
             logging.error(e)
