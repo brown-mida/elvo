@@ -18,8 +18,8 @@ sys.path.append(root_dir)
 
 LENGTH, WIDTH, HEIGHT = (150, 150, 64)  # TODO
 
-VALID_TRAINING = []
-VALID_VALIDATION = []
+VALID_TRAINING_INDICES = []
+VALID_VALIDATION_INDICES = []
 
 
 def load_training_data() -> np.array:
@@ -31,11 +31,11 @@ def load_training_data() -> np.array:
     arrays = []
     training_filenames = sorted(os.listdir(
         '/home/lzhu7/data/numpy_split/training'))  # TODO: Remove limit
-    for filename in training_filenames:
+    for i, filename in enumerate(training_filenames):
         arr = np.load('/home/lzhu7/data/numpy_split/training/' + filename)
         if arr.shape == (LENGTH, WIDTH, HEIGHT):
             arrays.append(arr)
-            VALID_TRAINING.append(filename[:-len('.npy')])
+            VALID_TRAINING_INDICES.append(i)
         else:
             logging.info(
                 f'training file {filename} has incorrect shape {arr.shape}')
@@ -51,11 +51,11 @@ def load_validation_data() -> np.array:
     arrays = []
     validation_filenames = sorted(os.listdir(
         '/home/lzhu7/data/numpy_split/validation'))
-    for filename in validation_filenames:
+    for i, filename in enumerate(validation_filenames):
         arr = np.load('/home/lzhu7/data/numpy_split/validation/' + filename)
         if arr.shape == (LENGTH, WIDTH, HEIGHT):
             arrays.append(arr)
-            VALID_VALIDATION.append(filename[:-len('.npy')])
+            VALID_VALIDATION_INDICES.append(i)
         else:
             logging.info(
                 f'validation file {filename} has incorrect shape {arr.shape}')
@@ -115,9 +115,9 @@ if __name__ == '__main__':
     y_train, y_valid = load_labels()
     logging.info(f'loaded training labels with shape {y_train.shape}')
     logging.info(f'loaded validation labels with shape {y_valid.shape}')
-    y_train = y_train[VALID_TRAINING]
+    y_train = y_train[VALID_TRAINING_INDICES]
     logging.info(f'filtered training labels to shape {y_train.shape}')
-    y_valid = y_valid[VALID_VALIDATION]
+    y_valid = y_valid[VALID_VALIDATION_INDICES]
     logging.info(f'filtered validation labels to shape {y_valid.shape}')
 
     model = build_model()
