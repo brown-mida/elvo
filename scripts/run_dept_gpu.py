@@ -18,6 +18,9 @@ sys.path.append(root_dir)
 
 LENGTH, WIDTH, HEIGHT = (150, 150, 64)  # TODO
 
+VALID_TRAINING = []
+VALID_VALIDATION = []
+
 
 def load_training_data() -> np.array:
     """Returns a 4D matrix of the training data.
@@ -32,6 +35,7 @@ def load_training_data() -> np.array:
         arr = np.load('/home/lzhu7/data/numpy_split/training/' + filename)
         if arr.shape == (LENGTH, WIDTH, HEIGHT):
             arrays.append(arr)
+            VALID_TRAINING.append(filename[:-len('.npy')])
         else:
             logging.info(
                 f'training file {filename} has incorrect shape {arr.shape}')
@@ -51,6 +55,7 @@ def load_validation_data() -> np.array:
         arr = np.load('/home/lzhu7/data/numpy_split/validation/' + filename)
         if arr.shape == (LENGTH, WIDTH, HEIGHT):
             arrays.append(arr)
+            VALID_VALIDATION.append(filename[:-len('.npy')])
         else:
             logging.info(
                 f'validation file {filename} has incorrect shape {arr.shape}')
@@ -102,6 +107,7 @@ def configure_logger():
 
 
 if __name__ == '__main__':
+    configure_logger()
     X_train = load_training_data()
     logging.info(f'loaded training data with shape {X_train.shape}')
     X_valid = load_validation_data()
@@ -109,8 +115,12 @@ if __name__ == '__main__':
     y_train, y_valid = load_labels()
     logging.info(f'loaded training labels with shape {y_train.shape}')
     logging.info(f'loaded validation labels with shape {y_valid.shape}')
+    y_train = y_train[VALID_TRAINING]
+    logging.info(f'filtered training labels to shape {y_train.shape}')
+    y_valid = y_valid[VALID_VALIDATION]
+    logging.info(f'filtered validation labels to shape {y_valid.shape}')
 
     model = build_model()
-    print(model.summary())
+    model.summary(logging.info)
     model.fit(X_train, y_train,
               batch_size=32, epochs=10, validation_data=(X_valid, y_valid))
