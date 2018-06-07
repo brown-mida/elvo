@@ -30,7 +30,11 @@ def load_training_data() -> np.array:
         '/home/lzhu7/data/numpy_split/training'))  # TODO: Remove limit
     for filename in training_filenames:
         arr = np.load('/home/lzhu7/data/numpy_split/training/' + filename)
-        arrays.append(arr)
+        if arr.shape == (LENGTH, WIDTH, HEIGHT):
+            arrays.append(arr)
+        else:
+            logging.info(
+                f'training file {filename} has incorrect shape {arr.shape}')
     return np.stack(arrays)
 
 
@@ -45,7 +49,11 @@ def load_validation_data() -> np.array:
         '/home/lzhu7/data/numpy_split/validation'))
     for filename in validation_filenames:
         arr = np.load('/home/lzhu7/data/numpy_split/validation/' + filename)
-        arrays.append(arr)
+        if arr.shape == (LENGTH, WIDTH, HEIGHT):
+            arrays.append(arr)
+        else:
+            logging.info(
+                f'validation file {filename} has incorrect shape {arr.shape}')
     return np.stack(arrays)
 
 
@@ -94,12 +102,15 @@ def configure_logger():
 
 
 if __name__ == '__main__':
-    X_train_first_10 = load_training_data()
-    logging.info(f'loaded training data with shape {X_train_first_10.shape}')
+    X_train = load_training_data()
+    logging.info(f'loaded training data with shape {X_train.shape}')
+    X_valid = load_validation_data()
+    logging.info(f'loaded validation data with shape {X_valid.shape}')
     y_train, y_valid = load_labels()
-    logging.info(f'loaded training label data with shape {y_train.shape}')
-    logging.info(f'loaded validation label data with shape {y_valid.shape}')
+    logging.info(f'loaded training labels with shape {y_train.shape}')
+    logging.info(f'loaded validation labels with shape {y_valid.shape}')
 
     model = build_model()
     print(model.summary())
-    model.fit(X_train_first_10, y_train, batch_size=32, epochs=10)
+    model.fit(X_train, y_train,
+              batch_size=32, epochs=10, validation_data=(X_valid, y_valid))
