@@ -26,7 +26,9 @@ if __name__ == '__main__':
             filename = blob.name[len('numpy/'):]
             logging.info(f'downloading {filename}')
             blob.download_to_filename(filename)
-            subprocess.call(['scp', filename, 'thingumy:/home/lzhu7/data/numpy'])
+            subprocess.call(['scp',
+                             filename,
+                             'thingumy:/home/lzhu7/data/numpy'])
             os.remove(filename)
         except Exception as e:
             logging.error(e)
