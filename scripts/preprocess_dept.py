@@ -1,3 +1,4 @@
+"""TODO add documentation to here and the google doc"""
 import logging
 import os
 import subprocess
@@ -291,14 +292,18 @@ def preprocess():
 
 def split_labels():
     df = pd.read_csv('/home/lzhu7/data/labels.csv', index_col='patient_id')
-    training_df = df[TRAINING_LIST]
+    deduped = df[~df.index.duplicated()]
+    training_names = [name[:-len('.npy')] for name in TRAINING_LIST]
+    validation_names = [name[:-len('.npy')] for name in VALIDATION_LIST]
+    training_df = deduped.loc[training_names]
     training_df.to_csv('/home/lzhu7/data/training_labels.csv')
-    validation_df = df[VALIDATION_LIST]
+    validation_df = deduped.loc[validation_names]
     validation_df.to_csv('/home/lzhu7/data/validation_labels.csv')
 
 
 if __name__ == '__main__':
     # TODO: Remove duplication of logger code
+    # TODO: labels.csv contains duplicates
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.INFO)
     handler = logging.StreamHandler()
