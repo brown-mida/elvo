@@ -47,14 +47,18 @@ def process_cab(blob: storage.Blob, patient_id: str) -> None:
 
     dirpath = list(os.walk('.'))[2][0]
     logging.info(f'loading scans from {dirpath}')
-    scan = parsers.load_scan(dirpath)
-    processed_scan = preprocess_scan(scan)
-    logging.info('processing dicom data')
+    processed_scan = _process_cab(dirpath)
 
     os.chdir('..')
     shutil.rmtree('tmp')
 
     save_to_gcs(processed_scan, patient_id, blob.bucket)
+
+
+def _process_cab(dirpath: str) -> np.array:
+    scan = parsers.load_scan(dirpath)
+    processed_scan = preprocess_scan(scan)
+    return processed_scan
 
 
 def process_zip(blob: storage.Blob, patient_id: str) -> None:
