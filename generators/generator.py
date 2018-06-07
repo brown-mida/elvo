@@ -95,14 +95,18 @@ class Generator(object):
         return images, labels
 
     def __transform_images(self, image):
+        # TODO: Ideally we want all data downloaded to be the same size.
+        # Since they are not all at the same size, we have to make some
+        # concessions.
+
         # Cut z axis to 200, keep x and y intact
-        image = transforms.crop_z(image)
+        # image = transforms.crop_z(image)
         image = np.moveaxis(image, 0, -1)
         image = transforms.crop_center(image, self.dims[0],
                                        self.dims[1])
 
         # Interpolate z axis to reduce to 24
-        image = zoom(image, (1, 1, self.dims[2] / 200))
+        image = zoom(image, (1, 1, self.dims[2] / np.shape(image)[2]))
         image = transforms.normalize(image)
         if self.extend_dims:
             image = np.expand_dims(image, axis=-1)
