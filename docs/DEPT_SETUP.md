@@ -9,6 +9,18 @@ source venv/bin/activate
 pip install Keras tensorflow
 ```
 
+To set up google cloud follow:
+https://cloud.google.com/storage/docs/gsutil_install#linux
+
+To access our VM run the following AFTER sshing in
+
+```
+kinit
+ssh thingumy
+```
+
+Use this VM for storing and processing data.
+
 To run the code on the GPUs, do the following
 additional steps
 
