@@ -67,7 +67,7 @@ def train_alexnet3d():
     )
 
     # Build and run model
-    model = AlexNet3DBuilder.build((dim_len, dim_len, top_len))
+    model = AlexNet3DBuilder.build((dim_len, dim_len, top_len, 1))
     model.compile(optimizer=Adam(lr=0.0001),
                   loss='sparse_categorical_crossentropy',
                   metrics=['accuracy'])
