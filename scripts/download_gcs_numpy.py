@@ -12,6 +12,7 @@ if __name__ == '__main__':
     client = storage.Client(project='elvo-198322')
     bucket = storage.Bucket(client, name='elvos')
 
+    # TODO: Remove duplication of logger code
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.INFO)
     handler = logging.StreamHandler()
