@@ -267,14 +267,16 @@ def preprocess():
 
     for filename in VALIDATION_LIST:
         try:
-            logging.info('processing' + filename)
+            logging.info('processing ' + filename)
             subprocess.call(['scp',
                              'thingumy:/home/lzhu7/data/numpy/' + filename,
                              filename])
             image3d = np.load(filename)
             image3d = crop(image3d)
             image3d = image3d.transpose((2, 1, 0))
-            image3d = standardize(image3d)
+            # TODO: Plot the image at this step
+            image3d: np.array = standardize(image3d)
+            logging.info(f'saving {filename} to thingumy')
             image3d.dump(filename)
             subprocess.call(['scp',
                              filename,
