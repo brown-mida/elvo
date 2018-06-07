@@ -6,7 +6,7 @@ import numpy as np
 
 
 def crop(image3d: np.array):
-    lw_center = len(image3d.shape[0]) / 2
+    lw_center = image3d.shape[0] // 2
     lw_min = lw_center - 100
     lw_max = lw_center + 100
     for i in range(image3d.shape[0]):
@@ -260,7 +260,7 @@ def preprocess():
             image3d.dump(filename)
             subprocess.call(['scp',
                              filename,
-                             'thingumy:/home/lzhu7/data/numpy_split/training' + filename])
+                             'thingumy:/home/lzhu7/data/numpy_split/training/' + filename])
             os.remove(filename)
         except Exception as e:
             logging.error(f'failed to process {filename} with error {e}')
@@ -278,7 +278,7 @@ def preprocess():
             image3d.dump(filename)
             subprocess.call(['scp',
                              filename,
-                             'thingumy:/home/lzhu7/data/numpy_split/validation' + filename])
+                             'thingumy:/home/lzhu7/data/numpy_split/validation/' + filename])
             os.remove(filename)
         except Exception as e:
             logging.error(f'failed to process {filename} with error {e}')
