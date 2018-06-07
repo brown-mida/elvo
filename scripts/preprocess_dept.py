@@ -253,14 +253,14 @@ def preprocess():
             subprocess.call(['scp',
                              'thingumy:/home/lzhu7/data/numpy/' + filename,
                              filename])
-            image3d = np.load('/home/lzhu7/data/numpy/' + filename)
+            image3d = np.load(filename)
             image3d = crop(image3d)
             image3d = image3d.transpose((2, 1, 0))
             image3d = standardize(image3d)
             image3d.dump(filename)
             subprocess.call(['scp',
                              filename,
-                             '/home/lzhu7/data/numpy_split/training' + filename])
+                             'thingumy:/home/lzhu7/data/numpy_split/training' + filename])
             os.remove(filename)
         except Exception as e:
             logging.error(f'failed to process {filename} with error {e}')
@@ -278,7 +278,7 @@ def preprocess():
             image3d.dump(filename)
             subprocess.call(['scp',
                              filename,
-                             '/home/lzhu7/data/numpy_split/validation' + filename])
+                             'thingumy:/home/lzhu7/data/numpy_split/validation' + filename])
             os.remove(filename)
         except Exception as e:
             logging.error(f'failed to process {filename} with error {e}')
