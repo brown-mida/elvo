@@ -86,9 +86,9 @@ def build_model() -> keras.Model:
     model.add(layers.Conv2D(512, (3, 3), activation='relu'))
     model.add(layers.MaxPool2D())
     model.add(layers.Flatten())
-    model.add(layers.Dense(1024))
-    model.add(layers.Dense(1024))
-    model.add(layers.Dense(1))
+    model.add(layers.Dense(1024, activation='relu'))
+    model.add(layers.Dense(1024, activation='relu'))
+    model.add(layers.Dense(1, activation='sigmoid'))
 
     model.compile(optimizer='rmsprop',
                   loss='binary_crossentropy',
@@ -121,6 +121,6 @@ if __name__ == '__main__':
     logging.info(f'filtered validation labels to shape {y_valid.shape}')
 
     model = build_model()
-    model.summary(logging.info)
+    model.summary()
     model.fit(X_train, y_train,
               batch_size=32, epochs=10, validation_data=(X_valid, y_valid))

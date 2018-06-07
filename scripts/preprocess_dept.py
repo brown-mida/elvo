@@ -12,6 +12,7 @@ import pandas as pd
 
 def crop(image3d: np.array) -> np.array:
     """Returns a (150, 150, 64) part of the input image."""
+    # TODO: Find the bug in this file
     lw_center = image3d.shape[0] // 2
     lw_min = lw_center - 75
     lw_max = lw_center + 75
