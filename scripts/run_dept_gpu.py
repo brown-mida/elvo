@@ -28,7 +28,6 @@ def load_training_data() -> np.array:
         '/home/lzhu7/data/numpy_split/training'))[:10]  # TODO: Remove limit
     for filename in training_filenames:
         arr = np.load('/home/lzhu7/data/numpy_split/training/' + filename)
-        print(arr.shape)
         arrays.append(arr)
     return np.stack(arrays)
 

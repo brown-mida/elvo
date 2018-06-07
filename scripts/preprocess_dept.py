@@ -9,8 +9,8 @@ import pandas as pd
 
 def crop(image3d: np.array):
     lw_center = image3d.shape[0] // 2
-    lw_min = lw_center - 100
-    lw_max = lw_center + 100
+    lw_min = lw_center - 75
+    lw_max = lw_center + 75
     for i in range(image3d.shape[0]):
         if image3d[i].max() > 1000:
             height_min = i + 25
