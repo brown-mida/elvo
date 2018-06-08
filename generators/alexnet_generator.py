@@ -7,7 +7,7 @@ from scipy.ndimage.interpolation import zoom
 from google.cloud import storage
 from preprocessing import transforms
 
-BLACKLIST = ['LAUIHISOEZIM5ILF']
+BLACKLIST = ['numpy/LAUIHISOEZIM5ILF.npy']
 
 
 class AlexNetGenerator(object):
