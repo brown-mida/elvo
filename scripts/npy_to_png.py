@@ -40,7 +40,7 @@ def upload_array(arr: np.ndarray, dirname: str, bucket: storage.Bucket):
             out_stream.seek(0)
             out_blob.upload_from_file(out_stream)
         except Exception as e:
-            logging.error(e)
+            logging.error(f'for dirname: {dirname}: {e}')
 
 
 if __name__ == '__main__':
