@@ -32,12 +32,15 @@ def upload_array(arr: np.ndarray, dirname: str, bucket: storage.Bucket):
     """Uploads axial slice PNGs to gs://elvos/<DIRNAME>/axial/.
     """
     for i in range(len(arr)):
-        out_stream = io.BytesIO()
-        misc.imsave(out_stream, arr[i], format='png')
-        out_filename = f'{dirname}/axial/{i:05d}.png'
-        out_blob = storage.Blob(out_filename, bucket)
-        out_stream.seek(0)
-        out_blob.upload_from_file(out_stream)
+        try:
+            out_stream = io.BytesIO()
+            misc.imsave(out_stream, arr[i], format='png')
+            out_filename = f'{dirname}/axial/{i:05d}.png'
+            out_blob = storage.Blob(out_filename, bucket)
+            out_stream.seek(0)
+            out_blob.upload_from_file(out_stream)
+        except Exception as e:
+            logging.error(e)
 
 
 if __name__ == '__main__':
