@@ -570,7 +570,7 @@ if __name__ == '__main__':
         input_arr = download_array(in_blob)
         try:
             output_arr = process_array(input_arr)
-            filename = in_blob.name.split()[-1]
+            filename = in_blob.name.split('/')[-1]
             if filename in TRAINING_LIST:
                 blob_name = f'fully_processed1/training/{filename}'
                 upload_array(output_arr, blob_name, bucket)
