@@ -90,13 +90,13 @@ def save_to_gcs(processed_scan, patient_id, bucket):
     logging.info(f'saving dicom data to GCS in {outpath}')
 
 
-def create_labels_csv(input_bucket, positives_df, negatives_df) -> None:
+def create_labels_csv(bucket, positives_df, negatives_df) -> None:
     """Creates a file labels.csv mapping patient_id to 1, if positive
     and 0, if negative.
     """
     labels = []
     blob: storage.Blob
-    for blob in input_bucket.list_blobs(prefix=ELVOS_ANON + '/'):
+    for blob in bucket.list_blobs(prefix=ELVOS_ANON + '/'):
         if blob.name.endswith('.csv'):
             continue  # Ignore the metadata CSV
 
@@ -112,6 +112,9 @@ def create_labels_csv(input_bucket, positives_df, negatives_df) -> None:
             labels.append((patient_id, 0))
     labels_df = pd.DataFrame(labels, columns=['patient_id', 'label'])
     labels_df.to_csv('labels.csv', index=False)
+    logging.info('uploading labels to the gs://elvos/labels.csv')
+    labels_blob = storage.Blob('labels.csv', bucket=bucket)
+    labels_blob.upload_from_filename('labels.csv')
     logging.info(f'label value counts {labels_df["label"].value_counts()}')
 
 
