@@ -537,7 +537,7 @@ def process_array(image3d: np.ndarray):
 
 def crop(image3d: np.ndarray) -> np.ndarray:
     # Update the numbers below to the region is correct
-    lw_center = image3d.shape[0] // 2
+    lw_center = image3d.shape[1] // 2
     lw_min = lw_center - 60
     lw_max = lw_center + 60
     height_max = len(image3d) - 45
