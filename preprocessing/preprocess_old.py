@@ -7,7 +7,7 @@ import pandas as pd
 from google.cloud import storage
 
 import preprocessing.parsers as parsers
-import preprocessing.transforms as transforms
+from preprocessing.preprocess import preprocess_scan
 
 
 def preprocess(bucket_name: str, roi_dir: str, output_dir: str):
@@ -38,7 +38,7 @@ def preprocess(bucket_name: str, roi_dir: str, output_dir: str):
             scans_path += '/' + os.listdir(scans_path)[0]
             slices = parsers.load_scan(scans_path)
             logging.info('Loaded slices into memory')
-            scan = _preprocess_scan(slices)
+            scan = preprocess_scan(slices)
             logging.info(
                 'Finished converting to HU, standardizing pixels'
                 ' to 1mm, and cropping the array to 200x200x200'
@@ -69,17 +69,6 @@ def _download_blob(bucket_name: str,
     blob = bucket.blob(source_blob_name)
 
     blob.download_to_filename(destination_file_name)
-
-
-def _preprocess_scan(slices):
-    """Transforms the CT slices into a processed 3D numpy array.
-    """
-    scan = transforms.get_pixels_hu(slices)
-    scan = transforms.standardize_spacing(scan, slices)
-    # TODO: consider cropping at another point
-    # scan = transforms.crop(scan)
-    # TODO: Generate an image at this point to verify the preprocessing
-    return scan
 
 
 def _save_scan(id_, scan, output_dir):

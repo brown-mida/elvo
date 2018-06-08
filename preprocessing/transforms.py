@@ -20,7 +20,6 @@ def get_pixels_hu(slices):
 
     # Convert the pixels Hounsfield units (HU)
     for i, s in enumerate(slices):
-        assert s.RescaleType == 'HU'
         intercept = s.RescaleIntercept
         assert intercept == -1024
         slope = s.RescaleSlope
