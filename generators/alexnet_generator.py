@@ -14,33 +14,65 @@ class AlexNetGenerator(object):
 
     def __init__(self, dims=(200, 200, 24),
                  batch_size=16, shuffle=True, validation=False,
-                 split=0.2, extend_dims=True):
+                 split=0.2, extend_dims=True,
+                 augment_data=True):
         self.dims = dims
         self.batch_size = batch_size
         self.extend_dims = extend_dims
+        self.augment_data = augment_data
 
-        # Get npy filenames from Google Cloud Storage
+        # Get npy files from Google Cloud Storage
         gcs_client = storage.Client.from_service_account_json(
             'credentials/client_secret.json'
         )
         bucket = gcs_client.get_bucket('elvos')
         blobs = bucket.list_blobs(prefix='numpy/')
-        filenames = []
-        for blob in blobs:
-            filenames.append(blob.name)
 
-        # Remove blacklisted files
-        for filename in BLACKLIST:
-            try:
-                filenames.remove('numpy/{}.npy'.format(filename))
-            except Exception:
-                print('INFO: {} does not exist'.format(filename))
+        files = []
+        for blob in blobs:
+            file = blob.name
+
+            # Check blacklist
+            if file in BLACKLIST:
+                continue
+
+            # Add all data augmentation methods
+            files.append({
+                "name": file,
+                "mode": "original"
+            })
+
+            if self.augment_data:
+                for i in range(5):
+                    files.append({
+                        "name": file,
+                        "mode": "translate"
+                    })
+                for i in range(5):
+                    files.append({
+                        "name": file,
+                        "mode": "rotate"
+                    })
+                for i in range(3):
+                    files.append({
+                        "name": file,
+                        "mode": "zoom"
+                    })
+                for i in range(3):
+                    files.append({
+                        "name": file,
+                        "mode": "gaussian"
+                    })
+                files.append({
+                    "name": file,
+                    "mode": "flip"
+                })
 
         # Split based on validation
         if validation:
-            filenames = filenames[:int(len(filenames) * split)]
+            files = files[:int(len(files) * split)]
         else:
-            filenames = filenames[int(len(filenames) * split):]
+            files = files[int(len(files) * split):]
 
         # Get label data from Google Cloud Storage
         blob = storage.Blob('labels.csv', bucket)
@@ -52,20 +84,21 @@ class AlexNetGenerator(object):
                 if row[0] != 'patient_id':
                     label_data[row[0]] = int(row[1])
 
-        labels = np.zeros(len(filenames))
-        for i, filename in enumerate(filenames):
+        labels = np.zeros(len(files))
+        for i, file in enumerate(files):
+            filename = file['name']
             filename = filename.split('/')[-1]
             filename = filename.split('.')[0]
             labels[i] = label_data[filename]
 
         # Take into account shuffling
         if shuffle:
-            tmp = list(zip(filenames, labels))
+            tmp = list(zip(files, labels))
             random.shuffle(tmp)
-            filenames, labels = zip(*tmp)
+            files, labels = zip(*tmp)
             labels = np.array(labels)
 
-        self.filenames = filenames
+        self.files = files
         self.labels = labels
         self.bucket = bucket
 
@@ -78,11 +111,11 @@ class AlexNetGenerator(object):
                 yield x, y
 
     def get_steps_per_epoch(self):
-        return len(self.filenames) // self.batch_size
+        return len(self.files) // self.batch_size
 
     def __data_generation(self, i):
         bsz = self.batch_size
-        filenames = self.filenames[i * bsz:(i + 1) * bsz]
+        files = self.files[i * bsz:(i + 1) * bsz]
         labels = self.labels[i * bsz:(i + 1) * bsz]
         images = []
 
@@ -92,41 +125,52 @@ class AlexNetGenerator(object):
             os.remove(os.path.join('tmp/npy', f))
 
         # Download files to tmp/npy/
-        for i, filename in enumerate(filenames):
-            blob = self.bucket.get_blob(filename)
-            file_id = filename.split('/')[-1]
+        for i, file in enumerate(files):
+            print("Loading " + file['name'])
+            blob = self.bucket.get_blob(file['name'])
+            file_id = file['name'].split('/')[-1]
             file_id = file_id.split('.')[0]
             blob.download_to_filename('tmp/npy/{}.npy'.format(file_id))
             img = np.load('tmp/npy/{}.npy'.format(file_id))
-            img = self.__transform_images(img)
+            img = self.__transform_images(img, file['mode'])
             images.append(img)
-            print("Loaded " + filename)
+            print("Loaded " + file['name'])
             print(np.shape(img))
         images = np.array(images)
         print("Loaded entire batch.")
         print(np.shape(images))
         return images, labels
 
-    def __transform_images(self, image):
-        # TODO: Ideally we want all data downloaded to be the same size.
-        # Since they are not all at the same size, we have to make some
-        # concessions.
-
+    def __transform_images(self, image, mode):
         # Cut z axis to 200, keep x and y intact
-        image = transforms.crop_z(image, 150)
+        image[image < -40] = 0
+        image[image > 400] = 0
         image = np.moveaxis(image, 0, -1)
-        print("AAA")
-        print(np.shape(image))
+        image = np.flip(image, 2)
+        image = transforms.crop_z(image, 150)
 
-        # Interpolate z axis to reduce to 24
+        # # Data augmentation methods, cut x and y to 80%
+        if mode == "translate":
+            image = transforms.translated_img(image)
+        elif mode == "rotate":
+            image = transforms.rotate_img(image)
+        elif mode == "zoom":
+            image = transforms.zoom_img(image)
+        elif mode == "gaussian":
+            image = transforms.gaussian_img(image)
+        elif mode == "flip":
+            image = transforms.flip_img(image)
         dims = np.shape(image)
-        print("DIMS")
-        print(dims)
+        image = transforms.crop_center(image, int(dims[0] * 0.8),
+                                       int(dims[1] * 0.8))
+
+        # # Interpolate axis to reduce to specified dimensions
+        dims = np.shape(image)
         image = zoom(image, (self.dims[0] / dims[0],
                              self.dims[1] / dims[1],
                              self.dims[2] / dims[2]))
-        print("BBB")
-        print(np.shape(image))
+
+        # # Normalize image and expand dims
         image = transforms.normalize(image)
         if self.extend_dims:
             image = np.expand_dims(image, axis=-1)
