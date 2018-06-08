@@ -2,6 +2,7 @@ dropbox==8.9.0
 Keras==2.1.5
 numpy==1.13.1
 pandas==0.23.0
+Pillow==5.1.0
 pydicom==1.0.2
 scipy==0.19.1
 tensorflow==1.0.0
