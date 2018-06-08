@@ -2,8 +2,8 @@
 """
 import io
 import logging
+import random
 
-import mayavi.mlab
 import numpy as np
 import pandas as pd
 from google.cloud import storage
@@ -493,10 +493,18 @@ def process_labels(labels_filename: str) -> None:
 
 # TODO: Duplicate in npy_to_mayavi.py
 def download_array(blob: storage.Blob) -> np.ndarray:
-    in_stream = io.BytesIO()
-    blob.download_to_file(in_stream)
-    in_stream.seek(0)  # Read from the start of the file-like object
-    return np.load(in_stream)
+    stream = io.BytesIO()
+    blob.download_to_file(stream)
+    stream.seek(0)  # Read from the start of the file-like object
+    return np.load(stream)
+
+
+def upload_array(arr: np.ndarray, blob_name: str, bucket: storage.Bucket):
+    stream = io.BytesIO()
+    np.save(stream, arr)
+    stream.seek(0)  # Read from the start of the file-like object
+    blob = bucket.blob(blob_name)
+    blob.upload_from_file(stream)
 
 
 def upload_png(arr: np.ndarray, dirname: str, bucket: storage.Bucket):
@@ -530,11 +538,11 @@ def process_array(image3d: np.ndarray):
 def crop(image3d: np.ndarray) -> np.ndarray:
     # Update the numbers below to the region is correct
     lw_center = image3d.shape[0] // 2
-    lw_min = lw_center - 50
-    lw_max = lw_center + 50
-    height_max = len(image3d) - 100
+    lw_min = lw_center - 60
+    lw_max = lw_center + 60
+    height_max = len(image3d) - 45
     height_min = height_max - 64
-    return image3d[height_min:height_max]  # lw_min:lw_max, lw_min:lw_max]
+    return image3d[height_min:height_max, lw_min:lw_max, lw_min:lw_max]
 
 
 def bound_pixels(image3d, min_bound, max_bound) -> np.ndarray:
@@ -555,13 +563,22 @@ if __name__ == '__main__':
 
     in_blob: storage.Blob
     # Update the prefix to filter new data.
-    for in_blob in bucket.list_blobs(prefix='numpy/'):
+    input_blobs = list(bucket.list_blobs(prefix='numpy/'))
+    random.shuffle(input_blobs)
+    for in_blob in input_blobs:
         logging.info(f'downloading {in_blob.name}')
         input_arr = download_array(in_blob)
-        mayavi.mlab.contour3d(input_arr)
-        print('Close screen to render output')
-        mayavi.mlab.show()
-        output_arr = process_array(input_arr)
-        mayavi.mlab.contour3d(output_arr)
-        print('Close screen to render next input')
-        mayavi.mlab.show()
+        try:
+            output_arr = process_array(input_arr)
+            filename = in_blob.name.split()[-1]
+            if filename in TRAINING_LIST:
+                blob_name = f'fully_processed1/training/{filename}'
+                upload_array(output_arr, blob_name, bucket)
+            elif filename in VALIDATION_LIST:
+                blob_name = f'fully_processed1/validation/{filename}'
+                upload_array(output_arr, blob_name, bucket)
+            else:
+                logging.error(f'{filename} not in training'
+                              f' nor validation lists')
+        except Exception as e:
+            logging.error(f'failed to process {in_blob.name}')
