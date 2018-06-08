@@ -1,6 +1,8 @@
 """Preprocesses the data in thingumy:/home/lzhu7/data/numpy and
 outputs (150 x 150 x 64) cropped, bounded, and standardized images
 to thingumy:/home/lzhu7/data/numpy_split
+
+Make sure to kinit first
 """
 import logging
 import os
@@ -525,8 +527,7 @@ def process_labels() -> None:
     validation_df.to_csv('/home/lzhu7/data/validation_labels.csv')
 
 
-if __name__ == '__main__':
-    # TODO: Remove duplication of logger code
+def configure_logger():
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.INFO)
     handler = logging.StreamHandler()
@@ -535,5 +536,8 @@ if __name__ == '__main__':
     handler.setFormatter(formatter)
     root_logger.addHandler(handler)
 
+
+if __name__ == '__main__':
+    configure_logger()
     preprocess()
     process_labels()

@@ -16,7 +16,7 @@ from keras import layers, optimizers
 root_dir = str(Path(__file__).parent.parent.absolute())
 sys.path.append(root_dir)
 
-LENGTH, WIDTH, HEIGHT = (150, 150, 64)  # TODO
+LENGTH, WIDTH, HEIGHT = (150, 150, 64)
 
 VALID_TRAINING_INDICES = []
 VALID_VALIDATION_INDICES = []
@@ -30,7 +30,7 @@ def load_training_data() -> np.array:
      """
     arrays = []
     training_filenames = sorted(os.listdir(
-        '/home/lzhu7/data/numpy_split/training'))  # TODO: Remove limit
+        '/home/lzhu7/data/numpy_split/training'))
     for i, filename in enumerate(training_filenames):
         arr = np.load('/home/lzhu7/data/numpy_split/training/' + filename)
         if arr.shape == (LENGTH, WIDTH, HEIGHT):
