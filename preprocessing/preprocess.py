@@ -118,7 +118,6 @@ def create_labels_csv(bucket, positives_df, negatives_df) -> None:
     logging.info(f'label value counts {labels_df["label"].value_counts()}')
 
 
-
 def preprocess_scan(slices: List[pydicom.FileDataset]) -> np.array:
     """Transforms the input dicom slices into a numpy array of pixels
     in Hounsfield units with standardized spacing.
