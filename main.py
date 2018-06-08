@@ -16,10 +16,12 @@ def train_alexnet3d():
     training_gen = AlexNetGenerator(
         dims=(dim_len, dim_len, top_len),
         batch_size=batch_size,
+        augment_data=False
     )
     validation_gen = AlexNetGenerator(
         dims=(dim_len, dim_len, top_len),
         batch_size=batch_size,
+        augment_data=False,
         validation=True
     )
 
@@ -39,7 +41,7 @@ def train_alexnet3d():
         epochs=epochs,
         callbacks=[mc_callback],
         verbose=1,
-        max_queue_size=1)
+        max_queue_size=5)
     print('Model has been fit.')
 
 

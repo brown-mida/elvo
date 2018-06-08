@@ -147,7 +147,8 @@ class AlexNetGenerator(object):
         image[image > 400] = 0
         image = np.moveaxis(image, 0, -1)
         image = np.flip(image, 2)
-        image = transforms.crop_z(image, 150)
+        dims = np.shape(image)
+        image = transforms.crop_z(image, int(dims[2] * 0.5))
 
         # # Data augmentation methods, cut x and y to 80%
         if mode == "translate":
@@ -160,7 +161,6 @@ class AlexNetGenerator(object):
             image = transforms.gaussian_img(image)
         elif mode == "flip":
             image = transforms.flip_img(image)
-        dims = np.shape(image)
         image = transforms.crop_center(image, int(dims[0] * 0.8),
                                        int(dims[1] * 0.8))
 
