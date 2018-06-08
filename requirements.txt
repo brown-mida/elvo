@@ -5,6 +5,7 @@ mayavi==4.6.0
 pandas==0.23.0
 Pillow==5.1.0
 pydicom==1.0.2
+PyQt5==5.10.1
 scipy==0.19.1
 tensorflow==1.8.0
 pytest==3.5.1
