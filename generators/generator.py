@@ -90,6 +90,8 @@ class Generator(object):
             img = self.__transform_images(img)
             images.append(img)
             print("Loaded " + filename)
+            print(np.shape(img))
+        images = np.array(images)
         print("Loaded entire batch.")
         print(np.shape(images))
         return images, labels

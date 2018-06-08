@@ -53,7 +53,7 @@ def train_alexnet3d():
     dim_len = 200
     top_len = 24
     epochs = 10
-    batch_size = 32
+    batch_size = 4
 
     # Generators
     training_gen = Generator(
