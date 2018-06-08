@@ -14,7 +14,7 @@ class Generator(object):
         self.loc = loc
         self.dim_length = dim_length
         self.batch_size = batch_size
-        
+
         filenames = []
         for filename in os.listdir(loc):
             if 'npy' in filename:
@@ -53,7 +53,6 @@ class Generator(object):
     def get_steps_per_epoch(self):
         return len(self.filenames) // self.batch_size
 
-
     def __data_generation(self, i):
         bsz = self.batch_size
         filenames = self.filenames[i * bsz:(i + 1) * bsz]
@@ -65,13 +64,11 @@ class Generator(object):
         images = self.__transform_images(images, self.dim_length)
         return images, labels
 
-    def __transform_images(self,images, dim_length):
-        resized = np.stack([scipy.ndimage.interpolation.zoom(arr, (24 / 200, 1, 1))
-                    for arr in images])
+    def __transform_images(self, images, dim_length):
+        resized = np.stack(
+            [scipy.ndimage.interpolation.zoom(arr, (24 / 200, 1, 1))
+             for arr in images]
+        )
         resized = np.moveaxis(resized, 1, -1)
         normalized = transforms.normalize(resized)
         return np.expand_dims(normalized, axis=4)
-
-
-
-

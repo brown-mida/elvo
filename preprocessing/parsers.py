@@ -2,28 +2,25 @@ import logging
 import os
 import re
 import shutil
-import numpy as np
+from typing import List
 
 import pydicom
 
 
-def load_scan(dirpath: str):
-    """Takes in the path of a directory containing scans and
-    returns a list of dicom dataset objects. Each dicom dataset
-    contains a single image slice.
+def load_scan(dirpath: str) -> List[pydicom.FileDataset]:
+    """Loads a CT scan.
+
+    This only loads dicom files ending in .dcm and ignores nested
+    folders.
+
+    :param dirpath: the path to a directory containing dicom (.dcm) files
+    :return: a list of all dicom FileDataset objects, sorted by
+        ImagePositionPatient
     """
     slices = [pydicom.read_file(dirpath + '/' + filename)
-              for filename in os.listdir(dirpath)]
-    slices = sorted(slices, key=lambda x: float(x.ImagePositionPatient[2]))
-    try:
-        slice_thickness = np.abs(slices[0].ImagePositionPatient[2] - slices[1].ImagePositionPatient[2])
-    except:
-        slice_thickness = np.abs(slices[0].SliceLocation - slices[1].SliceLocation)
-
-    for s in slices:
-        s.SliceThickness = slice_thickness
-
-    return slices
+              for filename in os.listdir(dirpath)
+              if filename.endswith('.dcm')]
+    return sorted(slices, key=lambda x: float(x.ImagePositionPatient[2]))
 
 
 def _parse_id(dirpath: str, input_dir: str) -> str:

@@ -1,5 +1,11 @@
 language: python
 python:
-  - "3.6"
-install: pip install tox-travis
-script: tox
+  - 3.6
+install: 
+  - pip install -r requirements.txt
+script: 
+  - flake8 generators models preprocessing
+  - pytest
+  - pytest --cov=./
+after_success:
+  - codecov --token 54bae0d6-e9bd-4bb9-b926-875f5cc023f2

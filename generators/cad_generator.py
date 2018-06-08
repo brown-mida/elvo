@@ -1,7 +1,6 @@
 import os
 import random
 import numpy as np
-import pandas as pd
 
 from preprocessing import transforms
 
@@ -53,7 +52,3 @@ class CadGenerator(object):
         images = np.array(images)
         normalized = transforms.normalize(images)
         return np.expand_dims(normalized, axis=4)
-
-
-
-
