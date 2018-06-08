@@ -21,3 +21,4 @@ data/*
 !data/DEFGH\ SAMPLE2
 credentials/
 data-*/*
+sandbox/*

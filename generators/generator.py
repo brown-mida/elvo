@@ -8,7 +8,7 @@ from google.cloud import storage
 from preprocessing import transforms
 
 
-class Generator(object):
+class AlexNetGenerator(object):
 
     def __init__(self, dims=(200, 200, 24),
                  batch_size=16, shuffle=True, validation=False,
@@ -85,8 +85,10 @@ class Generator(object):
         # Download files to tmp/npy/
         for i, filename in enumerate(filenames):
             blob = self.bucket.get_blob(filename)
-            blob.download_to_filename('tmp/npy/{}.npy'.format(i))
-            img = np.load('tmp/npy/{}.npy'.format(i))
+            file_id = filename.split('/')[-1]
+            file_id = file_id.split('.')[0]
+            blob.download_to_filename('tmp/npy/{}.npy'.format(file_id))
+            img = np.load('tmp/npy/{}.npy'.format(file_id))
             img = self.__transform_images(img)
             images.append(img)
             print("Loaded " + filename)
@@ -102,8 +104,8 @@ class Generator(object):
         # concessions.
 
         # Cut z axis to 200, keep x and y intact
-        # image = transforms.crop_z(image)
         image = np.moveaxis(image, 0, -1)
+        image = transforms.crop_z(image, 150)
         image = transforms.crop_center(image, self.dims[0],
                                        self.dims[1])
 
