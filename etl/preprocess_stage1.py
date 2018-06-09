@@ -2,6 +2,8 @@
 
 This script converts the compressed patient info in ELVOs_anon
 into numpy files, saved in the numpy folder of the elvo bucket.
+
+This script also creates the labels.csv file.
 """
 import io
 import logging

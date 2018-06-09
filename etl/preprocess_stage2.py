@@ -2,6 +2,8 @@
 
 This script splits the data into training/validation
 and returns cropped, bounded, and standardized images.
+
+This script also returns training/validation label CSVs.
 """
 import io
 import logging
@@ -12,6 +14,7 @@ import pandas as pd
 from google.cloud import storage
 from scipy import misc
 
+# TODO: Update this when new data comes.
 TRAINING_LIST = ['P4AIB8JMDY6RDRAP.npy', 'ASD2URNKFRN3ZSFL.npy',
                  'SRKOPGCEG62ZJTT2.npy', 'N7C279O07IXSUAX9.npy',
                  'UZFAM45KRI3C7MGB.npy', 'JMWZRLKLB5DSSXE3.npy',
@@ -539,7 +542,7 @@ def process_array(image3d: np.ndarray):
     # Comment out transformations that we don't need
     image3d = image3d.transpose((2, 1, 0))
     logging.info(f'transposed image has shape {image3d.shape}')
-    # image3d = standardize(image3d)
+    image3d = standardize(image3d)
     return image3d
 
 
