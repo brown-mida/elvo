@@ -22,6 +22,16 @@ ELVOS_ANON = 'ELVOs_anon'
 EXTENSION_LENGTH = len('.cab')  # == 4
 
 
+def configure_logger():
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.INFO)
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter(
+        fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    root_logger.addHandler(handler)
+
+
 def load_metadata(bucket):
     """Loads the metadata from GCS.
     """
@@ -158,6 +168,5 @@ def main():
 
 
 if __name__ == '__main__':
-    logging.basicConfig(filename='preprocess.log',
-                        level=logging.INFO)
+    configure_logger()
     main()
