@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from preprocessing import parsers
+from etl.lib import parsers
 
 DATA_DIR = 'data'
 

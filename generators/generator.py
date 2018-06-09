@@ -1,10 +1,10 @@
 import os
 import random
+
 import numpy as np
 import pandas as pd
 import scipy.ndimage
-
-from preprocessing import transforms
+import transforms
 
 
 class Generator(object):

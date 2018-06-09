@@ -9,9 +9,10 @@ This requires a `client_secret.json` file in the credentials folder.
 Download it (the gcloud service account) from the Google Cloud Console.
 """
 
-import os
-import gspread
 import csv
+import os
+
+import gspread
 from google.cloud import storage
 from oauth2client.service_account import ServiceAccountCredentials
 

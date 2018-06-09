@@ -15,8 +15,8 @@ import pandas as pd
 import pydicom
 from google.cloud import storage
 
-import parsers
-import transforms
+from lib import parsers
+from lib import transforms
 
 ELVOS_ANON = 'ELVOs_anon'
 EXTENSION_LENGTH = len('.cab')  # == 4

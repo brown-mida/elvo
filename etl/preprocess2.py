@@ -1,37 +1,16 @@
-"""Preprocesses the data in thingumy:/home/lzhu7/data/numpy and
-outputs (150 x 150 x 64) cropped, bounded, and standardized images
-to thingumy:/home/lzhu7/data/numpy_split
+"""For preprocessing data from gs://elvos/numpy.
 
-Make sure to kinit first
+This script splits the data into training/validation
+and returns cropped, bounded, and standardized images.
 """
+import io
 import logging
-import os
-import subprocess
+import random
 
 import numpy as np
 import pandas as pd
-
-
-def crop(image3d: np.array) -> np.array:
-    """Returns a (150, 150, 64) part of the input image."""
-    # TODO: Find the bug in this file
-    lw_center = image3d.shape[0] // 2
-    lw_min = lw_center - 75
-    lw_max = lw_center + 75
-    for i in range(image3d.shape[0]):
-        if image3d[i].max() > 1000:
-            height_min = i + 25
-            height_max = height_min + 64
-            return image3d[height_min:height_max, lw_min:lw_max, lw_min:lw_max]
-    raise ValueError('Maximum pixel value is less than 1000. Could not crop.')
-
-
-def standardize(image3d: np.array, min_bound=-1000, max_bound=400) -> np.array:
-    image3d = (image3d - min_bound) / (max_bound - min_bound)
-    image3d[image3d > 1] = 1.
-    image3d[image3d < 0] = 0.
-    return image3d
-
+from google.cloud import storage
+from scipy import misc
 
 TRAINING_LIST = ['P4AIB8JMDY6RDRAP.npy', 'ASD2URNKFRN3ZSFL.npy',
                  'SRKOPGCEG62ZJTT2.npy', 'N7C279O07IXSUAX9.npy',
@@ -475,58 +454,6 @@ VALIDATION_LIST = ['IWYDKUPY2NSYJGLF.npy', 'YBMFJQLVZENVF6MA.npy',
                    'BNAGD36PDWFHIEOO.npy', 'RWKA32WBSVFB4MQF.npy']
 
 
-def preprocess():
-    for filename in TRAINING_LIST:
-        try:
-            preprocess_file(filename, 'training')
-        except Exception as e:
-            logging.error(f'failed to process {filename} with error {e}')
-
-    for filename in VALIDATION_LIST:
-        try:
-            preprocess_file(filename, 'validation')
-        except Exception as e:
-            logging.error(f'failed to process {filename} with error {e}')
-
-
-def preprocess_file(filename, split_type):
-    """split_type is one of 'training' and 'validation'"""
-    logging.info('processing ' + filename)
-    subprocess.call(['scp',
-                     'thingumy:/home/lzhu7/data/numpy/' + filename,
-                     filename])
-    image3d = np.load(filename)
-    logging.info(f'loaded image has shape {image3d.shape}')
-    image3d = crop(image3d)
-    logging.info(f'cropped image has shape {image3d.shape}')
-    image3d = image3d.transpose((2, 1, 0))
-    logging.info(f'transposed image has shape {image3d.shape}')
-    # TODO: Plot the image at this step
-    image3d = standardize(image3d)
-    image3d.dump(filename)
-    subprocess.call(['scp',
-                     filename,
-                     (f'thingumy:/home/lzhu7/data/numpy_split/'
-                      f'{split_type}/{filename}')])
-    logging.info(f'saving {filename} to thingumy')
-    os.remove(filename)
-
-
-def process_labels() -> None:
-    """Splits the labels into training/validation.
-
-    Note: this function saves the data locally, not to thingumy.
-    """
-    df = pd.read_csv('/home/lzhu7/data/labels.csv', index_col='patient_id')
-    deduped = df[~df.index.duplicated()]
-    training_names = [name[:-len('.npy')] for name in TRAINING_LIST]
-    validation_names = [name[:-len('.npy')] for name in VALIDATION_LIST]
-    training_df = deduped.loc[training_names]
-    training_df.to_csv('/home/lzhu7/data/training_labels.csv')
-    validation_df = deduped.loc[validation_names]
-    validation_df.to_csv('/home/lzhu7/data/validation_labels.csv')
-
-
 def configure_logger():
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.INFO)
@@ -537,7 +464,108 @@ def configure_logger():
     root_logger.addHandler(handler)
 
 
+def process_labels(labels_filename: str) -> None:
+    """Splits the labels into training/validation.
+
+    Note: this function saves the data locally, not to thingumy.
+    """
+    df = pd.read_csv(labels_filename, index_col='patient_id')
+    deduped = df[~df.index.duplicated()]
+    training_names = [name[:-len('.npy')] for name in TRAINING_LIST]
+    validation_names = [name[:-len('.npy')] for name in VALIDATION_LIST]
+    training_df = deduped.loc[training_names]
+    training_df.to_csv('/home/lzhu7/data/training_labels.csv')
+    validation_df = deduped.loc[validation_names]
+    validation_df.to_csv('/home/lzhu7/data/validation_labels.csv')
+
+
+def download_array(blob: storage.Blob) -> np.ndarray:
+    stream = io.BytesIO()
+    blob.download_to_file(stream)
+    stream.seek(0)  # Read from the start of the file-like object
+    return np.load(stream)
+
+
+def upload_array(arr: np.ndarray, blob_name: str, bucket: storage.Bucket):
+    stream = io.BytesIO()
+    np.save(stream, arr)
+    stream.seek(0)  # Read from the start of the file-like object
+    blob = bucket.blob(blob_name)
+    blob.upload_from_file(stream)
+
+
+def upload_png(arr: np.ndarray, dirname: str, bucket: storage.Bucket):
+    """Uploads axial slice PNGs to gs://elvos/<DIRNAME>/axial/.
+    """
+    for i in range(len(arr)):
+        try:
+            out_stream = io.BytesIO()
+            misc.imsave(out_stream, arr[i], format='png')
+            out_filename = f'{dirname}/axial/{i:05d}.png'
+            out_blob = storage.Blob(out_filename, bucket)
+            out_stream.seek(0)
+            out_blob.upload_from_file(out_stream)
+        except Exception as e:
+            logging.error(f'for dirname: {dirname}: {e}')
+
+
+def crop(image3d: np.ndarray) -> np.ndarray:
+    # Update the numbers below to the region is correct
+    lw_center = image3d.shape[1] // 2
+    lw_min = lw_center - 60
+    lw_max = lw_center + 60
+    height_max = len(image3d) - 45
+    height_min = height_max - 64
+    return image3d[height_min:height_max, lw_min:lw_max, lw_min:lw_max]
+
+
+def bound_pixels(image3d, min_bound, max_bound) -> np.ndarray:
+    image3d[image3d < min_bound] = min_bound
+    image3d[image3d > max_bound] = max_bound
+    return image3d
+
+
+def standardize(image3d: np.ndarray) -> np.ndarray:
+    image3d = (image3d - image3d.min()) / (image3d.max() - image3d.max())
+    return image3d
+
+
+def process_array(image3d: np.ndarray):
+    """split_type is one of 'training' and 'validation'"""
+    logging.info(f'loaded image has shape {image3d.shape}')
+    image3d = crop(image3d)
+    logging.info(f'cropped image has shape {image3d.shape}')
+    image3d = bound_pixels(image3d, -1000, 400)
+    # Comment out transformations that we don't need
+    image3d = image3d.transpose((2, 1, 0))
+    logging.info(f'transposed image has shape {image3d.shape}')
+    # image3d = standardize(image3d)
+    return image3d
+
+
 if __name__ == '__main__':
     configure_logger()
-    preprocess()
-    process_labels()
+    client = storage.Client(project='elvo-198322')
+    bucket = storage.Bucket(client, name='elvos')
+
+    in_blob: storage.Blob
+    # Update the prefix to filter new data.
+    input_blobs = list(bucket.list_blobs(prefix='numpy/'))
+    random.shuffle(input_blobs)
+    for in_blob in input_blobs:
+        logging.info(f'downloading {in_blob.name}')
+        input_arr = download_array(in_blob)
+        try:
+            output_arr = process_array(input_arr)
+            filename = in_blob.name.split('/')[-1]
+            if filename in TRAINING_LIST:
+                blob_name = f'fully_processed1/training/{filename}'
+                upload_array(output_arr, blob_name, bucket)
+            elif filename in VALIDATION_LIST:
+                blob_name = f'fully_processed1/validation/{filename}'
+                upload_array(output_arr, blob_name, bucket)
+            else:
+                logging.error(f'{filename} not in training'
+                              f' nor validation lists')
+        except Exception as e:
+            logging.error(f'failed to process {in_blob.name}')
