@@ -4,17 +4,11 @@ Make sure to copy the data from thingumy to here first.
 """
 import logging
 import os
-import sys
-from pathlib import Path
 
 import keras
 import numpy as np
 import pandas as pd
 from keras import layers, optimizers
-
-# This allows us to import from models and generators
-root_dir = str(Path(__file__).parent.parent.absolute())
-sys.path.append(root_dir)
 
 LENGTH, WIDTH, HEIGHT = (150, 150, 64)
 
