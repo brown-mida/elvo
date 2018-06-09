@@ -21,6 +21,11 @@ class AlexNetGenerator(object):
         self.extend_dims = extend_dims
         self.augment_data = augment_data
 
+        # Delete all content in tmp/npy/
+        filelist = [f for f in os.listdir('tmp/npy')]
+        for f in filelist:
+            os.remove(os.path.join('tmp/npy', f))
+
         # Get npy files from Google Cloud Storage
         gcs_client = storage.Client.from_service_account_json(
             'credentials/client_secret.json'
@@ -119,11 +124,6 @@ class AlexNetGenerator(object):
         labels = self.labels[i * bsz:(i + 1) * bsz]
         images = []
 
-        # Delete all content in tmp/npy/
-        filelist = [f for f in os.listdir('tmp/npy')]
-        for f in filelist:
-            os.remove(os.path.join('tmp/npy', f))
-
         # Download files to tmp/npy/
         for i, file in enumerate(files):
             print("Loading " + file['name'])
@@ -132,6 +132,7 @@ class AlexNetGenerator(object):
             file_id = file_id.split('.')[0]
             blob.download_to_filename('tmp/npy/{}.npy'.format(file_id))
             img = np.load('tmp/npy/{}.npy'.format(file_id))
+            os.remove('tmp/npy/{}.npy'.format(file_id))
             img = self.__transform_images(img, file['mode'])
             images.append(img)
             print("Loaded " + file['name'])
