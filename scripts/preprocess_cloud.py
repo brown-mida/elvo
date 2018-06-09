@@ -9,17 +9,6 @@ import pandas as pd
 from google.cloud import storage
 from scipy import misc
 
-
-def configure_logger():
-    root_logger = logging.getLogger()
-    root_logger.setLevel(logging.INFO)
-    handler = logging.StreamHandler()
-    formatter = logging.Formatter(
-        fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    handler.setFormatter(formatter)
-    root_logger.addHandler(handler)
-
-
 TRAINING_LIST = ['P4AIB8JMDY6RDRAP.npy', 'ASD2URNKFRN3ZSFL.npy',
                  'SRKOPGCEG62ZJTT2.npy', 'N7C279O07IXSUAX9.npy',
                  'UZFAM45KRI3C7MGB.npy', 'JMWZRLKLB5DSSXE3.npy',
@@ -462,18 +451,14 @@ VALIDATION_LIST = ['IWYDKUPY2NSYJGLF.npy', 'YBMFJQLVZENVF6MA.npy',
                    'BNAGD36PDWFHIEOO.npy', 'RWKA32WBSVFB4MQF.npy']
 
 
-def preprocess():
-    for filename in TRAINING_LIST:
-        try:
-            process_array(filename, 'training')
-        except Exception as e:
-            logging.error(f'failed to process {filename} with error {e}')
-
-    for filename in VALIDATION_LIST:
-        try:
-            process_array(filename, 'validation')
-        except Exception as e:
-            logging.error(f'failed to process {filename} with error {e}')
+def configure_logger():
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.INFO)
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter(
+        fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    root_logger.addHandler(handler)
 
 
 def process_labels(labels_filename: str) -> None:
@@ -491,7 +476,6 @@ def process_labels(labels_filename: str) -> None:
     validation_df.to_csv('/home/lzhu7/data/validation_labels.csv')
 
 
-# TODO: Duplicate in npy_to_mayavi.py
 def download_array(blob: storage.Blob) -> np.ndarray:
     stream = io.BytesIO()
     blob.download_to_file(stream)
@@ -522,19 +506,6 @@ def upload_png(arr: np.ndarray, dirname: str, bucket: storage.Bucket):
             logging.error(f'for dirname: {dirname}: {e}')
 
 
-def process_array(image3d: np.ndarray):
-    """split_type is one of 'training' and 'validation'"""
-    logging.info(f'loaded image has shape {image3d.shape}')
-    image3d = crop(image3d)
-    logging.info(f'cropped image has shape {image3d.shape}')
-    image3d = bound_pixels(image3d, -1000, 400)
-    # Comment out transformations that we don't need
-    image3d = image3d.transpose((2, 1, 0))
-    logging.info(f'transposed image has shape {image3d.shape}')
-    # image3d = standardize(image3d)
-    return image3d
-
-
 def crop(image3d: np.ndarray) -> np.ndarray:
     # Update the numbers below to the region is correct
     lw_center = image3d.shape[1] // 2
@@ -553,6 +524,19 @@ def bound_pixels(image3d, min_bound, max_bound) -> np.ndarray:
 
 def standardize(image3d: np.ndarray) -> np.ndarray:
     image3d = (image3d - image3d.min()) / (image3d.max() - image3d.max())
+    return image3d
+
+
+def process_array(image3d: np.ndarray):
+    """split_type is one of 'training' and 'validation'"""
+    logging.info(f'loaded image has shape {image3d.shape}')
+    image3d = crop(image3d)
+    logging.info(f'cropped image has shape {image3d.shape}')
+    image3d = bound_pixels(image3d, -1000, 400)
+    # Comment out transformations that we don't need
+    image3d = image3d.transpose((2, 1, 0))
+    logging.info(f'transposed image has shape {image3d.shape}')
+    # image3d = standardize(image3d)
     return image3d
 
 
