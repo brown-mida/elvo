@@ -18,11 +18,13 @@ from keras.models import Model
 from keras.layers import Input, BatchNormalization, Dense, Flatten
 from keras.layers.convolutional import Conv2D, MaxPooling2D
 
+from ml.models.model import ModelBuilder
 
-class SimpleNetBuilder(object):
+
+class SimpleNetBuilder(ModelBuilder):
 
     @staticmethod
-    def build(input_shape):
+    def build(input_shape, num_classes=2, config={}):
         """Create a Simple CNN  model.
         """
 
@@ -48,11 +50,8 @@ class SimpleNetBuilder(object):
         x = Flatten()(x)
 
         # Fully connected layers
-        output_img = Dense(1, activation='softmax', use_bias=True)(x)
+        output_img = Dense(num_classes, activation='sigmoid',
+                           use_bias=True)(x)
 
         model = Model(inputs=input_img, outputs=output_img)
         return model
-
-
-# m = SimpleNetBuilder.build((120, 120, 64))
-# m.summary()

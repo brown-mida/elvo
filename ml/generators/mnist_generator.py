@@ -1,14 +1,17 @@
 import random
 import numpy as np
-from scipy.ndimage.interpolation import zoom
 import mnist
 
+from ml.generators.generator import Generator
 
-class MnistGenerator(object):
 
-    def __init__(self, dims=(120, 120, 64),
-                 batch_size=16, shuffle=True, validation=False,
-                 extend_dims=True):
+class MnistGenerator(Generator):
+
+    def __init__(self, dims=(120, 120, 64), batch_size=16,
+                 shuffle=True,
+                 validation=False,
+                 split=0.2, extend_dims=True,
+                 augment_data=True):
         self.dims = dims
         self.batch_size = batch_size
         self.extend_dims = extend_dims
@@ -31,17 +34,6 @@ class MnistGenerator(object):
         self.files = files
         self.labels = labels
 
-    def generate(self):
-        steps = self.get_steps_per_epoch()
-        while True:
-            for i in range(steps):
-                print(i)
-                x, y = self.__data_generation(i)
-                yield x, y
-
-    def get_steps_per_epoch(self):
-        return len(self.files) // self.batch_size
-
     def __data_generation(self, i):
         bsz = self.batch_size
         files = self.files[i * bsz:(i + 1) * bsz]
@@ -55,18 +47,3 @@ class MnistGenerator(object):
         print("Loaded entire batch.")
         print(np.shape(images))
         return images, labels
-
-    def __transform_images(self, image):
-        # Add a third dimension
-        image = np.repeat(image[:, :, np.newaxis], self.dims[2], axis=2)
-
-        # Interpolate axis to reshape to specified dimensions
-        dims = np.shape(image)
-        image = zoom(image, (self.dims[0] / dims[0],
-                             self.dims[1] / dims[1],
-                             1))
-
-        # Expand dims
-        if self.extend_dims:
-            image = np.expand_dims(image, axis=-1)
-        return image

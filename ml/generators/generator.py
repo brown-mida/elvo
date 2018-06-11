@@ -5,12 +5,12 @@ import numpy as np
 from scipy.ndimage.interpolation import zoom
 
 from google.cloud import storage
-from preprocessing import transforms
+from etl.lib import transforms
 
 BLACKLIST = ['preprocess_luke/validation/LAUIHISOEZIM5ILF.npy']
 
 
-class SingleGenerator(object):
+class Generator(object):
 
     def __init__(self, dims=(120, 120, 64), batch_size=16,
                  shuffle=True,
@@ -142,13 +142,12 @@ class SingleGenerator(object):
 
     def __data_generation(self, i):
         bsz = self.batch_size
-        files = self.files[0:bsz]
-        labels = self.labels[0:bsz]
+        files = self.files[i * bsz:(i + 1) * bsz]
+        labels = self.labels[i * bsz:(i + 1) * bsz]
         images = []
 
         # Download files to tmp/npy/
         for i, file in enumerate(files):
-            print("Loading " + file['name'])
             blob = self.bucket.get_blob(file['name'])
             file_id = file['name'].split('/')[-1]
             file_id = file_id.split('.')[0]
@@ -159,14 +158,15 @@ class SingleGenerator(object):
             os.remove('tmp/npy/{}.npy'.format(file_id))
             img = self.__transform_images(img, file['mode'])
             images.append(img)
-            print("Loaded " + file['name'])
-            print(np.shape(img))
         images = np.array(images)
         print("Loaded entire batch.")
         print(np.shape(images))
         return images, labels
 
     def __transform_images(self, image, mode):
+        image[image < -40] = -40
+        image[image > 400] = 400
+
         # Data augmentation methods, cut x and y to 80%
         if mode == "translate":
             image = transforms.translated_img(image)
@@ -186,7 +186,8 @@ class SingleGenerator(object):
                                  self.dims[1] / dims[1],
                                  self.dims[2] / dims[2]))
 
-        # Expand dims
+        # Normalize image and expand dims
+        image = transforms.normalize(image)
         if self.extend_dims:
             image = np.expand_dims(image, axis=-1)
         return image
