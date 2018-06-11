@@ -464,34 +464,23 @@ VALIDATION_LIST = ['IWYDKUPY2NSYJGLF.npy', 'YBMFJQLVZENVF6MA.npy',
 
 
 def mip_array(array: np.ndarray, type: str) -> np.ndarray:
-    # if type is 'axial':
-    #     to_return = np.zeros((len(array[0]), len(array[0][0])))
-    # else:
-    #     to_return = np.zeros((len(array), len(array[0])))
+    # for numpy data:
+    # return np.max(array, axis=0)
 
-    maximum = array[0]
-    for i in range(1, len(array)):
-        maximum = np.maximum(maximum, array[i])
+    # for preprocess_luke data:
+    return np.max(array, axis=2)
 
-    return maximum
 
-    # for slice in array:
-    #     for row in slice:
-    #         for col in row:
-    #             if type is 'axial':
-    #                 to_return[row][col] = array.max(axis=0)
-    #             elif type is 'sagittal':
-    #                 to_return[row][col] = array.max(axis=1)
-    #             else:
-    #                 to_return[row][col] = array.max(axis=2)
-    # return to_return
+def crop(arr: np.ndarray):
+    to_return = arr[151:len(arr)-51]
+    return to_return
 
 
 def remove_extremes(arr: np.ndarray):
-    a = arr > 500
-    b = arr < -700
-    arr[a] = 0
-    arr[b] = 0
+    a = arr > 270
+    b = arr < 0
+    arr[a] = -50
+    arr[b] = -50
     return arr
 
 
@@ -500,6 +489,19 @@ def download_array(blob: storage.Blob) -> np.ndarray:
     blob.download_to_file(in_stream)
     in_stream.seek(0)  # Read from the start of the file-like object
     return np.load(in_stream)
+
+
+def normalize(image, lower_bound=None, upper_bound=None):
+    # TODO: This is an issue, we can't zero center per image
+    if lower_bound is None:
+        lower_bound = image.min()
+    if upper_bound is None:
+        upper_bound = image.max()
+
+    image[image > upper_bound] = upper_bound
+    image[image < lower_bound] = lower_bound
+
+    return (image - image.mean()) / image.std()
 
 
 def upload_png(arr: np.ndarray, id: str, type: str, bucket: storage.Bucket):
@@ -517,10 +519,11 @@ def upload_png(arr: np.ndarray, id: str, type: str, bucket: storage.Bucket):
             logging.error(f'for patient ID: {id} {e}')
 
 
-def save_to_cloud(arr: np.ndarray, id: str, type: str):
+def save_npy_to_cloud(arr: np.ndarray, id: str, type: str):
     """Uploads MIP .npy files to gs://elvos/mip_data/<patient_id>/<scan_type>_mip.npy
     """
     try:
+        print(f"gs://elvos/mip_data/{id}/{type}_mip.npy")
         np.save(file_io.FileIO(f'gs://elvos/mip_data/{id}/{type}_mip.npy', 'w'), arr)
     except Exception as e:
         logging.error(f'for patient ID: {id} {e}')
@@ -532,25 +535,31 @@ if __name__ == '__main__':
     bucket = storage.Bucket(client, name='elvos')
 
     in_blob: storage.Blob
-    for in_blob in bucket.list_blobs(prefix='numpy/'):
+    # .npy
+    # for in_blob in bucket.list_blobs(prefix='numpy/'):
+    # luke
+    for in_blob in bucket.list_blobs(prefix='preprocess_luke/training/'):
+
         logging.info(f'downloading {in_blob.name}')
         input_arr = download_array(in_blob)
         logging.info(f"blob shape: {input_arr.shape}")
-        not_extreme_blob = remove_extremes(input_arr)
+
+        # .npy
+        # cropped_arr = crop(input_arr)
+        # not_extreme_arr = remove_extremes(cropped_arr)
+        # luke
+        not_extreme_arr = remove_extremes(input_arr)
+
         logging.info(f'removed array extremes')
         # create folder w patient ID
-        axial = mip_array(not_extreme_blob, 'axial')
+        axial = mip_array(not_extreme_arr, 'axial')
         logging.info(f'mip-ed CTA image')
-        # upload_png(axial, in_blob.name[6:22], 'axial', bucket)
-        print(axial)
-        print(axial[100])
-        plt.figure(figsize=axial.shape)
+        normalized = normalize(axial, lower_bound=-400)
+        plt.figure(figsize=(6, 6))
         plt.imshow(axial, interpolation='none')
         plt.show()
-        # plt.savefig('axial_0.png')
 
-        logging.info(f'saved png to cloud')
-        save_to_cloud(axial, in_blob.name[6:22], 'axial')
+        save_npy_to_cloud(axial, in_blob.name[25:41], 'axial')
         logging.info(f'saved .npy file to cloud')
 
         # sagittal = mip_array(not_extreme_blob, 'sagittal')
@@ -563,10 +572,3 @@ if __name__ == '__main__':
         # save_to_cloud(coronal, in_blob.name[6:22], 'coronal')
 
         # save
-
-
-        # process array:
-        # 1) remove bone and air -- set them to a low num
-        # 2) take maximum by columns
-        # 3) try taking maximum by rows?
-
