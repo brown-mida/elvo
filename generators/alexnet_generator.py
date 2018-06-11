@@ -151,7 +151,7 @@ class AlexNetGenerator(object):
         dims = np.shape(image)
         image = transforms.crop_z(image, int(dims[2] * 0.5))
 
-        # # Data augmentation methods, cut x and y to 80%
+        # Data augmentation methods, cut x and y to 80%
         if mode == "translate":
             image = transforms.translated_img(image)
         elif mode == "rotate":
@@ -165,13 +165,13 @@ class AlexNetGenerator(object):
         image = transforms.crop_center(image, int(dims[0] * 0.8),
                                        int(dims[1] * 0.8))
 
-        # # Interpolate axis to reduce to specified dimensions
+        # Interpolate axis to reduce to specified dimensions
         dims = np.shape(image)
         image = zoom(image, (self.dims[0] / dims[0],
                              self.dims[1] / dims[1],
                              self.dims[2] / dims[2]))
 
-        # # Normalize image and expand dims
+        # Normalize image and expand dims
         image = transforms.normalize(image)
         if self.extend_dims:
             image = np.expand_dims(image, axis=-1)

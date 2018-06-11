@@ -41,7 +41,7 @@ def train_alexnet3d():
         epochs=epochs,
         callbacks=[mc_callback],
         verbose=1,
-        max_queue_size=5)
+        max_queue_size=1)
     print('Model has been fit.')
 
 
