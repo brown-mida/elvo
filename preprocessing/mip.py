@@ -1,14 +1,25 @@
-# from preprocessing import preprocess
-from scripts import preprocess_cloud
-
-# import io
+import io
 import logging
 
 # import mayavi.mlab
-# import numpy as np
+import numpy as np
 # import pandas as pd
+from PIL import Image
 from google.cloud import storage
-# from scipy import misc
+from scipy import misc
+from tensorflow.python.lib.io import file_io
+from matplotlib import pyplot as plt
+
+
+def configure_logger():
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.INFO)
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter(
+        fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    root_logger.addHandler(handler)
+
 
 TRAINING_LIST = ['P4AIB8JMDY6RDRAP.npy', 'ASD2URNKFRN3ZSFL.npy',
                  'SRKOPGCEG62ZJTT2.npy', 'N7C279O07IXSUAX9.npy',
@@ -451,26 +462,109 @@ VALIDATION_LIST = ['IWYDKUPY2NSYJGLF.npy', 'YBMFJQLVZENVF6MA.npy',
                    'CCVIH3DIM3GF6SLG.npy', 'QJFMNVKKVZXKBROO.npy',
                    'BNAGD36PDWFHIEOO.npy', 'RWKA32WBSVFB4MQF.npy']
 
-# def mip_array(array: np.ndarray, type: str) -> np.ndarray:
-#     if type is 'axial':
-#
-#     elif type is 'sagittal':
-#
-#     else:
-#
+
+def mip_array(array: np.ndarray, type: str) -> np.ndarray:
+    # if type is 'axial':
+    #     to_return = np.zeros((len(array[0]), len(array[0][0])))
+    # else:
+    #     to_return = np.zeros((len(array), len(array[0])))
+
+    maximum = array[0]
+    for i in range(1, len(array)):
+        maximum = np.maximum(maximum, array[i])
+
+    return maximum
+
+    # for slice in array:
+    #     for row in slice:
+    #         for col in row:
+    #             if type is 'axial':
+    #                 to_return[row][col] = array.max(axis=0)
+    #             elif type is 'sagittal':
+    #                 to_return[row][col] = array.max(axis=1)
+    #             else:
+    #                 to_return[row][col] = array.max(axis=2)
+    # return to_return
+
+
+def remove_extremes(arr: np.ndarray):
+    a = arr > 500
+    b = arr < -700
+    arr[a] = 0
+    arr[b] = 0
+    return arr
+
+
+def download_array(blob: storage.Blob) -> np.ndarray:
+    in_stream = io.BytesIO()
+    blob.download_to_file(in_stream)
+    in_stream.seek(0)  # Read from the start of the file-like object
+    return np.load(in_stream)
+
+
+def upload_png(arr: np.ndarray, id: str, type: str, bucket: storage.Bucket):
+    """Uploads MIP PNGs to gs://elvos/mip_data/<patient_id>/<scan_type>_mip.png.
+    """
+    for i in range(len(arr)):
+        try:
+            out_stream = io.BytesIO()
+            misc.imsave(out_stream, arr[i], format='png')
+            out_filename = f'mip_data/{id}/{type}_mip.png'
+            out_blob = storage.Blob(out_filename, bucket)
+            out_stream.seek(0)
+            out_blob.upload_from_file(out_stream)
+        except Exception as e:
+            logging.error(f'for patient ID: {id} {e}')
+
+
+def save_to_cloud(arr: np.ndarray, id: str, type: str):
+    """Uploads MIP .npy files to gs://elvos/mip_data/<patient_id>/<scan_type>_mip.npy
+    """
+    try:
+        np.save(file_io.FileIO(f'gs://elvos/mip_data/{id}/{type}_mip.npy', 'w'), arr)
+    except Exception as e:
+        logging.error(f'for patient ID: {id} {e}')
 
 
 if __name__ == '__main__':
-    preprocess_cloud.configure_logger()
+    configure_logger()
     client = storage.Client(project='elvo-198322')
     bucket = storage.Bucket(client, name='elvos')
 
     in_blob: storage.Blob
-    for in_blob in bucket.list_blobs(prefix='/numpy'):
+    for in_blob in bucket.list_blobs(prefix='numpy/'):
         logging.info(f'downloading {in_blob.name}')
-        input_arr = preprocess_cloud.download_array(in_blob)
-        print(input_arr.shape)
-        break
+        input_arr = download_array(in_blob)
+        logging.info(f"blob shape: {input_arr.shape}")
+        not_extreme_blob = remove_extremes(input_arr)
+        logging.info(f'removed array extremes')
+        # create folder w patient ID
+        axial = mip_array(not_extreme_blob, 'axial')
+        logging.info(f'mip-ed CTA image')
+        # upload_png(axial, in_blob.name[6:22], 'axial', bucket)
+        print(axial)
+        print(axial[100])
+        plt.figure(figsize=axial.shape)
+        plt.imshow(axial, interpolation='none')
+        plt.show()
+        # plt.savefig('axial_0.png')
+
+        logging.info(f'saved png to cloud')
+        save_to_cloud(axial, in_blob.name[6:22], 'axial')
+        logging.info(f'saved .npy file to cloud')
+
+        # sagittal = mip_array(not_extreme_blob, 'sagittal')
+        # upload_png(sagittal, in_blob.name[6:22], 'sagittal', bucket)
+        # save_to_cloud(sagittal, in_blob.name[6:22], 'sagittal')
+        #
+        # # save
+        # coronal = mip_array(not_extreme_blob, 'coronal')
+        # upload_png(coronal, in_blob.name[6:22], 'coronal', bucket)
+        # save_to_cloud(coronal, in_blob.name[6:22], 'coronal')
+
+        # save
+
+
         # process array:
         # 1) remove bone and air -- set them to a low num
         # 2) take maximum by columns
