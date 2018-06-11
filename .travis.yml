@@ -4,7 +4,7 @@ python:
 install: 
   - pip install -r requirements.txt
 script: 
-  - flake8 generators models preprocessing
+  - flake8 etl modeling generators models
   - pytest
   - pytest --cov=./
 after_success:
