@@ -143,7 +143,6 @@ class SingleGenerator(object):
     def __data_generation(self, i):
         bsz = self.batch_size
         files = self.files[0:bsz]
-        print(files)
         labels = self.labels[0:bsz]
         images = []
 

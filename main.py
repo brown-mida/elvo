@@ -18,22 +18,24 @@ def train_alexnet2d():
     batch_size = 4
 
     # Generators
-    training_gen = SingleGenerator(
+    training_gen = NewGenerator(
         batch_size=batch_size,
-        augment_data=False,
+        split=0.1,
+        augment_data=True,
         extend_dims=False
     )
-    validation_gen = SingleGenerator(
+    validation_gen = NewGenerator(
         batch_size=batch_size,
-        augment_data=False,
         extend_dims=False,
+        split=0.1,
+        augment_data=True,
         validation=True
     )
 
     # Build and run model
     model = AlexNet2DBuilder.build((dim_len, dim_len, top_len))
-    model.compile(optimizer=Adam(lr=0.0001),
-                  loss='sparse_categorical_crossentropy',
+    model.compile(optimizer=Adam(lr=1e-5),
+                  loss='binary_crossentropy',
                   metrics=['accuracy'])
     mc_callback = ModelCheckpoint(filepath='tmp/alex_weights.hdf5', verbose=1)
 
@@ -46,7 +48,7 @@ def train_alexnet2d():
         epochs=epochs,
         callbacks=[mc_callback],
         verbose=1,
-        max_queue_size=1)
+        max_queue_size=5)
     print('Model has been fit.')
 
 

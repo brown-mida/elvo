@@ -3,6 +3,7 @@ import csv
 import random
 import numpy as np
 from scipy.ndimage.interpolation import zoom
+from keras.utils import to_categorical
 
 from google.cloud import storage
 from preprocessing import transforms
@@ -164,6 +165,7 @@ class NewGenerator(object):
         images = np.array(images)
         print("Loaded entire batch.")
         print(np.shape(images))
+        labels = to_categorical(labels, num_classes=2)
         return images, labels
 
     def __transform_images(self, image, mode):
