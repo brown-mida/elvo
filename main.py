@@ -4,32 +4,38 @@ from keras.optimizers import Adam
 from generators.mnist_generator import MnistGenerator
 from generators.alexnet_generator import AlexNetGenerator
 from generators.new_generator import NewGenerator
+from generators.single_generator import SingleGenerator
 
 from models.alexnet3d import AlexNet3DBuilder
-from models.resnet3d import Resnet3DBuilder
+from models.alexnet2d import AlexNet2DBuilder
 
 
-def train_resnet():
+def train_alexnet2d():
     # Parameters
-    dim_len = 64
+    dim_len = 120
     top_len = 64
     epochs = 10
-    batch_size = 16
+    batch_size = 4
 
     # Generators
-    training_gen = MnistGenerator(dims=(dim_len, dim_len, top_len),
-                                  batch_size=batch_size)
-    validation_gen = MnistGenerator(dims=(dim_len, dim_len, top_len),
-                                    batch_size=batch_size,
-                                    validation=True)
+    training_gen = SingleGenerator(
+        batch_size=batch_size,
+        augment_data=False,
+        extend_dims=False
+    )
+    validation_gen = SingleGenerator(
+        batch_size=batch_size,
+        augment_data=False,
+        extend_dims=False,
+        validation=True
+    )
 
     # Build and run model
-    model = Resnet3DBuilder.build_resnet_34((dim_len, dim_len, top_len, 1), 1)
+    model = AlexNet2DBuilder.build((dim_len, dim_len, top_len))
     model.compile(optimizer=Adam(lr=0.0001),
                   loss='sparse_categorical_crossentropy',
                   metrics=['accuracy'])
-    mc_callback = ModelCheckpoint(filepath='tmp/weights.hdf5', verbose=1)
-    # tb_callback = TensorBoard(write_images=True)
+    mc_callback = ModelCheckpoint(filepath='tmp/alex_weights.hdf5', verbose=1)
 
     print('Model has been compiled.')
     model.fit_generator(
@@ -85,4 +91,4 @@ def train_alexnet3d():
 
 
 if __name__ == '__main__':
-    train_alexnet3d()
+    train_alexnet2d()

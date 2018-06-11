@@ -46,26 +46,26 @@ class AlexNet2DBuilder(object):
         input_img = Input(shape=input_shape, name="cad_input")
 
         # Conv1 (Output 200 x 200 x 48)
-        x = Conv2D(48, (11, 11), activation='relu',
+        x = Conv2D(256, (11, 11), activation='relu',
                    padding='same')(input_img)
         x = BatchNormalization()(x)
         x = MaxPooling2D(pool_size=(4, 4), strides=(4, 4))(x)
 
         # Conv2 (Output 50 x 50 x 64)
-        x = Conv2D(64, (5, 5), activation='relu', padding='same')(x)
+        x = Conv2D(256, (5, 5), activation='relu', padding='same')(x)
         x = BatchNormalization()(x)
         x = MaxPooling2D(pool_size=(4, 4), strides=(4, 4))(x)
 
         # Conv3 (Output 12 x 12 x 96)
-        x = Conv2D(96, (3, 3), activation='relu',
+        x = Conv2D(512, (3, 3), activation='relu',
                    padding='same')(x)
 
         # Conv4 (Output 6 x 6 x 128)
-        x = Conv2D(128, (3, 3), activation='relu', strides=(2, 2),
+        x = Conv2D(512, (3, 3), activation='relu', strides=(2, 2),
                    padding='same')(x)
 
         # Conv5 (Output 3 x 3 x 128)
-        x = Conv2D(256, (3, 3), activation='relu', strides=(2, 2),
+        x = Conv2D(1024, (3, 3), activation='relu', strides=(2, 2),
                    padding='same')(x)
 
         # Flatten
@@ -73,13 +73,9 @@ class AlexNet2DBuilder(object):
         x = Flatten()(x)
 
         # Fully connected layers
-        x = Dense(1000, activation='relu', use_bias=True)(x)
-        x = Dense(1000, activation='relu', use_bias=True)(x)
+        x = Dense(1024, activation='relu', use_bias=True)(x)
+        x = Dense(1024, activation='relu', use_bias=True)(x)
         output_img = Dense(2, activation='softmax', use_bias=True)(x)
 
         model = Model(inputs=input_img, outputs=output_img)
         return model
-
-
-m = AlexNet2DBuilder.build((200, 200, 24))
-m.summary()
