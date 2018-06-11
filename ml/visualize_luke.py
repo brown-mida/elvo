@@ -34,7 +34,7 @@ if __name__ == '__main__':
     bucket = storage.Bucket(client, name='elvos')
 
     in_blob: storage.Blob
-    for in_blob in bucket.list_blobs(prefix='processed/'):
+    for in_blob in bucket.list_blobs(prefix='preprocess_luke/'):
         logging.info(f'downloading {in_blob.name}')
         arr = download_array(in_blob)
         mlab.contour3d(arr)

@@ -12,6 +12,7 @@ import random
 import numpy as np
 import pandas as pd
 from google.cloud import storage
+from mayavi import mlab
 from scipy import misc
 
 # TODO: Update this when new data comes.
@@ -515,8 +516,8 @@ def upload_png(arr: np.ndarray, dirname: str, bucket: storage.Bucket):
 def crop(image3d: np.ndarray) -> np.ndarray:
     # Update the numbers below to the region is correct
     lw_center = image3d.shape[1] // 2
-    lw_min = lw_center - 60
-    lw_max = lw_center + 60
+    lw_min = lw_center - 140
+    lw_max = lw_center + 140
     height_max = len(image3d) - 45
     height_min = height_max - 64
     return image3d[height_min:height_max, lw_min:lw_max, lw_min:lw_max]
@@ -529,7 +530,7 @@ def bound_pixels(image3d, min_bound, max_bound) -> np.ndarray:
 
 
 def standardize(image3d: np.ndarray) -> np.ndarray:
-    image3d = (image3d - image3d.min()) / (image3d.max() - image3d.max())
+    image3d = (image3d - image3d.min()) / (image3d.max() - image3d.min())
     return image3d
 
 
@@ -561,6 +562,8 @@ if __name__ == '__main__':
         input_arr = download_array(in_blob)
         try:
             output_arr = process_array(input_arr)
+            mlab.contour3d(output_arr)
+            mlab.show()
             filename = in_blob.name.split('/')[-1]
             if filename in TRAINING_LIST:
                 blob_name = f'processed/luke/training/{filename}'
