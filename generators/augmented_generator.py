@@ -1,10 +1,10 @@
 import os
 import random
+
 import numpy as np
 import pandas as pd
+import transforms
 from scipy.ndimage.interpolation import zoom
-
-from preprocessing import transforms
 
 
 class AugmentedGenerator(object):

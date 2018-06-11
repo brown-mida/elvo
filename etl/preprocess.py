@@ -2,6 +2,8 @@
 
 This script converts the compressed patient info in ELVOs_anon
 into numpy files, saved in the numpy folder of the elvo bucket.
+
+This script also creates the labels.csv file.
 """
 import io
 import logging
@@ -15,11 +17,21 @@ import pandas as pd
 import pydicom
 from google.cloud import storage
 
-import parsers
-import transforms
+from lib import parsers
+from lib import transforms
 
 ELVOS_ANON = 'ELVOs_anon'
 EXTENSION_LENGTH = len('.cab')  # == 4
+
+
+def configure_logger():
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.INFO)
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter(
+        fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    root_logger.addHandler(handler)
 
 
 def load_metadata(bucket):
@@ -151,10 +163,12 @@ def main():
                 logging.info(f'file extension must be .cab or .zip,'
                              f' got {blob.name}')
         except Exception as e:
+            # Reset the working directory, tmp files for the next dataset
+            os.chdir('..')
+            shutil.rmtree('tmp')
             logging.error(e)
 
 
 if __name__ == '__main__':
-    logging.basicConfig(filename='preprocess.log',
-                        level=logging.INFO)
+    configure_logger()
     main()
