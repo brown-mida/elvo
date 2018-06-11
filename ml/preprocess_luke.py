@@ -555,6 +555,7 @@ if __name__ == '__main__':
     # Update the prefix to filter new data.
     input_blobs = list(bucket.list_blobs(prefix='numpy/'))
     random.shuffle(input_blobs)
+    # TODO: This should also upload the
     for in_blob in input_blobs:
         logging.info(f'downloading {in_blob.name}')
         input_arr = download_array(in_blob)
@@ -562,10 +563,10 @@ if __name__ == '__main__':
             output_arr = process_array(input_arr)
             filename = in_blob.name.split('/')[-1]
             if filename in TRAINING_LIST:
-                blob_name = f'fully_processed1/training/{filename}'
+                blob_name = f'processed/luke/training/{filename}'
                 upload_array(output_arr, blob_name, bucket)
             elif filename in VALIDATION_LIST:
-                blob_name = f'fully_processed1/validation/{filename}'
+                blob_name = f'processed/luke/validation/{filename}'
                 upload_array(output_arr, blob_name, bucket)
             else:
                 logging.error(f'{filename} not in training'
