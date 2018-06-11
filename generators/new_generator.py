@@ -169,6 +169,9 @@ class NewGenerator(object):
         return images, labels
 
     def __transform_images(self, image, mode):
+        image[image < -40] = -40
+        image[image > 400] = 400
+
         # Data augmentation methods, cut x and y to 80%
         if mode == "translate":
             image = transforms.translated_img(image)

@@ -8,6 +8,47 @@ from generators.single_generator import SingleGenerator
 
 from models.alexnet3d import AlexNet3DBuilder
 from models.alexnet2d import AlexNet2DBuilder
+from models.simple import SimpleNetBuilder
+
+
+def train_simplenet():
+    # Parameters
+    dim_len = 120
+    top_len = 64
+    epochs = 10
+    batch_size = 4
+
+    # Generators
+    training_gen = NewGenerator(
+        batch_size=batch_size,
+        augment_data=False,
+        extend_dims=False
+    )
+    validation_gen = NewGenerator(
+        batch_size=batch_size,
+        augment_data=False,
+        extend_dims=False,
+        validation=True
+    )
+
+    # Build and run model
+    model = SimpleNetBuilder.build((dim_len, dim_len, top_len))
+    model.compile(optimizer=Adam(lr=1e-5),
+                  loss='binary_crossentropy',
+                  metrics=['accuracy'])
+    mc_callback = ModelCheckpoint(filepath='tmp/alex_weights.hdf5', verbose=1)
+
+    print('Model has been compiled.')
+    model.fit_generator(
+        generator=training_gen.generate(),
+        steps_per_epoch=training_gen.get_steps_per_epoch(),
+        validation_data=validation_gen.generate(),
+        validation_steps=validation_gen.get_steps_per_epoch(),
+        epochs=epochs,
+        callbacks=[mc_callback],
+        verbose=1,
+        max_queue_size=1)
+    print('Model has been fit.')
 
 
 def train_alexnet2d():
@@ -93,4 +134,4 @@ def train_alexnet3d():
 
 
 if __name__ == '__main__':
-    train_alexnet3d()
+    train_simplenet()

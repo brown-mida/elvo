@@ -6,7 +6,7 @@ import mnist
 
 class MnistGenerator(object):
 
-    def __init__(self, dims=(200, 200, 24),
+    def __init__(self, dims=(120, 120, 64),
                  batch_size=16, shuffle=True, validation=False,
                  extend_dims=True):
         self.dims = dims
