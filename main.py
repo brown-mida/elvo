@@ -3,6 +3,7 @@ from keras.optimizers import Adam
 
 from generators.mnist_generator import MnistGenerator
 from generators.alexnet_generator import AlexNetGenerator
+from generators.alexnet_generator_2 import AlexNetGenerator2
 
 from models.alexnet3d import AlexNet3DBuilder
 from models.resnet3d import Resnet3DBuilder
@@ -11,9 +12,9 @@ from models.resnet3d import Resnet3DBuilder
 def train_resnet():
     # Parameters
     dim_len = 64
-    top_len = 32
+    top_len = 64
     epochs = 10
-    batch_size = 4
+    batch_size = 16
 
     # Generators
     training_gen = MnistGenerator(dims=(dim_len, dim_len, top_len),
@@ -25,7 +26,7 @@ def train_resnet():
     # Build and run model
     model = Resnet3DBuilder.build_resnet_34((dim_len, dim_len, top_len, 1), 1)
     model.compile(optimizer=Adam(lr=0.0001),
-                  loss='binary_crossentropy',
+                  loss='sparse_categorical_crossentropy',
                   metrics=['accuracy'])
     mc_callback = ModelCheckpoint(filepath='tmp/weights.hdf5', verbose=1)
     # tb_callback = TensorBoard(write_images=True)
@@ -45,17 +46,17 @@ def train_resnet():
 
 def train_alexnet3d():
     # Parameters
-    dim_len = 64
-    top_len = 24
+    dim_len = 120
+    top_len = 64
     epochs = 10
     batch_size = 4
 
     # Generators
-    training_gen = MnistGenerator(
+    training_gen = AlexNetGenerator2(
         dims=(dim_len, dim_len, top_len),
         batch_size=batch_size
     )
-    validation_gen = MnistGenerator(
+    validation_gen = AlexNetGenerator2(
         dims=(dim_len, dim_len, top_len),
         batch_size=batch_size,
         validation=True
@@ -82,4 +83,4 @@ def train_alexnet3d():
 
 
 if __name__ == '__main__':
-    train_resnet()
+    train_alexnet3d()

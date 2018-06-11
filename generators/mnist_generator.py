@@ -51,7 +51,6 @@ class MnistGenerator(object):
         for file in files:
             img = self.__transform_images(file)
             images.append(img)
-            print(np.shape(img))
         images = np.array(images)
         print("Loaded entire batch.")
         print(np.shape(images))
