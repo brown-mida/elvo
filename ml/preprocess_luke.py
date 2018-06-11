@@ -513,6 +513,7 @@ def upload_png(arr: np.ndarray, dirname: str, bucket: storage.Bucket):
             logging.error(f'for dirname: {dirname}: {e}')
 
 
+# TODO: Unit test this
 def crop(image3d: np.ndarray) -> np.ndarray:
     # Update the numbers below to the region is correct
     lw_center = image3d.shape[1] // 2
@@ -556,7 +557,7 @@ if __name__ == '__main__':
     # Update the prefix to filter new data.
     input_blobs = list(bucket.list_blobs(prefix='numpy/'))
     random.shuffle(input_blobs)
-    # TODO: This should also upload the
+    # TODO: This should also upload the labels
     for in_blob in input_blobs:
         logging.info(f'downloading {in_blob.name}')
         input_arr = download_array(in_blob)
