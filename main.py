@@ -74,8 +74,8 @@ def train_alexnet3d():
 
     # Build and run model
     model = AlexNet3DBuilder.build((dim_len, dim_len, top_len, 1))
-    model.compile(optimizer=Adam(lr=0.0001),
-                  loss='sparse_categorical_crossentropy',
+    model.compile(optimizer=Adam(lr=1e-5),
+                  loss='binary_crossentropy',
                   metrics=['accuracy'])
     mc_callback = ModelCheckpoint(filepath='tmp/alex_weights.hdf5', verbose=1)
 
@@ -93,4 +93,4 @@ def train_alexnet3d():
 
 
 if __name__ == '__main__':
-    train_alexnet2d()
+    train_alexnet3d()
