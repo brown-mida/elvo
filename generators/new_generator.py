@@ -186,7 +186,8 @@ class NewGenerator(object):
                                  self.dims[1] / dims[1],
                                  self.dims[2] / dims[2]))
 
-        # Expand dims
+        # Normalize image and expand dims
+        image = transforms.normalize(image)
         if self.extend_dims:
             image = np.expand_dims(image, axis=-1)
         return image

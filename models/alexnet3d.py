@@ -47,27 +47,27 @@ class AlexNet3DBuilder(object):
 
         input_img = Input(shape=input_shape, name="cad_input")
 
-        # Conv1 (Output 200 x 200 x 24 x 48)
-        x = Conv3D(48, (11, 11, 5), activation='relu',
+        # Conv1 (Output 120 x 120 x 64 x 128)
+        x = Conv3D(128, (7, 7, 7), activation='relu',
                    padding='same')(input_img)
-        x = BatchNormalization()(x)
-        x = MaxPooling3D(pool_size=(4, 4, 2), strides=(4, 4, 2))(x)
+        # x = BatchNormalization()(x)
+        x = MaxPooling3D(pool_size=(2, 2, 2), strides=(2, 2, 2))(x)
 
-        # Conv2 (Output 50 x 50 x 24 x 64)
-        x = Conv3D(64, (5, 5, 5), activation='relu', padding='same')(x)
-        x = BatchNormalization()(x)
-        x = MaxPooling3D(pool_size=(4, 4, 2), strides=(4, 4, 2))(x)
+        # Conv2 (Output 30 x 30 x 16 x 256)
+        x = Conv3D(256, (5, 5, 5), activation='relu', padding='same')(x)
+        # x = BatchNormalization()(x)
+        x = MaxPooling3D(pool_size=(2, 2, 2), strides=(2, 2, 2))(x)
 
-        # Conv3 (Output 12 x 12 x 24 x 96)
-        x = Conv3D(96, (3, 3, 3), activation='relu',
+        # Conv3 (Output 7 x 7 x 8 x 256)
+        x = Conv3D(256, (3, 3, 3), activation='relu',
                    padding='same')(x)
 
-        # Conv4 (Output 6 x 6 x 24 x 128)
-        x = Conv3D(128, (3, 3, 3), activation='relu', strides=(2, 2, 1),
+        # Conv4 (Output 4 x 4 x 4 x 512)
+        x = Conv3D(512, (3, 3, 3), activation='relu', strides=(2, 2, 2),
                    padding='same')(x)
 
-        # Conv5 (Output 3 x 3 x 24 x 128)
-        x = Conv3D(256, (3, 3, 3), activation='relu', strides=(2, 2, 1),
+        # Conv5 (Output 2 x 2 x 2 x 1024)
+        x = Conv3D(1024, (3, 3, 3), activation='relu', strides=(2, 2, 2),
                    padding='same')(x)
 
         # Pooling and flatten
@@ -75,13 +75,13 @@ class AlexNet3DBuilder(object):
         x = Flatten()(x)
 
         # Fully connected layers
-        x = Dense(1000, activation='relu', use_bias=True)(x)
-        x = Dense(1000, activation='relu', use_bias=True)(x)
-        x = Dense(2, activation='relu', use_bias=True)(x)
+        x = Dense(1024, activation='relu', use_bias=True)(x)
+        x = Dense(1024, activation='relu', use_bias=True)(x)
+        x = Dense(1, activation='sigmoid', use_bias=True)(x)
 
         model = Model(inputs=input_img, outputs=x)
         return model
 
 
-# m = AlexNet3DBuilder.build((200, 200, 24, 1))
+# m = AlexNet3DBuilder.build((120, 120, 64, 1))
 # m.summary()
