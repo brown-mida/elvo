@@ -54,11 +54,13 @@ def train_alexnet3d():
     # Generators
     training_gen = AlexNetGenerator2(
         dims=(dim_len, dim_len, top_len),
-        batch_size=batch_size
+        batch_size=batch_size,
+        augment_data=False
     )
     validation_gen = AlexNetGenerator2(
         dims=(dim_len, dim_len, top_len),
         batch_size=batch_size,
+        augment_data=False,
         validation=True
     )
 

@@ -49,30 +49,25 @@ class AlexNetGenerator2(object):
             })
 
             if self.augment_data:
-                for i in range(5):
-                    files.append({
-                        "name": file,
-                        "mode": "translate"
-                    })
-                for i in range(5):
-                    files.append({
-                        "name": file,
-                        "mode": "rotate"
-                    })
-                for i in range(3):
-                    files.append({
-                        "name": file,
-                        "mode": "zoom"
-                    })
-                for i in range(3):
-                    files.append({
-                        "name": file,
-                        "mode": "gaussian"
-                    })
-                files.append({
-                    "name": file,
-                    "mode": "flip"
-                })
+                self.__add_augmented(files, file)
+
+        blobs = bucket.list_blobs(prefix='preprocess_luke/validation')
+
+        for blob in blobs:
+            file = blob.name
+
+            # Check blacklist
+            if file in BLACKLIST:
+                continue
+
+            # Add all data augmentation methods
+            files.append({
+                "name": file,
+                "mode": "original"
+            })
+
+            if self.augment_data:
+                self.__add_augmented(files, file)
 
         # Split based on validation
         if validation:
@@ -107,6 +102,32 @@ class AlexNetGenerator2(object):
         self.files = files
         self.labels = labels
         self.bucket = bucket
+
+    def __add_augmented(self, files, file):
+        for i in range(5):
+            files.append({
+                "name": file,
+                "mode": "translate"
+            })
+        for i in range(5):
+            files.append({
+                "name": file,
+                "mode": "rotate"
+            })
+        for i in range(3):
+            files.append({
+                "name": file,
+                "mode": "zoom"
+            })
+        for i in range(3):
+            files.append({
+                "name": file,
+                "mode": "gaussian"
+            })
+        files.append({
+            "name": file,
+            "mode": "flip"
+        })
 
     def generate(self):
         steps = self.get_steps_per_epoch()
