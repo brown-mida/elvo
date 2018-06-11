@@ -1,14 +1,14 @@
-from preprocessing import preprocess
+# from preprocessing import preprocess
 from scripts import preprocess_cloud
 
-import io
+# import io
 import logging
 
-import mayavi.mlab
-import numpy as np
-import pandas as pd
+# import mayavi.mlab
+# import numpy as np
+# import pandas as pd
 from google.cloud import storage
-from scipy import misc
+# from scipy import misc
 
 TRAINING_LIST = ['P4AIB8JMDY6RDRAP.npy', 'ASD2URNKFRN3ZSFL.npy',
                  'SRKOPGCEG62ZJTT2.npy', 'N7C279O07IXSUAX9.npy',
@@ -451,6 +451,28 @@ VALIDATION_LIST = ['IWYDKUPY2NSYJGLF.npy', 'YBMFJQLVZENVF6MA.npy',
                    'CCVIH3DIM3GF6SLG.npy', 'QJFMNVKKVZXKBROO.npy',
                    'BNAGD36PDWFHIEOO.npy', 'RWKA32WBSVFB4MQF.npy']
 
+# def mip_array(array: np.ndarray, type: str) -> np.ndarray:
+#     if type is 'axial':
+#
+#     elif type is 'sagittal':
+#
+#     else:
+#
+
+
 if __name__ == '__main__':
     preprocess_cloud.configure_logger()
+    client = storage.Client(project='elvo-198322')
+    bucket = storage.Bucket(client, name='elvos')
+
+    in_blob: storage.Blob
+    for in_blob in bucket.list_blobs(prefix='/numpy'):
+        logging.info(f'downloading {in_blob.name}')
+        input_arr = preprocess_cloud.download_array(in_blob)
+        print(input_arr.shape)
+        break
+        # process array:
+        # 1) remove bone and air -- set them to a low num
+        # 2) take maximum by columns
+        # 3) try taking maximum by rows?
 
