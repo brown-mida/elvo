@@ -1,3 +1,9 @@
+""" The main run file.
+
+Please use the runfile (./run) instead.
+Usage: ./run -g GEN -m MOD -o OUTPUT
+"""
+
 import sys
 
 from keras.callbacks import ModelCheckpoint
