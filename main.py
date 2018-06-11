@@ -18,12 +18,12 @@ def train_alexnet2d():
     batch_size = 4
 
     # Generators
-    training_gen = SingleGenerator(
+    training_gen = NewGenerator(
         batch_size=batch_size,
         augment_data=False,
         extend_dims=False
     )
-    validation_gen = SingleGenerator(
+    validation_gen = NewGenerator(
         batch_size=batch_size,
         augment_data=False,
         extend_dims=False,
@@ -33,7 +33,7 @@ def train_alexnet2d():
     # Build and run model
     model = AlexNet2DBuilder.build((dim_len, dim_len, top_len))
     model.compile(optimizer=Adam(lr=0.0001),
-                  loss='sparse_categorical_crossentropy',
+                  loss='binary_crossentropy',
                   metrics=['accuracy'])
     mc_callback = ModelCheckpoint(filepath='tmp/alex_weights.hdf5', verbose=1)
 
@@ -91,4 +91,4 @@ def train_alexnet3d():
 
 
 if __name__ == '__main__':
-    train_alexnet3d()
+    train_alexnet2d()
