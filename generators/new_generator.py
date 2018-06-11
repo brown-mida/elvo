@@ -165,7 +165,6 @@ class NewGenerator(object):
         images = np.array(images)
         print("Loaded entire batch.")
         print(np.shape(images))
-        labels = to_categorical(labels, num_classes=2)
         return images, labels
 
     def __transform_images(self, image, mode):
