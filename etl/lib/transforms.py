@@ -81,7 +81,7 @@ def crop_z(image, z=200):
     assert image.shape[2] >= z
 
     selected_indices = list(range(z))
-    image = image.take(selected_indices, axis=0)
+    image = image.take(selected_indices, axis=2)
     return image
 
 
