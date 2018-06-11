@@ -7,10 +7,10 @@ from scipy.ndimage.interpolation import zoom
 from google.cloud import storage
 from preprocessing import transforms
 
-BLACKLIST = ['numpy/LAUIHISOEZIM5ILF.npy']
+BLACKLIST = ['preprocess_luke/validation/LAUIHISOEZIM5ILF.npy']
 
 
-class AlexNetGenerator2(object):
+class NewGenerator(object):
 
     def __init__(self, dims=(120, 120, 64), batch_size=16,
                  shuffle=True,
@@ -180,10 +180,11 @@ class AlexNetGenerator2(object):
             image = transforms.flip_img(image)
 
         # Interpolate axis to reduce to specified dimensions
-        dims = np.shape(image)
-        image = zoom(image, (self.dims[0] / dims[0],
-                             self.dims[1] / dims[1],
-                             self.dims[2] / dims[2]))
+        if self.augment_data:
+            dims = np.shape(image)
+            image = zoom(image, (self.dims[0] / dims[0],
+                                 self.dims[1] / dims[1],
+                                 self.dims[2] / dims[2]))
 
         # Expand dims
         if self.extend_dims:
