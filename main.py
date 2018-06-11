@@ -4,6 +4,7 @@ from keras.optimizers import Adam
 from generators.mnist_generator import MnistGenerator
 from generators.alexnet_generator import AlexNetGenerator
 from generators.new_generator import NewGenerator
+from generators.single_generator import SingleGenerator
 
 from models.alexnet3d import AlexNet3DBuilder
 from models.alexnet2d import AlexNet2DBuilder
@@ -17,12 +18,12 @@ def train_alexnet2d():
     batch_size = 4
 
     # Generators
-    training_gen = NewGenerator(
+    training_gen = SingleGenerator(
         batch_size=batch_size,
         augment_data=False,
         extend_dims=False
     )
-    validation_gen = NewGenerator(
+    validation_gen = SingleGenerator(
         batch_size=batch_size,
         augment_data=False,
         extend_dims=False,
