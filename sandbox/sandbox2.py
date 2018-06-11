@@ -1,6 +1,14 @@
 import numpy as np
-from scipy.ndimage.interpolation import zoom
+import matplotlib.pyplot as plt
+from generators.mnist_generator import MnistGenerator
 
-a = np.random.rand(192, 192, 200)
-a = zoom(a, (1, 1, 32 / 192))
-print(np.shape(a))
+
+gen = MnistGenerator(dims=(200, 200, 24),
+                     batch_size=4).generate()
+for data, label in gen:
+    fig, ax = plt.subplots(2, 2, figsize=[20, 20])
+    for i in range(4):
+            img = np.reshape(data[i, :, :, 0], (200, 200))
+            ax[int(i / 2), int(i % 2)].imshow(img, cmap='gray')
+    plt.show()
+    print(label)

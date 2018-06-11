@@ -1,8 +1,8 @@
 import os
 import random
-import numpy as np
 
-from preprocessing import transforms
+import numpy as np
+import transforms
 
 
 class CadGenerator(object):
