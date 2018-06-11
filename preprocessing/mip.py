@@ -492,7 +492,6 @@ def download_array(blob: storage.Blob) -> np.ndarray:
 
 
 def normalize(image, lower_bound=None, upper_bound=None):
-    # TODO: This is an issue, we can't zero center per image
     if lower_bound is None:
         lower_bound = image.min()
     if upper_bound is None:
