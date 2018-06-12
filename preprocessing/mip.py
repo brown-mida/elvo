@@ -1,15 +1,12 @@
 import io
 import logging
 
-# import mayavi.mlab
 import numpy as np
-# import pandas as pd
-from PIL import Image
 from google.cloud import storage
 from scipy import misc
 from tensorflow.python.lib.io import file_io
 from matplotlib import pyplot as plt
-
+import imageio
 
 def configure_logger():
     root_logger = logging.getLogger()
@@ -465,14 +462,14 @@ VALIDATION_LIST = ['IWYDKUPY2NSYJGLF.npy', 'YBMFJQLVZENVF6MA.npy',
 
 def mip_array(array: np.ndarray, type: str) -> np.ndarray:
     # for numpy data:
-    # return np.max(array, axis=0)
+    return np.max(array, axis=0)
 
     # for preprocess_luke data:
-    return np.max(array, axis=2)
+    #return np.max(array, axis=2)
 
 
 def crop(arr: np.ndarray):
-    to_return = arr[151:len(arr)-51]
+    to_return = arr[len(arr)-35-64:len(arr)-35]
     return to_return
 
 
@@ -506,16 +503,17 @@ def normalize(image, lower_bound=None, upper_bound=None):
 def upload_png(arr: np.ndarray, id: str, type: str, bucket: storage.Bucket):
     """Uploads MIP PNGs to gs://elvos/mip_data/<patient_id>/<scan_type>_mip.png.
     """
-    for i in range(len(arr)):
-        try:
-            out_stream = io.BytesIO()
-            misc.imsave(out_stream, arr[i], format='png')
-            out_filename = f'mip_data/{id}/{type}_mip.png'
-            out_blob = storage.Blob(out_filename, bucket)
-            out_stream.seek(0)
-            out_blob.upload_from_file(out_stream)
-        except Exception as e:
-            logging.error(f'for patient ID: {id} {e}')
+    #for i in range(len(arr)):
+    try:
+        out_stream = io.BytesIO()
+        print(arr.shape)
+        imageio.imwrite(out_stream, arr, format='png')
+        out_filename = f'mip_data/{id}/{type}_mip.png'
+        out_blob = storage.Blob(out_filename, bucket)
+        out_stream.seek(0)
+        out_blob.upload_from_file(out_stream)
+    except Exception as e:
+        logging.error(f'for patient ID: {id} {e}')
 
 
 def save_npy_to_cloud(arr: np.ndarray, id: str, type: str):
@@ -535,19 +533,19 @@ if __name__ == '__main__':
 
     in_blob: storage.Blob
     # .npy
-    # for in_blob in bucket.list_blobs(prefix='numpy/'):
+    for in_blob in bucket.list_blobs(prefix='numpy/'):
     # luke
-    for in_blob in bucket.list_blobs(prefix='preprocess_luke/training/'):
+    #for in_blob in bucket.list_blobs(prefix='preprocess_luke/training/'):
 
         logging.info(f'downloading {in_blob.name}')
         input_arr = download_array(in_blob)
         logging.info(f"blob shape: {input_arr.shape}")
 
         # .npy
-        # cropped_arr = crop(input_arr)
-        # not_extreme_arr = remove_extremes(cropped_arr)
+        cropped_arr = crop(input_arr)
+        not_extreme_arr = remove_extremes(cropped_arr)
         # luke
-        not_extreme_arr = remove_extremes(input_arr)
+        #not_extreme_arr = remove_extremes(input_arr)
 
         logging.info(f'removed array extremes')
         # create folder w patient ID
@@ -560,6 +558,7 @@ if __name__ == '__main__':
 
         save_npy_to_cloud(axial, in_blob.name[25:41], 'axial')
         logging.info(f'saved .npy file to cloud')
+        upload_png(axial, in_blob.name[25:41], 'axial', bucket)
 
         # sagittal = mip_array(not_extreme_blob, 'sagittal')
         # upload_png(sagittal, in_blob.name[6:22], 'sagittal', bucket)
