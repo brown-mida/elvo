@@ -7,12 +7,12 @@ from scipy.ndimage.interpolation import zoom
 from google.cloud import storage
 from etl.lib import transforms
 
-BLACKLIST = ['preprocess_luke/validation/LAUIHISOEZIM5ILF.npy']
+BLACKLIST = ['mip_data/LAUIHISOEZIM5ILF.npy']
 
 
-class Generator(object):
+class MipGenerator(object):
 
-    def __init__(self, dims=(120, 120, 1), batch_size=16,
+    def __init__(self, dims=(120, 120), batch_size=16,
                  shuffle=True,
                  validation=False,
                  split=0.2, extend_dims=True,
@@ -29,31 +29,12 @@ class Generator(object):
 
         # Get npy files from Google Cloud Storage
         gcs_client = storage.Client.from_service_account_json(
-            # TODO: make this so it's not hard-coded
-            '/Users/haltriedman/PycharmProjects/elvo-analysis/secrets'
+            'credentials/client_secret.json'
         )
         bucket = gcs_client.get_bucket('elvos')
         blobs = bucket.list_blobs(prefix='mip_data/')
 
         files = []
-        for blob in blobs:
-            file = blob.name
-
-            # Check blacklist
-            if file in BLACKLIST:
-                continue
-
-            # Add all data augmentation methods
-            files.append({
-                "name": file,
-                "mode": "original"
-            })
-
-            if self.augment_data:
-                self.__add_augmented(files, file)
-
-        blobs = bucket.list_blobs(prefix='preprocess_luke/validation')
-
         for blob in blobs:
             file = blob.name
 
@@ -91,6 +72,7 @@ class Generator(object):
             filename = file['name']
             filename = filename.split('/')[-1]
             filename = filename.split('.')[0]
+            filename = filename.split('_')[0]
             labels[i] = label_data[filename]
 
         # Take into account shuffling
@@ -170,11 +152,11 @@ class Generator(object):
 
         # Data augmentation methods, cut x and y to 80%
         if mode == "translate":
-            image = transforms.translated_img(image)
+            image = transforms.translated_img(image, dims=2)
         elif mode == "rotate":
             image = transforms.rotate_img(image)
         elif mode == "zoom":
-            image = transforms.zoom_img(image)
+            image = transforms.zoom_img(image, dims=2)
         elif mode == "gaussian":
             image = transforms.gaussian_img(image)
         elif mode == "flip":
@@ -184,8 +166,7 @@ class Generator(object):
         if self.augment_data:
             dims = np.shape(image)
             image = zoom(image, (self.dims[0] / dims[0],
-                                 self.dims[1] / dims[1],
-                                 self.dims[2] / dims[2]))
+                                 self.dims[1] / dims[1]))
 
         # Normalize image and expand dims
         image = transforms.normalize(image)

@@ -12,6 +12,7 @@ from keras.optimizers import Adam
 from ml.generators.generator import Generator
 from ml.generators.mnist_generator import MnistGenerator
 from ml.generators.single_generator import SingleGenerator
+from ml.generators.mip_generator import MipGenerator
 
 from ml.models.alexnet3d import AlexNet3DBuilder
 from ml.models.alexnet2d import AlexNet2DBuilder
@@ -30,15 +31,33 @@ batch_size = 4
 if generator == 'default':
     Gen = Generator
     num_classes = 2
+    dims = 3
 elif generator == 'mnist':
     Gen = MnistGenerator
     num_classes = 10
+    dims = 3
 elif generator == 'single':
     Gen = SingleGenerator
     num_classes = 2
+    dims = 3
+elif generator == 'mip':
+    Gen = MipGenerator
+    num_classes = 2
+    dims = 2
 else:
     raise ValueError('Invalid Generator')
 
+# Model
+if model == 'alexnet2d':
+    Mod = AlexNet2DBuilder
+elif model == 'alexnet3d':
+    Mod = AlexNet3DBuilder
+elif model == 'simple':
+    Mod = SimpleNetBuilder
+else:
+    raise ValueError('Invalid Model')
+
+# Creation
 training_gen = Gen(
     batch_size=batch_size,
     augment_data=False,
@@ -50,16 +69,6 @@ validation_gen = Gen(
     extend_dims=False,
     validation=True
 )
-
-# Model
-if model == 'alexnet2d':
-    Mod = AlexNet2DBuilder
-elif model == 'alexnet3d':
-    Mod = AlexNet3DBuilder
-elif model == 'simple':
-    Mod = SimpleNetBuilder
-else:
-    raise ValueError('Invalid Model')
 
 model = Mod.build((dim_len, dim_len, top_len),
                   num_classes=num_classes)

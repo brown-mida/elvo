@@ -108,12 +108,18 @@ def gaussian_img(img):
     return gaussian_filter(img, sigma)
 
 
-def translated_img(img):
+def translated_img(img, dims=3):
     x_shift = int(np.random.uniform(-20, 20))
     y_shift = int(np.random.uniform(-20, 20))
-    return shift(img, (x_shift, y_shift, 0))
+    if dims == 3:
+        return shift(img, (x_shift, y_shift, 0))
+    else:
+        return shift(img, (x_shift, y_shift))
 
 
-def zoom_img(img):
+def zoom_img(img, dims=3):
     zoom_val = np.random.uniform(1.05, 1.20)
-    return zoom(img, (zoom_val, zoom_val, 1))
+    if dims == 3:
+        return zoom(img, (zoom_val, zoom_val, 1))
+    else:
+        return zoom(img, (zoom_val, zoom_val))
