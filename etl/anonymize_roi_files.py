@@ -23,7 +23,7 @@ for oldname in os.listdir(path):
     # ignore files in path which aren't in the csv file
     if oldname in IDs:
         os.rename(os.path.join(path, oldname),
-                 os.path.join(tmpPath, IDs[oldname]))
+                  os.path.join(tmpPath, IDs[oldname]))
     elif oldname.replace("_1", "") in IDs:
         oldname_wo_number = oldname.replace("_1", "")
         os.rename(os.path.join(path, oldname),
