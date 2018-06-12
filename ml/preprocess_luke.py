@@ -7,11 +7,11 @@ This script also returns training/validation label CSVs.
 """
 import io
 import logging
-import random
 
 import numpy as np
 import pandas as pd
 from google.cloud import storage
+from matplotlib import pyplot as plt
 from scipy import misc
 
 # TODO: Update this when new data comes.
@@ -467,19 +467,16 @@ def configure_logger():
     root_logger.addHandler(handler)
 
 
-def process_labels(labels_filename: str) -> None:
+def process_labels(labels_filename: str) -> (pd.DataFrame, pd.DataFrame):
     """Splits the labels into training/validation.
-
-    Note: this function saves the data locally, not to thingumy.
     """
     df = pd.read_csv(labels_filename, index_col='patient_id')
     deduped = df[~df.index.duplicated()]
     training_names = [name[:-len('.npy')] for name in TRAINING_LIST]
     validation_names = [name[:-len('.npy')] for name in VALIDATION_LIST]
     training_df = deduped.loc[training_names]
-    training_df.to_csv('/home/lzhu7/data/training_labels.csv')
     validation_df = deduped.loc[validation_names]
-    validation_df.to_csv('/home/lzhu7/data/validation_labels.csv')
+    return training_df, validation_df
 
 
 def download_array(blob: storage.Blob) -> np.ndarray:
@@ -512,14 +509,32 @@ def upload_png(arr: np.ndarray, dirname: str, bucket: storage.Bucket):
             logging.error(f'for dirname: {dirname}: {e}')
 
 
+def upload_mip_image(arr: np.ndarray, blob_name: str, bucket: storage.Bucket):
+    stream = io.BytesIO()
+    mip_arr = arr.max(axis=2)
+    plt.imsave(stream, mip_arr, format='png')
+    stream.seek(0)
+    blob = bucket.blob(blob_name)
+    blob.upload_from_file(stream)
+
+
 def crop(image3d: np.ndarray) -> np.ndarray:
     """Crops a 3d image in ijk form."""
     lw_center = image3d.shape[1] // 2
-    lw_min = lw_center - 60
-    lw_max = lw_center + 60
-    height_max = len(image3d) - 45
-    height_min = height_max - 64
-    return image3d[height_min:height_max, lw_min:lw_max, lw_min:lw_max]
+    lw_min = lw_center - 80
+    lw_max = lw_center + 80
+    for i in range(len(image3d) - 1, 0, -1):
+        if image3d[i, lw_center, lw_center] > 400:
+            height_max = i - 30
+            height_min = height_max - 50
+            logging.info(f'setting height range to ({height_min},{height_max})')
+            break
+    else:  # This runs if we don't break
+        logging.error('could not find i such that'
+                      ' image3d[i, lw_center, lw_center] > 400')
+        raise RuntimeError()
+    return image3d[
+           height_min:height_max, lw_min:lw_max, lw_min:lw_max]
 
 
 def bound_pixels(image3d, min_bound, max_bound) -> np.ndarray:
@@ -538,7 +553,7 @@ def process_array(image3d: np.ndarray):
     logging.info(f'loaded image has shape {image3d.shape}')
     image3d = crop(image3d)
     logging.info(f'cropped image has shape {image3d.shape}')
-    image3d = bound_pixels(image3d, -1000, 400)
+    image3d = bound_pixels(image3d, -200, 400)
     # Comment out transformations that we don't need
     image3d = image3d.transpose((2, 1, 0))
     logging.info(f'transposed image has shape {image3d.shape}')
@@ -551,22 +566,44 @@ if __name__ == '__main__':
     client = storage.Client(project='elvo-198322')
     bucket = storage.Bucket(client, name='elvos')
 
+    label_blob = bucket.get_blob('labels.csv')
+    label_blob.download_to_filename('labels.csv')
+    train_df, val_df = process_labels('labels.csv')
+
+    train_df.to_csv('training_labels.csv')
+    train_blob = bucket.blob('processed/luke1/training_labels.csv')
+    train_blob.upload_from_filename('training_labels.csv')
+    logging.info('uploading training labels')
+
+    val_df.to_csv('validation_labels.csv')
+    val_blob = bucket.blob('processed/luke1/validation_labels.csv')
+    val_blob.upload_from_filename('validation_labels.csv')
+    logging.info('uploading validation labels')
+
     in_blob: storage.Blob
     # Update the prefix to filter new data.
-    input_blobs = list(bucket.list_blobs(prefix='numpy/'))
-    random.shuffle(input_blobs)
-    # TODO: This should also upload the labels
+    input_blobs = bucket.list_blobs(prefix='numpy/')
     for in_blob in input_blobs:
         logging.info(f'downloading {in_blob.name}')
         input_arr = download_array(in_blob)
         try:
+            logging.info('processing array')
             output_arr = process_array(input_arr)
             filename = in_blob.name.split('/')[-1]
+            # TODO: Uncomment these to show the plots
+            # mlab.contour3d(output_arr)
+            # mlab.show()
+            # mip_arr = output_arr.max(axis=2)
+            # plt.imshow(mip_arr)
+            # plt.show()
+            image_blob_name = f'images/luke1/{filename}'
+            logging.info('loading mip')
+            upload_mip_image(output_arr, image_blob_name, bucket)
             if filename in TRAINING_LIST:
-                blob_name = f'processed/luke/training/{filename}'
+                blob_name = f'processed/luke1/training/{filename}'
                 upload_array(output_arr, blob_name, bucket)
             elif filename in VALIDATION_LIST:
-                blob_name = f'processed/luke/validation/{filename}'
+                blob_name = f'processed/luke1/validation/{filename}'
                 upload_array(output_arr, blob_name, bucket)
             else:
                 logging.error(f'{filename} not in training'
