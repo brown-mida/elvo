@@ -44,6 +44,7 @@ def standardize_spacing(image, slices):
     )
     new_shape = np.round(image.shape * spacing)
     resize_factor = new_shape / image.shape
+
     return zoom(image, resize_factor, mode='nearest')
 
 
@@ -86,10 +87,11 @@ def crop_z(image, z=200):
 
 
 def crop_center(img, cropx, cropy):
-    x, y = img.shape[0:2]
+    x = img.shape[1]
+    y = img.shape[2]
     startx = x // 2 - (cropx // 2)
     starty = y // 2 - (cropy // 2)
-    return img[starty:starty + cropy, startx:startx + cropx, :]
+    return img[:, startx:startx + cropx, starty:starty + cropy]
 
 
 def rotate_img(img):
