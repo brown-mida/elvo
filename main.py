@@ -4,6 +4,7 @@ Please use the runfile (./run) instead.
 Usage: ./run -g GEN -m MOD -o OUTPUT
 """
 
+import os
 import sys
 
 from keras.callbacks import ModelCheckpoint
@@ -18,32 +19,30 @@ from ml.models.alexnet3d import AlexNet3DBuilder
 from ml.models.alexnet2d import AlexNet2DBuilder
 from ml.models.simple import SimpleNetBuilder
 
-generator = sys.argv[1]
-model = sys.argv[2]
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
-# Parameters
-dim_len = 120
-top_len = 64
-epochs = 10
-batch_size = 4
+# Parsing parameters
+generator = sys.argv[1]
+augment_data = sys.argv[2].upper() == 'TRUE'
+extend_dims = sys.argv[3].upper() == 'TRUE'
+model = sys.argv[4]
+dims = [int(i) for i in sys.argv[5].split(',')]
+epochs = int(sys.argv[6])
+batch_size = int(sys.argv[7])
 
 # Generators
 if generator == 'default':
     Gen = Generator
     num_classes = 2
-    dims = 3
 elif generator == 'mnist':
     Gen = MnistGenerator
     num_classes = 10
-    dims = 3
 elif generator == 'single':
     Gen = SingleGenerator
     num_classes = 2
-    dims = 3
 elif generator == 'mip':
     Gen = MipGenerator
     num_classes = 2
-    dims = 2
 else:
     raise ValueError('Invalid Generator')
 
@@ -59,19 +58,20 @@ else:
 
 # Creation
 training_gen = Gen(
+    dims=dims,
     batch_size=batch_size,
-    augment_data=False,
-    extend_dims=False
+    augment_data=augment_data,
+    extend_dims=extend_dims
 )
 validation_gen = Gen(
+    dims=dims,
     batch_size=batch_size,
-    augment_data=False,
-    extend_dims=False,
+    augment_data=augment_data,
+    extend_dims=extend_dims,
     validation=True
 )
 
-model = Mod.build((dim_len, dim_len, top_len),
-                  num_classes=num_classes)
+model = Mod.build(dims, num_classes=num_classes)
 model.compile(optimizer=Adam(lr=1e-5),
               loss='sparse_categorical_crossentropy',
               metrics=['accuracy'])

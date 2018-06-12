@@ -83,5 +83,5 @@ class AlexNet2DBuilder(object):
         model = Model(inputs=input_img, outputs=output_img)
         return model
 
-m = AlexNet2DBuilder.build((120, 120, 64))
-m.summary()
+# m = AlexNet2DBuilder.build((120, 120, 64))
+# m.summary()
