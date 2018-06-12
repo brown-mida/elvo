@@ -1,17 +1,18 @@
+# TODO: preprocess coronal and sagittal scans so they have mips too
+
 import io
 import logging
 
 import numpy as np
-from google.cloud import storage
-from scipy import misc
-from tensorflow.python.lib.io import file_io
 from matplotlib import pyplot as plt
+from google.cloud import storage
+from tensorflow.python.lib.io import file_io
 import imageio
 
 
 def authenticate():
     return storage.Client.from_service_account_json(
-        '../credentials/client_secret.json'
+        './credentials/client_secret.json'
     )
 
 
@@ -79,13 +80,12 @@ def upload_png(arr: np.ndarray, id: str, type: str, bucket: storage.Bucket):
         logging.error(f'for patient ID: {id} {e}')
 
 
-def save_npy_to_cloud(arr: np.ndarray, id: str,
-                      type: str, bucket: storage.Bucket):
-    """Uploads MIP .npy files to gs://elvos/mip_data/<patient_id>/<scan_type>_mip.npy
+def save_npy_to_cloud(arr: np.ndarray, id: str, type: str):
+    """Uploads MIP .npy files to gs://elvos/mip_data/from_numpy/<patient id>_mip.npy
     """
     try:
-        print(f"gs://elvos/mip_data/{id}/{type}_mip.npy")
-        np.save(file_io.FileIO(f'gs://elvos/mip_data/{id}/{type}_mip.npy', 'w'), arr)
+        print(f'gs://elvos/mip_data/from_{type}/{id}_mip.npy')
+        np.save(file_io.FileIO(f'gs://elvos/mip_data/from_{type}/{id}_mip.npy', 'w'), arr)
     except Exception as e:
         logging.error(f'for patient ID: {id} {e}')
 
@@ -95,7 +95,13 @@ if __name__ == '__main__':
     client = authenticate()
     bucket = client.get_bucket('elvos')
 
+    # from numpy directory
     for in_blob in bucket.list_blobs(prefix='numpy/'):
+
+        # blacklist
+        if in_blob.name == 'numpy/LAUIHISOEZIM5ILF.npy':
+            continue
+
         logging.info(f'downloading {in_blob.name}')
         input_arr = download_array(in_blob)
         logging.info(f"blob shape: {input_arr.shape}")
@@ -114,9 +120,62 @@ if __name__ == '__main__':
         file_id = in_blob.name.split('/')[1]
         file_id = file_id.split('.')[0]
 
-        save_npy_to_cloud(axial, file_id, 'axial', bucket)
+        save_npy_to_cloud(axial, in_blob.name[6:22], 'numpy')
         logging.info(f'saved .npy file to cloud')
-        upload_png(axial, file_id, 'axial', bucket)
+
+    # from preprocess_luke/training directory
+    for in_blob in bucket.list_blobs(prefix='preprocess_luke/training/'):
+        if in_blob.name == 'numpy/LAUIHISOEZIM5ILF.npy':
+            continue
+        logging.info(f'downloading {in_blob.name}')
+        input_arr = download_array(in_blob)
+        logging.info(f"blob shape: {input_arr.shape}")
+
+        cropped_arr = crop(input_arr)
+        not_extreme_arr = remove_extremes(cropped_arr)
+
+        logging.info(f'removed array extremes')
+        # create folder w patient ID
+        axial = mip_array(not_extreme_arr, 'axial')
+        logging.info(f'mip-ed CTA image')
+        normalized = normalize(axial, lower_bound=-400)
+        # plt.figure(figsize=(6, 6))
+        # plt.imshow(axial, interpolation='none')
+        # plt.show()
+        file_id = in_blob.name.split('/')[1]
+        file_id = file_id.split('.')[0]
+
+        save_npy_to_cloud(axial, in_blob.name[25:41], 'luke_training')
+        logging.info(f'saved .npy file to cloud')
+
+    # from preprocess_luke/validation directory
+    for in_blob in bucket.list_blobs(prefix='preprocess_luke/validation/'):
+        # blacklist
+        if in_blob.name == 'preprocess_luke/validation/LAUIHISOEZIM5ILF.npy':
+            continue
+        logging.info(f'downloading {in_blob.name}')
+        input_arr = download_array(in_blob)
+        logging.info(f"blob shape: {input_arr.shape}")
+
+        cropped_arr = crop(input_arr)
+        not_extreme_arr = remove_extremes(cropped_arr)
+
+        logging.info(f'removed array extremes')
+        # create folder w patient ID
+        axial = mip_array(not_extreme_arr, 'axial')
+        logging.info(f'mip-ed CTA image')
+        normalized = normalize(axial, lower_bound=-400)
+        # plt.figure(figsize=(6, 6))
+        # plt.imshow(axial, interpolation='none')
+        # plt.show()
+        file_id = in_blob.name.split('/')[1]
+        file_id = file_id.split('.')[0]
+
+        save_npy_to_cloud(axial, in_blob.name[27:43], 'luke_validation')
+        logging.info(f'saved .npy file to cloud')
+
+
+        # upload_png(axial, file_id, 'axial', bucket)
 
         # sagittal = mip_array(not_extreme_blob, 'sagittal')
         # upload_png(sagittal, in_blob.name[6:22], 'sagittal', bucket)
