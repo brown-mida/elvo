@@ -77,7 +77,7 @@ if __name__ == '__main__':
     Gen = MnistGenerator
 
     training_gen = Gen(
-        dims=(120,120,1),
+        dims=(120, 120, 1),
         batch_size=batch_size,
         augment_data=False,
         extend_dims=False
