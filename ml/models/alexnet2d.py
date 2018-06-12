@@ -18,10 +18,10 @@ from keras.models import Model
 from keras.layers import Input, BatchNormalization, Dense, Flatten
 from keras.layers.convolutional import Conv2D, MaxPooling2D
 
-from ml.models.model import ModelBuilder
+# from ml.models.model import ModelBuilder
 
 
-class AlexNet2DBuilder(ModelBuilder):
+class AlexNet2DBuilder(object):
 
     @staticmethod
     def build(input_shape, num_classes=2):
@@ -82,3 +82,6 @@ class AlexNet2DBuilder(ModelBuilder):
 
         model = Model(inputs=input_img, outputs=output_img)
         return model
+
+m = AlexNet2DBuilder.build((120, 120, 64))
+m.summary()

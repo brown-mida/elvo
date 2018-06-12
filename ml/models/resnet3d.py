@@ -294,3 +294,5 @@ class Resnet3DBuilder(object):
         """Build resnet 152."""
         return Resnet3DBuilder.build(input_shape, num_outputs, bottleneck,
                                      [3, 8, 36, 3], reg_factor=reg_factor)
+
+m = Resnet3DBuilder.build_resnet_18((200, 200, 200, 1), 2)
