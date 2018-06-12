@@ -1,11 +1,21 @@
-if [ "$#" -ne 1 ]; then
-    echo "Specify a config file from the configs/ folder."
-    echo "Example: ./run default.elvo"
+INLINE=""
+CONFIG=""
+
+while getopts "ic:" option; do
+    case ${option} in
+        c) CONFIG="$OPTARG";;
+        i) INLINE="1";;
+    esac
+done
+
+if ! test "$CONFIG" ; then
+    echo "ERROR: Config not defined."
+    echo "Usage: ./run -c configname.elvo [-i]"
     exit 1
 fi
 
-source ./config/$1
-if [[ ! -f ./config/$1 ]] ; then
+source ./config/$CONFIG
+if [[ ! -f ./config/$CONFIG ]] ; then
     exit 1
 fi
 
@@ -49,5 +59,10 @@ if ! test "$batch_size" ; then
     exit 1
 fi
 
-nohup python -u main.py $generator $augment_data $extend_dims \
-    $model $dims $epochs $batch_size > results/$output &
+if test ! "$INLINE" ; then
+    nohup python -u main.py $generator $augment_data $extend_dims \
+        $model $dims $epochs $batch_size > results/$output &
+else
+    python main.py $generator $augment_data $extend_dims \
+        $model $dims $epochs $batch_size
+fi
