@@ -1,14 +1,19 @@
 import random
 import numpy as np
-from scipy.ndimage.interpolation import zoom
 import mnist
 
+from scipy.ndimage.interpolation import zoom
 
-class MnistGenerator(object):
+from ml.generators.generator import Generator
 
-    def __init__(self, dims=(200, 200, 24),
-                 batch_size=16, shuffle=True, validation=False,
-                 extend_dims=True):
+
+class MnistGenerator(Generator):
+
+    def __init__(self, dims=(120, 120, 64), batch_size=16,
+                 shuffle=True,
+                 validation=False,
+                 split=0.2, extend_dims=True,
+                 augment_data=True):
         self.dims = dims
         self.batch_size = batch_size
         self.extend_dims = extend_dims
