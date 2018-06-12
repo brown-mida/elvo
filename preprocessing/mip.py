@@ -552,9 +552,9 @@ if __name__ == '__main__':
         axial = mip_array(not_extreme_arr, 'axial')
         logging.info(f'mip-ed CTA image')
         normalized = normalize(axial, lower_bound=-400)
-        plt.figure(figsize=(6, 6))
-        plt.imshow(axial, interpolation='none')
-        plt.show()
+        # plt.figure(figsize=(6, 6))
+        # plt.imshow(axial, interpolation='none')
+        # plt.show()
 
         save_npy_to_cloud(axial, in_blob.name[25:41], 'axial')
         logging.info(f'saved .npy file to cloud')
