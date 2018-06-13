@@ -44,7 +44,7 @@ class MipGenerator(object):
             'credentials/client_secret.json'
         )
         bucket = gcs_client.get_bucket('elvos')
-        blobs = bucket.list_blobs(prefix='mip_data/from_numpy/')
+        blobs = bucket.list_blobs(prefix='multichannel_mip_data/from_numpy/')
 
         files = []
         for blob in blobs:
@@ -137,11 +137,13 @@ class MipGenerator(object):
             # print(np.shape(img))
             images.append(img)
         images = np.array(images)
-        # print("Loaded entire batch.")
-        # print(np.shape(images))
+        print("Loaded entire batch.")
+        print(np.shape(images))
         return images, labels
 
     def __transform_images(self, image):
+        image = np.moveaxis(image, 0, -1)
+
         # Set bounds
         image[image < -40] = -40
         image[image > 400] = 400

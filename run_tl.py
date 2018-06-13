@@ -17,7 +17,7 @@ def save_features():
         dims=(220, 220, 3),
         batch_size=4,
         augment_data=False,
-        extend_dims=True,
+        extend_dims=False,
         shuffle=True
     )
     features_train = model.predict_generator(
@@ -32,7 +32,7 @@ def save_features():
         dims=(220, 220, 3),
         batch_size=4,
         augment_data=False,
-        extend_dims=True,
+        extend_dims=False,
         validation=True,
         shuffle=True
     )

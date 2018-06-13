@@ -13,7 +13,7 @@ BLACKLIST = ['LAUIHISOEZIM5ILF',
              '2018050120260258']
 
 
-class MipGeneratorLocal(object):
+class MipGenerator(object):
 
     def __init__(self, dims=(120, 120, 1), batch_size=16,
                  shuffle=True,
@@ -41,7 +41,8 @@ class MipGeneratorLocal(object):
         bucket = gcs_client.get_bucket('elvos')
 
         # Get file list
-        filelist = [f for f in os.listdir('tmp/npy')]
+        filelist = sorted([f for f in os.listdir('tmp/npy')])
+        print(filelist)
         files = []
         for file in filelist:
             # Check blacklist
@@ -100,9 +101,11 @@ class MipGeneratorLocal(object):
 
     def generate(self):
         steps = self.get_steps_per_epoch()
+        print(steps)
         while True:
             for i in range(steps):
                 print(i)
+                print("D")
                 x, y = self.__data_generation(i)
                 yield x, y
 
@@ -119,6 +122,7 @@ class MipGeneratorLocal(object):
         for i, file in enumerate(files):
             file_id = file['name'].split('/')[-1]
             file_id = file_id.split('.')[0]
+            print(file_id)
             img = np.load('tmp/npy/{}.npy'.format(file_id))
             img = self.__transform_images(img)
             # print(np.shape(img))
