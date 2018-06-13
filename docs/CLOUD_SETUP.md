@@ -12,6 +12,23 @@ sudo apt-get update
 sudo apt-get install gcc python-dev python-pip python3-venv
 ```
 
+Then follow the instructions here: `https://cloud.google.com/compute/docs/gpus/add-gpus#install-gpu-driver`
+
+#!/bin/bash
+echo "Checking for CUDA and installing."
+# Check for CUDA and try to install.
+if ! dpkg-query -W cuda-9-0; then
+  # The 17.04 installer works with 17.10.
+  curl -O http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1704/x86_64/cuda-repo-ubuntu1704_9.0.176-1_amd64.deb
+  dpkg -i ./cuda-repo-ubuntu1704_9.0.176-1_amd64.deb
+  apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1704/x86_64/7fa2af80.pub
+  apt-get update
+  apt-get install cuda-9-0 -y
+fi
+# Enable persistence mode
+nvidia-smi -pm 1
+
+
 ### First time user commands:
 ```
 git clone https://github.com/elvoai/elvo-analysis.git # Clone the repo from GitHub
@@ -20,6 +37,7 @@ python3 -m venv venv # Create a virtual environment
 pip install --upgrade pip # Update pip to version 10
 source venv/bin/activate # Activate the virtual environment
 pip install -r requirements.txt # Install packages
+pip install tensorflow-gpu==1.8.0 # Install tensorflow for the gpu
 ```
 
 ### Every time:
