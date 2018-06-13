@@ -8,7 +8,6 @@ from keras.models import Model, Sequential
 from keras.layers import Input, BatchNormalization, Dense, Flatten, GlobalAveragePooling2D, Dropout
 from keras.optimizers import Adam, SGD
 from keras.applications.resnet50 import ResNet50
-from keras.layers.convolutional import Conv2D, MaxPooling2D
 from ml.generators.mip_generator import MipGenerator
 
 
@@ -17,9 +16,9 @@ def save_features():
     gen = MipGenerator(
         dims=(220, 220, 3),
         batch_size=4,
-        augment_data=True,
+        augment_data=False,
         extend_dims=True,
-        shuffle=False
+        shuffle=True
     )
     features_train = model.predict_generator(
         generator=gen.generate(),
@@ -32,10 +31,10 @@ def save_features():
     gen = MipGenerator(
         dims=(220, 220, 3),
         batch_size=4,
-        augment_data=True,
+        augment_data=False,
         extend_dims=True,
         validation=True,
-        shuffle=False
+        shuffle=True
     )
     features_test = model.predict_generator(
         generator=gen.generate(),
@@ -90,7 +89,7 @@ def fine_tune():
     train_gen = MipGenerator(
         dims=(220, 220, 3),
         batch_size=4,
-        augment_data=True,
+        augment_data=False,
         extend_dims=True,
         shuffle=False
     )
@@ -98,7 +97,7 @@ def fine_tune():
     test_gen = MipGenerator(
         dims=(220, 220, 3),
         batch_size=4,
-        augment_data=True,
+        augment_data=False,
         extend_dims=True,
         validation=True,
         shuffle=False
