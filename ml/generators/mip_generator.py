@@ -30,10 +30,8 @@ class MipGenerator(object):
             rotation_range=20,
             width_shift_range=0.1,
             height_shift_range=0.1,
-            shear_range=0.1,
             zoom_range=0.1,
-            horizontal_flip=True,
-            vertical_flip=True
+            horizontal_flip=True
         )
 
         # Delete all content in tmp/npy/
@@ -46,9 +44,28 @@ class MipGenerator(object):
             'credentials/client_secret.json'
         )
         bucket = gcs_client.get_bucket('elvos')
-        blobs = bucket.list_blobs(prefix='mip_data/from_numpy/')
+        blobs = bucket.list_blobs(prefix='mip_data/from_luke_training/')
 
         files = []
+        for blob in blobs:
+            file = blob.name
+
+            # Check blacklist
+            blacklisted = False
+            for each in BLACKLIST:
+                if each in file:
+                    blacklisted = True
+
+            if not blacklisted:
+                # Add all data augmentation methods
+                files.append({
+                    "name": file,
+                })
+
+                if self.augment_data and not self.validation:
+                    self.__add_augmented(files, file)
+
+        blobs = bucket.list_blobs(prefix='mip_data/from_luke_validation/')
         for blob in blobs:
             file = blob.name
 
@@ -145,8 +162,8 @@ class MipGenerator(object):
 
     def __transform_images(self, image):
         # Set bounds
-        image[image < -40] = -40
-        image[image > 400] = 400
+        # image[image < -40] = -40
+        # image[image > 400] = 400
 
         # Normalize image and expand dims
         image = transforms.normalize(image)
@@ -162,8 +179,8 @@ class MipGenerator(object):
             image = self.datagen.random_transform(image)
 
         # Interpolate axis to reduce to specified dimensions
-        dims = np.shape(image)
-        image = zoom(image, (self.dims[0] / dims[0],
-                             self.dims[1] / dims[1],
-                             1))
+        # dims = np.shape(image)
+        # image = zoom(image, (self.dims[0] / dims[0],
+        #                      self.dims[1] / dims[1],
+        #                      1))
         return image
