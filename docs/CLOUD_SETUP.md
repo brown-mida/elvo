@@ -33,6 +33,9 @@ fi
 sudo nvidia-smi -pm 1
 ```
 
+We also need to install cudNN. Follow the instructions
+here: https://gist.github.com/sayef/8fc3791149876edc449052c3d6823d40
+
 ### First time user commands:
 
 On your own computer:
