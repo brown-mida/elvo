@@ -2,7 +2,7 @@ This document contains instructions for using the cloud VMs.
 
 ### Commands for DevOps:
 Create an instance with:
-- us-east-1-b
+- us-east1-b
 - 4 CPUs and 26 GB memory
 - a GPU (may need to increase the quota)
 - Ubuntu 17.10 w/ 50 GB standard storage
@@ -16,6 +16,7 @@ sudo apt-get install -y gcc python-dev python-pip python3.6-venv
 Then follow the instructions here: `https://cloud.google.com/compute/docs/gpus/add-gpus#install-gpu-driver`
 to install a gpu driver
 
+The code we want to run is here:
 ```
 #!/bin/bash
 echo "Checking for CUDA and installing."
@@ -33,6 +34,13 @@ nvidia-smi -pm 1
 ```
 
 ### First time user commands:
+
+On your own computer:
+```
+gcloud compute ssh <YOUR_INSTANCE_NAME>
+```
+
+On your instance
 ```
 git clone https://github.com/elvoai/elvo-analysis.git # Clone the repo from GitHub
 cd elvo-analysis # Change directories
@@ -42,6 +50,8 @@ source venv/bin/activate # Activate the virtual environment
 pip install -r requirements.txt # Install packages
 pip install tensorflow-gpu==1.8.0 # Install tensorflow for the gpu
 ```
+
+Log out and follow the instructions below to run Jupyter.
 
 ### Every time:
 On your own computer:
