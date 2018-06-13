@@ -83,22 +83,22 @@ class SimpleUNetBuilder(object):
         conv5 = Conv2D(1024, (3, 3), activation='relu',
                        padding='same')(conv5)
 
-        #begin resizing attempt
+        # begin resizing attempt
 
-        #deconv1 (Output n/8, n/8, 512)
+        # deconv1 (Output n/8, n/8, 512)
         deconv1 = Conv2DTranspose(512, (3, 3), strides=(2, 2),
                                 activation='relu', padding='same')(conv5)
         deconv1_1 = Cropping2D(((0, 0), (1, 1)))(conv4)
         both_1 = Concatenate([deconv1, deconv1_1])
 
-        #deconv2 (Output n/4, n/4, 256)
+        # deconv2 (Output n/4, n/4, 256)
         print(type(both_1))
         deconv2 = Conv2DTranspose(256, (3, 3), strides=(2, 2),
                                 activation='relu', padding='same')(both_1)
         deconv2_1 = Cropping2D(((0, 0), (1, 1)))(conv3)
         both_2 = Concatenate([deconv2, deconv2_1])
 
-        #deconv3 (Output n/2, n/2, 128)
+        # deconv3 (Output n/2, n/2, 128)
         deconv3 = Conv2DTranspose(128, (5, 5), strides=(2, 2),
                                   activation='relu', padding='same')(both_2)
         deconv3_1 = Cropping2D(((0, 0), (1, 1)))(conv2)
@@ -146,6 +146,7 @@ class SimpleUNetBuilder(object):
 
         model = Model(inputs=input_img, outputs=output_img)
         return model
+
 
 m = SimpleUNetBuilder.build((120, 120, 64))
 m.summary()

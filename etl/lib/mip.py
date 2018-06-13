@@ -4,7 +4,6 @@ import io
 import logging
 
 import numpy as np
-from matplotlib import pyplot as plt
 from google.cloud import storage
 from tensorflow.python.lib.io import file_io
 import imageio
@@ -65,7 +64,7 @@ def normalize(image, lower_bound=None, upper_bound=None):
 def upload_png(arr: np.ndarray, id: str, type: str, bucket: storage.Bucket):
     """Uploads MIP PNGs to gs://elvos/mip_data/<patient_id>/<scan_type>_mip.png.
     """
-    #for i in range(len(arr)):
+    # for i in range(len(arr)):
     try:
         # arr = arr.astype(np.uint8)
         out_stream = io.BytesIO()
@@ -81,11 +80,13 @@ def upload_png(arr: np.ndarray, id: str, type: str, bucket: storage.Bucket):
 
 
 def save_npy_to_cloud(arr: np.ndarray, id: str, type: str):
-    """Uploads MIP .npy files to gs://elvos/mip_data/from_numpy/<patient id>_mip.npy
+    """Uploads MIP .npy files to gs://elvos/mip_data/from_numpy/<patient
+        id>_mip.npy
     """
     try:
         print(f'gs://elvos/mip_data/from_{type}/{id}_mip.npy')
-        np.save(file_io.FileIO(f'gs://elvos/mip_data/from_{type}/{id}_mip.npy', 'w'), arr)
+        np.save(file_io.FileIO(f'gs://elvos/mip_data/from_{type}/'
+                               f'{id}_mip.npy', 'w'), arr)
     except Exception as e:
         logging.error(f'for patient ID: {id} {e}')
 
@@ -173,7 +174,6 @@ if __name__ == '__main__':
 
         save_npy_to_cloud(axial, in_blob.name[27:43], 'luke_validation')
         logging.info(f'saved .npy file to cloud')
-
 
         # upload_png(axial, file_id, 'axial', bucket)
 
