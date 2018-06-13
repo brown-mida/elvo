@@ -14,7 +14,7 @@ BLACKLIST = ['LAUIHISOEZIM5ILF',
 
 class MipGenerator(object):
 
-    def __init__(self, dims=(120, 120), batch_size=16,
+    def __init__(self, dims=(120, 120, 1), batch_size=16,
                  shuffle=True,
                  validation=False,
                  split=0.2, extend_dims=True,
@@ -153,6 +153,7 @@ class MipGenerator(object):
         return images, labels
 
     def __transform_images(self, image, mode):
+
         image[image < -40] = -40
         image[image > 400] = 400
 
@@ -176,5 +177,9 @@ class MipGenerator(object):
         # Normalize image and expand dims
         image = transforms.normalize(image)
         if self.extend_dims:
-            image = np.expand_dims(image, axis=-1)
+            if len(self.dims) == 2:
+                image = np.expand_dims(image, axis=-1)
+            else:
+                image = np.repeat(image[:, :, np.newaxis],
+                                  self.dims[2], axis=2)
         return image
