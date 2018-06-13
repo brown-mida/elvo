@@ -1,10 +1,10 @@
 """
 Purpose: This script implements maximum intensity projections (MIP). This process involves
-taking 3D brain scans and compressing their maximum values down into a single 2D array.
+taking 3D brain scans, chunking them into three relevant sections, and compressing each section's
+maximum values down into a 2D array. When these are recombined, we get an array with the shape
+(3, X, Y) — which is ready to be fed directly into standardized Keras architecture with pretrained
+feature detection weights from ImageNet/CIFAR10.
 """
-
-
-# TODO: preprocess coronal and sagittal scans so they have mips too
 
 import io
 import logging
@@ -33,15 +33,34 @@ def configure_logger():
 
 
 def mip_array(array: np.ndarray, type: str) -> np.ndarray:
-    print(np.max(array, axis=0).shape)
-    return np.max(array, axis=0)
+    to_return = np.zeros((3, len(array[0][0]), len(array[0][0][0])))
+    print(to_return.shape)
+    for i in range(3):
+        print(array[i].shape)
+        to_return[i] = np.max(array[i], axis=0)
+    return to_return
 
 
 def crop(arr: np.ndarray, whence: str):
+    print(arr.shape)
+
     if whence == 'numpy':
-        to_return = arr[len(arr)-35-64:len(arr)-35]
+        to_return = np.zeros((3, 25, len(arr[0]), len(arr[0][0])))
+        print(to_return.shape)
+        chunk_start = 30
+        chunk_end = chunk_start + 25
+        inc = 25
     else:
-        to_return = arr[len(arr)-40:]
+        to_return = np.zeros((3, 21, len(arr[0]), len(arr[0][0])))
+        print(to_return.shape)
+        chunk_start = 1
+        chunk_end = chunk_start + 21
+        inc = 21
+
+    for i in range(3):
+        to_return[i] = arr[len(arr)-chunk_end:len(arr)-chunk_start]
+        chunk_start += inc
+        chunk_end += inc
     return to_return
 
 
@@ -75,7 +94,6 @@ def normalize(image, lower_bound=None, upper_bound=None):
 def upload_png(arr: np.ndarray, id: str, type: str, bucket: storage.Bucket):
     """Uploads MIP PNGs to gs://elvos/mip_data/<patient_id>/<scan_type>_mip.png.
     """
-    #for i in range(len(arr)):
     try:
         # arr = arr.astype(np.uint8)
         out_stream = io.BytesIO()
@@ -91,11 +109,11 @@ def upload_png(arr: np.ndarray, id: str, type: str, bucket: storage.Bucket):
 
 
 def save_npy_to_cloud(arr: np.ndarray, id: str, whence: str):
-    """Uploads MIP .npy files to gs://elvos/mip_data/from_numpy/<patient id>_mip.npy
+    """Uploads MIP .npy files to gs://elvos/multichannel_mip_data/from_numpy/<patient id>_mip.npy
     """
     try:
-        print(f'gs://elvos/mip_data/from_{whence}/{id}_mip.npy')
-        np.save(file_io.FileIO(f'gs://elvos/mip_data/from_{whence}/{id}_mip.npy', 'w'), arr)
+        print(f'gs://elvos/multichannel_mip_data/from_{whence}/{id}_mip.npy')
+        np.save(file_io.FileIO(f'gs://elvos/multichannel_mip_data/from_{whence}/{id}_mip.npy', 'w'), arr)
     except Exception as e:
         logging.error(f'for patient ID: {id} {e}')
 
@@ -106,32 +124,33 @@ if __name__ == '__main__':
     bucket = client.get_bucket('elvos')
 
     # from numpy directory
-    # for in_blob in bucket.list_blobs(prefix='numpy/'):
-    #
-    #     # blacklist
-    #     if in_blob.name == 'numpy/LAUIHISOEZIM5ILF.npy':
-    #         continue
-    #
-    #     logging.info(f'downloading {in_blob.name}')
-    #     input_arr = download_array(in_blob)
-    #     logging.info(f"blob shape: {input_arr.shape}")
-    #
-    #     cropped_arr = crop(input_arr)
-    #     not_extreme_arr = remove_extremes(cropped_arr)
-    #
-    #     logging.info(f'removed array extremes')
-    #     # create folder w patient ID
-    #     axial = mip_array(not_extreme_arr, 'numpy', 'axial')
-    #     logging.info(f'mip-ed CTA image')
-    #     normalized = normalize(axial, lower_bound=-400)
-    #     # plt.figure(figsize=(6, 6))
-    #     # plt.imshow(axial, interpolation='none')
-    #     # plt.show()
-    #     file_id = in_blob.name.split('/')[1]
-    #     file_id = file_id.split('.')[0]
-    #
-    #     save_npy_to_cloud(axial, in_blob.name[6:22], 'numpy')
-    #     logging.info(f'saved .npy file to cloud')
+    for in_blob in bucket.list_blobs(prefix='numpy/'):
+
+        # blacklist
+        if in_blob.name == 'numpy/LAUIHISOEZIM5ILF.npy':
+            continue
+
+        logging.info(f'downloading {in_blob.name}')
+        input_arr = download_array(in_blob)
+        logging.info(f"blob shape: {input_arr.shape}")
+
+        cropped_arr = crop(input_arr, 'numpy')
+        not_extreme_arr = remove_extremes(cropped_arr)
+
+        logging.info(f'removed array extremes')
+        # create folder w patient ID
+        axial = mip_array(not_extreme_arr, 'axial')
+        logging.info(f'mip-ed CTA image')
+        normalized = normalize(axial, lower_bound=-400)
+        # for i in range(3):
+        #     plt.figure(figsize=(6, 6))
+        #     plt.imshow(axial[i], interpolation='none')
+        #     plt.show()
+        file_id = in_blob.name.split('/')[1]
+        file_id = file_id.split('.')[0]
+        save_npy_to_cloud(axial, in_blob.name[6:22], 'numpy')
+
+        logging.info(f'saved .npy file to cloud')
 
     # from preprocess_luke/training directory
     for in_blob in bucket.list_blobs(prefix='preprocess_luke/training/'):
@@ -151,17 +170,19 @@ if __name__ == '__main__':
         axial = mip_array(not_extreme_arr, 'axial')
         logging.info(f'mip-ed CTA image')
         normalized = normalize(axial, lower_bound=-400)
-        # plt.figure(figsize=(6, 6))
-        # plt.imshow(axial, interpolation='none')
-        # plt.show()
+        # for i in range(3):
+        #     plt.figure(figsize=(6, 6))
+        #     plt.imshow(axial[i], interpolation='none')
+        #     plt.show()
         file_id = in_blob.name.split('/')[1]
         file_id = file_id.split('.')[0]
-
         save_npy_to_cloud(axial, in_blob.name[25:41], 'luke_training')
+
         logging.info(f'saved .npy file to cloud')
 
     # from preprocess_luke/validation directory
     for in_blob in bucket.list_blobs(prefix='preprocess_luke/validation/'):
+
         # blacklist
         if in_blob.name == 'preprocess_luke/validation/LAUIHISOEZIM5ILF.npy':
             continue
@@ -179,25 +200,12 @@ if __name__ == '__main__':
         axial = mip_array(not_extreme_arr, 'axial')
         logging.info(f'mip-ed CTA image')
         normalized = normalize(axial, lower_bound=-400)
-        # plt.figure(figsize=(6, 6))
-        # plt.imshow(axial, interpolation='none')
-        # plt.show()
+        # for i in range(3):
+        #     plt.figure(figsize=(6, 6))
+        #     plt.imshow(axial[i], interpolation='none')
+        #     plt.show()
         file_id = in_blob.name.split('/')[1]
         file_id = file_id.split('.')[0]
-
         save_npy_to_cloud(axial, in_blob.name[27:43], 'luke_validation')
+
         logging.info(f'saved .npy file to cloud')
-
-
-        # upload_png(axial, file_id, 'axial', bucket)
-
-        # sagittal = mip_array(not_extreme_blob, 'sagittal')
-        # upload_png(sagittal, in_blob.name[6:22], 'sagittal', bucket)
-        # save_to_cloud(sagittal, in_blob.name[6:22], 'sagittal')
-        #
-        # # save
-        # coronal = mip_array(not_extreme_blob, 'coronal')
-        # upload_png(coronal, in_blob.name[6:22], 'coronal', bucket)
-        # save_to_cloud(coronal, in_blob.name[6:22], 'coronal')
-
-        # save
