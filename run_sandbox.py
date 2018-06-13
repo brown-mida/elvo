@@ -5,7 +5,8 @@
 import numpy as np
 
 from keras.models import Model, Sequential
-from keras.layers import Input, BatchNormalization, Dense, Flatten, GlobalAveragePooling2D, Dropout
+from keras.layers import Input, BatchNormalization, Dense, Flatten, GlobalAveragePooling2D, Dropout, GlobalAveragePooling2D
+from keras.optimizers import Adam
 from keras.applications.resnet50 import ResNet50
 from keras.layers.convolutional import Conv2D, MaxPooling2D
 from ml.generators.mip_generator import MipGenerator
@@ -52,18 +53,19 @@ def train_top_model():
     test_labels = np.load('tmp/labels_test.npy')[:172]
 
     model = Sequential()
-    model.add(Flatten(input_shape=train_data.shape[1:]))
-    model.add(Dense(256, activation='relu'))
+    model.add(GlobalAveragePooling2D(input_shape=train_data.shape[1:]))
+    model.add(Dense(1024, activation='relu'))
     model.add(Dropout(0.5))
     model.add(Dense(1, activation='sigmoid'))
 
-    model.compile(optimizer='adam',
+    model.compile(optimizer=Adam(lr=1e-5),
                   loss='binary_crossentropy', metrics=['accuracy'])
     model.fit(train_data, train_labels,
-              epochs=10,
+              epochs=50,
               batch_size=4,
               validation_data=(test_data, test_labels))
     model.save_weights('tmp/top_weights')
 
 
+# save_features()
 train_top_model()
