@@ -83,13 +83,41 @@ class SimpleUNetBuilder(object):
         conv5 = Conv2D(1024, (3, 3), activation='relu',
                        padding='same')(conv5)
 
-        # Conv6 (Output n/8, n/8, 512)
-        conv6 = Conv2DTranspose(512, (3, 3), strides=(2, 2),
-                                activation='relu', padding='same')(conv5)
-        conv6_1 = Cropping2D(cropping=0.5)(conv4)
-        # conv6 = Concatenate([conv6, conv6_1])
+        #begin resizing attempt
 
-        # # Conv2 (Output 50 x 50 x 64)
+        #deconv1 (Output n/8, n/8, 512)
+        deconv1 = Conv2DTranspose(512, (3, 3), strides=(2, 2),
+                                activation='relu', padding='same')(conv5)
+        deconv1_1 = Cropping2D(((0, 0), (1, 1)))(conv4)
+        both_1 = Concatenate([deconv1, deconv1_1])
+
+        #deconv2 (Output n/4, n/4, 256)
+        print(type(both_1))
+        deconv2 = Conv2DTranspose(256, (3, 3), strides=(2, 2),
+                                activation='relu', padding='same')(both_1)
+        deconv2_1 = Cropping2D(((0, 0), (1, 1)))(conv3)
+        both_2 = Concatenate([deconv2, deconv2_1])
+
+        #deconv3 (Output n/2, n/2, 128)
+        deconv3 = Conv2DTranspose(128, (5, 5), strides=(2, 2),
+                                  activation='relu', padding='same')(both_2)
+        deconv3_1 = Cropping2D(((0, 0), (1, 1)))(conv2)
+        both_3 = Concatenate([deconv3, deconv3_1])
+
+        # deconv4 (Output n, n, 96)
+        deconv4 = Conv2DTranspose(96, (5, 5), strides=(2, 2),
+                                  activation='relu', padding='same')(both_3)
+        deconv4_1 = Cropping2D(((0, 0), (1, 1)))(conv1)
+        both_4 = Concatenate([deconv4, deconv4_1])
+
+        # Fully connected layers
+        dense1 = Dense(1024, activation='relu', use_bias=True)(both_4)
+        dense2 = Dense(1024, activation='relu', use_bias=True)(dense1)
+        output_img = Dense(num_classes, activation='sigmoid',
+                                    use_bias=True)(dense2)
+
+        # begin unused code
+        # Conv2 (Output 50 x 50 x 64)
         # x = Conv2D(256, (5, 5), activation='relu', padding='same')(x)
         # x = BatchNormalization()(x)
         # x = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(x)
@@ -116,7 +144,7 @@ class SimpleUNetBuilder(object):
         # output_img = Dense(num_classes, activation='sigmoid',
         #                    use_bias=True)(x)
 
-        model = Model(inputs=input_img, outputs=conv6_1)
+        model = Model(inputs=input_img, outputs=output_img)
         return model
 
 m = SimpleUNetBuilder.build((120, 120, 64))
