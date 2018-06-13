@@ -27,6 +27,8 @@ augment_data = sys.argv[2].upper() == 'TRUE'
 extend_dims = sys.argv[3].upper() == 'TRUE'
 model = sys.argv[4]
 dims = [int(i) for i in sys.argv[5].split(',')]
+if extend_dims:
+    dims.append(1)
 epochs = int(sys.argv[6])
 batch_size = int(sys.argv[7])
 

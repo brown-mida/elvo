@@ -7,7 +7,9 @@ from scipy.ndimage.interpolation import zoom
 from google.cloud import storage
 from etl.lib import transforms
 
-BLACKLIST = ['mip_data/LAUIHISOEZIM5ILF.npy']
+BLACKLIST = ['LAUIHISOEZIM5ILF',
+             '2018050121043822',
+             '2018050120260258']
 
 
 class MipGenerator(object):
@@ -32,24 +34,27 @@ class MipGenerator(object):
             'credentials/client_secret.json'
         )
         bucket = gcs_client.get_bucket('elvos')
-        blobs = bucket.list_blobs(prefix='mip_data/')
+        blobs = bucket.list_blobs(prefix='mip_data/from_numpy/')
 
         files = []
         for blob in blobs:
             file = blob.name
 
             # Check blacklist
-            if file in BLACKLIST:
-                continue
+            blacklisted = False
+            for each in BLACKLIST:
+                if each in file:
+                    blacklisted = True
 
-            # Add all data augmentation methods
-            files.append({
-                "name": file,
-                "mode": "original"
-            })
+            if not blacklisted:
+                # Add all data augmentation methods
+                files.append({
+                    "name": file,
+                    "mode": "original"
+                })
 
-            if self.augment_data:
-                self.__add_augmented(files, file)
+                if self.augment_data:
+                    self.__add_augmented(files, file)
 
         # Split based on validation
         if validation:
@@ -140,6 +145,7 @@ class MipGenerator(object):
             img = np.load('tmp/npy/{}.npy'.format(file_id))
             os.remove('tmp/npy/{}.npy'.format(file_id))
             img = self.__transform_images(img, file['mode'])
+            print(np.shape(img))
             images.append(img)
         images = np.array(images)
         print("Loaded entire batch.")
@@ -163,10 +169,9 @@ class MipGenerator(object):
             image = transforms.flip_img(image)
 
         # Interpolate axis to reduce to specified dimensions
-        if self.augment_data:
-            dims = np.shape(image)
-            image = zoom(image, (self.dims[0] / dims[0],
-                                 self.dims[1] / dims[1]))
+        dims = np.shape(image)
+        image = zoom(image, (self.dims[0] / dims[0],
+                             self.dims[1] / dims[1]))
 
         # Normalize image and expand dims
         image = transforms.normalize(image)
