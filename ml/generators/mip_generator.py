@@ -24,6 +24,7 @@ class MipGenerator(object):
         self.batch_size = batch_size
         self.extend_dims = extend_dims
         self.augment_data = augment_data
+        self.validation = validation
 
         self.datagen = ImageDataGenerator(
             rotation_range=30,
@@ -102,7 +103,7 @@ class MipGenerator(object):
         self.bucket = bucket
 
     def __add_augmented(self, files, file):
-        for i in range(19):
+        for i in range(1):
             files.append({
                 "name": file,
             })
