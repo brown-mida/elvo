@@ -63,7 +63,7 @@ class MipGenerator(object):
                     "name": file,
                 })
 
-                if self.augment_data:
+                if self.augment_data and not self.validation:
                     self.__add_augmented(files, file)
 
         # Split based on validation
@@ -157,7 +157,7 @@ class MipGenerator(object):
                                   self.dims[2], axis=2)
 
         # Data augmentation methods
-        if self.augment_data:
+        if self.augment_data and not self.validation:
             image = self.datagen.random_transform(image)
 
         # Interpolate axis to reduce to specified dimensions
