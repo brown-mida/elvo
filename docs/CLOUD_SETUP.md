@@ -30,7 +30,7 @@ if ! dpkg-query -W cuda-9-0; then
   sudo apt-get install cuda-9-0 -y
 fi
 # Enable persistence mode
-nvidia-smi -pm 1
+sudo nvidia-smi -pm 1
 ```
 
 ### First time user commands:
