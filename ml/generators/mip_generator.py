@@ -145,11 +145,11 @@ class MipGenerator(object):
             img = np.load('tmp/npy/{}.npy'.format(file_id))
             os.remove('tmp/npy/{}.npy'.format(file_id))
             img = self.__transform_images(img, file['mode'])
-            print(np.shape(img))
+            # print(np.shape(img))
             images.append(img)
         images = np.array(images)
-        print("Loaded entire batch.")
-        print(np.shape(images))
+        # print("Loaded entire batch.")
+        # print(np.shape(images))
         return images, labels
 
     def __transform_images(self, image, mode):
