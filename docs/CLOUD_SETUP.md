@@ -10,7 +10,7 @@ Create an instance with:
 The run the following commands
 ```
 sudo apt-get update
-sudo apt-get install -y gcc python-dev python-pip python3.6-venv
+sudo apt-get install -y gcc python3-dev python3-pip python3.6-venv
 ```
 
 Then follow the instructions here: `https://cloud.google.com/compute/docs/gpus/add-gpus#install-gpu-driver`
