@@ -27,11 +27,11 @@ class MipGenerator(object):
         self.validation = validation
 
         self.datagen = ImageDataGenerator(
-            rotation_range=30,
-            width_shift_range=0.2,
-            height_shift_range=0.2,
-            shear_range=0.2,
-            zoom_range=0.2,
+            rotation_range=20,
+            width_shift_range=0.1,
+            height_shift_range=0.1,
+            shear_range=0.1,
+            zoom_range=0.1,
             horizontal_flip=True,
             vertical_flip=True
         )
