@@ -16,7 +16,7 @@ sudo apt-get install gcc python-dev python-pip python3-venv
 Then follow the instructions here: `https://cloud.google.com/compute/docs/gpus/add-gpus#install-gpu-driver`
 
 
-````
+```
 #!/bin/bash
 echo "Checking for CUDA and installing."
 # Check for CUDA and try to install.
