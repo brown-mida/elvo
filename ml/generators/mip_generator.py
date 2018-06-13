@@ -3,6 +3,7 @@ import csv
 import random
 import numpy as np
 from scipy.ndimage.interpolation import zoom
+from keras.preprocessing.image import ImageDataGenerator
 
 from google.cloud import storage
 from etl.lib import transforms
@@ -23,6 +24,16 @@ class MipGenerator(object):
         self.batch_size = batch_size
         self.extend_dims = extend_dims
         self.augment_data = augment_data
+
+        self.datagen = ImageDataGenerator(
+            rotation_range=30,
+            width_shift_range=0.2,
+            height_shift_range=0.2,
+            shear_range=0.2,
+            zoom_range=0.2,
+            horizontal_flip=True,
+            vertical_flip=True
+        )
 
         # Delete all content in tmp/npy/
         filelist = [f for f in os.listdir('tmp/npy')]
@@ -50,7 +61,6 @@ class MipGenerator(object):
                 # Add all data augmentation methods
                 files.append({
                     "name": file,
-                    "mode": "original"
                 })
 
                 if self.augment_data:
@@ -92,30 +102,10 @@ class MipGenerator(object):
         self.bucket = bucket
 
     def __add_augmented(self, files, file):
-        for i in range(5):
+        for i in range(19):
             files.append({
                 "name": file,
-                "mode": "translate"
             })
-        for i in range(5):
-            files.append({
-                "name": file,
-                "mode": "rotate"
-            })
-        for i in range(3):
-            files.append({
-                "name": file,
-                "mode": "zoom"
-            })
-        for i in range(3):
-            files.append({
-                "name": file,
-                "mode": "gaussian"
-            })
-        files.append({
-            "name": file,
-            "mode": "flip"
-        })
 
     def generate(self):
         steps = self.get_steps_per_epoch()
@@ -144,7 +134,7 @@ class MipGenerator(object):
             )
             img = np.load('tmp/npy/{}.npy'.format(file_id))
             os.remove('tmp/npy/{}.npy'.format(file_id))
-            img = self.__transform_images(img, file['mode'])
+            img = self.__transform_images(img)
             # print(np.shape(img))
             images.append(img)
         images = np.array(images)
@@ -152,27 +142,10 @@ class MipGenerator(object):
         # print(np.shape(images))
         return images, labels
 
-    def __transform_images(self, image, mode):
-
+    def __transform_images(self, image):
+        # Set bounds
         image[image < -40] = -40
         image[image > 400] = 400
-
-        # Data augmentation methods, cut x and y to 80%
-        if mode == "translate":
-            image = transforms.translated_img(image, dims=2)
-        elif mode == "rotate":
-            image = transforms.rotate_img(image)
-        elif mode == "zoom":
-            image = transforms.zoom_img(image, dims=2)
-        elif mode == "gaussian":
-            image = transforms.gaussian_img(image)
-        elif mode == "flip":
-            image = transforms.flip_img(image)
-
-        # Interpolate axis to reduce to specified dimensions
-        dims = np.shape(image)
-        image = zoom(image, (self.dims[0] / dims[0],
-                             self.dims[1] / dims[1]))
 
         # Normalize image and expand dims
         image = transforms.normalize(image)
@@ -182,4 +155,14 @@ class MipGenerator(object):
             else:
                 image = np.repeat(image[:, :, np.newaxis],
                                   self.dims[2], axis=2)
+
+        # Data augmentation methods
+        if self.augment_data:
+            image = self.datagen.random_transform(image)
+
+        # Interpolate axis to reduce to specified dimensions
+        dims = np.shape(image)
+        image = zoom(image, (self.dims[0] / dims[0],
+                             self.dims[1] / dims[1],
+                             1))
         return image
