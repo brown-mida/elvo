@@ -590,13 +590,14 @@ if __name__ == '__main__':
             logging.info('processing array')
             output_arr = process_array(input_arr)
             filename = in_blob.name.split('/')[-1]
+            patient_id = filename[:-len('.npy')]
             # TODO: Uncomment these to show the plots
             # mlab.contour3d(output_arr)
             # mlab.show()
             # mip_arr = output_arr.max(axis=2)
             # plt.imshow(mip_arr)
             # plt.show()
-            image_blob_name = f'images/luke1/{filename}'
+            image_blob_name = f'images/luke1/{patient_id}.png'
             logging.info('loading mip')
             upload_mip_image(output_arr, image_blob_name, bucket)
             if filename in TRAINING_LIST:
