@@ -96,7 +96,7 @@ if __name__ == '__main__':
                   loss='sparse_categorical_crossentropy',
                   metrics=['accuracy'])
 
-    mc_callback = ModelCheckpoint(filepath='tmp/alex_weights.hdf5', verbose=1)
+    mc_callback = ModelCheckpoint(filepath='tmp/conv_weights.hdf5', verbose=1)
     print('Model has been compiled.')
 
     # Training
