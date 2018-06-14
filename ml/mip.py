@@ -1,12 +1,10 @@
 import io
 import logging
 
+import imageio
 import numpy as np
 from google.cloud import storage
-from scipy import misc
 from tensorflow.python.lib.io import file_io
-from matplotlib import pyplot as plt
-import imageio
 
 
 def authenticate():
