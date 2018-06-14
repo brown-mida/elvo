@@ -46,8 +46,7 @@ class MipGenerator(object):
         bucket = gcs_client.get_bucket('elvos')
 
         files = []
-        blobs = bucket.list_blobs(
-            prefix='multichannel_mip_data/from_luke_training/')
+        blobs = bucket.list_blobs(prefix='mip_data/from_luke_training/')
         for blob in blobs:
             file = blob.name
 
@@ -66,8 +65,7 @@ class MipGenerator(object):
                 if self.augment_data and not self.validation:
                     self.__add_augmented(files, file)
 
-        blobs = bucket.list_blobs(
-            prefix='multichannel_mip_data/from_luke_validation/')
+        blobs = bucket.list_blobs(prefix='mip_data/from_luke_validation/')
         for blob in blobs:
             file = blob.name
 

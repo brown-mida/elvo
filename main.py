@@ -13,7 +13,7 @@ from keras.optimizers import Adam
 from ml.generators.generator import Generator
 from ml.generators.mnist_generator import MnistGenerator
 from ml.generators.single_generator import SingleGenerator
-from ml.generators.mip_generator import MipGenerator
+from ml.generators.multichannel_mip_generator import MipGenerator
 
 from ml.models.alexnet3d import AlexNet3DBuilder
 from ml.models.alexnet2d import AlexNet2DBuilder

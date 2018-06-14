@@ -44,9 +44,30 @@ class MipGenerator(object):
             'credentials/client_secret.json'
         )
         bucket = gcs_client.get_bucket('elvos')
-        blobs = bucket.list_blobs(prefix='mip_data/from_numpy/')
 
         files = []
+        blobs = bucket.list_blobs(
+            prefix='multichannel_mip_data/from_luke_training/')
+        for blob in blobs:
+            file = blob.name
+
+            # Check blacklist
+            blacklisted = False
+            for each in BLACKLIST:
+                if each in file:
+                    blacklisted = True
+
+            if not blacklisted:
+                # Add all data augmentation methods
+                files.append({
+                    "name": file,
+                })
+
+                if self.augment_data and not self.validation:
+                    self.__add_augmented(files, file)
+
+        blobs = bucket.list_blobs(
+            prefix='multichannel_mip_data/from_luke_validation/')
         for blob in blobs:
             file = blob.name
 
@@ -125,6 +146,7 @@ class MipGenerator(object):
 
         # Download files to tmp/npy/
         for i, file in enumerate(files):
+            print(file)
             blob = self.bucket.get_blob(file['name'])
             file_id = file['name'].split('/')[-1]
             file_id = file_id.split('.')[0]
