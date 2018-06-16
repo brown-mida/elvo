@@ -1,24 +1,41 @@
+# PyCharm
 .idea/
+
+# Python
 .ipynb_checkpoints/
 venv/
 __pycache__/
 .pytest_cache/
 
+# Data
 RI Hospital ELVO Data/
 ELVOS/
-logs/
-tmp/
-results/
-*.npy
-
-preprocessing.log
-nohup.out
-*.zip
-
-secrets/
 data/*
 !data/ABCDE\ SAMPLE
 !data/DEFGH\ SAMPLE2
-credentials/
 data-*/*
 sandbox/*
+*.npy
+*.zip
+
+# Models (weights)
+results/
+models/
+
+# Config
+secrets/
+credentials/
+
+# Logs
+logs/
+*.log
+nohup.out
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
