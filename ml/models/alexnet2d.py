@@ -14,9 +14,10 @@ Based on:
 - https://www.nature.com/articles/s41746-017-0015-z.pdf
 """
 
-from keras.models import Model
 from keras.layers import Input, BatchNormalization, Dense, Flatten
 from keras.layers.convolutional import Conv2D, MaxPooling2D
+from keras.models import Model
+
 
 # from ml.models.model import ModelBuilder
 
@@ -82,6 +83,7 @@ class AlexNet2DBuilder(object):
 
         model = Model(inputs=input_img, outputs=output_img)
         return model
+
 
 m = AlexNet2DBuilder.build((120, 120, 64))
 m.summary()
