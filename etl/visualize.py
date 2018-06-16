@@ -1,7 +1,6 @@
-"""Converts the .npy files in gcs://elvos/numpy/ to
-a directory of axial-view PNGs in gcs://elvos/png/.
+"""Visualizes images in gs://elvos/numpy with mayavi.
 
-If scipy.misc does not work, be sure to install Pillow==5.1.0
+Make sure to install mayavi and PyQT5 before running.
 """
 import io
 import logging

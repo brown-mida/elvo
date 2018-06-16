@@ -4,6 +4,7 @@ Google Drive folder
 
 Note: since this is a one-time change, I (Mary) just hard-coded the path
 according to my laptop's directory structure.
+# TODO: Remove hard coding.
 """
 
 import csv

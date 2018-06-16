@@ -1,10 +1,6 @@
 """Fetches ELVO key spreadsheet from Google Drive, and saves it in
 Google Cloud Storage.
 
-Requires gspread, oauth2client, and google-cloud-storage. To install, run:
-
-pip install gspread oauth2client google-cloud-storage
-
 This requires a `client_secret.json` file in the credentials folder.
 Download it (the gcloud service account) from the Google Cloud Console.
 """
@@ -19,6 +15,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 # Authenticate to Google Drive
 print("Authenticating to Google Drive...")
 scope = ['https://spreadsheets.google.com/feeds']
+# TODO: Credentials should be kept in secrets/
 creds = ServiceAccountCredentials.from_json_keyfile_name(
     '../credentials/client_secret.json', scope
 )
