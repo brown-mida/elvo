@@ -114,8 +114,8 @@ def save_npy_to_cloud(arr: np.ndarray, id: str, whence: str):
     """
     try:
         print(f'gs://elvos/multichannel_mip_data/from_{whence}/{id}_mip.npy')
-        np.save(file_io.FileIO(f'gs://elvos/multichannel_mip_data/from_{whence}/'
-                               f'{id}_mip.npy', 'w'), arr)
+        np.save(file_io.FileIO(f'gs://elvos/multichannel_mip_data/from_'
+                               f'{whence}/{id}_mip.npy', 'w'), arr)
     except Exception as e:
         logging.error(f'for patient ID: {id} {e}')
 
