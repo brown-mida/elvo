@@ -87,7 +87,7 @@ def fine_tune():
 
     model = Model(input=model_1.input, output=model_2(model_1.output))
 
-    for layer in model.layers[:39]:# 38, 79, 141 
+    for layer in model.layers[:39]:  # 38, 79, 141
         layer.trainable = False
     model.compile(optimizer=SGD(lr=1e-4, momentum=0.9),
                   loss='binary_crossentropy',
@@ -160,8 +160,6 @@ def fine_tune_2():
     )
 
     model.save('tmp/trained_resnet_2')
-
-
 
 
 # save_features()

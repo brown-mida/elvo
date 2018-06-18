@@ -1,9 +1,13 @@
 from keras.models import Model
-from keras.layers import Input, BatchNormalization, Dense, Dropout, GlobalAveragePooling2D
+from keras.layers import (
+    Input, BatchNormalization, Dense,
+    Dropout, GlobalAveragePooling2D
+)
 from keras.layers.convolutional import Conv2D
 from ml.generators.mnist_generator import MnistGenerator
 from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint
+
 
 class AllConvModelBuilder(object):
 
@@ -11,9 +15,9 @@ class AllConvModelBuilder(object):
     def build(input_shape):
 
         if len(input_shape) != 3:
-            raise ValueError("Input shape should be a tuple of the form (conv1, conv2, conv3)")
+            raise ValueError("Input shape should be a " +
+                             "tuple of the form (conv1, conv2, conv3)")
 
-        output_dim = 2
         filt_dims = 3
         dropout = 0.2
 
@@ -21,33 +25,40 @@ class AllConvModelBuilder(object):
         input_img = Input(shape=input_shape)
 
         # Conv1: output shape (120, 120, 96)
-        x = Conv2D(96, (filt_dims, filt_dims), activation='relu', padding='same')(input_img)
+        x = Conv2D(96, (filt_dims, filt_dims), activation='relu',
+                   padding='same')(input_img)
         x = BatchNormalization()(x)
 
         # Conv2: output shape (120, 120, 96)
-        x = Conv2D(96, (filt_dims, filt_dims), activation='relu', padding='same')(x)
+        x = Conv2D(96, (filt_dims, filt_dims), activation='relu',
+                   padding='same')(x)
         x = BatchNormalization()(x)
 
         # Conv3: output shape (30, 30, 96)
-        x = Conv2D(96, (filt_dims, filt_dims), strides=(2, 2), padding='same')(x)
+        x = Conv2D(96, (filt_dims, filt_dims), strides=(2, 2),
+                   padding='same')(x)
         x = BatchNormalization()(x)
         x = Dropout(dropout)(x)
 
         # Conv4: output shape (30, 30, 192)
-        x = Conv2D(192, (filt_dims, filt_dims), activation='relu', padding='same')(input_img)
+        x = Conv2D(192, (filt_dims, filt_dims), activation='relu',
+                   padding='same')(input_img)
         x = BatchNormalization()(x)
 
         # Conv5: output shape (30, 30, 192)
-        x = Conv2D(192, (filt_dims, filt_dims), activation='relu', padding='same')(x)
+        x = Conv2D(192, (filt_dims, filt_dims), activation='relu',
+                   padding='same')(x)
         x = BatchNormalization()(x)
 
         # Conv6: output shape (15, 15, 192)
-        x = Conv2D(192, (filt_dims, filt_dims), strides=(2, 2), padding='same')(x)
+        x = Conv2D(192, (filt_dims, filt_dims), strides=(2, 2),
+                   padding='same')(x)
         x = BatchNormalization()(x)
         x = Dropout(dropout)(x)
 
         # Conv7: output shape (15, 15, 192)
-        x = Conv2D(192, (filt_dims, filt_dims), activation='relu', padding='same')(x)
+        x = Conv2D(192, (filt_dims, filt_dims), activation='relu',
+                   padding='same')(x)
         x = BatchNormalization()(x)
 
         # Conv8: output shape (15, 15, 192)
@@ -93,8 +104,8 @@ if __name__ == '__main__':
     m = AllConvModelBuilder.build((120, 120, 1))
     m.summary()
     m.compile(optimizer=Adam(lr=1e-5),
-                  loss='sparse_categorical_crossentropy',
-                  metrics=['accuracy'])
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
 
     mc_callback = ModelCheckpoint(filepath='tmp/alex_weights.hdf5', verbose=1)
     print('Model has been compiled.')
@@ -110,4 +121,3 @@ if __name__ == '__main__':
         verbose=1,
         max_queue_size=1)
     print('Model has been fit.')
-

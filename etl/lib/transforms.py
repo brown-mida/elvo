@@ -123,4 +123,3 @@ def zoom_img(img, dims=3):
         return zoom(img, (zoom_val, zoom_val, 1))
     else:
         return zoom(img, (zoom_val, zoom_val))
-
