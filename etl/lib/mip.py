@@ -89,14 +89,6 @@ def upload_png(arr: np.ndarray, id: str, type: str, bucket: storage.Bucket):
         logging.error(f'for patient ID: {id} {e}')
 
 
-<<<<<<< HEAD
-def save_npy_to_cloud(arr: np.ndarray, id: str, whence: str):
-    """Uploads MIP .npy files to gs://elvos/mip_data/from_numpy/<patient id>_mip.npy
-    """
-    try:
-        print(f'gs://elvos/mip_data/from_{whence}/{id}_mip.npy')
-        np.save(file_io.FileIO(f'gs://elvos/mip_data/from_{whence}/{id}_mip.npy', 'w'), arr)
-=======
 def save_npy_to_cloud(arr: np.ndarray, id: str, type: str):
     """Uploads MIP .npy files to gs://elvos/mip_data/from_numpy/<patient
         id>_mip.npy
@@ -105,7 +97,6 @@ def save_npy_to_cloud(arr: np.ndarray, id: str, type: str):
         print(f'gs://elvos/mip_data/from_{type}/{id}_mip.npy')
         np.save(file_io.FileIO(f'gs://elvos/mip_data/from_{type}/'
                                f'{id}_mip.npy', 'w'), arr)
->>>>>>> 06fdf5236aa4344afc50f6cd30e6025758d8006e
     except Exception as e:
         logging.error(f'for patient ID: {id} {e}')
 
