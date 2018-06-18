@@ -7,25 +7,26 @@ from __future__ import (
     absolute_import,
     division,
     print_function,
-    unicode_literals
+    unicode_literals,
 )
+
 import six
-from keras.models import Model
+from keras import backend as K
 from keras.layers import (
     Input,
     Activation,
     Dense,
-    Flatten
+    Flatten,
 )
 from keras.layers.convolutional import (
     Conv3D,
     AveragePooling3D,
-    MaxPooling3D
+    MaxPooling3D,
 )
 from keras.layers.merge import add
 from keras.layers.normalization import BatchNormalization
+from keras.models import Model
 from keras.regularizers import l2
-from keras import backend as K
 
 
 def _bn_relu(input):
@@ -71,19 +72,20 @@ def _bn_relu_conv3d(**conv_params):
                       strides=strides, kernel_initializer=kernel_initializer,
                       padding=padding,
                       kernel_regularizer=kernel_regularizer)(activation)
+
     return f
 
 
 def _shortcut3d(input, residual):
     """3D shortcut to match input and residual and merges them with "sum"."""
-    stride_dim1 = input._keras_shape[DIM1_AXIS] \
-        // residual._keras_shape[DIM1_AXIS]
-    stride_dim2 = input._keras_shape[DIM2_AXIS] \
-        // residual._keras_shape[DIM2_AXIS]
-    stride_dim3 = input._keras_shape[DIM3_AXIS] \
-        // residual._keras_shape[DIM3_AXIS]
-    equal_channels = residual._keras_shape[CHANNEL_AXIS] \
-        == input._keras_shape[CHANNEL_AXIS]
+    stride_dim1 = input._keras_shape[DIM1_AXIS] // residual._keras_shape[
+        DIM1_AXIS]
+    stride_dim2 = input._keras_shape[DIM2_AXIS] // residual._keras_shape[
+        DIM2_AXIS]
+    stride_dim3 = input._keras_shape[DIM3_AXIS] // residual._keras_shape[
+        DIM3_AXIS]
+    equal_channels = residual._keras_shape[CHANNEL_AXIS] == input._keras_shape[
+        CHANNEL_AXIS]
 
     shortcut = input
     if stride_dim1 > 1 or stride_dim2 > 1 or stride_dim3 > 1 \
@@ -94,7 +96,7 @@ def _shortcut3d(input, residual):
             strides=(stride_dim1, stride_dim2, stride_dim3),
             kernel_initializer="he_normal", padding="valid",
             kernel_regularizer=l2(1e-4)
-            )(input)
+        )(input)
     return add([shortcut, residual])
 
 
@@ -108,7 +110,7 @@ def _residual_block3d(block_function, filters, kernel_regularizer, repetitions,
             input = block_function(filters=filters, strides=strides,
                                    kernel_regularizer=kernel_regularizer,
                                    is_first_block_of_first_layer=(
-                                       is_first_layer and i == 0)
+                                           is_first_layer and i == 0)
                                    )(input)
         return input
 
@@ -118,6 +120,7 @@ def _residual_block3d(block_function, filters, kernel_regularizer, repetitions,
 def basic_block(filters, strides=(1, 1, 1), kernel_regularizer=l2(1e-4),
                 is_first_block_of_first_layer=False):
     """Basic 3 X 3 X 3 convolution blocks. Extended from raghakot's 2D impl."""
+
     def f(input):
         if is_first_block_of_first_layer:
             # don't repeat bn->relu since we just did bn->relu->maxpool
@@ -144,6 +147,7 @@ def basic_block(filters, strides=(1, 1, 1), kernel_regularizer=l2(1e-4),
 def bottleneck(filters, strides=(1, 1, 1), kernel_regularizer=l2(1e-4),
                is_first_block_of_first_layer=False):
     """Basic 3 X 3 X 3 convolution blocks. Extended from raghakot's 2D impl."""
+
     def f(input):
         if is_first_block_of_first_layer:
             # don't repeat bn->relu since we just did bn->relu->maxpool
@@ -294,5 +298,6 @@ class Resnet3DBuilder(object):
         """Build resnet 152."""
         return Resnet3DBuilder.build(input_shape, num_outputs, bottleneck,
                                      [3, 8, 36, 3], reg_factor=reg_factor)
+
 
 m = Resnet3DBuilder.build_resnet_18((200, 200, 200, 1), 2)
