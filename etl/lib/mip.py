@@ -1,6 +1,7 @@
 """
-Purpose: This script implements maximum intensity projections (MIP). This process involves
-taking 3D brain scans and compressing their maximum values down into a single 2D array.
+Purpose: This script implements maximum intensity projections (MIP). This
+process involves taking 3D brain scans and compressing their maximum values
+down into a single 2D array.
 """
 
 

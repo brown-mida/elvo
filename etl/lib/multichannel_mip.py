@@ -1,8 +1,9 @@
 """
-Purpose: This script implements maximum intensity projections (MIP). This process involves
-taking 3D brain scans, chunking them into three relevant sections, and compressing each section's
-maximum values down into a 2D array. When these are recombined, we get an array with the shape
-(3, X, Y) — which is ready to be fed directly into standardized Keras architecture with pretrained
+Purpose: This script implements maximum intensity projections (MIP). This
+process involves taking 3D brain scans, chunking them into three relevant
+sections, and compressing each section's maximum values down into a 2D array.
+When these are recombined, we get an array with the shape(3, X, Y) — which is
+ready to be fed directly into standardized Keras architecture with pretrained
 feature detection weights from ImageNet/CIFAR10.
 """
 
@@ -10,7 +11,6 @@ import io
 import logging
 
 import numpy as np
-from matplotlib import pyplot as plt
 from google.cloud import storage
 from tensorflow.python.lib.io import file_io
 import imageio
@@ -109,11 +109,13 @@ def upload_png(arr: np.ndarray, id: str, type: str, bucket: storage.Bucket):
 
 
 def save_npy_to_cloud(arr: np.ndarray, id: str, whence: str):
-    """Uploads MIP .npy files to gs://elvos/multichannel_mip_data/from_numpy/<patient id>_mip.npy
+    """Uploads MIP .npy files to gs://elvos/multichannel_mip_data/from_numpy/
+        <patient id>_mip.npy
     """
     try:
         print(f'gs://elvos/multichannel_mip_data/from_{whence}/{id}_mip.npy')
-        np.save(file_io.FileIO(f'gs://elvos/multichannel_mip_data/from_{whence}/{id}_mip.npy', 'w'), arr)
+        np.save(file_io.FileIO(f'gs://elvos/multichannel_mip_data/from_{whence}/'
+                               f'{id}_mip.npy', 'w'), arr)
     except Exception as e:
         logging.error(f'for patient ID: {id} {e}')
 

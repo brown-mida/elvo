@@ -16,8 +16,7 @@ Based on:
 
 from keras.models import Model
 from keras.layers import (
-    Input, BatchNormalization,
-    Dense, Flatten, Conv2DTranspose,
+    Input, Dense, Conv2DTranspose,
     Concatenate, Cropping2D
 )
 from keras.layers.convolutional import Conv2D, MaxPooling2D
@@ -87,14 +86,14 @@ class SimpleUNetBuilder(object):
 
         # deconv1 (Output n/8, n/8, 512)
         deconv1 = Conv2DTranspose(512, (3, 3), strides=(2, 2),
-                                activation='relu', padding='same')(conv5)
+                                  activation='relu', padding='same')(conv5)
         deconv1_1 = Cropping2D(((0, 0), (1, 1)))(conv4)
         both_1 = Concatenate([deconv1, deconv1_1])
 
         # deconv2 (Output n/4, n/4, 256)
         print(type(both_1))
         deconv2 = Conv2DTranspose(256, (3, 3), strides=(2, 2),
-                                activation='relu', padding='same')(both_1)
+                                  activation='relu', padding='same')(both_1)
         deconv2_1 = Cropping2D(((0, 0), (1, 1)))(conv3)
         both_2 = Concatenate([deconv2, deconv2_1])
 
@@ -114,7 +113,7 @@ class SimpleUNetBuilder(object):
         dense1 = Dense(1024, activation='relu', use_bias=True)(both_4)
         dense2 = Dense(1024, activation='relu', use_bias=True)(dense1)
         output_img = Dense(num_classes, activation='sigmoid',
-                                    use_bias=True)(dense2)
+                           use_bias=True)(dense2)
 
         # begin unused code
         # Conv2 (Output 50 x 50 x 64)
