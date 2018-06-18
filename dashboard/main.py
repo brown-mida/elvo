@@ -10,6 +10,11 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/annotator')
+def annotator():
+    return render_template('annotator.html')
+
+
 def validator():
     # Validating data (visually)
     raise NotImplementedError()
