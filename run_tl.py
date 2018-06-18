@@ -4,8 +4,8 @@
 
 import numpy as np
 
-from keras.models import Model, Sequential
-from keras.layers import Input, BatchNormalization, Dense, Flatten, GlobalAveragePooling2D, Dropout
+from keras.models import Model, Sequential, load_model
+from keras.layers import Dense, GlobalAveragePooling2D, Dropout
 from keras.optimizers import Adam, SGD
 from keras.applications.resnet50 import ResNet50
 from ml.generators.mip_generator import MipGenerator
@@ -16,9 +16,10 @@ def save_features():
     gen = MipGenerator(
         dims=(220, 220, 3),
         batch_size=4,
-        augment_data=False,
+        augment_data=True,
         extend_dims=False,
-        shuffle=True
+        shuffle=True,
+        split=0.1
     )
     features_train = model.predict_generator(
         generator=gen.generate(),
@@ -34,7 +35,8 @@ def save_features():
         augment_data=False,
         extend_dims=False,
         validation=True,
-        shuffle=True
+        shuffle=False,
+        split=0.1
     )
     features_test = model.predict_generator(
         generator=gen.generate(),
@@ -47,12 +49,15 @@ def save_features():
 
 def train_top_model():
     train_data = np.load('tmp/features_train.npy')
-    train_labels = np.load('tmp/labels_train.npy')[:700]
+    print(np.shape(train_data))
+    train_labels = np.load('tmp/labels_train.npy')[:1576]
     test_data = np.load('tmp/features_test.npy')
-    test_labels = np.load('tmp/labels_test.npy')[:172]
+    test_labels = np.load('tmp/labels_test.npy')[:84]
 
     model = Sequential()
     model.add(GlobalAveragePooling2D(input_shape=train_data.shape[1:]))
+    model.add(Dense(1024, activation='relu'))
+    model.add(Dropout(0.5))
     model.add(Dense(1024, activation='relu'))
     model.add(Dropout(0.5))
     model.add(Dense(1, activation='sigmoid'))
@@ -60,7 +65,7 @@ def train_top_model():
     model.compile(optimizer=Adam(lr=1e-5),
                   loss='binary_crossentropy', metrics=['accuracy'])
     model.fit(train_data, train_labels,
-              epochs=50,
+              epochs=3,
               batch_size=4,
               validation_data=(test_data, test_labels))
     model.save_weights('tmp/top_weights')
@@ -75,12 +80,54 @@ def fine_tune():
     )
     model_2.add(Dense(1024, activation='relu', name='b'))
     model_2.add(Dropout(0.5, name='c'))
+    model_2.add(Dense(1024, activation='relu'))
+    model_2.add(Dropout(0.5))
     model_2.add(Dense(1, activation='sigmoid', name='d'))
     model_2.load_weights('tmp/top_weights')
 
     model = Model(input=model_1.input, output=model_2(model_1.output))
 
-    for layer in model.layers[:141]:
+    for layer in model.layers[:39]:# 38, 79, 141 
+        layer.trainable = False
+    model.compile(optimizer=SGD(lr=1e-4, momentum=0.9),
+                  loss='binary_crossentropy',
+                  metrics=['accuracy'])
+
+    train_gen = MipGenerator(
+        dims=(220, 220, 3),
+        batch_size=16,
+        augment_data=True,
+        extend_dims=False,
+        shuffle=True,
+        split=0.1
+    )
+
+    test_gen = MipGenerator(
+        dims=(220, 220, 3),
+        batch_size=4,
+        augment_data=False,
+        extend_dims=False,
+        validation=True,
+        shuffle=False,
+        split=0.1
+    )
+
+    model.fit_generator(
+        generator=train_gen.generate(),
+        steps_per_epoch=train_gen.get_steps_per_epoch(),
+        validation_data=test_gen.generate(),
+        validation_steps=test_gen.get_steps_per_epoch(),
+        epochs=20,
+        verbose=1
+    )
+
+    model.save('tmp/trained_resnet_a')
+
+
+def fine_tune_2():
+    model = load_model('tmp/trained_resnet')
+
+    for layer in model.layers[:39]:
         layer.trainable = False
     model.compile(optimizer=SGD(lr=1e-5, momentum=0.9),
                   loss='binary_crossentropy',
@@ -88,9 +135,9 @@ def fine_tune():
 
     train_gen = MipGenerator(
         dims=(220, 220, 3),
-        batch_size=4,
-        augment_data=False,
-        extend_dims=True,
+        batch_size=16,
+        augment_data=True,
+        extend_dims=False,
         shuffle=False
     )
 
@@ -98,7 +145,7 @@ def fine_tune():
         dims=(220, 220, 3),
         batch_size=4,
         augment_data=False,
-        extend_dims=True,
+        extend_dims=False,
         validation=True,
         shuffle=False
     )
@@ -108,10 +155,16 @@ def fine_tune():
         steps_per_epoch=train_gen.get_steps_per_epoch(),
         validation_data=test_gen.generate(),
         validation_steps=test_gen.get_steps_per_epoch(),
-        epochs=50,
+        epochs=500,
         verbose=1
     )
 
-save_features()
+    model.save('tmp/trained_resnet_2')
+
+
+
+
+# save_features()
 # train_top_model()
 # fine_tune()
+fine_tune_2()
