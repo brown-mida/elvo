@@ -2,22 +2,10 @@ import numpy as np
 import scipy.ndimage
 
 
-def normalize(image, lower_bound=None, upper_bound=None):
-    # TODO: We can't zero center per image
-    if lower_bound is None:
-        lower_bound = image.min()
-    if upper_bound is None:
-        upper_bound = image.max()
-
-    image[image > upper_bound] = upper_bound
-    image[image < lower_bound] = lower_bound
-
-    return (image - image.mean()) / image.std()
-
-
 def crop(image, output_shape=(200, 200, 200)):
-    """Crops the input pixel array. Centering the width and length, and taking
-    the top portion in the height axis"""
+    """Crops the input pixel array. Centering the width and length,
+    and taking the top portion in the height axis
+    """
     assert image.ndim == 3
     assert all([image.shape[i] >= output_shape[i] for i in range(3)])
 
