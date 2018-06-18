@@ -17,6 +17,7 @@ data-*/*
 sandbox/*
 *.npy
 *.zip
+tmp/
 
 # Models (weights)
 results/
