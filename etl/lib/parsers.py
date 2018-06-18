@@ -2,9 +2,21 @@ import logging
 import os
 import re
 import shutil
-from typing import List
+from typing import List, Dict
 
 import pydicom
+
+
+def load_scans(input_dir: str):
+    id_pattern = re.compile(r'\d+')
+    patient_ids = []
+    preprocessed_scans = []
+    for dirpath, dirnames, filenames in os.walk(input_dir):
+        if filenames and '.dcm' in filenames[0]:
+            patient_id = id_pattern.findall(dirpath)[0]
+            patient_ids.append(patient_id)
+            preprocessed_scans.append(load_scan(dirpath))
+    return patient_ids, preprocessed_scans
 
 
 def load_scan(dirpath: str) -> List[pydicom.FileDataset]:
@@ -23,15 +35,7 @@ def load_scan(dirpath: str) -> List[pydicom.FileDataset]:
     return sorted(slices, key=lambda x: float(x.ImagePositionPatient[2]))
 
 
-def _parse_id(dirpath: str, input_dir: str) -> str:
-    """Turns a dirpath like
-        ELVOS/anon/HIA2VPHI6ABMCQTV HANKERSON IGNACIO A/f8...
-    to its patient id: HIA2VPHI6ABMCQTV
-    """
-    return dirpath[len(input_dir) + 1:].split()[0]
-
-
-def load_patient_infos(input_dir: str):
+def load_patient_infos(input_dir: str) -> Dict[str, str]:
     """Returns a mapping of patient ids to the directory of scans"""
     patient_ids = {}
     for dirpath, dirnames, filenames in os.walk(input_dir):
@@ -41,16 +45,12 @@ def load_patient_infos(input_dir: str):
     return patient_ids
 
 
-def load_scans(input_dir: str):
-    id_pattern = re.compile(r'\d+')
-    patient_ids = []
-    preprocessed_scans = []
-    for dirpath, dirnames, filenames in os.walk(input_dir):
-        if filenames and '.dcm' in filenames[0]:
-            patient_id = id_pattern.findall(dirpath)[0]
-            patient_ids.append(patient_id)
-            preprocessed_scans.append(load_scan(dirpath))
-    return patient_ids, preprocessed_scans
+def _parse_id(dirpath: str, input_dir: str) -> str:
+    """Turns a dirpath like
+        ELVOS/anon/HIA2VPHI6ABMCQTV HANKERSON IGNACIO A/f8...
+    to its patient id: HIA2VPHI6ABMCQTV
+    """
+    return dirpath[len(input_dir) + 1:].split()[0]
 
 
 def unzip_scans(input_dir: str, remove_zip=True):

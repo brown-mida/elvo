@@ -14,9 +14,9 @@ Based on
 - https://arxiv.org/pdf/1607.00556.pdf
 """
 
-from keras.models import Model
 from keras.layers import Input
 from keras.layers.convolutional import Conv3D, MaxPooling3D, UpSampling3D
+from keras.models import Model
 
 
 class SimpleCad3DBuilder(object):
@@ -74,7 +74,6 @@ class SimpleCad3DBuilder(object):
                             padding='same', name="cad_sigmoid")(x)
         model = Model(inputs=input_img, outputs=output_img)
         return model
-
 
 # m = SimpleCad3DBuilder.build((200, 200, 200, 1))
 # m.summary()
