@@ -3,6 +3,7 @@ from ml.models.model import ModelBuilder
 from keras.layers import Input, Conv3D, Dense, MaxPooling3D, Dropout
 from keras import Model
 
+
 class FusionNet3dBuilder(ModelBuilder):
 
     @staticmethod
