@@ -44,7 +44,7 @@ class MipGenerator(object):
             'credentials/client_secret.json'
         )
         bucket = gcs_client.get_bucket('elvos')
-        blobs = bucket.list_blobs(prefix='mip_data/from_numpy/')
+        blobs = bucket.list_blobs(prefix='multichannel_mip_data/from_numpy/')
 
         files = []
         for blob in blobs:
