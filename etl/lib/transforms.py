@@ -45,3 +45,16 @@ def standardize_spacing(image, slices):
     resize_factor = new_shape / image.shape
 
     return zoom(image, resize_factor, mode='nearest')
+
+
+def normalize(image, lower_bound=None, upper_bound=None):
+    # TODO: This is an issue, we can't zero center per image
+    if lower_bound is None:
+        lower_bound = image.min()
+    if upper_bound is None:
+        upper_bound = image.max()
+
+    image[image > upper_bound] = upper_bound
+    image[image < lower_bound] = lower_bound
+
+    return (image - image.mean()) / image.std()
