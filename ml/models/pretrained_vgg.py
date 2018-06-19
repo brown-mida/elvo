@@ -18,8 +18,7 @@ from keras.models import Model
 from keras.layers import Input, BatchNormalization, Dense, Flatten, GlobalAveragePooling2D
 from keras.applications.resnet50 import ResNet50
 from keras.layers.convolutional import Conv2D, MaxPooling2D
-
-# from ml.models.model import ModelBuilder
+from ml.models.model import ModelBuilder
 
 
 class AlexNet2DBuilder(object):

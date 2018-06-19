@@ -23,7 +23,7 @@ from keras.layers.convolutional import Conv3D, MaxPooling3D
 from ml.models.model import ModelBuilder
 
 
-class AlexNet3DBuilder(ModelBuilder):
+class AlexNet3DBuilder(object):
 
     @staticmethod
     def build(input_shape, num_classes=2):
