@@ -19,7 +19,7 @@ from ml.models.alexnet3d import AlexNet3DBuilder
 from ml.models.alexnet2d import AlexNet2DBuilder
 from ml.models.simple import SimpleNetBuilder
 from ml.models.all_conv_model import AllConvModelBuilder
-from ml.models.fusion_net_3d import FusionNet3DBuilder
+from ml.models.fusion_net3d import FusionNet3dBuilder
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
