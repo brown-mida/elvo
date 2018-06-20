@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 
 import Grid from '@material-ui/core/Grid'
-import Button from '@material-ui/core/Button';
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper/";
 import axios from 'axios'
@@ -12,6 +11,7 @@ class App extends Component {
     super(props);
     this.state = {
       patientId: '0DQO9A6UXUQHR8RA',
+      searchValue: '',
       axialIndex: 230,
       axialMipIndex: 23,
       sagittalIndex: 125,
@@ -29,30 +29,34 @@ class App extends Component {
         z1: 0,
         z2: 0,
       }
-    }
+    };
+
+    // Needed to bind this to class
+    this.handleKeyPress = this.handleKeyPress.bind(this);
+    this.getImageDimensions = this.getImageDimensions.bind(this);
   }
 
   handleKeyPress(event) {
     if (event.key === 'Enter') {
-      this.setState((prevState) => {
-        prevState['patientId'] = event.target.value;
-        return prevState
-      });
+      console.log('enter');
+      this.setState({patientId: this.state.searchValue});
+      console.log('searching for patient:', this.state.patientId);
       this.getImageDimensions();
     }
   }
 
   getImageDimensions() {
+    self = this;
     axios.get(`/image/dimensions/${this.state.patientId}`)
         .then((response) => {
           console.log('response', response);
-          this.setState(prevState => {
+          self.setState(prevState => {
             prevState['dimensions'] = {
               i: response.data['i'],
               j: response.data['j'],
               k: response.data['k'],
             }
-          });
+          })
         })
         .catch((error) => {
           console.error(error);
@@ -60,7 +64,7 @@ class App extends Component {
   }
 
   render() {
-    console.log(`in render, state is: ${this.state}`);
+    console.log('in render, state is:', this.state);
     return (
         <Grid container spacing={16}>
           <Grid item sm={6}>
@@ -104,48 +108,52 @@ class App extends Component {
               </svg>
             </Paper>
           </Grid>
-          <Grid item sm={6}>
-            <Paper>
-              <h2>3D</h2>
-              <span>
-              <img
-                  src={`/image/rendering/${this.state.patientId}/${this.state.threshold}`}
-                  style={{maxWidth: 300, maxHeight: 300}}
-              />
-                <Button> {'TODO: Actually re-render with ROI zoom'}
-                  Re-Render
-                </Button>
-              </span>
-            </Paper>
-          </Grid>
-          <Grid item sm={6}>
-            <Paper>
-              <h2>Axial MIP</h2>
-              <svg height={this.state.dimensions['j']}
-                   width={this.state.dimensions['k']}
-                   style={{
-                     zIndex: 1,
-                     backgroundImage: `url(/image/axial_mip/${this.state.patientId}/${this.state.axialMipIndex})`
-                   }}
-              >
-                <line x1="0" y1="0"
-                      x2="200" y2="200"
-                      style={{
-                        stroke: 'rgb(255, 0, 0)',
-                        strokeWidth: 2,
-                      }}
-                />
-              </svg>
-            </Paper>
-          </Grid>
+          {/*<Grid item sm={6}>*/}
+          {/*<Paper>*/}
+          {/*<h2>3D</h2>*/}
+          {/*<span>*/}
+          {/*<img*/}
+          {/*src={`/image/rendering/${this.state.patientId}/${this.state.threshold}`}*/}
+          {/*style={{maxWidth: 300, maxHeight: 300}}*/}
+          {/*/>*/}
+          {/*<Button> {'TODO: Actually re-render with ROI zoom'}*/}
+          {/*Re-Render*/}
+          {/*</Button>*/}
+          {/*</span>*/}
+          {/*</Paper>*/}
+          {/*</Grid>*/}
+          {/*<Grid item sm={6}>*/}
+          {/*<Paper>*/}
+          {/*<h2>Axial MIP</h2>*/}
+          {/*<svg height={this.state.dimensions['j']}*/}
+          {/*width={this.state.dimensions['k']}*/}
+          {/*style={{*/}
+          {/*zIndex: 1,*/}
+          {/*backgroundImage: `url(/image/axial_mip/${this.state.patientId}/${this.state.axialMipIndex})`*/}
+          {/*}}*/}
+          {/*>*/}
+          {/*<line x1="0" y1="0"*/}
+          {/*x2="200" y2="200"*/}
+          {/*style={{*/}
+          {/*stroke: 'rgb(255, 0, 0)',*/}
+          {/*strokeWidth: 2,*/}
+          {/*}}*/}
+          {/*/>*/}
+          {/*</svg>*/}
+          {/*</Paper>*/}
+          {/*</Grid>*/}
           <Grid item sm={6}>
             <Paper>
               <TextField
                   id="search"
                   label="Patient Id"
                   type="search"
+                  onChange={(event) => this.setState({
+                    searchValue: event.target.value,
+                  })}
                   onKeyPress={this.handleKeyPress}
                   margin="normal"
+                  value={this.state.searchValue}
               />
               <br/>
               <TextField
