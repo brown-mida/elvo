@@ -48,13 +48,20 @@ def annotator():
     return flask.render_template('annotator.html')
 
 
+@app.route('/image/dimensions/<patient_id>/')
+def dimensions(patient_id):
+    arr = _download_arr(patient_id)
+    shape = arr.shape
+    return flask.json.dumps({
+        'i': shape[0],
+        'j': shape[1],
+        'k': shape[2],
+    })
+
+
 @app.route('/image/axial/<patient_id>/<int:slice_i>')
 def axial(patient_id, slice_i):
-    blob = bucket.get_blob(f'numpy/{patient_id}.npy')
-    in_stream = io.BytesIO()
-    blob.download_to_file(in_stream)
-    in_stream.seek(0)
-    arr = np.load(in_stream)
+    arr = _download_arr(patient_id)
     out_stream = io.BytesIO()
     image.imsave(out_stream,
                  arr[slice_i],
@@ -69,11 +76,7 @@ def axial(patient_id, slice_i):
 
 @app.route('/image/axial_mip/<patient_id>/<int:slice_i>')
 def axial_mip(patient_id, slice_i):
-    blob = bucket.get_blob(f'numpy/{patient_id}.npy')
-    in_stream = io.BytesIO()
-    blob.download_to_file(in_stream)
-    in_stream.seek(0)
-    arr = np.load(in_stream)
+    arr = _download_arr(patient_id)
     out_stream = io.BytesIO()
     image.imsave(out_stream,
                  arr[10 * slice_i:10 * (slice_i + 1)].max(axis=0),
@@ -88,11 +91,7 @@ def axial_mip(patient_id, slice_i):
 
 @app.route('/image/sagittal/<patient_id>/<int:slice_k>')
 def sagittal(patient_id, slice_k):
-    blob = bucket.get_blob(f'numpy/{patient_id}.npy')
-    in_stream = io.BytesIO()
-    blob.download_to_file(in_stream)
-    in_stream.seek(0)
-    arr = np.load(in_stream)
+    arr = _download_arr(patient_id)
     out_stream = io.BytesIO()
     image.imsave(out_stream,
                  np.flip(arr[:, :, slice_k], 0),
@@ -107,11 +106,7 @@ def sagittal(patient_id, slice_k):
 
 @app.route('/image/rendering/<patient_id>/<threshold>')
 def rendering(patient_id, threshold):
-    blob = bucket.get_blob(f'numpy/{patient_id}.npy')
-    in_stream = io.BytesIO()
-    blob.download_to_file(in_stream)
-    in_stream.seek(0)
-    arr = np.load(in_stream)
+    arr = _download_arr(patient_id)
     out_stream = io.BytesIO()
     logging.debug('creating 3d rendering')
     # TODO: Remove hardcoded numbers
@@ -123,26 +118,31 @@ def rendering(patient_id, threshold):
 
 
 def save_3d(file, arr, threshold=150):
-    # Position the scan upright,
-    # so the head of the patient would be at the top facing the camera
+    # Position the scan upright, so the head of the patient would
+    # be at the top facing the camera
     p = arr.transpose(2, 1, 0)
-
     verts, faces, _, _ = measure.marching_cubes_lewiner(p, threshold)
-
-    fig = plt.figure(figsize=(10, 10))
-    ax = fig.add_subplot(111, projection='3d')
-
-    # Fancy indexing: `verts[faces]` to generate a collection of triangles
+    # Fancy indexing: `verts[faces]` to generate a collection
+    # of triangles
     mesh = Poly3DCollection(verts[faces], alpha=0.70)
     face_color = [0.45, 0.45, 0.75]
     mesh.set_facecolor(face_color)
-    ax.add_collection3d(mesh)
 
+    fig = plt.figure(figsize=(10, 10))
+    ax = fig.add_subplot(111, projection='3d')
+    ax.add_collection3d(mesh)
     ax.set_xlim(0, p.shape[0])
     ax.set_ylim(0, p.shape[1])
     ax.set_zlim(0, p.shape[2])
-
     plt.savefig(file, format='png')
+
+
+def _download_arr(patient_id: str) -> np.ndarray:
+    blob = bucket.get_blob(f'numpy/{patient_id}.npy')
+    in_stream = io.BytesIO()
+    blob.download_to_file(in_stream)
+    in_stream.seek(0)
+    return np.load(in_stream)
 
 
 def validator():
