@@ -76,4 +76,3 @@ class AllConvModelBuilder(object):
 
         model = Model(inputs=input_img, outputs=output_img)
         return model
-
