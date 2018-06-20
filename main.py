@@ -18,6 +18,8 @@ from ml.generators.mip_generator import MipGenerator
 from ml.models.alexnet3d import AlexNet3DBuilder
 from ml.models.alexnet2d import AlexNet2DBuilder
 from ml.models.simple import SimpleNetBuilder
+from ml.models.all_conv_model import AllConvModelBuilder
+from ml.models.fusion_net3d import FusionNet3dBuilder
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
@@ -36,15 +38,19 @@ batch_size = int(sys.argv[7])
 if generator == 'default':
     Gen = Generator
     num_classes = 2
+    loss = 'binary_crossentropy'
 elif generator == 'mnist':
     Gen = MnistGenerator
     num_classes = 10
+    loss = 'sparse_categorical_crossentropy'
 elif generator == 'single':
     Gen = SingleGenerator
     num_classes = 2
+    loss = 'binary_crossentropy'
 elif generator == 'mip':
     Gen = MipGenerator
     num_classes = 2
+    loss = 'binary_crossentropy'
 else:
     raise ValueError('Invalid Generator')
 
@@ -55,6 +61,10 @@ elif model == 'alexnet3d':
     Mod = AlexNet3DBuilder
 elif model == 'simple':
     Mod = SimpleNetBuilder
+elif model == 'all_conv':
+    Mod = AllConvModelBuilder
+elif model == 'fusionnet3d':
+    Mod = FusionNet3DBuilder
 else:
     raise ValueError('Invalid Model')
 
@@ -75,9 +85,9 @@ validation_gen = Gen(
 
 model = Mod.build(dims, num_classes=num_classes)
 model.compile(optimizer=Adam(lr=1e-5),
-              loss='sparse_categorical_crossentropy',
+              loss=loss,
               metrics=['accuracy'])
-mc_callback = ModelCheckpoint(filepath='tmp/alex_weights.hdf5', verbose=1)
+mc_callback = ModelCheckpoint(filepath=f'tmp/{model}_weights.hdf5', verbose=1)
 print('Model has been compiled.')
 
 # Training

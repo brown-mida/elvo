@@ -47,7 +47,8 @@ class MipGenerator(object):
 
         files = []
         blobs = bucket.list_blobs(
-            prefix='multichannel_mip_data/from_luke_training/')
+            prefix='multichannel_mip_data/from_luke_training/'
+        )
         for blob in blobs:
             file = blob.name
 
@@ -67,7 +68,8 @@ class MipGenerator(object):
                     self.__add_augmented(files, file)
 
         blobs = bucket.list_blobs(
-            prefix='multichannel_mip_data/from_luke_validation/')
+            prefix='multichannel_mip_data/from_luke_validation/'
+        )
         for blob in blobs:
             file = blob.name
 

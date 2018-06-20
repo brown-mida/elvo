@@ -8,7 +8,7 @@ from keras.models import Model, Sequential, load_model
 from keras.layers import Dense, GlobalAveragePooling2D, Dropout
 from keras.optimizers import Adam, SGD
 from keras.applications.resnet50 import ResNet50
-from ml.generators.mip_generator import MipGenerator
+from ml.generators.multichannel_mip_generator import MipGenerator
 
 
 def save_features():
