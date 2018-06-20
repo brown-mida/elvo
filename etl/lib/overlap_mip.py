@@ -130,33 +130,33 @@ if __name__ == '__main__':
     bucket = client.get_bucket('elvos')
 
     # from numpy directory
-    for in_blob in bucket.list_blobs(prefix='numpy/'):
-
-        # blacklist
-        if in_blob.name == 'numpy/LAUIHISOEZIM5ILF.npy':
-            continue
-
-        logging.info(f'downloading {in_blob.name}')
-        input_arr = download_array(in_blob)
-        logging.info(f"blob shape: {input_arr.shape}")
-
-        cropped_arr = crop(input_arr, 'numpy')
-        not_extreme_arr = remove_extremes(cropped_arr)
-
-        logging.info(f'removed array extremes')
-        # create folder w patient ID
-        axial = mip_array(not_extreme_arr, 'axial')
-        logging.info(f'mip-ed CTA image')
-        normalized = normalize(axial, lower_bound=-400)
-        # for i in range(5, 15):
-        #     plt.figure(figsize=(6, 6))
-        #     plt.imshow(axial[i], interpolation='none')
-        #     plt.show()
-        file_id = in_blob.name.split('/')[1]
-        file_id = file_id.split('.')[0]
-        save_npy_to_cloud(axial, in_blob.name[6:22], 'numpy')
-
-        logging.info(f'saved .npy file to cloud')
+    # for in_blob in bucket.list_blobs(prefix='numpy/'):
+    #
+    #     # blacklist
+    #     if in_blob.name == 'numpy/LAUIHISOEZIM5ILF.npy':
+    #         continue
+    #
+    #     logging.info(f'downloading {in_blob.name}')
+    #     input_arr = download_array(in_blob)
+    #     logging.info(f"blob shape: {input_arr.shape}")
+    #
+    #     cropped_arr = crop(input_arr, 'numpy')
+    #     not_extreme_arr = remove_extremes(cropped_arr)
+    #
+    #     logging.info(f'removed array extremes')
+    #     # create folder w patient ID
+    #     axial = mip_array(not_extreme_arr, 'axial')
+    #     logging.info(f'mip-ed CTA image')
+    #     normalized = normalize(axial, lower_bound=-400)
+    #     # for i in range(5, 15):
+    #     #     plt.figure(figsize=(6, 6))
+    #     #     plt.imshow(axial[i], interpolation='none')
+    #     #     plt.show()
+    #     file_id = in_blob.name.split('/')[1]
+    #     file_id = file_id.split('.')[0]
+    #     save_npy_to_cloud(axial, in_blob.name[6:22], 'numpy')
+    #
+    #     logging.info(f'saved .npy file to cloud')
 
     # from preprocess_luke/training directory
     for in_blob in bucket.list_blobs(prefix='preprocess_luke/training/'):
