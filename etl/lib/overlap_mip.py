@@ -160,6 +160,7 @@ if __name__ == '__main__':
 
     # from preprocess_luke/training directory
     for in_blob in bucket.list_blobs(prefix='preprocess_luke/training/'):
+        print("hi")
         if in_blob.name == 'numpy/LAUIHISOEZIM5ILF.npy':
             continue
         logging.info(f'downloading {in_blob.name}')
@@ -189,6 +190,7 @@ if __name__ == '__main__':
 
     # from preprocess_luke/validation directory
     for in_blob in bucket.list_blobs(prefix='preprocess_luke/validation/'):
+        print("hello")
 
         # blacklist
         if in_blob.name == 'preprocess_luke/validation/LAUIHISOEZIM5ILF.npy':
