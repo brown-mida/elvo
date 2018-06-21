@@ -134,6 +134,8 @@ class MipGenerator(object):
 
     def __transform_images(self, image):
         print(f"original image shape: {image.shape}")
+
+        image = np.transpose(image, (1, 2, 0))
         # Set bounds
         image[image < -40] = -40
         image[image > 400] = 400
@@ -154,7 +156,8 @@ class MipGenerator(object):
         # Interpolate axis to reduce to specified dimensions
         dims = np.shape(image)
         print(f'new dims: {dims}')
-        image = zoom(image, (1, self.dims[1] / dims[1],
-                             self.dims[2] / dims[2]))
+        image = zoom(image, (self.dims[0] / dims[0],
+                             self.dims[1] / dims[1],
+                             1))
         print(f'interpolated image: {image.shape}')
         return image
