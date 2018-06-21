@@ -125,7 +125,7 @@ class MipGenerator(object):
             # print(file_id)
             img = np.load('tmp/auc_training_data/{}.npy'.format(file_id))
             img = self.__transform_images(img)
-            # print(np.shape(img))
+            print(np.shape(img))
             images.append(img)
         images = np.array(images)
         # print("Loaded entire batch.")
