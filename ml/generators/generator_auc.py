@@ -36,7 +36,7 @@ class MipGenerator(object):
 
         # Access Google Cloud Storage
         gcs_client = storage.Client.from_service_account_json(
-            './credentials/client_secret.json'
+            '../credentials/client_secret.json'
         )
         bucket = gcs_client.get_bucket('elvos')
 
