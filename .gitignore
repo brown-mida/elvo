@@ -21,7 +21,7 @@ sandbox/*
 # Models (weights)
 results/
 models/
-tmp/*.hdf5
+notebooks/tmp/*.hdf5
 
 # Config
 secrets/
