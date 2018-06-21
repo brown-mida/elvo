@@ -123,7 +123,7 @@ class MipGenerator(object):
             file_id = file['name'].split('/')[-1]
             file_id = file_id.split('.')[0]
             print(file_id)
-            img = np.load('multichannel_mip/auc_training_data/{}_mip.npy'.format(file_id))
+            img = np.load('multichannel_mip/auc_training_data/{}.npy'.format(file_id))
             img = self.__transform_images(img)
             # print(np.shape(img))
             images.append(img)
