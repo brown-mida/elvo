@@ -41,10 +41,7 @@ class MipGenerator(object):
         bucket = gcs_client.get_bucket('elvos')
 
         # Get file list
-        filelist = sorted([f for f in os.listdir('/home/harold_triedman/'
-                                                 'elvo-analysis/'
-                                                 'multichannel_mip/'
-                                                 'auc_training_data')])
+        filelist = sorted([f for f in os.listdir('tmp/auc_training_data')])
         print(filelist)
         files = []
         for file in filelist:
