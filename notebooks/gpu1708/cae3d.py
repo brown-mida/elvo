@@ -9,15 +9,15 @@ import typing
 
 import numpy as np
 import pandas as pd
-import scipy.ndimage
 from keras import models, layers
+
 
 def load_data(data_dir: str) -> typing.Dict[str, np.ndarray]:
     """Returns a dictionary which maps patient ids
     to patient pixel data."""
     data_dict = {}
     for filename in os.listdir(data_dir):
-        patient_id = filename[:-4] # remove .npy extension
+        patient_id = filename[:-4]  # remove .npy extension
         data_dict[patient_id] = np.load(
             pathlib.Path(data_dir) / filename)
     return data_dict
@@ -55,6 +55,7 @@ def create_autoencoder():
     model.add(layers.Deconv3D(1, 4, padding='same', activation='relu'))
     return model
 
+
 if __name__ == '__main__':
     data_path = '/home/lzhu7/elvo-analysis/data/luke4/'
     processed_dict = load_data(data_path)
@@ -65,12 +66,12 @@ if __name__ == '__main__':
     X, y = prepare_for_training(processed_dict, labels_df)
     X = np.expand_dims(X, axis=4)
     print('X has shape:', X.shape)
-    
+
     model = create_autoencoder()
     model.compile(optimizer='adadelta',
                   loss='binary_crossentropy')
     model.summary()
-    
+
     for i in range(50):
         model.fit(X, X, epochs=1, batch_size=8, validation_split=0.2,
                   verbose=2)
