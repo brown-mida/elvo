@@ -42,7 +42,7 @@ class MipGenerator(object):
 
         # Get file list
         filelist = sorted([f for f in os.listdir('tmp/auc_training_data')])
-        print(filelist)
+        # print(filelist)
         files = []
         for file in filelist:
             # Check blacklist
@@ -101,11 +101,11 @@ class MipGenerator(object):
 
     def generate(self):
         steps = self.get_steps_per_epoch()
-        print(steps)
+        # print(steps)
         while True:
             for i in range(steps):
-                print(i)
-                print("D")
+                # print(i)
+                # print("D")
                 x, y = self.__data_generation(i)
                 yield x, y
 
@@ -122,7 +122,7 @@ class MipGenerator(object):
         for i, file in enumerate(files):
             file_id = file['name'].split('/')[-1]
             file_id = file_id.split('.')[0]
-            print(file_id)
+            # print(file_id)
             img = np.load('tmp/auc_training_data/{}.npy'.format(file_id))
             img = self.__transform_images(img)
             # print(np.shape(img))
