@@ -152,7 +152,6 @@ class MipGenerator(object):
 
         # Interpolate axis to reduce to specified dimensions
         dims = np.shape(image)
-        image = zoom(image, (self.dims[0] / dims[0],
-                             self.dims[1] / dims[1],
-                             1))
+        image = zoom(image, (1, self.dims[1] / dims[1],
+                             self.dims[2] / dims[2]))
         return image
