@@ -104,7 +104,7 @@ class MipGenerator(object):
         # print(steps)
         while True:
             for i in range(steps):
-                print(f'step {i}')
+                # print(f'step {i}')
                 # print("D")
                 x, y = self.__data_generation(i)
                 yield x, y
@@ -122,10 +122,10 @@ class MipGenerator(object):
         for i, file in enumerate(files):
             file_id = file['name'].split('/')[-1]
             file_id = file_id.split('.')[0]
-            print(file_id)
+            # print(file_id)
             img = np.load('tmp/auc_training_data/{}.npy'.format(file_id))
             img = self.__transform_images(img)
-            print(np.shape(img))
+            # print(np.shape(img))
             images.append(img)
         images = np.array(images)
         # print("Loaded entire batch.")
@@ -133,7 +133,7 @@ class MipGenerator(object):
         return images, labels
 
     def __transform_images(self, image):
-        print(f"original image shape: {image.shape}")
+        # print(f"original image shape: {image.shape}")
 
         image = np.transpose(image, (1, 2, 0))
         # Set bounds
@@ -155,9 +155,9 @@ class MipGenerator(object):
 
         # Interpolate axis to reduce to specified dimensions
         dims = np.shape(image)
-        print(f'new dims: {dims}')
+        # print(f'new dims: {dims}')
         image = zoom(image, (self.dims[0] / dims[0],
                              self.dims[1] / dims[1],
                              1))
-        print(f'interpolated image: {image.shape}')
+        # print(f'interpolated image: {image.shape}')
         return image
