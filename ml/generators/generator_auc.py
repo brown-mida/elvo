@@ -19,7 +19,7 @@ BLACKLIST = ['LAUIHISOEZIM5ILF',
 
 class MipGenerator(object):
 
-    def __init__(self, dims=(120, 120, 1), batch_size=16,
+    def __init__(self, dims=(224, 224, 3), batch_size=16,
                  shuffle=True,
                  validation=False,
                  split=0.2, extend_dims=True,
