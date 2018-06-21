@@ -1,7 +1,3 @@
-"""
-This generator is designed to facilitate AUC/ROC calculations.
-"""
-
 import os
 import csv
 import random
@@ -19,7 +15,7 @@ BLACKLIST = ['LAUIHISOEZIM5ILF',
 
 class MipGenerator(object):
 
-    def __init__(self, dims=(224, 224, 3), batch_size=16,
+    def __init__(self, dims=(120, 120, 1), batch_size=16,
                  shuffle=True,
                  validation=False,
                  split=0.2, extend_dims=True,
@@ -38,22 +34,17 @@ class MipGenerator(object):
             horizontal_flip=True
         )
 
-        # Delete all content in tmp/npy/
-        filelist = [f for f in os.listdir('tmp/npy')]
-        for f in filelist:
-            os.remove(os.path.join('tmp/npy', f))
-
-        # Get npy files from Google Cloud Storage
+        # Access Google Cloud Storage
         gcs_client = storage.Client.from_service_account_json(
             'credentials/client_secret.json'
         )
         bucket = gcs_client.get_bucket('elvos')
-        blobs = bucket.list_blobs(prefix='multichannel_mip_data/from_numpy/')
 
+        # Get file list
+        filelist = sorted([f for f in os.listdir('multichannel_mip/auc_training_data')])
+        print(filelist)
         files = []
-        for blob in blobs:
-            file = blob.name
-
+        for file in filelist:
             # Check blacklist
             blacklisted = False
             for each in BLACKLIST:
@@ -88,8 +79,6 @@ class MipGenerator(object):
         labels = np.zeros(len(files))
         for i, file in enumerate(files):
             filename = file['name']
-            filename = filename.split('/')[-1]
-            filename = filename.split('.')[0]
             filename = filename.split('_')[0]
             labels[i] = label_data[filename]
 
@@ -112,9 +101,11 @@ class MipGenerator(object):
 
     def generate(self):
         steps = self.get_steps_per_epoch()
+        print(steps)
         while True:
             for i in range(steps):
                 print(i)
+                print("D")
                 x, y = self.__data_generation(i)
                 yield x, y
 
@@ -129,25 +120,19 @@ class MipGenerator(object):
 
         # Download files to tmp/npy/
         for i, file in enumerate(files):
-            blob = self.bucket.get_blob(file['name'])
             file_id = file['name'].split('/')[-1]
             file_id = file_id.split('.')[0]
-            blob.download_to_filename(
-                'tmp/npy/{}.npy'.format(file_id)
-            )
-            img = np.load('tmp/npy/{}.npy'.format(file_id))
-            os.remove('tmp/npy/{}.npy'.format(file_id))
+            print(file_id)
+            img = np.load('multichannel_mip/auc_training_data/{}_mip.npy'.format(file_id))
             img = self.__transform_images(img)
             # print(np.shape(img))
             images.append(img)
         images = np.array(images)
-        print("Loaded entire batch.")
-        print(np.shape(images))
+        # print("Loaded entire batch.")
+        # print(np.shape(images))
         return images, labels
 
     def __transform_images(self, image):
-        image = np.moveaxis(image, 0, -1)
-
         # Set bounds
         image[image < -40] = -40
         image[image > 400] = 400
