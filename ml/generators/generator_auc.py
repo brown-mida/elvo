@@ -104,7 +104,7 @@ class MipGenerator(object):
         # print(steps)
         while True:
             for i in range(steps):
-                print("step " + i)
+                print(f'step {i}')
                 # print("D")
                 x, y = self.__data_generation(i)
                 yield x, y
