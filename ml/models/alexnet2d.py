@@ -87,4 +87,3 @@ class AlexNet2DBuilder(object):
 
 m = AlexNet2DBuilder.build((120, 120, 64))
 m.summary()
-
