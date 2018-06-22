@@ -1,5 +1,5 @@
 from keras.models import Model
-from keras.layers import(
+from keras.layers import (
     Input, BatchNormalization, Dense,
     Dropout, GlobalAveragePooling2D)
 from keras.layers.convolutional import Conv2D
@@ -14,7 +14,6 @@ class AllConvModelBuilder(object):
             raise ValueError("Input shape should be a tuple"
                              "of the form (conv1, conv2, conv3)")
 
-        output_dim = 2
         filt_dims = 3
         dropout = 0.2
 
