@@ -47,8 +47,28 @@ def standardize_spacing(image, slices):
     return zoom(image, resize_factor, mode='nearest')
 
 
+def mip_array(array: np.ndarray, type: str) -> np.ndarray:
+    print(np.max(array, axis=0).shape)
+    return np.max(array, axis=0)
+
+
+def crop(arr: np.ndarray, whence: str):
+    if whence == 'numpy':
+        to_return = arr[len(arr)-35-64:len(arr)-35]
+    else:
+        to_return = arr[len(arr)-40:]
+    return to_return
+
+
+def remove_extremes(arr: np.ndarray):
+    a = arr > 270
+    b = arr < 0
+    arr[a] = -50
+    arr[b] = -50
+    return arr
+
+
 def normalize(image, lower_bound=None, upper_bound=None):
-    # TODO: This is an issue, we can't zero center per image
     if lower_bound is None:
         lower_bound = image.min()
     if upper_bound is None:
