@@ -115,34 +115,6 @@ class SimpleUNetBuilder(object):
         output_img = Dense(num_classes, activation='sigmoid',
                            use_bias=True)(dense2)
 
-        # begin unused code
-        # Conv2 (Output 50 x 50 x 64)
-        # x = Conv2D(256, (5, 5), activation='relu', padding='same')(x)
-        # x = BatchNormalization()(x)
-        # x = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(x)
-
-        # # Conv3 (Output 12 x 12 x 96)
-        # x = Conv2D(512, (3, 3), activation='relu',
-        #            padding='same')(x)
-
-        # # Conv4 (Output 6 x 6 x 128)
-        # x = Conv2D(512, (3, 3), activation='relu', strides=(2, 2),
-        #            padding='same')(x)
-
-        # # Conv5 (Output 3 x 3 x 128)
-        # x = Conv2D(1024, (3, 3), activation='relu', strides=(2, 2),
-        #            padding='same')(x)
-
-        # # Flatten
-        # x = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(x)
-        # x = Flatten()(x)
-
-        # # Fully connected layers
-        # x = Dense(1024, activation='relu', use_bias=True)(x)
-        # x = Dense(1024, activation='relu', use_bias=True)(x)
-        # output_img = Dense(num_classes, activation='sigmoid',
-        #                    use_bias=True)(x)
-
         model = Model(inputs=input_img, outputs=output_img)
         return model
 
