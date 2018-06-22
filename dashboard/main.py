@@ -53,9 +53,9 @@ def dimensions(patient_id):
     arr = _download_arr(patient_id)
     shape = arr.shape
     return flask.json.dumps({
-        'i': shape[0],
-        'j': shape[1],
-        'k': shape[2],
+        'z': shape[0],
+        'x': shape[1],
+        'y': shape[2],
     })
 
 
@@ -79,7 +79,7 @@ def axial_mip(patient_id, slice_i):
     arr = _download_arr(patient_id)
     out_stream = io.BytesIO()
     image.imsave(out_stream,
-                 arr[10 * slice_i:10 * (slice_i + 1)].max(axis=0),
+                 arr[slice_i:slice_i + 24].max(axis=0),
                  vmin=-200,
                  vmax=400,
                  cmap='gray',

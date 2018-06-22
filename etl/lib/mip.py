@@ -10,10 +10,10 @@ down into a single 2D array.
 import io
 import logging
 
+import imageio
 import numpy as np
 from google.cloud import storage
 from tensorflow.python.lib.io import file_io
-import imageio
 
 
 def authenticate():
@@ -75,7 +75,7 @@ def normalize(image, lower_bound=None, upper_bound=None):
 def upload_png(arr: np.ndarray, id: str, type: str, bucket: storage.Bucket):
     """Uploads MIP PNGs to gs://elvos/mip_data/<patient_id>/<scan_type>_mip.png.
     """
-    # for i in range(len(arr)):
+    # for z in range(len(arr)):
     try:
         # arr = arr.astype(np.uint8)
         out_stream = io.BytesIO()

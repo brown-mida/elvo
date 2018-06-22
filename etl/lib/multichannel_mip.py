@@ -10,10 +10,10 @@ feature detection weights from ImageNet/CIFAR10.
 import io
 import logging
 
+import imageio
 import numpy as np
 from google.cloud import storage
 from tensorflow.python.lib.io import file_io
-import imageio
 
 
 def authenticate():
@@ -144,9 +144,9 @@ if __name__ == '__main__':
         axial = mip_array(not_extreme_arr, 'axial')
         logging.info(f'mip-ed CTA image')
         normalized = normalize(axial, lower_bound=-400)
-        # for i in range(3):
+        # for z in range(3):
         #     plt.figure(figsize=(6, 6))
-        #     plt.imshow(axial[i], interpolation='none')
+        #     plt.imshow(axial[z], interpolation='none')
         #     plt.show()
         file_id = in_blob.name.split('/')[1]
         file_id = file_id.split('.')[0]
@@ -172,9 +172,9 @@ if __name__ == '__main__':
         axial = mip_array(not_extreme_arr, 'axial')
         logging.info(f'mip-ed CTA image')
         normalized = normalize(axial, lower_bound=-400)
-        # for i in range(3):
+        # for z in range(3):
         #     plt.figure(figsize=(6, 6))
-        #     plt.imshow(axial[i], interpolation='none')
+        #     plt.imshow(axial[z], interpolation='none')
         #     plt.show()
         file_id = in_blob.name.split('/')[1]
         file_id = file_id.split('.')[0]
@@ -202,9 +202,9 @@ if __name__ == '__main__':
         axial = mip_array(not_extreme_arr, 'axial')
         logging.info(f'mip-ed CTA image')
         normalized = normalize(axial, lower_bound=-400)
-        # for i in range(3):
+        # for z in range(3):
         #     plt.figure(figsize=(6, 6))
-        #     plt.imshow(axial[i], interpolation='none')
+        #     plt.imshow(axial[z], interpolation='none')
         #     plt.show()
         file_id = in_blob.name.split('/')[1]
         file_id = file_id.split('.')[0]
