@@ -1,4 +1,5 @@
 from sklearn.metrics import roc_auc_score
+from sklearn.metrics import classification_report
 import numpy as np
 
 from keras.models import load_model
@@ -15,13 +16,12 @@ data_loc = '/home/shared/data/data-20180405'
 label_loc = '/home/shared/data/elvos_meta_drop1.xls'
 
 # Generators
-gen = AugmentedGenerator(data_loc, label_loc, 
+gen = AugmentedGenerator(data_loc, label_loc,
                          dims=(dim_len, dim_len, top_len),
                          batch_size=batch_size,
                          extend_dims=False,
                          validation=True,
                          split=0.1)
-                         # validation=True,
 
 print("Validation = True")
 # Build model
@@ -44,6 +44,5 @@ print(len(true_labels))
 auc = roc_auc_score(true_labels, result)
 print(auc)
 target_names = ['No', 'Yes']
-from sklearn.metrics import classification_report
 report = classification_report(true_labels, result, target_names=target_names)
 print(report)
