@@ -1,5 +1,4 @@
-dropbox==8.9.0
-google-cloud==0.33.1
+google-cloud-storage==1.10.0
 jupyter==1.0.0
 Keras==2.2.0
 matplotlib==2.2.2

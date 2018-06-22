@@ -1,0 +1,29 @@
+# The generator to use. Refer to main.py and the generators folder in
+# ml/generators/ to see the list of generators you can use.
+generator=default
+
+# Option to determine if you want to augment data.
+augment_data=false
+
+# Option to determine if you want to expand the dimensions of the
+# source image by a single dimension. For instance, if your generator
+# makes (120, 120) images, extend_dims will make the generator generate
+# (120, 120, 1) image instead. This is useful for CNNs.
+extend_dims=false
+
+# The model to use. Refer to main.py and the models folder in
+# ml/models to see the list of models you can use.
+model=alexnet2d
+
+# The file name to save the output as. The file will be stored in the
+# results/ folder.
+output=0_alexnet2d.txt
+
+# The dimension of the training file images. Separate by commas, no spaces.
+dims=120,120,64
+
+# The number of epochs to run.
+epochs=50
+
+# The batch size while training.
+batch_size=4
