@@ -16,8 +16,7 @@ Based on:
 
 from keras.models import Model
 from keras.layers import (
-    Input, BatchNormalization,
-    Dense, Flatten, Conv2DTranspose,
+    Input, Dense, Conv2DTranspose,
     Concatenate, Cropping2D
 )
 from keras.layers.convolutional import Conv2D, MaxPooling2D
@@ -87,14 +86,14 @@ class SimpleUNetBuilder(object):
 
         # deconv1 (Output n/8, n/8, 512)
         deconv1 = Conv2DTranspose(512, (3, 3), strides=(2, 2),
-                                activation='relu', padding='same')(conv5)
+                                  activation='relu', padding='same')(conv5)
         deconv1_1 = Cropping2D(((0, 0), (1, 1)))(conv4)
         both_1 = Concatenate([deconv1, deconv1_1])
 
         # deconv2 (Output n/4, n/4, 256)
         print(type(both_1))
         deconv2 = Conv2DTranspose(256, (3, 3), strides=(2, 2),
-                                activation='relu', padding='same')(both_1)
+                                  activation='relu', padding='same')(both_1)
         deconv2_1 = Cropping2D(((0, 0), (1, 1)))(conv3)
         both_2 = Concatenate([deconv2, deconv2_1])
 
@@ -114,35 +113,7 @@ class SimpleUNetBuilder(object):
         dense1 = Dense(1024, activation='relu', use_bias=True)(both_4)
         dense2 = Dense(1024, activation='relu', use_bias=True)(dense1)
         output_img = Dense(num_classes, activation='sigmoid',
-                                    use_bias=True)(dense2)
-
-        # begin unused code
-        # Conv2 (Output 50 x 50 x 64)
-        # x = Conv2D(256, (5, 5), activation='relu', padding='same')(x)
-        # x = BatchNormalization()(x)
-        # x = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(x)
-
-        # # Conv3 (Output 12 x 12 x 96)
-        # x = Conv2D(512, (3, 3), activation='relu',
-        #            padding='same')(x)
-
-        # # Conv4 (Output 6 x 6 x 128)
-        # x = Conv2D(512, (3, 3), activation='relu', strides=(2, 2),
-        #            padding='same')(x)
-
-        # # Conv5 (Output 3 x 3 x 128)
-        # x = Conv2D(1024, (3, 3), activation='relu', strides=(2, 2),
-        #            padding='same')(x)
-
-        # # Flatten
-        # x = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(x)
-        # x = Flatten()(x)
-
-        # # Fully connected layers
-        # x = Dense(1024, activation='relu', use_bias=True)(x)
-        # x = Dense(1024, activation='relu', use_bias=True)(x)
-        # output_img = Dense(num_classes, activation='sigmoid',
-        #                    use_bias=True)(x)
+                           use_bias=True)(dense2)
 
         model = Model(inputs=input_img, outputs=output_img)
         return model
