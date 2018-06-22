@@ -11,7 +11,8 @@ class AllConvModelBuilder(object):
     def build(input_shape):
 
         if len(input_shape) != 3:
-            raise ValueError("Input shape should be a tuple of the form (conv1, conv2, conv3)")
+            raise ValueError("Input shape should be a tuple"
+                             "of the form (conv1, conv2, conv3)")
 
         output_dim = 2
         filt_dims = 3
@@ -21,33 +22,40 @@ class AllConvModelBuilder(object):
         input_img = Input(shape=input_shape)
 
         # Conv1: output shape (120, 120, 96)
-        x = Conv2D(96, (filt_dims, filt_dims), activation='relu', padding='same')(input_img)
+        x = Conv2D(96, (filt_dims, filt_dims), activation='relu',
+                   padding='same')(input_img)
         x = BatchNormalization()(x)
 
         # Conv2: output shape (120, 120, 96)
-        x = Conv2D(96, (filt_dims, filt_dims), activation='relu', padding='same')(x)
+        x = Conv2D(96, (filt_dims, filt_dims), activation='relu',
+                   padding='same')(x)
         x = BatchNormalization()(x)
 
         # Conv3: output shape (30, 30, 96)
-        x = Conv2D(96, (filt_dims, filt_dims), strides=(2, 2), padding='same')(x)
+        x = Conv2D(96, (filt_dims, filt_dims), strides=(2, 2),
+                   padding='same')(x)
         x = BatchNormalization()(x)
         x = Dropout(dropout)(x)
 
         # Conv4: output shape (30, 30, 192)
-        x = Conv2D(192, (filt_dims, filt_dims), activation='relu', padding='same')(input_img)
+        x = Conv2D(192, (filt_dims, filt_dims), activation='relu',
+                   padding='same')(input_img)
         x = BatchNormalization()(x)
 
         # Conv5: output shape (30, 30, 192)
-        x = Conv2D(192, (filt_dims, filt_dims), activation='relu', padding='same')(x)
+        x = Conv2D(192, (filt_dims, filt_dims), activation='relu',
+                   padding='same')(x)
         x = BatchNormalization()(x)
 
         # Conv6: output shape (15, 15, 192)
-        x = Conv2D(192, (filt_dims, filt_dims), strides=(2, 2), padding='same')(x)
+        x = Conv2D(192, (filt_dims, filt_dims), strides=(2, 2),
+                   padding='same')(x)
         x = BatchNormalization()(x)
         x = Dropout(dropout)(x)
 
         # Conv7: output shape (15, 15, 192)
-        x = Conv2D(192, (filt_dims, filt_dims), activation='relu', padding='same')(x)
+        x = Conv2D(192, (filt_dims, filt_dims), activation='relu',
+                   padding='same')(x)
         x = BatchNormalization()(x)
 
         # Conv8: output shape (15, 15, 192)
