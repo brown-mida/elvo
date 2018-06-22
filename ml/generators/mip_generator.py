@@ -18,6 +18,7 @@ class MipGenerator(object):
     def __init__(self, dims=(120, 120, 1), batch_size=16,
                  shuffle=True,
                  validation=False,
+                 test=False, split_test=False,
                  split=0.2, extend_dims=True,
                  augment_data=True):
         self.dims = dims
@@ -92,13 +93,27 @@ class MipGenerator(object):
 
         # Split based on validation
         if validation:
-            files = files[:int(len(files) * split)]
-            labels = labels[:int(len(labels) * split)]
+            if split_test:
+                files = files[:int(len(files) * split / 2)]
+                labels = labels[:int(len(labels) * split / 2)]
+            else:
+                files = files[:int(len(files) * split)]
+                labels = labels[:int(len(labels) * split)]
+        elif test:
+            if split_test:
+                files = files[int(len(files) * split / 2): 
+                              int(len(files) * split)]
+                labels = labels[int(len(labels) * split / 2):
+                                int(len(labels) * split)]
+            else:
+                raise ValueError('must set split_test to True if test')
         else:
             files = files[int(len(files) * split):]
             labels = labels[int(len(labels) * split):]
         print(np.shape(files))
         print(np.shape(labels))
+        print("Negatives: {}".format(np.count_nonzero(labels == 0)))
+        print("Positives: {}".format(np.count_nonzero(labels)))
         self.files = files
         self.labels = labels
         self.bucket = bucket

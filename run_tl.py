@@ -2,9 +2,8 @@ import numpy as np
 
 from keras import backend as K
 
-from keras import metrics
 from keras.callbacks import ModelCheckpoint
-from keras.models import Model, Sequential, load_model
+from keras.models import Model, load_model
 from keras.layers import Dense, GlobalAveragePooling2D, Dropout, Input
 from keras.optimizers import Adam, SGD
 from keras.applications.resnet50 import ResNet50
@@ -31,13 +30,13 @@ def save_features():
         augment_data=True,
         extend_dims=False,
         shuffle=True,
-        split=0.1
+        split=0.2
     )
     features_train = model.predict_generator(
         generator=gen.generate(),
         steps=gen.get_steps_per_epoch(),
         verbose=1
-    )
+     )
     np.save('tmp/features_train.npy', features_train)
     np.save('tmp/labels_train.npy', gen.labels)
 
@@ -46,9 +45,10 @@ def save_features():
         batch_size=4,
         augment_data=False,
         extend_dims=False,
-        validation=True,
+        test=True,
+        split_test=True,
         shuffle=True,
-        split=0.1
+        split=0.2
     )
     features_test = model.predict_generator(
         generator=gen.generate(),
@@ -61,9 +61,9 @@ def save_features():
 
 def train_top_model():
     train_data = np.load('tmp/features_train.npy')
-    train_labels = np.load('tmp/labels_train.npy')[:1576]
+    train_labels = np.load('tmp/labels_train.npy')[:1404]# [:1576]
     test_data = np.load('tmp/features_test.npy')
-    test_labels = np.load('tmp/labels_test.npy')[:84]
+    test_labels = np.load('tmp/labels_test.npy')[:172]# [:84]
 
     inp = Input(shape=train_data.shape[1:])
     x = GlobalAveragePooling2D(name='t_pool')(inp)
@@ -72,7 +72,7 @@ def train_top_model():
     x = Dense(1024, activation='relu', name='t_dense_2')(x)
     x = Dropout(0.5, name='t_do_2')(x)
     outp = Dense(1, activation='sigmoid', name='t_dense_3')(x)
-    model = model = Model(input=inp, output=outp)
+    model = Model(input=inp, output=outp)
 
     model.compile(optimizer=Adam(lr=1e-5),
                   loss='binary_crossentropy',
@@ -119,7 +119,7 @@ def fine_tune():
     model.load_weights('tmp/stage_1_resnet_weights', by_name=True)
     print(l2.get_weights())
 
-    for layer in model.layers[:]:  # 38, 79, 141
+    for layer in model.layers[:38]:  # 38, 79, 141
         layer.trainable = False
     model.compile(optimizer=SGD(lr=1e-4, momentum=0.9),
                   loss='binary_crossentropy',
@@ -127,7 +127,7 @@ def fine_tune():
 
     train_gen = MipGenerator(
         dims=(220, 220, 3),
-        batch_size=4,
+        batch_size=16,
         augment_data=True,
         extend_dims=False,
         shuffle=True,
@@ -155,7 +155,7 @@ def fine_tune():
         steps_per_epoch=train_gen.get_steps_per_epoch(),
         validation_data=test_gen.generate(),
         validation_steps=test_gen.get_steps_per_epoch(),
-        epochs=20,
+        epochs=5000,
         verbose=1,
         callbacks=[mc_callback]
     )
@@ -199,8 +199,8 @@ def fine_tune_2():
     model.save('tmp/trained_resnet_2')
 
 
-# save_features()
-train_top_model()
+save_features()
+# train_top_model()
 # train_top_model_2()
 # fine_tune()
 # fine_tune_2()
