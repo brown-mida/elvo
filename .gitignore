@@ -23,6 +23,7 @@ tmp/
 # Models (weights)
 results/
 models/
+notebooks/tmp/*.hdf5
 
 # Config
 secrets/

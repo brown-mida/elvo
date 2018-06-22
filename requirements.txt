@@ -1,6 +1,7 @@
 google-cloud-storage==1.10.0
 jupyter==1.0.0
 Keras==2.2.0
+keras-vis==0.4.1
 matplotlib==2.2.2
 notebook==5.5.0
 numpy==1.14.5

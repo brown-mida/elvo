@@ -6,6 +6,7 @@ from scipy.ndimage.interpolation import zoom
 from keras.preprocessing.image import ImageDataGenerator
 
 from google.cloud import storage
+from etl.lib import transforms
 
 BLACKLIST = ['LAUIHISOEZIM5ILF',
              '2018050121043822',
@@ -17,7 +18,6 @@ class MipGenerator(object):
     def __init__(self, dims=(120, 120, 1), batch_size=16,
                  shuffle=True,
                  validation=False,
-                 test=False, split_test=False,
                  split=0.2, extend_dims=True,
                  augment_data=True):
         self.dims = dims
@@ -27,29 +27,24 @@ class MipGenerator(object):
         self.validation = validation
 
         self.datagen = ImageDataGenerator(
-            rotation_range=15,
+            rotation_range=20,
             width_shift_range=0.1,
             height_shift_range=0.1,
-            zoom_range=[1.0, 1.1],
+            zoom_range=0.1,
             horizontal_flip=True
         )
 
-        # Delete all content in tmp/npy/
-        filelist = [f for f in os.listdir('tmp/npy')]
-        for f in filelist:
-            os.remove(os.path.join('tmp/npy', f))
-
-        # Get npy files from Google Cloud Storage
+        # Access Google Cloud Storage
         gcs_client = storage.Client.from_service_account_json(
             '../credentials/client_secret.json'
         )
         bucket = gcs_client.get_bucket('elvos')
-        blobs = bucket.list_blobs(prefix='multichannel_mip_data/from_numpy/')
 
+        # Get file list
+        filelist = sorted([f for f in os.listdir('tmp/auc_training_data')])
+        # print(filelist)
         files = []
-        for blob in blobs:
-            file = blob.name
-
+        for file in filelist:
             # Check blacklist
             blacklisted = False
             for each in BLACKLIST:
@@ -65,6 +60,12 @@ class MipGenerator(object):
                 if self.augment_data and not self.validation:
                     self.__add_augmented(files, file)
 
+        # Split based on validation
+        if validation:
+            files = files[:int(len(files) * split)]
+        else:
+            files = files[int(len(files) * split):]
+
         # Get label data from Google Cloud Storage
         blob = storage.Blob('labels.csv', bucket)
         blob.download_to_filename('tmp/labels.csv')
@@ -78,41 +79,16 @@ class MipGenerator(object):
         labels = np.zeros(len(files))
         for i, file in enumerate(files):
             filename = file['name']
-            filename = filename.split('/')[-1]
-            filename = filename.split('.')[0]
             filename = filename.split('_')[0]
             labels[i] = label_data[filename]
 
         # Take into account shuffling
         if shuffle:
             tmp = list(zip(files, labels))
-            random.Random(192382491).shuffle(tmp)
+            random.shuffle(tmp)
             files, labels = zip(*tmp)
             labels = np.array(labels)
 
-        # Split based on validation
-        if validation:
-            if split_test:
-                files = files[:int(len(files) * split / 2)]
-                labels = labels[:int(len(labels) * split / 2)]
-            else:
-                files = files[:int(len(files) * split)]
-                labels = labels[:int(len(labels) * split)]
-        elif test:
-            if split_test:
-                files = files[int(len(files) * split / 2): 
-                              int(len(files) * split)]
-                labels = labels[int(len(labels) * split / 2):
-                                int(len(labels) * split)]
-            else:
-                raise ValueError('must set split_test to True if test')
-        else:
-            files = files[int(len(files) * split):]
-            labels = labels[int(len(labels) * split):]
-        print(np.shape(files))
-        print(np.shape(labels))
-        print("Negatives: {}".format(np.count_nonzero(labels == 0)))
-        print("Positives: {}".format(np.count_nonzero(labels)))
         self.files = files
         self.labels = labels
         self.bucket = bucket
@@ -125,9 +101,11 @@ class MipGenerator(object):
 
     def generate(self):
         steps = self.get_steps_per_epoch()
+        # print(steps)
         while True:
             for i in range(steps):
-                # print(i)
+                # print(f'step {i}')
+                # print("D")
                 x, y = self.__data_generation(i)
                 yield x, y
 
@@ -142,14 +120,10 @@ class MipGenerator(object):
 
         # Download files to tmp/npy/
         for i, file in enumerate(files):
-            blob = self.bucket.get_blob(file['name'])
             file_id = file['name'].split('/')[-1]
             file_id = file_id.split('.')[0]
-            blob.download_to_filename(
-                'tmp/npy/{}.npy'.format(file_id)
-            )
-            img = np.load('tmp/npy/{}.npy'.format(file_id))
-            # os.remove('tmp/npy/{}.npy'.format(file_id))
+            # print(file_id)
+            img = np.load('tmp/auc_training_data/{}.npy'.format(file_id))
             img = self.__transform_images(img)
             # print(np.shape(img))
             images.append(img)
@@ -159,13 +133,15 @@ class MipGenerator(object):
         return images, labels
 
     def __transform_images(self, image):
-        image = np.moveaxis(image, 0, -1)
+        # print(f"original image shape: {image.shape}")
 
+        image = np.transpose(image, (1, 2, 0))
         # Set bounds
         image[image < -40] = -40
         image[image > 400] = 400
 
         # Normalize image and expand dims
+        image = transforms.normalize(image)
         if self.extend_dims:
             if len(self.dims) == 2:
                 image = np.expand_dims(image, axis=-1)
@@ -178,9 +154,10 @@ class MipGenerator(object):
             image = self.datagen.random_transform(image)
 
         # Interpolate axis to reduce to specified dimensions
-        # image = transforms.normalize(image)
         dims = np.shape(image)
+        # print(f'new dims: {dims}')
         image = zoom(image, (self.dims[0] / dims[0],
                              self.dims[1] / dims[1],
                              1))
+        # print(f'interpolated image: {image.shape}')
         return image
