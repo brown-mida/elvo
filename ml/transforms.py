@@ -4,7 +4,7 @@ import scipy.ndimage
 
 def crop(image, output_shape=(200, 200, 200)):
     """Crops the input pixel array. Centering the width and length,
-    and taking the top portion in the height axis
+    and taking the top portion in the z axis
     """
     assert image.ndim == 3
     assert all([image.shape[i] >= output_shape[i] for i in range(3)])
