@@ -5,7 +5,7 @@ from keras import backend as K
 from keras import metrics
 from keras.callbacks import ModelCheckpoint
 from keras.models import Model, Sequential, load_model
-from keras.layers import Dense, GlobalAveragePooling2D, Dropout
+from keras.layers import Dense, GlobalAveragePooling2D, Dropout, Input
 from keras.optimizers import Adam, SGD
 from keras.applications.resnet50 import ResNet50
 from ml.generators.mip_generator import MipGenerator
@@ -15,18 +15,18 @@ def sensitivity(y_true, y_pred):
     true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
     possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
     return true_positives / (possible_positives + K.epsilon())
- 
+
 
 def specificity(y_true, y_pred):
-    true_negatives = K.sum(K.round(K.clip((1-y_true) * (1-y_pred), 0, 1)))
-    possible_negatives = K.sum(K.round(K.clip(1-y_true, 0, 1)))
+    true_negatives = K.sum(K.round(K.clip((1 - y_true) * (1 - y_pred), 0, 1)))
+    possible_negatives = K.sum(K.round(K.clip(1 - y_true, 0, 1)))
     return true_negatives / (possible_negatives + K.epsilon())
 
 
 def save_features():
     model = ResNet50(weights='imagenet', include_top=False)
     gen = MipGenerator(
-        dims=(200, 200, 3),
+        dims=(220, 220, 3),
         batch_size=4,
         augment_data=True,
         extend_dims=False,
@@ -37,12 +37,12 @@ def save_features():
         generator=gen.generate(),
         steps=gen.get_steps_per_epoch(),
         verbose=1
-     )
+    )
     np.save('tmp/features_train.npy', features_train)
     np.save('tmp/labels_train.npy', gen.labels)
 
     gen = MipGenerator(
-        dims=(200, 200, 3),
+        dims=(220, 220, 3),
         batch_size=4,
         augment_data=False,
         extend_dims=False,
@@ -61,81 +61,73 @@ def save_features():
 
 def train_top_model():
     train_data = np.load('tmp/features_train.npy')
-    print(np.shape(train_data))
     train_labels = np.load('tmp/labels_train.npy')[:1576]
     test_data = np.load('tmp/features_test.npy')
     test_labels = np.load('tmp/labels_test.npy')[:84]
 
-    model = Sequential()
-    model.add(GlobalAveragePooling2D(input_shape=train_data.shape[1:]))
-    model.add(Dense(1024, activation='relu'))
-    model.add(Dropout(0.5))
-    model.add(Dense(1024, activation='relu'))
-    model.add(Dropout(0.5))
-    model.add(Dense(1, activation='sigmoid'))
-    
+    inp = Input(shape=train_data.shape[1:])
+    x = GlobalAveragePooling2D(name='t_pool')(inp)
+    x = Dense(1024, activation='relu', name='t_dense_1')(x)
+    x = Dropout(0.5, name='t_do_1')(x)
+    x = Dense(1024, activation='relu', name='t_dense_2')(x)
+    x = Dropout(0.5, name='t_do_2')(x)
+    outp = Dense(1, activation='sigmoid', name='t_dense_3')(x)
+    model = model = Model(input=inp, output=outp)
+
     model.compile(optimizer=Adam(lr=1e-5),
-                  loss='binary_crossentropy', 
+                  loss='binary_crossentropy',
                   metrics=['accuracy', sensitivity, specificity])
 
-    mc_callback = ModelCheckpoint(filepath='tmp/stage_1_resnet', 
+    mc_callback = ModelCheckpoint(filepath='tmp/stage_1_resnet',
                                   save_best_only=True,
                                   monitor='val_acc',
                                   mode='max',
                                   verbose=1)
+    mc_callback_w = ModelCheckpoint(filepath='tmp/stage_1_resnet_weights',
+                                    save_best_only=True,
+                                    monitor='val_acc',
+                                    mode='max',
+                                    save_weights_only=True,
+                                    verbose=1)
     model.fit(train_data, train_labels,
               epochs=5000,
               batch_size=4,
               validation_data=(test_data, test_labels),
-              callbacks=[mc_callback])
+              callbacks=[mc_callback, mc_callback_w])
     model.save_weights('tmp/top_weights')
-
-
-def train_top_model_2():
-    train_data = np.load('tmp/features_train.npy')
-    train_labels = np.load('tmp/labels_train.npy')[:1576]
-    test_data = np.load('tmp/features_test.npy')
-    test_labels = np.load('tmp/labels_test.npy')[:84]
-    
-    metrics.sensitivity = sensitivity
-    metrics.specificity = specificity
-    model = load_model('tmp/stage_1_resnet')
-    
-    model.compile(optimizer=SGD(lr=1e-6, momentum=0.9),
-                  loss='binary_crossentropy', 
-                  metrics=['accuracy', sensitivity, specificity])
-
-    mc_callback = ModelCheckpoint(filepath='tmp/stage_2_resnet', 
-                                  save_best_only=True,
-                                  monitor='val_acc',
-                                  mode='max',
-                                  verbose=1)
-    model.fit(train_data, train_labels,
-              epochs=500,
-              batch_size=4,
-              validation_data=(test_data, test_labels),
-              callbacks=[mc_callback])
 
 
 def fine_tune():
     model_1 = ResNet50(weights='imagenet', include_top=False)
 
-    metrics.sensitivity = sensitivity
-    metrics.specificity = specificity
-    model_2 = load_model('tmp/stage_1_resnet')
-    print(model_2.layers[-3:][0].get_weights())
-    model = Model(input=model_1.input, output=model_2(model_1.output))
+    l1 = GlobalAveragePooling2D(name='t_pool')
+    l2 = Dense(1024, activation='relu', name='t_dense_1')
+    l3 = Dropout(0.5, name='t_do_1')
+    l4 = Dense(1024, activation='relu', name='t_dense_2')
+    l5 = Dropout(0.5, name='t_do_2')
+    l6 = Dense(1, activation='sigmoid', name='t_dense_3')
 
-    for layer in model.layers[:141]:  # 38, 79, 141
+    x = l1(model_1.output)
+    x = l2(x)
+    x = l3(x)
+    x = l4(x)
+    x = l5(x)
+    outp = l6(x)
+    model = Model(input=model_1.input, output=outp)
+
+    print(l2.get_weights())
+    model.load_weights('tmp/stage_1_resnet_weights', by_name=True)
+    print(l2.get_weights())
+
+    for layer in model.layers[:]:  # 38, 79, 141
         layer.trainable = False
     model.compile(optimizer=SGD(lr=1e-4, momentum=0.9),
                   loss='binary_crossentropy',
                   metrics=['accuracy', sensitivity, specificity])
 
-    print(model.layers[-3:])
     train_gen = MipGenerator(
         dims=(220, 220, 3),
-        batch_size=16,
+        batch_size=4,
         augment_data=True,
         extend_dims=False,
         shuffle=True,
@@ -152,7 +144,7 @@ def fine_tune():
         split=0.1
     )
 
-    mc_callback = ModelCheckpoint(filepath='tmp/stage_2_resnet', 
+    mc_callback = ModelCheckpoint(filepath='tmp/stage_2_resnet',
                                   save_best_only=True,
                                   monitor='val_acc',
                                   mode='max',
@@ -208,7 +200,7 @@ def fine_tune_2():
 
 
 # save_features()
-# train_top_model()
+train_top_model()
 # train_top_model_2()
-fine_tune()
+# fine_tune()
 # fine_tune_2()
