@@ -15,13 +15,15 @@ from dropbox.files import FolderMetadata
 
 if __name__ == '__main__':
 
-    os.environ['DROPBOX_TOKEN'] = '7rhGNlTWWHAAAAAAAAAAJgYJurAsZ3H_A7GDKYgRzAqXuBv4dNO0CCyizIVFDb6A'
+    os.environ['DROPBOX_TOKEN'] = \
+        '7rhGNlTWWHAAAAAAAAAAJgYJurAsZ3H_A7GDKYgRzAqXuBv4dNO0CCyizIVFDb6A'
 
     # TODO: Use a config file to store env variables
     # to store secret info
     dbx = dropbox.Dropbox(os.environ['DROPBOX_TOKEN'])
 
-    results = dbx.files_list_folder('/home/ROI_ELVOs/ROI_cropped_anon/AEPRN5R7W2ASOGR0')
+    results = dbx.files_list_folder('/home/ROI_ELVOs/'
+                                    'ROI_cropped_anon/AEPRN5R7W2ASOGR0')
 
     print(results)
 

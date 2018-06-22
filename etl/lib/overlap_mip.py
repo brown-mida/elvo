@@ -14,7 +14,7 @@ import numpy as np
 from google.cloud import storage
 from tensorflow.python.lib.io import file_io
 import imageio
-from matplotlib import pyplot as plt
+# from matplotlib import pyplot as plt
 
 
 NUM_SLICES = 20
