@@ -85,5 +85,5 @@ class AlexNet2DBuilder(object):
         return model
 
 
-# m = AlexNet2DBuilder.build((120, 120, 64))
-# m.summary()
+m = AlexNet2DBuilder.build((120, 120, 64))
+m.summary()

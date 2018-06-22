@@ -2,7 +2,7 @@
 Purpose: This script implements maximum intensity projections (MIP). This
 process involves taking 3D brain scans, chunking them into three relevant
 sections, and compressing each section's maximum values down into a 2D array.
-When these are recombined, we get an array with the shape (3, X, Y) — which is
+When these are recombined, we get an array with the shape(3, X, Y) — which is
 ready to be fed directly into standardized Keras architecture with pretrained
 feature detection weights from ImageNet/CIFAR10.
 """
@@ -12,6 +12,9 @@ import numpy as np
 # from matplotlib import pyplot as plt
 import etl.lib.cloud_management as cloud
 import etl.lib.transforms as transforms
+
+
+NUM_SLICES = 20
 
 
 def configure_logger():
@@ -48,7 +51,7 @@ if __name__ == '__main__':
         axial = transforms.mip_array(not_extreme_arr, 'axial')
         logging.info(f'mip-ed CTA image')
         normalized = transforms.normalize(axial, lower_bound=-400)
-        # for i in range(3):
+        # for i in range(5, 15):
         #     plt.figure(figsize=(6, 6))
         #     plt.imshow(axial[i], interpolation='none')
         #     plt.show()
@@ -60,6 +63,7 @@ if __name__ == '__main__':
 
     # from preprocess_luke/training directory
     for in_blob in bucket.list_blobs(prefix='preprocess_luke/training/'):
+        print("hi")
         if in_blob.name == 'numpy/LAUIHISOEZIM5ILF.npy':
             continue
         logging.info(f'downloading {in_blob.name}')
@@ -83,11 +87,13 @@ if __name__ == '__main__':
         file_id = in_blob.name.split('/')[1]
         file_id = file_id.split('.')[0]
         cloud.save_npy_to_cloud(axial, in_blob.name[25:41], 'luke_training')
+        cloud.save_npy_to_cloud(axial, in_blob.name[25:41], 'luke')
 
         logging.info(f'saved .npy file to cloud')
 
     # from preprocess_luke/validation directory
     for in_blob in bucket.list_blobs(prefix='preprocess_luke/validation/'):
+        print("hello")
 
         # blacklist
         if in_blob.name == 'preprocess_luke/validation/LAUIHISOEZIM5ILF.npy':
@@ -113,5 +119,6 @@ if __name__ == '__main__':
         file_id = in_blob.name.split('/')[1]
         file_id = file_id.split('.')[0]
         cloud.save_npy_to_cloud(axial, in_blob.name[27:43], 'luke_validation')
+        cloud.save_npy_to_cloud(axial, in_blob.name[27:43], 'luke')
 
         logging.info(f'saved .npy file to cloud')

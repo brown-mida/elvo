@@ -18,7 +18,8 @@ class FusionNet3dBuilder(ModelBuilder):
         maxpool1 = MaxPooling3D(pool_size=(2, 2, 1))(conv1)
         conv2 = Conv3D(64, kernel_size=(3, 3, 64),
                        activation='relu')(maxpool1)
-        conv3 = Conv3D(64, kernel_size=(3, 3, 64), activation='relu')(conv2)
+        conv3 = Conv3D(64, kernel_size=(3, 3, 64),
+                       activation='relu')(conv2)
         maxpool2 = MaxPooling3D(pool_size=(2, 2, 1))(conv3)
         dropout = Dropout(0.5)(maxpool2)
         dense1 = Dense(2048, activation='relu')(dropout)

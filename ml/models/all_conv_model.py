@@ -1,12 +1,8 @@
 from keras.models import Model
 from keras.layers import (
     Input, BatchNormalization, Dense,
-    Dropout, GlobalAveragePooling2D
-)
+    Dropout, GlobalAveragePooling2D)
 from keras.layers.convolutional import Conv2D
-# from ml.generators.mnist_generator import MnistGenerator
-# from keras.optimizers import Adam
-# from keras.callbacks import ModelCheckpoint
 
 
 class AllConvModelBuilder(object):
@@ -15,8 +11,8 @@ class AllConvModelBuilder(object):
     def build(input_shape):
 
         if len(input_shape) != 3:
-            raise ValueError("Input shape should be a " +
-                             "tuple of the form (conv1, conv2, conv3)")
+            raise ValueError("Input shape should be a tuple"
+                             "of the form (conv1, conv2, conv3)")
 
         filt_dims = 3
         dropout = 0.2
