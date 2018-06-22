@@ -1,9 +1,9 @@
 from keras.models import Model
-from keras.layers import Input, BatchNormalization, Dense, Dropout, GlobalAveragePooling2D
+from keras.layers import(
+    Input, BatchNormalization, Dense,
+    Dropout, GlobalAveragePooling2D)
 from keras.layers.convolutional import Conv2D
-# from ml.generators.mnist_generator import MnistGenerator
-# from keras.optimizers import Adam
-# from keras.callbacks import ModelCheckpoint
+
 
 class AllConvModelBuilder(object):
 
@@ -65,47 +65,3 @@ class AllConvModelBuilder(object):
 
         model = Model(inputs=input_img, outputs=output_img)
         return model
-
-
-# if __name__ == '__main__':
-#
-#     batch_size = 32
-#     dim_len = 120
-#     channels = 1
-#     epochs = 10
-#
-#     training_gen = Gen(
-#         dims=(120, 120, 1),
-#         batch_size=batch_size,
-#         augment_data=False,
-#         extend_dims=False
-#     )
-#     validation_gen = Gen(
-#         dims=(120, 120, 1),
-#         batch_size=batch_size,
-#         augment_data=False,
-#         extend_dims=False,
-#         validation=True
-#     )
-#
-#     m = AllConvModelBuilder.build((120, 120, 1))
-#     m.summary()
-#     m.compile(optimizer=Adam(lr=1e-5),
-#                   loss='sparse_categorical_crossentropy',
-#                   metrics=['accuracy'])
-#
-#     mc_callback = ModelCheckpoint(filepath='tmp/conv_weights.hdf5', verbose=1)
-#     print('Model has been compiled.')
-#
-#     # Training
-#     m.fit_generator(
-#         generator=training_gen.generate(),
-#         steps_per_epoch=training_gen.get_steps_per_epoch(),
-#         validation_data=validation_gen.generate(),
-#         validation_steps=validation_gen.get_steps_per_epoch(),
-#         epochs=epochs,
-#         callbacks=[mc_callback],
-#         verbose=1,
-#         max_queue_size=1)
-#     print('Model has been fit.')
-
