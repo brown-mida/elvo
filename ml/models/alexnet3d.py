@@ -20,8 +20,6 @@ from keras.models import Model
 from keras.layers import Input, BatchNormalization, Dense, Flatten
 from keras.layers.convolutional import Conv3D, MaxPooling3D
 
-from ml.models.model import ModelBuilder
-
 
 class AlexNet3DBuilder(object):
 
