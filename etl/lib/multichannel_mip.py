@@ -23,6 +23,7 @@ def configure_logger():
     handler.setFormatter(formatter)
     root_logger.addHandler(handler)
 
+
 if __name__ == '__main__':
     configure_logger()
     client = cloud.authenticate()
