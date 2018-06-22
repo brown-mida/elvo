@@ -6,7 +6,6 @@ from scipy.ndimage.interpolation import zoom
 from keras.preprocessing.image import ImageDataGenerator
 
 from google.cloud import storage
-from etl.lib import transforms
 
 BLACKLIST = ['LAUIHISOEZIM5ILF',
              '2018050121043822',
