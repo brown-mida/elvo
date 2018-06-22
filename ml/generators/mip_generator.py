@@ -65,12 +65,6 @@ class MipGenerator(object):
                 if self.augment_data and not self.validation:
                     self.__add_augmented(files, file)
 
-        # Split based on validation
-        if validation:
-            files = files[:int(len(files) * split)]
-        else:
-            files = files[int(len(files) * split):]
-
         # Get label data from Google Cloud Storage
         blob = storage.Blob('labels.csv', bucket)
         blob.download_to_filename('tmp/labels.csv')
@@ -92,10 +86,19 @@ class MipGenerator(object):
         # Take into account shuffling
         if shuffle:
             tmp = list(zip(files, labels))
-            random.shuffle(tmp)
+            random.Random(192382491).shuffle(tmp)
             files, labels = zip(*tmp)
             labels = np.array(labels)
 
+        # Split based on validation
+        if validation:
+            files = files[:int(len(files) * split)]
+            labels = labels[:int(len(labels) * split)]
+        else:
+            files = files[int(len(files) * split):]
+            labels = labels[int(len(labels) * split):]
+        print(np.shape(files))
+        print(np.shape(labels))
         self.files = files
         self.labels = labels
         self.bucket = bucket
@@ -132,7 +135,7 @@ class MipGenerator(object):
                 'tmp/npy/{}.npy'.format(file_id)
             )
             img = np.load('tmp/npy/{}.npy'.format(file_id))
-            os.remove('tmp/npy/{}.npy'.format(file_id))
+            # os.remove('tmp/npy/{}.npy'.format(file_id))
             img = self.__transform_images(img)
             # print(np.shape(img))
             images.append(img)
@@ -161,7 +164,7 @@ class MipGenerator(object):
             image = self.datagen.random_transform(image)
 
         # Interpolate axis to reduce to specified dimensions
-        image = transforms.normalize(image)
+        # image = transforms.normalize(image)
         dims = np.shape(image)
         image = zoom(image, (self.dims[0] / dims[0],
                              self.dims[1] / dims[1],
