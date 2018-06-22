@@ -16,7 +16,7 @@ import dropbox
 from dropbox.files import FolderMetadata
 from google.cloud import storage
 
-# TODO: Use a better alternative than environment variables
+# TODO: Use a config file to store env variables
 # to store secret info
 dbx = dropbox.Dropbox(os.environ['DROPBOX_TOKEN'])
 
