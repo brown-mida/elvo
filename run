@@ -1,33 +1,68 @@
-GENERATOR=""
-MODEL=""
-OUTPUT=""
+INLINE=""
+CONFIG=""
 
-while getopts "g:m:o:" option; do
+while getopts "ic:" option; do
     case ${option} in
-        g) GENERATOR="$OPTARG";;
-        m) MODEL="$OPTARG";;
-        o) OUTPUT="$OPTARG";;
+        c) CONFIG="$OPTARG";;
+        i) INLINE="1";;
     esac
 done
 
-if ! [[ "$GENERATOR" =~ ^(default|mnist|single)$ ]] ; then
-    echo "ERROR: You must provide a correct generator."
-    echo "Available: default | mnist | single"
-    echo "Example usage: ./run -g single -m simple -o result.txt"
+if ! test "$CONFIG" ; then
+    echo "ERROR: Config not defined."
+    echo "Usage: ./run -c configname.elvo [-i]"
     exit 1
 fi
 
-if ! [[ "$MODEL" =~ ^(alexnet2d|alexnet3d|simple)$ ]] ; then
-    echo "ERROR: You must provide a correct model."
-    echo "Available: alexnet2d | alexnet3d | simple"
-    echo "Example usage: ./run -g single -m simple -o result.txt"
+source ./config/$CONFIG
+if [[ ! -f ./config/$CONFIG ]] ; then
     exit 1
 fi
 
-if ! test "$OUTPUT" ; then
-    echo "ERROR: You must provide an output file name."
-    echo "Example usage: ./run -g single -m simple -o result.txt"
+if ! test "$generator" ; then
+    echo "ERROR: Key 'generator' not in config."
     exit 1
 fi
 
-nohup python -u main.py $GENERATOR $MODEL > results/$OUTPUT &
+if ! test "$augment_data" ; then
+    echo "ERROR: Key 'augment_data' not in config."
+    exit 1
+fi
+
+if ! test "$extend_dims" ; then
+    echo "ERROR: Key 'extend_dims' not in config."
+    exit 1
+fi
+
+if ! test "$model" ; then
+    echo "ERROR: Key 'model' not in config."
+    exit 1
+fi
+
+if ! test "$output" ; then
+    echo "ERROR: Key 'output' not in config."
+    exit 1
+fi
+
+if ! test "$dims" ; then
+    echo "ERROR: Key 'dims' not in config."
+    exit 1
+fi
+
+if ! test "$epochs" ; then
+    echo "ERROR: Key 'epochs' not in config."
+    exit 1
+fi
+
+if ! test "$batch_size" ; then
+    echo "ERROR: Key 'batch_size' not in config."
+    exit 1
+fi
+
+if test ! "$INLINE" ; then
+    nohup python -u main.py $generator $augment_data $extend_dims \
+        $model $dims $epochs $batch_size > results/$output &
+else
+    python main.py $generator $augment_data $extend_dims \
+        $model $dims $epochs $batch_size
+fi
