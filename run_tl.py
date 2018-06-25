@@ -36,7 +36,7 @@ def save_features():
         generator=gen.generate(),
         steps=gen.get_steps_per_epoch(),
         verbose=1
-     )
+    )
     np.save('tmp/features_train.npy', features_train)
     np.save('tmp/labels_train.npy', gen.labels)
 
@@ -61,9 +61,9 @@ def save_features():
 
 def train_top_model():
     train_data = np.load('tmp/features_train.npy')
-    train_labels = np.load('tmp/labels_train.npy')[:1404]# [:1576]
+    train_labels = np.load('tmp/labels_train.npy')[:1404]
     test_data = np.load('tmp/features_test.npy')
-    test_labels = np.load('tmp/labels_test.npy')[:172]# [:84]
+    test_labels = np.load('tmp/labels_test.npy')[:172]
 
     inp = Input(shape=train_data.shape[1:])
     x = GlobalAveragePooling2D(name='t_pool')(inp)
