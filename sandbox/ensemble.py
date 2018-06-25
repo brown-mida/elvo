@@ -137,6 +137,6 @@ def get_auc():
     plt.show()
 
 
-# get_pred()
-# get_validation()
+get_pred()
+get_validation()
 get_auc()
