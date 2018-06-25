@@ -121,11 +121,20 @@ def coronal(patient_id, slice_j):
 
 @app.route('/image/rendering/<patient_id>/<threshold>')
 def rendering(patient_id, threshold):
+    x1 = flask.request.args.get('x1')
+    x2 = flask.request.args.get('x2')
+    y1 = flask.request.args.get('y1')
+    y2 = flask.request.args.get('y2')
+    z1 = flask.request.args.get('z1')
+    z2 = flask.request.args.get('z2')
+
     arr = _download_arr(patient_id)
     out_stream = io.BytesIO()
     logging.debug('creating 3d rendering')
-    # TODO: Remove hardcoded numbers
-    save_3d(out_stream, arr[200:300, 70:150, 70:150], threshold=threshold)
+    roi = arr[min(x1, x2):max(x1, x2),
+          min(y1, y2):max(y1, y2),
+          min(z1, z2):max(z1, z2)]
+    save_3d(out_stream, roi, threshold=threshold)
     out_stream.seek(0)
     logging.debug('sending 3d rendering')
     return flask.send_file(out_stream,
