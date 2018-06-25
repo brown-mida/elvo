@@ -16,7 +16,6 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 app = flask.Flask(__name__)
 
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'elvo-7136c1299dea.json'
-
 client = storage.Client(project='elvo-198322')
 bucket = client.bucket('elvos')
 
