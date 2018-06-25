@@ -187,8 +187,8 @@ def main():
                              f' got {blob.name}')
         except Exception as e:
             # Reset the working directory, tmp files for the next dataset
-            os.chdir('..')
-            shutil.rmtree('tmp')
+            # os.chdir('..')
+            # shutil.rmtree('tmp')
             logging.error(e)
 
     old_labels_df.to_csv('labels_new.csv', index=False)
