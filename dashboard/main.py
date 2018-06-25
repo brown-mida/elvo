@@ -104,6 +104,21 @@ def sagittal(patient_id, slice_k):
                            mimetype='image/png')
 
 
+@app.route('/image/coronal/<patient_id>/<slice_j>')
+def coronal(patient_id, slice_j):
+    arr = _download_arr(patient_id)
+    out_stream = io.BytesIO()
+    image.imsave(out_stream,
+                 np.flip(arr[:, :, slice_j], 0),
+                 vmin=-200,
+                 vmax=400,
+                 cmap='gray',
+                 format='png')
+    out_stream.seek(0)
+    return flask.send_file(out_stream,
+                           mimetype='image/png')
+
+
 @app.route('/image/rendering/<patient_id>/<threshold>')
 def rendering(patient_id, threshold):
     arr = _download_arr(patient_id)
