@@ -124,285 +124,285 @@ class App extends Component {
     console.log('in render, state is:', this.state);
     const imagesToCache = this.updateImageCache();
     return (
-        <Grid container spacing={16}>
-          <Grid item sm={6}>
-            <Paper style={styles.paper}>
-              <h2>User Guide</h2>
-              <p>Use the text fields below to set the bounding box.</p>
-              <p>To scroll, click on an input field and use the up/down arrow
-                keys.</p>
-              <p><em>Only use this app on Wi-Fi</em></p>
-              <h2>To Do</h2>
-              <p>Improve scrolling performance w/ image caching</p>
-            </Paper>
-          </Grid>
-          <Grid item sm={6}>
-            <Paper style={styles.paper}>
-              <h2>Sagittal</h2>
-              <svg height={this.state.dimensions.z}
-                   width={this.state.dimensions.y}
-              >
-                <image
-                    href={`/image/sagittal/${this.state.patientId}/${this.state.indices.x}`}/>
-                <line x1="0" y1={this.state.dimensions.z - this.state.indices.z}
-                      x2={this.state.dimensions.y}
-                      y2={this.state.dimensions.z - this.state.indices.z}
-                      style={{
-                        stroke: 'rgb(255, 255, 255)',
-                        strokeWidth: 2,
-                      }}
-                />
-                <line x1={this.state.roiDimensions.y1}
-                      y1={this.state.roiDimensions.z2}
-                      x2={this.state.roiDimensions.y2}
-                      y2={this.state.roiDimensions.z2}
-                      style={{
-                        stroke: 'rgb(0, 255, 0)',
-                        strokeWidth: 2,
-                      }}
-                />
-                <line x1={this.state.roiDimensions.y1}
-                      y1={this.state.roiDimensions.z1}
-                      x2={this.state.roiDimensions.y2}
-                      y2={this.state.roiDimensions.z1}
-                      style={{
-                        stroke: 'rgb(0, 255, 0)',
-                        strokeWidth: 2,
-                      }}
-                />
-                <line x1={this.state.roiDimensions.y1}
-                      y1={this.state.roiDimensions.z1}
-                      x2={this.state.roiDimensions.y1}
-                      y2={this.state.roiDimensions.z2}
-                      style={{
-                        stroke: 'rgb(0, 0, 255)',
-                        strokeWidth: 2,
-                      }}
-                />
-                <line x1={this.state.roiDimensions.y2}
-                      y1={this.state.roiDimensions.z1}
-                      x2={this.state.roiDimensions.y2}
-                      y2={this.state.roiDimensions.z2}
-                      style={{
-                        stroke: 'rgb(0, 0, 255)',
-                        strokeWidth: 2,
-                      }}
-                />
-              </svg>
-              <div>
-                <TextField
-                    id="x"
-                    label="x"
-                    margin="normal"
-                    type="number"
-                    inputProps={{step: this.state.step}}
-                    value={this.state.indices.x}
-                    onChange={this.updateIndex('x')}
-                />
-              </div>
-            </Paper>
-          </Grid>
-          <Grid item sm={6}>
-            <Paper style={styles.paper}>
-              <TextField
-                  id="search"
-                  label="Patient Id"
-                  type="search"
-                  onChange={(event) => this.setState({
-                    searchValue: event.target.value,
-                  })}
-                  onKeyPress={this.handleSearchKeyPress}
-                  margin="normal"
-                  value={this.state.searchValue}
-              />
-              <br/>
-              <TextField
-                  id="x1"
-                  label="x1"
-                  margin="normal"
-                  value={this.state.roiDimensions.x1}
-                  onChange={this.updateBoundingBox('x1')}
-              />
-              <TextField
-                  id="x2"
-                  label="x2"
-                  margin="normal"
-                  value={this.state.roiDimensions.x2}
-                  onChange={this.updateBoundingBox('x2')}
-              />
-              <br/>
-              <TextField
-                  id="y1"
-                  label="y1"
-                  margin="normal"
-                  value={this.state.roiDimensions.y1}
-                  onChange={this.updateBoundingBox('y1')}
-              />
-              <TextField
-                  id="y2"
-                  label="y2"
-                  margin="normal"
-                  value={this.state.roiDimensions.y2}
-                  onChange={this.updateBoundingBox('y2')}
-              />
-              <br/>
-              <TextField
-                  id="z1"
-                  label="z1"
-                  margin="normal"
-                  value={this.state.roiDimensions.z1}
-                  onChange={this.updateBoundingBox('z1')}
-              />
-              <TextField
-                  id="z2"
-                  label="z2"
-                  margin="normal"
-                  value={this.state.roiDimensions.z2}
-                  onChange={this.updateBoundingBox('z2')}
-              />
-              <br/>
-              <Button
-                  variant="contained"
-              >
-                Update
-              </Button>
-            </Paper>
-          </Grid>
-          <Grid item sm={6}>
-            <Paper style={styles.paper}>
-              <h2>Axial</h2>
-              <svg height={this.state.dimensions.x}
-                   width={this.state.dimensions.y}
-              >
-                <image
-                    href={`/image/axial/${this.state.patientId}/${this.state.indices.z}`}/>
-                <line x1={this.state.roiDimensions.x1}
-                      y1={this.state.roiDimensions.y1}
-                      x2={this.state.roiDimensions.x2}
-                      y2={this.state.roiDimensions.y1}
-                      style={{
-                        stroke: 'rgb(255, 0, 0)',
-                        strokeWidth: 2,
-                      }}
-                />
-                <line x1={this.state.roiDimensions.x1}
-                      y1={this.state.roiDimensions.y2}
-                      x2={this.state.roiDimensions.x2}
-                      y2={this.state.roiDimensions.y2}
-                      style={{
-                        stroke: 'rgb(255, 0, 0)',
-                        strokeWidth: 2,
-                      }}
-                />
-                <line x1={this.state.roiDimensions.x1}
-                      y1={this.state.roiDimensions.y1}
-                      x2={this.state.roiDimensions.x1}
-                      y2={this.state.roiDimensions.y2}
-                      style={{
-                        stroke: 'rgb(0, 255, 0)',
-                        strokeWidth: 2,
-                      }}
-                />
-                <line x1={this.state.roiDimensions.x2}
-                      y1={this.state.roiDimensions.y1}
-                      x2={this.state.roiDimensions.x2}
-                      y2={this.state.roiDimensions.y2}
-                      style={{
-                        stroke: 'rgb(0, 255, 0)',
-                        strokeWidth: 2,
-                      }}
-                />
-              </svg>
-              <div>
-                <TextField
-                    id="z"
-                    label="z"
-                    margin="normal"
-                    inputProps={{step: this.state.step}}
-                    type="number"
-                    value={this.state.indices.z}
-                    onChange={this.updateIndex('z')}
-                />
-              </div>
-            </Paper>
-          </Grid>
-          <Grid item sm={6}>
-            <Paper style={styles.paper}>
-              <h2>3D</h2>
-              <span>
-                {/*<img*/}
-                {/*src={`/image/rendering/${this.state.patientId}/${this.state.threshold}`}*/}
-                {/*style={{maxWidth: 300, maxHeight: 300}}*/}
-                {/*/>*/}
-                {/*<Button> /!* 'TODO: Actually re-render with ROI zoom' *!/*/}
-                {/*Re-Render*/}
-                {/*</Button>*/}
-                3D View Not Ready Yet
-                </span>
-            </Paper>
-          </Grid>
-          <Grid item sm={6}>
-            <Paper style={styles.paper}>
-              <h2>Axial MIP</h2>
-              <svg height={this.state.dimensions.x}
-                   width={this.state.dimensions.y}
-              >
-                <image
-                    href={`/image/axial_mip/${this.state.patientId}/${this.state.indices.z}`}/>
-                <line x1={this.state.roiDimensions.x1}
-                      y1={this.state.roiDimensions.y1}
-                      x2={this.state.roiDimensions.x2}
-                      y2={this.state.roiDimensions.y1}
-                      style={{
-                        stroke: 'rgb(255, 0, 0)',
-                        strokeWidth: 2,
-                      }}
-                />
-                <line x1={this.state.roiDimensions.x1}
-                      y1={this.state.roiDimensions.y2}
-                      x2={this.state.roiDimensions.x2}
-                      y2={this.state.roiDimensions.y2}
-                      style={{
-                        stroke: 'rgb(255, 0, 0)',
-                        strokeWidth: 2,
-                      }}
-                />
-                <line x1={this.state.roiDimensions.x1}
-                      y1={this.state.roiDimensions.y1}
-                      x2={this.state.roiDimensions.x1}
-                      y2={this.state.roiDimensions.y2}
-                      style={{
-                        stroke: 'rgb(0, 255, 0)',
-                        strokeWidth: 2,
-                      }}
-                />
-                <line x1={this.state.roiDimensions.x2}
-                      y1={this.state.roiDimensions.y1}
-                      x2={this.state.roiDimensions.x2}
-                      y2={this.state.roiDimensions.y2}
-                      style={{
-                        stroke: 'rgb(0, 255, 0)',
-                        strokeWidth: 2,
-                      }}
-                />
-              </svg>
-              <div>
-                <TextField
-                    id="z"
-                    label="z"
-                    margin="normal"
-                    type="number"
-                    inputProps={{step: this.state.step}}
-                    value={this.state.indices.z}
-                    onChange={this.updateIndex('z')}
-                />
-              </div>
-            </Paper>
-          </Grid>
-          <div style={{display: 'hidden'}}>
-            {imagesToCache}
-          </div>
+      <Grid container spacing={16}>
+        <Grid item sm={6}>
+          <Paper style={styles.paper}>
+            <h2>User Guide</h2>
+            <p>Use the text fields below to set the bounding box.</p>
+            <p>To scroll, click on an input field and use the up/down arrow
+              keys.</p>
+            <p><em>Only use this app on Wi-Fi</em></p>
+            <h2>To Do</h2>
+            <p>Improve scrolling performance w/ image caching</p>
+          </Paper>
         </Grid>
+        <Grid item sm={6}>
+          <Paper style={styles.paper}>
+            <h2>Sagittal</h2>
+            <svg height={this.state.dimensions.z}
+                 width={this.state.dimensions.y}
+            >
+              <image
+                  href={`/image/sagittal/${this.state.patientId}/${this.state.indices.x}`}/>
+              <line x1="0" y1={this.state.dimensions.z - this.state.indices.z}
+                    x2={this.state.dimensions.y}
+                    y2={this.state.dimensions.z - this.state.indices.z}
+                    style={{
+                      stroke: 'rgb(255, 255, 255)',
+                      strokeWidth: 2,
+                    }}
+              />
+              <line x1={this.state.roiDimensions.y1}
+                    y1={this.state.roiDimensions.z2}
+                    x2={this.state.roiDimensions.y2}
+                    y2={this.state.roiDimensions.z2}
+                    style={{
+                      stroke: 'rgb(0, 255, 0)',
+                      strokeWidth: 2,
+                    }}
+              />
+              <line x1={this.state.roiDimensions.y1}
+                    y1={this.state.roiDimensions.z1}
+                    x2={this.state.roiDimensions.y2}
+                    y2={this.state.roiDimensions.z1}
+                    style={{
+                      stroke: 'rgb(0, 255, 0)',
+                      strokeWidth: 2,
+                    }}
+              />
+              <line x1={this.state.roiDimensions.y1}
+                    y1={this.state.roiDimensions.z1}
+                    x2={this.state.roiDimensions.y1}
+                    y2={this.state.roiDimensions.z2}
+                    style={{
+                      stroke: 'rgb(0, 0, 255)',
+                      strokeWidth: 2,
+                    }}
+              />
+              <line x1={this.state.roiDimensions.y2}
+                    y1={this.state.roiDimensions.z1}
+                    x2={this.state.roiDimensions.y2}
+                    y2={this.state.roiDimensions.z2}
+                    style={{
+                      stroke: 'rgb(0, 0, 255)',
+                      strokeWidth: 2,
+                    }}
+              />
+            </svg>
+            <div>
+              <TextField
+                  id="x"
+                  label="x"
+                  margin="normal"
+                  type="number"
+                  inputProps={{step: this.state.step}}
+                  value={this.state.indices.x}
+                  onChange={this.updateIndex('x')}
+              />
+            </div>
+          </Paper>
+        </Grid>
+        <Grid item sm={6}>
+          <Paper style={styles.paper}>
+            <TextField
+                id="search"
+                label="Patient Id"
+                type="search"
+                onChange={(event) => this.setState({
+                  searchValue: event.target.value,
+                })}
+                onKeyPress={this.handleSearchKeyPress}
+                margin="normal"
+                value={this.state.searchValue}
+            />
+            <br/>
+            <TextField
+                id="x1"
+                label="x1"
+                margin="normal"
+                value={this.state.roiDimensions.x1}
+                onChange={this.updateBoundingBox('x1')}
+            />
+            <TextField
+                id="x2"
+                label="x2"
+                margin="normal"
+                value={this.state.roiDimensions.x2}
+                onChange={this.updateBoundingBox('x2')}
+            />
+            <br/>
+            <TextField
+                id="y1"
+                label="y1"
+                margin="normal"
+                value={this.state.roiDimensions.y1}
+                onChange={this.updateBoundingBox('y1')}
+            />
+            <TextField
+                id="y2"
+                label="y2"
+                margin="normal"
+                value={this.state.roiDimensions.y2}
+                onChange={this.updateBoundingBox('y2')}
+            />
+            <br/>
+            <TextField
+                id="z1"
+                label="z1"
+                margin="normal"
+                value={this.state.roiDimensions.z1}
+                onChange={this.updateBoundingBox('z1')}
+            />
+            <TextField
+                id="z2"
+                label="z2"
+                margin="normal"
+                value={this.state.roiDimensions.z2}
+                onChange={this.updateBoundingBox('z2')}
+            />
+            <br/>
+            <Button
+                variant="contained"
+            >
+              Update
+            </Button>
+          </Paper>
+        </Grid>
+        <Grid item sm={6}>
+          <Paper style={styles.paper}>
+            <h2>Axial</h2>
+            <svg height={this.state.dimensions.x}
+                 width={this.state.dimensions.y}
+            >
+              <image
+                  href={`/image/axial/${this.state.patientId}/${this.state.indices.z}`}/>
+              <line x1={this.state.roiDimensions.x1}
+                    y1={this.state.roiDimensions.y1}
+                    x2={this.state.roiDimensions.x2}
+                    y2={this.state.roiDimensions.y1}
+                    style={{
+                      stroke: 'rgb(255, 0, 0)',
+                      strokeWidth: 2,
+                    }}
+              />
+              <line x1={this.state.roiDimensions.x1}
+                    y1={this.state.roiDimensions.y2}
+                    x2={this.state.roiDimensions.x2}
+                    y2={this.state.roiDimensions.y2}
+                    style={{
+                      stroke: 'rgb(255, 0, 0)',
+                      strokeWidth: 2,
+                    }}
+              />
+              <line x1={this.state.roiDimensions.x1}
+                    y1={this.state.roiDimensions.y1}
+                    x2={this.state.roiDimensions.x1}
+                    y2={this.state.roiDimensions.y2}
+                    style={{
+                      stroke: 'rgb(0, 255, 0)',
+                      strokeWidth: 2,
+                    }}
+              />
+              <line x1={this.state.roiDimensions.x2}
+                    y1={this.state.roiDimensions.y1}
+                    x2={this.state.roiDimensions.x2}
+                    y2={this.state.roiDimensions.y2}
+                    style={{
+                      stroke: 'rgb(0, 255, 0)',
+                      strokeWidth: 2,
+                    }}
+              />
+            </svg>
+            <div>
+              <TextField
+                  id="z"
+                  label="z"
+                  margin="normal"
+                  inputProps={{step: this.state.step}}
+                  type="number"
+                  value={this.state.indices.z}
+                  onChange={this.updateIndex('z')}
+              />
+            </div>
+          </Paper>
+        </Grid>
+        <Grid item sm={6}>
+          <Paper style={styles.paper}>
+            <h2>3D</h2>
+            <span>
+              {/*<img*/}
+              {/*src={`/image/rendering/${this.state.patientId}/${this.state.threshold}`}*/}
+              {/*style={{maxWidth: 300, maxHeight: 300}}*/}
+              {/*/>*/}
+              {/*<Button> /!* 'TODO: Actually re-render with ROI zoom' *!/*/}
+              {/*Re-Render*/}
+              {/*</Button>*/}
+              3D View Not Ready Yet
+              </span>
+          </Paper>
+        </Grid>
+        <Grid item sm={6}>
+          <Paper style={styles.paper}>
+            <h2>Axial MIP</h2>
+            <svg height={this.state.dimensions.x}
+                 width={this.state.dimensions.y}
+            >
+              <image
+                  href={`/image/axial_mip/${this.state.patientId}/${this.state.indices.z}`}/>
+              <line x1={this.state.roiDimensions.x1}
+                    y1={this.state.roiDimensions.y1}
+                    x2={this.state.roiDimensions.x2}
+                    y2={this.state.roiDimensions.y1}
+                    style={{
+                      stroke: 'rgb(255, 0, 0)',
+                      strokeWidth: 2,
+                    }}
+              />
+              <line x1={this.state.roiDimensions.x1}
+                    y1={this.state.roiDimensions.y2}
+                    x2={this.state.roiDimensions.x2}
+                    y2={this.state.roiDimensions.y2}
+                    style={{
+                      stroke: 'rgb(255, 0, 0)',
+                      strokeWidth: 2,
+                    }}
+              />
+              <line x1={this.state.roiDimensions.x1}
+                    y1={this.state.roiDimensions.y1}
+                    x2={this.state.roiDimensions.x1}
+                    y2={this.state.roiDimensions.y2}
+                    style={{
+                      stroke: 'rgb(0, 255, 0)',
+                      strokeWidth: 2,
+                    }}
+              />
+              <line x1={this.state.roiDimensions.x2}
+                    y1={this.state.roiDimensions.y1}
+                    x2={this.state.roiDimensions.x2}
+                    y2={this.state.roiDimensions.y2}
+                    style={{
+                      stroke: 'rgb(0, 255, 0)',
+                      strokeWidth: 2,
+                    }}
+              />
+            </svg>
+            <div>
+              <TextField
+                  id="z"
+                  label="z"
+                  margin="normal"
+                  type="number"
+                  inputProps={{step: this.state.step}}
+                  value={this.state.indices.z}
+                  onChange={this.updateIndex('z')}
+              />
+            </div>
+          </Paper>
+        </Grid>
+        <div style={{display: 'hidden'}}>
+          {imagesToCache}
+        </div>
+      </Grid>
     )
   }
 }

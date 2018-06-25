@@ -15,10 +15,14 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
 app = flask.Flask(__name__)
 
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'elvo-7136c1299dea.json'
-client = storage.Client(project='elvo-198322')
-bucket = client.bucket('elvos')
+# os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'elvo-7136c1299dea.json'
+# client = storage.Client(project='elvo-198322')
+# bucket = client.bucket('elvos')
 
+gcs_client = storage.Client.from_service_account_json(
+    '../credentials/client_secret.json'
+)
+bucket = gcs_client.get_bucket('elvos')
 
 # blob = bucket.get_blob(f'numpy/0DQO9A6UXUQHR8RA.npy')
 # blob.download_to_filename('tmp.npy')
