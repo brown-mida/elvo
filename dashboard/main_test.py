@@ -3,11 +3,10 @@ import os
 
 import pytest
 
-from main import app
-
 
 @pytest.mark.skipif('TRAVIS' in os.environ, reason='Database not on travis')
 def test_index():
+    from main import app  # TODO: Deal with TravisCI failure
     app.testing = True
     client = app.test_client()
 
@@ -17,6 +16,7 @@ def test_index():
 
 @pytest.mark.skipif('TRAVIS' in os.environ, reason='Database not on travis')
 def test_roi():
+    from main import app
     app.testing = True
     client = app.test_client()
     data = {
