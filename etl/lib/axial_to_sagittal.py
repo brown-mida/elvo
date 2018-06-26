@@ -22,6 +22,10 @@ if __name__ == '__main__':
         # blacklist
         if in_blob.name == 'numpy/LAUIHISOEZIM5ILF.npy':
             continue
+        elif in_blob.name == 'numpy/ALOUY4SF3BQKXQCZ.npy':
+            continue
+        elif in_blob.name == 'numpy/ABPO2BORDNF3OVL3.npy':
+            continue
 
         # perform the normal MIPing procedure
         logging.info(f'downloading {in_blob.name}')

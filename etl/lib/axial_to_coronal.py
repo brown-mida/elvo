@@ -19,11 +19,14 @@ if __name__ == '__main__':
     bucket = client.get_bucket('elvos')
 
     for in_blob in bucket.list_blobs(prefix='numpy'):
-        if in_blob.name <= 'numpy/ALOUY4SF3BQKXQCZ.npy':
-            continue
+
 
         # blacklist
         if in_blob.name == 'numpy/LAUIHISOEZIM5ILF.npy':
+            continue
+        elif in_blob.name == 'numpy/ALOUY4SF3BQKXQCZ.npy':
+            continue
+        elif in_blob.name == 'numpy/ABPO2BORDNF3OVL3.npy':
             continue
 
         # perform the normal MIPing procedure
