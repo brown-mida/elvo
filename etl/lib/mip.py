@@ -8,9 +8,17 @@ down into a single 2D array.
 import logging
 import numpy as np
 # from matplotlib import pyplot as plt
-import etl.lib.cloud_management as cloud
-import etl.lib.transforms as transforms
+import cloud_management as cloud
+import transforms
 
+TYPES = ['normal',
+         'multichannel',
+         'overlap']
+
+WHENCE = ['numpy',
+          'numpy/coronal',
+          'preprocess_luke/training',
+          'preprocess_luke/validation']
 
 def configure_logger():
     root_logger = logging.getLogger()
@@ -27,9 +35,48 @@ if __name__ == '__main__':
     client = cloud.authenticate()
     bucket = client.get_bucket('elvos')
 
+    # iterate through every source directory...
+    for location in WHENCE:
+        prefix = location + '/'
+        # every kind of MIP...
+        for type in TYPES:
+            logging.info(f"MIPing {view} images"
+                             f"to {type} MIP from prefix")
+
+            for in_blob in bucket.list_blobs(prefix=prefix):
+                # blacklist
+                if in_blob.name == prefix + 'LAUIHISOEZIM5ILF.npy':
+                    continue
+
+                # perform the normal MIPing procedure
+                logging.info(f'downloading {in_blob.name}')
+                input_arr = cloud.download_array(in_blob)
+                logging.info(f"blob shape: {input_arr.shape}")
+                cropped_arr = transforms.crop(input_arr, type)
+                not_extreme_arr = transforms.remove_extremes(cropped_arr)
+                logging.info(f'removed array extremes')
+                axial = transforms.mip_array(not_extreme_arr,
+                                             location,
+                                             type)
+
+                # if the source directory is one of the luke ones
+                if location != 'numpy':
+                    file_id = in_blob.name.split('/')[2]
+                    file_id = file_id.split('.')[0]
+                    # save to both a training and validation split
+                    # and a potential generator source directory
+                    cloud.save_npy_to_cloud(axial, file_id, location)
+                    cloud.save_npy_to_cloud(axial, file_id, 'luke')
+                # otherwise it's from numpy
+                else:
+                    file_id = in_blob.name.split('/')[1]
+                    file_id = file_id.split('.')[0]
+                    # save to the numpy generator source directory
+                    cloud.save_npy_to_cloud(axial, file_id, location)
+
+
     # from numpy directory
     for in_blob in bucket.list_blobs(prefix='numpy/'):
-
         # blacklist
         if in_blob.name == 'numpy/LAUIHISOEZIM5ILF.npy':
             continue
@@ -40,7 +87,6 @@ if __name__ == '__main__':
 
         cropped_arr = transforms.crop(input_arr)
         not_extreme_arr = transforms.remove_extremes(cropped_arr)
-
         logging.info(f'removed array extremes')
         # create folder w patient ID
         axial = transforms.mip_array(not_extreme_arr, 'numpy', 'axial')

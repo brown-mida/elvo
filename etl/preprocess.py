@@ -108,22 +108,7 @@ def create_labels_csv(bucket, positives_df, negatives_df) -> None:
     and 0, if negative.
     """
     labels = []
-    # new_negatives = {}
     blob: storage.Blob
-
-    # for blob in bucket.list_blobs(prefix=ELVOS_ANON + '/'):
-    #     patient_id = blob.name[len(ELVOS_ANON) + 1 : -EXTENSION_LENGTH]
-    #     if blob.name.endswith('.csv'):
-    #         continue  # Ignore the metadata CSV
-    #
-    #     if blob.time_created.date() >= datetime.date(2018, 6, 15):
-    #         continue  # skip old data
-    #
-    #     new_negatives[patient_id] = 0
-    #
-    # negatives_df.concat(new_negatives, ignore_index=True)
-    # print(negatives_df)
-    # return
 
     for blob in bucket.list_blobs(prefix=ELVOS_ANON + '/'):
         if blob.name.endswith('.csv'):
@@ -178,13 +163,6 @@ def main():
     positives_df, negatives_df = load_metadata(input_bucket)
     create_labels_csv(input_bucket, positives_df, negatives_df)
 
-    # old_labels_df = get_labels_df(input_bucket)
-
-    # new_labels = list(old_labels_df.values.T.tolist())
-    # print(new_labels)
-    # print(len(new_labels))
-    # return
-
     blob: storage.Blob
     for blob in input_bucket.list_blobs(prefix=ELVOS_ANON + '/'):
 
@@ -194,6 +172,13 @@ def main():
 
         if blob.name.endswith('.csv'):
             continue  # Ignore the metadata CSV
+
+        # if blob.name < 'ELVOs_anon/XHF16O9O7LFK1JNI.npy':
+        #     print(blob.name)
+        #     continue
+
+        if blob.time_created.date() >= datetime.date(2018, 6, 21):
+            continue
 
         try:
             logging.info(f'processing blob {blob.name}')
@@ -212,11 +197,6 @@ def main():
             os.chdir('..')
             shutil.rmtree('tmp')
             logging.error(e)
-
-    # old_labels_df.to_csv('labels_new.csv', index=False)
-    # labels_new_blob = storage.Blob('labels_new.csv', bucket=input_bucket)
-    # labels_new_blob.upload_from_filename('labels_new.csv')
-    # logging.info(f'label value counts {old_labels_df["label"].value_counts()}')
 
 
 if __name__ == '__main__':
