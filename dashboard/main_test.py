@@ -31,3 +31,4 @@ def test_roi():
     r = client.post('/roi',
                     data=json.dumps(data),
                     content_type='application/json')
+    assert r.status_code == 200

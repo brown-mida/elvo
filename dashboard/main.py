@@ -6,14 +6,14 @@ import os
 import flask
 import matplotlib as mpl
 import numpy as np
-
-mpl.use('Agg')
 from flask_sqlalchemy import SQLAlchemy
 from google.cloud import storage
-from matplotlib import image
-from matplotlib import pyplot as plt
-from skimage import measure
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+from skimage import measure
+
+mpl.use('Agg')
+from matplotlib import image  # noqa: E402
+from matplotlib import pyplot as plt  # noqa: E402
 
 app = flask.Flask(__name__)
 
@@ -129,7 +129,8 @@ def rendering(patient_id):
     z2 = int(flask.request.args.get('z2'))
 
     arr = _download_arr(patient_id)
-    roi = arr[min(x1, x2):max(x1, x2),
+    roi = arr[
+          min(x1, x2):max(x1, x2),
           min(y1, y2):max(y1, y2),
           min(z1, z2):max(z1, z2)]
     return _send_3d(roi)
