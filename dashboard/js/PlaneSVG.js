@@ -32,6 +32,7 @@ class PlaneSVG extends Component {
     return (
         <svg height={this.props.height}
              width={this.props.width}
+             onWheel={this.props.scrollEvent}
         >
           <image
               href={`/image/${this.props.viewType}/${this.props.patientId}/${this.props.posIndex}`}/>

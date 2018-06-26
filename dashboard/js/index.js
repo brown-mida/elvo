@@ -22,6 +22,7 @@ class App extends Component {
         z: 230, // TODO: Rename to axialIndex
       },
       threshold: 120,
+      scrollAmount: 2,
       dimensions: {
         z: 300,
         x: 250,
@@ -47,6 +48,7 @@ class App extends Component {
     this.updateImageCache = this.updateImageCache.bind(this);
     this.handleAnnotation = this.handleAnnotation.bind(this);
     this.updateRenderingParams = this.updateRenderingParams.bind(this);
+    this.updateIndexScroll = this.updateIndexScroll.bind(this);
   }
 
   handleSearchKeyPress(event) {
@@ -84,6 +86,25 @@ class App extends Component {
           return state;
         })
       }
+    }
+  }
+
+  updateIndexScroll(attr) {
+    return (event) => {
+      let newValue;
+      if (event.deltaY > 0) {
+        newValue = this.state.indices[attr] - this.state.scrollAmount;
+      } else {
+        newValue = this.state.indices[attr] + this.state.scrollAmount;
+        if (newValue < 0) {
+          newValue = 0;
+        }
+      }
+
+      this.setState((state) => {
+        state.indices[attr] = newValue;
+        return state;
+      });
     }
   }
 
@@ -275,6 +296,7 @@ class App extends Component {
                         roiY2={this.state.roiDimensions.z2}
                         posIndex={this.state.indices.x}
                         lineIndex={this.state.dimensions.z - this.state.indices.z}
+                        scrollEvent={this.updateIndexScroll('x')}
               />
               <div>
                 <TextField
@@ -307,6 +329,7 @@ class App extends Component {
                         roiY1={this.state.roiDimensions.y1}
                         roiY2={this.state.roiDimensions.y2}
                         posIndex={this.state.indices.z}
+                        scrollEvent={this.updateIndexScroll('z')}
               />
               <div>
                 <TextField
@@ -354,6 +377,7 @@ class App extends Component {
                         roiY1={this.state.roiDimensions.y1}
                         roiY2={this.state.roiDimensions.y2}
                         posIndex={this.state.indices.z}
+                        scrollEvent={this.updateIndexScroll('z')}
               />
             </div>
           </div>
@@ -371,6 +395,7 @@ class App extends Component {
                         roiY1={this.state.roiDimensions.z1}
                         roiY2={this.state.roiDimensions.z2}
                         posIndex={this.state.indices.y}
+                        scrollEvent={this.updateIndexScroll('y')}
               />
               <div>
                 <TextField
