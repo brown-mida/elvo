@@ -7,3 +7,8 @@ def test_index():
 
     r = client.get('/')
     assert r.status_code == 200
+
+
+def test_roi():
+    # TODO: Implement this test
+    pass

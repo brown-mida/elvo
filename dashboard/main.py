@@ -1,3 +1,4 @@
+import datetime
 import io
 import logging
 import os
@@ -7,6 +8,7 @@ import matplotlib as mpl
 import numpy as np
 
 mpl.use('Agg')
+from flask_sqlalchemy import SQLAlchemy
 from google.cloud import storage
 from matplotlib import image
 from matplotlib import pyplot as plt
@@ -17,6 +19,7 @@ app = flask.Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
 client = storage.Client(project='elvo-198322')
 bucket = client.bucket('elvos')
@@ -32,9 +35,6 @@ def configure_logger():
     root_logger.addHandler(handler)
 
 
-configure_logger()
-
-
 @app.route('/')
 def index():
     return flask.render_template('index.html')
@@ -45,10 +45,39 @@ def annotator():
     return flask.render_template('annotator.html')
 
 
+class Annotation(db.Model):
+    __tablename__ = 'annotations'
+    id_ = db.Column(db.Integer, primary_key=True)
+    created_by = db.Column(db.String(255))
+    created_at = db.Column(db.DateTime(timezone=True))
+    x1 = db.Column(db.Integer)
+    x2 = db.Column(db.Integer)
+    y1 = db.Column(db.Integer)
+    y2 = db.Column(db.Integer)
+    z1 = db.Column(db.Integer)
+    z2 = db.Column(db.Integer)
+
+
 @app.route('/roi', methods=['POST'])
 def roi():
-    # TODO: Database updates
-    pass
+    created_by = flask.request.args.get('created_by')
+    x1 = flask.request.args.get('x1')
+    x2 = flask.request.args.get('x2')
+    y1 = flask.request.args.get('y1')
+    y2 = flask.request.args.get('y2')
+    z1 = flask.request.args.get('z1')
+    z2 = flask.request.args.get('z2')
+
+    ann = Annotation(created_by=created_by,
+                     created_at=datetime.datetime.utcnow(),
+                     x1=x1,
+                     x2=x2,
+                     y1=y1,
+                     y2=y2,
+                     z1=z1,
+                     z2=z2)
+    db.session.add(ann)
+    db.session.commit()
 
 
 @app.route('/image/dimensions/<patient_id>/')
