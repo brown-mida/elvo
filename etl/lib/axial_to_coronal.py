@@ -19,7 +19,7 @@ if __name__ == '__main__':
     bucket = client.get_bucket('elvos')
 
     for in_blob in bucket.list_blobs(prefix='numpy'):
-        if in_blob.name < 'numpy/ABPO2BORDNF3OVL3.npy':
+        if in_blob.name <= 'numpy/ABPO2BORDNF3OVL3.npy':
             continue
 
         # blacklist
