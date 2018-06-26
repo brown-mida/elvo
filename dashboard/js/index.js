@@ -7,11 +7,7 @@ import Paper from "@material-ui/core/Paper/";
 import axios from 'axios'
 import Button from "@material-ui/core/Button";
 
-const styles = {
-  paper: {
-    padding: '10px',
-  }
-};
+import styles from './style.css';
 
 // TODO: Caching
 class App extends Component {
@@ -124,9 +120,9 @@ class App extends Component {
     console.log('in render, state is:', this.state);
     const imagesToCache = this.updateImageCache();
     return (
-      <Grid container spacing={16}>
-        <Grid item sm={6}>
-          <Paper style={styles.paper}>
+      <div>
+        <div className='guide'>
+          <Paper className='paper'>
             <h2>User Guide</h2>
             <p>Use the text fields below to set the bounding box.</p>
             <p>To scroll, click on an input field and use the up/down arrow
@@ -135,9 +131,9 @@ class App extends Component {
             <h2>To Do</h2>
             <p>Improve scrolling performance w/ image caching</p>
           </Paper>
-        </Grid>
-        <Grid item sm={6}>
-          <Paper style={styles.paper}>
+        </div>
+        <div className='sagittal'>
+          <Paper className='paper'>
             <h2>Sagittal</h2>
             <svg height={this.state.dimensions.z}
                  width={this.state.dimensions.y}
@@ -191,19 +187,20 @@ class App extends Component {
             </svg>
             <div>
               <TextField
-                  id="x"
-                  label="x"
-                  margin="normal"
-                  type="number"
-                  inputProps={{step: this.state.step}}
-                  value={this.state.indices.x}
-                  onChange={this.updateIndex('x')}
+                className='text'
+                id="x"
+                label="x"
+                margin="normal"
+                type="number"
+                inputProps={{step: this.state.step}}
+                value={this.state.indices.x}
+                onChange={this.updateIndex('x')}
               />
             </div>
           </Paper>
-        </Grid>
-        <Grid item sm={6}>
-          <Paper style={styles.paper}>
+        </div>
+        <div className='input'>
+          <Paper className='paper'>
             <TextField
                 id="search"
                 label="Patient Id"
@@ -254,11 +251,11 @@ class App extends Component {
                 onChange={this.updateBoundingBox('z1')}
             />
             <TextField
-                id="z2"
-                label="z2"
-                margin="normal"
-                value={this.state.roiDimensions.z2}
-                onChange={this.updateBoundingBox('z2')}
+              id="z2"
+              label="z2"
+              margin="normal"
+              value={this.state.roiDimensions.z2}
+              onChange={this.updateBoundingBox('z2')}
             />
             <br/>
             <Button
@@ -267,9 +264,9 @@ class App extends Component {
               Update
             </Button>
           </Paper>
-        </Grid>
-        <Grid item sm={6}>
-          <Paper style={styles.paper}>
+        </div>
+        <div className='axial'>
+          <Paper className='paper'>
             <h2>Axial</h2>
             <svg height={this.state.dimensions.x}
                  width={this.state.dimensions.y}
@@ -315,19 +312,20 @@ class App extends Component {
             </svg>
             <div>
               <TextField
-                  id="z"
-                  label="z"
-                  margin="normal"
-                  inputProps={{step: this.state.step}}
-                  type="number"
-                  value={this.state.indices.z}
-                  onChange={this.updateIndex('z')}
+                className='text'
+                id="z"
+                label="z"
+                margin="normal"
+                inputProps={{step: this.state.step}}
+                type="number"
+                value={this.state.indices.z}
+                onChange={this.updateIndex('z')}
               />
             </div>
           </Paper>
-        </Grid>
-        <Grid item sm={6}>
-          <Paper style={styles.paper}>
+        </div>
+        <div className='threedimensions'>
+          <Paper className='paper'>
             <h2>3D</h2>
             <span>
               {/*<img*/}
@@ -340,9 +338,9 @@ class App extends Component {
               3D View Not Ready Yet
               </span>
           </Paper>
-        </Grid>
-        <Grid item sm={6}>
-          <Paper style={styles.paper}>
+        </div>
+        <div className='mip' >
+          <Paper className='paper'>
             <h2>Axial MIP</h2>
             <svg height={this.state.dimensions.x}
                  width={this.state.dimensions.y}
@@ -388,21 +386,22 @@ class App extends Component {
             </svg>
             <div>
               <TextField
-                  id="z"
-                  label="z"
-                  margin="normal"
-                  type="number"
-                  inputProps={{step: this.state.step}}
-                  value={this.state.indices.z}
-                  onChange={this.updateIndex('z')}
+                className='text'
+                id="z"
+                label="z"
+                margin="normal"
+                type="number"
+                inputProps={{step: this.state.step}}
+                value={this.state.indices.z}
+                onChange={this.updateIndex('z')}
               />
             </div>
           </Paper>
-        </Grid>
+        </div>
         <div style={{display: 'hidden'}}>
           {imagesToCache}
         </div>
-      </Grid>
+      </div>
     )
   }
 }

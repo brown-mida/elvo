@@ -1,0 +1,60 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: 'Roboto', sans-serif;
+}
+
+.paper {
+    padding: 10px;
+    height: 50vh;
+    position: relative;
+}
+
+.guide {
+    position: absolute;
+    width: 30vw;
+    height: 50vh;
+}
+
+.sagittal {
+    position: absolute;
+    width: 35vw;
+    height: 50vh;
+    left: 30vw;
+}
+
+.input {
+    position: absolute;
+    width: 30vw;
+    height: 50vh;
+    top: 50vh;
+}
+
+.axial {
+    position: absolute;
+    width: 35vw;
+    height: 50vh;
+    left: 65vw;
+}
+
+.threedimensions {
+    position: absolute;
+    width: 35vw;
+    height: 50vh;
+    top: 50vh;
+    left: 65vw;
+}
+
+.mip {
+    position: absolute;
+    width: 35vw;
+    height: 50vh;
+    left: 30vw;
+    top: 50vh;
+}
+
+.text {
+    position: absolute !important;
+    left: 50%;
+    top: 20%;
+}
