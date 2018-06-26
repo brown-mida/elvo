@@ -60,13 +60,15 @@ class Annotation(db.Model):
 
 @app.route('/roi', methods=['POST'])
 def roi():
-    created_by = flask.request.args.get('created_by')
-    x1 = flask.request.args.get('x1')
-    x2 = flask.request.args.get('x2')
-    y1 = flask.request.args.get('y1')
-    y2 = flask.request.args.get('y2')
-    z1 = flask.request.args.get('z1')
-    z2 = flask.request.args.get('z2')
+    data = flask.request.values
+    logging.info(f'creating annotation: {data}')
+    created_by = data['created_by']
+    x1 = data['x1']
+    x2 = data['x2']
+    y1 = data['y1']
+    y2 = data['y2']
+    z1 = data['z1']
+    z2 = data['z2']
 
     ann = Annotation(created_by=created_by,
                      created_at=datetime.datetime.utcnow(),
