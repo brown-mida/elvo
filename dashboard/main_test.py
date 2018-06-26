@@ -29,4 +29,5 @@ def test_roi():
         'z2': -1,
     }
     r = client.post('/roi',
-                    data=json.dumps(data))
+                    data=json.dumps(data),
+                    content_type='application/json')

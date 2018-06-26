@@ -60,7 +60,7 @@ class Annotation(db.Model):
 
 @app.route('/roi', methods=['POST'])
 def roi():
-    data = flask.request.values
+    data = flask.request.json
     logging.info(f'creating annotation: {data}')
     created_by = data['created_by']
     x1 = data['x1']
@@ -80,6 +80,8 @@ def roi():
                      z2=z2)
     db.session.add(ann)
     db.session.commit()
+    logging.info(f'inserted annotation: {ann}')
+    return str(ann.id_)
 
 
 @app.route('/image/dimensions/<patient_id>/')

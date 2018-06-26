@@ -40,6 +40,7 @@ class App extends Component {
         z2: 200,
       },
       step: 4,
+      createdBy: '',
     };
 
     // Needed to bind this to class
@@ -47,6 +48,7 @@ class App extends Component {
     this.getImageDimensions = this.getImageDimensions.bind(this);
     this.updateBoundingBox = this.updateBoundingBox.bind(this);
     this.updateImageCache = this.updateImageCache.bind(this);
+    this.handleAnnotation = this.handleAnnotation.bind(this);
   }
 
   handleSearchKeyPress(event) {
@@ -120,6 +122,26 @@ class App extends Component {
         })
   }
 
+  handleAnnotation(event) {
+    if (this.state.createdBy === '') {
+      console.error('Username cannot be empty');
+      return;
+    }
+    const data = {
+      created_by: this.state.createdBy,
+      x1: this.state.roiDimensions.x1,
+      x2: this.state.roiDimensions.x2,
+      y1: this.state.roiDimensions.y1,
+      y2: this.state.roiDimensions.y2,
+      z1: this.state.roiDimensions.z1,
+      z2: this.state.roiDimensions.z2,
+    };
+    axios.post('/roi', data)
+        .catch((error) => {
+          console.error('failed to insert annotation:', data);
+        });
+  }
+
   render() {
     console.log('in render, state is:', this.state);
     const imagesToCache = this.updateImageCache();
@@ -144,9 +166,9 @@ class App extends Component {
               >
                 <image
                     href={`/image/sagittal/${this.state.patientId}/${this.state.indices.x}`}/>
-                <line x1="0" y1={this.state.dimensions.z - this.state.indices.z}
+                <line x1="0" y1={this.state.indices.z}
                       x2={this.state.dimensions.y}
-                      y2={this.state.dimensions.z - this.state.indices.z}
+                      y2={this.state.indices.z}
                       style={{
                         stroke: 'rgb(255, 255, 255)',
                         strokeWidth: 2,
@@ -261,10 +283,20 @@ class App extends Component {
                   onChange={this.updateBoundingBox('z2')}
               />
               <br/>
+              <TextField
+                  id="created_by"
+                  label="Username"
+                  onChange={(event) => this.setState({
+                    createdBy: event.target.value,
+                  })}
+                  margin="normal"
+                  value={this.state.createdBy}
+              />
               <Button
                   variant="contained"
+                  onClick={this.handleAnnotation}
               >
-                Update
+                Create Annotation
               </Button>
             </Paper>
           </Grid>
