@@ -44,7 +44,7 @@ def compress_files():
         logging.info(f'downloading {blob.name}, patient id: {patient_id}')
         blob.download_to_file(in_stream)
         in_stream.seek(0)
-        arr = np.load(in_stream.seek(0))
+        arr = np.load(in_stream)
         arrays[patient_id] = arr
 
     if len(arrays) > 0:  # Upload remaining files
@@ -70,7 +70,7 @@ notify_slack = SlackAPIPostOperator(
     channel='i-utra',
     username='airflow',
     token=os.environ['SLACK_TOKEN'],
-    text=f'gcs://elvos/ELVOs_anon to gcs://elvos/numpy workflow finished'
+    text=f'gs://elvos/numpy to gs://elvos/numpy_compress workflow finished'
          f' running. Check the http://104.196.51.205:8080/ to see the results',
     dag=dag,
 )
