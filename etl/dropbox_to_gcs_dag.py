@@ -12,4 +12,5 @@ default_args = {
 dag = DAG(dag_id='dropbox_to_gcs', default_args=default_args)
 
 op = BashOperator(task_id='dropbox_to_gcs_op',
-                  bash_command='python3 ./etl/dropbox_to_gcs.py')
+                  bash_command='python3 ./etl/dropbox_to_gcs.py',
+                  dag=dag)
