@@ -35,7 +35,7 @@ class App extends Component {
         z1: 100,
         z2: 200,
       },
-      renderingParams: '',
+      renderingParams: 'x1=100&x2=110&y1=100&y2=110&z1=100&z2=110',
       step: 4,
       createdBy: '',
     };
