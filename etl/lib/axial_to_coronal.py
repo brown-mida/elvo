@@ -20,6 +20,8 @@ if __name__ == '__main__':
 
     for in_blob in bucket.list_blobs(prefix='numpy'):
 
+        if in_blob.name <= 'numpy/CGQFS5PB627OWLL7.npy':
+            continue
 
         # blacklist
         if in_blob.name == 'numpy/LAUIHISOEZIM5ILF.npy':
