@@ -10,12 +10,11 @@ default_args = {
     'start_date': datetime(2018, 6, 26, 8),
 }
 
-dag = DAG(dag_id='dropbox_to_gcs',
-          default_args=default_args)
+dag = DAG(dag_id='gcs_dicom_to_numpy', default_args=default_args)
 
-op = BashOperator(task_id='dropbox_to_gcs_op',
+op = BashOperator(task_id='dicom_to_numpy_op',
                   bash_command='python3 /home/lukezhu/elvo-analysis/'
-                               'etl/dropbox_to_gcs.py',
+                               'etl/preprocess.py',
                   dag=dag)
 
 notify_slack = SlackAPIPostOperator(
@@ -23,8 +22,8 @@ notify_slack = SlackAPIPostOperator(
     channel='i-utra',
     username='airflow',
     token=os.environ['SLACK_TOKEN'],
-    text=f'Dropbox to gcs://elvos/ELVOs_anon workflow finished running. '
-         f'Check the http://104.196.51.205:8080/ to see the results',
+    text=f'gcs://elvos/ELVOs_anon to gcs://elvos/numpy workflow finished'
+         f' running. Check the http://104.196.51.205:8080/ to see the results',
     dag=dag,
 )
 
