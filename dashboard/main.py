@@ -15,19 +15,16 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
 app = flask.Flask(__name__)
 
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'elvo-7136c1299dea.json'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 client = storage.Client(project='elvo-198322')
 bucket = client.bucket('elvos')
 
 
-# blob = bucket.get_blob(f'numpy/0DQO9A6UXUQHR8RA.npy')
-# blob.download_to_filename('tmp.npy')
-
-
 def configure_logger():
     root_logger = logging.getLogger()
-    root_logger.setLevel(logging.DEBUG)  # TODO: Change level
+    root_logger.setLevel(logging.INFO)
     handler = logging.StreamHandler()
     formatter = logging.Formatter(
         fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -48,6 +45,12 @@ def annotator():
     return flask.render_template('annotator.html')
 
 
+@app.route('/roi', methods=['POST'])
+def roi():
+    # TODO: Database updates
+    pass
+
+
 @app.route('/image/dimensions/<patient_id>/')
 def dimensions(patient_id):
     arr = _download_arr(patient_id)
@@ -62,65 +65,29 @@ def dimensions(patient_id):
 @app.route('/image/axial/<patient_id>/<int:slice_i>')
 def axial(patient_id, slice_i):
     arr = _download_arr(patient_id)
-    out_stream = io.BytesIO()
-    image.imsave(out_stream,
-                 arr[slice_i],
-                 vmin=-200,
-                 vmax=400,
-                 cmap='gray',
-                 format='png')
-    out_stream.seek(0)
-    return flask.send_file(out_stream,
-                           mimetype='image/png')
+    return _send_slice(arr[slice_i])
 
 
 @app.route('/image/axial_mip/<patient_id>/<int:slice_i>')
 def axial_mip(patient_id, slice_i):
     arr = _download_arr(patient_id)
-    out_stream = io.BytesIO()
-    image.imsave(out_stream,
-                 arr[slice_i:slice_i + 24].max(axis=0),
-                 vmin=-200,
-                 vmax=400,
-                 cmap='gray',
-                 format='png')
-    out_stream.seek(0)
-    return flask.send_file(out_stream,
-                           mimetype='image/png')
+    return _send_slice(arr[slice_i:slice_i + 24].max(axis=0))
 
 
 @app.route('/image/sagittal/<patient_id>/<int:slice_k>')
 def sagittal(patient_id, slice_k):
     arr = _download_arr(patient_id)
-    out_stream = io.BytesIO()
-    image.imsave(out_stream,
-                 np.flip(arr[:, :, slice_k], 0),
-                 vmin=-200,
-                 vmax=400,
-                 cmap='gray',
-                 format='png')
-    out_stream.seek(0)
-    return flask.send_file(out_stream,
-                           mimetype='image/png')
+    return _send_slice(np.flip(arr[:, :, slice_k], 0))
 
 
 @app.route('/image/coronal/<patient_id>/<slice_j>')
 def coronal(patient_id, slice_j):
     arr = _download_arr(patient_id)
-    out_stream = io.BytesIO()
-    image.imsave(out_stream,
-                 np.flip(arr[:, :, slice_j], 0),
-                 vmin=-200,
-                 vmax=400,
-                 cmap='gray',
-                 format='png')
-    out_stream.seek(0)
-    return flask.send_file(out_stream,
-                           mimetype='image/png')
+    return _send_slice(arr[:, slice_j, :])
 
 
-@app.route('/image/rendering/<patient_id>/<threshold>')
-def rendering(patient_id, threshold):
+@app.route('/image/rendering/<patient_id>')
+def rendering(patient_id):
     x1 = flask.request.args.get('x1')
     x2 = flask.request.args.get('x2')
     y1 = flask.request.args.get('y1')
@@ -129,19 +96,31 @@ def rendering(patient_id, threshold):
     z2 = flask.request.args.get('z2')
 
     arr = _download_arr(patient_id)
-    out_stream = io.BytesIO()
-    logging.debug('creating 3d rendering')
     roi = arr[min(x1, x2):max(x1, x2),
           min(y1, y2):max(y1, y2),
           min(z1, z2):max(z1, z2)]
-    save_3d(out_stream, roi, threshold=threshold)
+    return _send_3d(roi)
+
+
+def _send_3d(roi: np.ndarray):
+    out_stream = io.BytesIO()
+    logging.debug('creating 3d rendering')
+    _save_3d(out_stream, roi)
     out_stream.seek(0)
     logging.debug('sending 3d rendering')
     return flask.send_file(out_stream,
                            mimetype='image/png')
 
 
-def save_3d(file, arr, threshold=150):
+def _save_3d(file, arr: np.ndarray, threshold=150):
+    """
+    Saves the array to the file-like object
+
+    :param file: The file-like object to save the array to
+    :param arr: The array to save
+    :param threshold: Contour value to search for isosurfaces
+    :return:
+    """
     # Position the scan upright, so the head of the patient would
     # be at the top facing the camera
     p = arr.transpose(2, 1, 0)
@@ -167,6 +146,19 @@ def _download_arr(patient_id: str) -> np.ndarray:
     blob.download_to_file(in_stream)
     in_stream.seek(0)
     return np.load(in_stream)
+
+
+def _send_slice(arr: np.ndarray):
+    out_stream = io.BytesIO()
+    image.imsave(out_stream,
+                 np.flip(arr, 0),
+                 vmin=-200,
+                 vmax=400,
+                 cmap='gray',
+                 format='png')
+    out_stream.seek(0)
+    return flask.send_file(out_stream,
+                           mimetype='image/png')
 
 
 def validator():
