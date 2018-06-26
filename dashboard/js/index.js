@@ -36,6 +36,11 @@ class App extends Component {
         z1: 100,
         z2: 200,
       },
+      holdingDown: false,
+      offset: {
+        x: 0,
+        y: 0,
+      },
       renderingParams: 'x1=100&x2=110&y1=100&y2=110&z1=100&z2=110',
       step: 4,
       createdBy: '',
@@ -49,6 +54,9 @@ class App extends Component {
     this.handleAnnotation = this.handleAnnotation.bind(this);
     this.updateRenderingParams = this.updateRenderingParams.bind(this);
     this.updateIndexScroll = this.updateIndexScroll.bind(this);
+    this.handleMouseDown = this.handleMouseDown.bind(this);
+    this.handleMouseMove = this.handleMouseMove.bind(this)
+    this.handleMouseUp = this.handleMouseUp.bind(this);
   }
 
   handleSearchKeyPress(event) {
@@ -75,6 +83,46 @@ class App extends Component {
         });
       }
     }
+  }
+
+  handleMouseDown(attr1, attr2) {
+    return (e) => {
+      let elem = e.target.getBoundingClientRect();
+      const x = e.clientX - elem.left;
+      const y = e.clientY - elem.top;
+      this.setState((state) => {
+        state.roiDimensions[`${attr1}1`] = x;
+        state.roiDimensions[`${attr2}1`] = y;
+        state.roiDimensions[`${attr1}2`] = x;
+        state.roiDimensions[`${attr2}2`] = y;
+        state.holdingDown = true;
+        state.offset = {
+          x: elem.left,
+          y: elem.top,
+        };
+        return state;
+      });
+    }
+  }
+
+  handleMouseMove(attr1, attr2) {
+    return (e) => {
+      if (this.state.holdingDown) {
+        const x = e.clientX - this.state.offset.x;
+        const y = e.clientY - this.state.offset.y;
+        this.setState((state) => {
+          state.roiDimensions[`${attr1}2`] = x;
+          state.roiDimensions[`${attr2}2`] = y;
+          return state;
+        });
+      }
+    }
+  }
+
+  handleMouseUp() {
+    this.setState({
+      holdingDown: false,
+    });
   }
 
   updateIndex(attr) {
@@ -297,6 +345,9 @@ class App extends Component {
                         posIndex={this.state.indices.x}
                         lineIndex={this.state.dimensions.z - this.state.indices.z}
                         scrollEvent={this.updateIndexScroll('x')}
+                        mouseDownEvent={this.handleMouseDown('y', 'z')}
+                        mouseMoveEvent={this.handleMouseMove('y', 'z')}
+                        mouseUpEvent={this.handleMouseUp}
               />
               <div>
                 <TextField
@@ -330,6 +381,9 @@ class App extends Component {
                         roiY2={this.state.roiDimensions.y2}
                         posIndex={this.state.indices.z}
                         scrollEvent={this.updateIndexScroll('z')}
+                        mouseDownEvent={this.handleMouseDown('x', 'y')}
+                        mouseMoveEvent={this.handleMouseMove('x', 'y')}
+                        mouseUpEvent={this.handleMouseUp}
               />
               <div>
                 <TextField
@@ -378,6 +432,9 @@ class App extends Component {
                         roiY2={this.state.roiDimensions.y2}
                         posIndex={this.state.indices.z}
                         scrollEvent={this.updateIndexScroll('z')}
+                        mouseDownEvent={this.handleMouseDown('x', 'y')}
+                        mouseMoveEvent={this.handleMouseMove('x', 'y')}
+                        mouseUpEvent={this.handleMouseUp}
               />
             </div>
           </div>
@@ -395,7 +452,11 @@ class App extends Component {
                         roiY1={this.state.roiDimensions.z1}
                         roiY2={this.state.roiDimensions.z2}
                         posIndex={this.state.indices.y}
+                        lineIndex={this.state.dimensions.z - this.state.indices.z}
                         scrollEvent={this.updateIndexScroll('y')}
+                        mouseDownEvent={this.handleMouseDown('x', 'z')}
+                        mouseMoveEvent={this.handleMouseMove('x', 'z')}
+                        mouseUpEvent={this.handleMouseUp}
               />
               <div>
                 <TextField
