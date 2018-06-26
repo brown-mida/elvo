@@ -24,7 +24,7 @@ class App extends Component {
       searchValue: '0DQO9A6UXUQHR8RA',
       indices: {
         x: 125, // TODO: Rename to sagittalIndex
-        y: 0, // TODO: Rename to coronalIndex
+        y: 125, // TODO: Rename to coronalIndex
         z: 230, // TODO: Rename to axialIndex
       },
       threshold: 120,
@@ -41,6 +41,7 @@ class App extends Component {
         z1: 100,
         z2: 200,
       },
+      renderingParams: '',
       step: 4,
       createdBy: '',
     };
@@ -51,6 +52,7 @@ class App extends Component {
     this.updateBoundingBox = this.updateBoundingBox.bind(this);
     this.updateImageCache = this.updateImageCache.bind(this);
     this.handleAnnotation = this.handleAnnotation.bind(this);
+    this.updateRenderingParams = this.updateRenderingParams.bind(this);
   }
 
   handleSearchKeyPress(event) {
@@ -122,6 +124,20 @@ class App extends Component {
         .catch((error) => {
           console.error(error);
         })
+  }
+
+  updateRenderingParams() {
+    const renderingParams = (
+        `x1=${this.state.roiDimensions.x1}&` +
+        `x2=${this.state.roiDimensions.x2}&` +
+        `y1=${this.state.roiDimensions.y1}&` +
+        `y2=${this.state.roiDimensions.y2}&` +
+        `z1=${this.state.roiDimensions.z1}&` +
+        `z2=${this.state.roiDimensions.z2}`
+    );
+    this.setState({
+      renderingParams: renderingParams,
+    });
   }
 
   handleAnnotation(event) {
@@ -309,14 +325,16 @@ class App extends Component {
             <Paper style={styles.paper}>
               <h2>3D</h2>
               <span>
-                {/*<img*/}
-                {/*src={`/image/rendering/${this.state.patientId}/${this.state.threshold}`}*/}
-                {/*style={{maxWidth: 300, maxHeight: 300}}*/}
-                {/*/>*/}
-                {/*<Button> /!* 'TODO: Actually re-render with ROI zoom' *!/*/}
-                {/*Re-Render*/}
-                {/*</Button>*/}
-                3D View Not Ready Yet
+                <img
+                    src={`/image/rendering/${this.state.patientId}?${this.state.renderingParams}`}
+                    style={{maxWidth: 300, maxHeight: 300}}
+                />
+                <Button
+                    variant="contained"
+                    onClick={this.updateRenderingParams}
+                >
+                  Update Rendering
+                </Button>
                 </span>
             </Paper>
           </Grid>
@@ -344,6 +362,34 @@ class App extends Component {
                     inputProps={{step: this.state.step}}
                     value={this.state.indices.z}
                     onChange={this.updateIndex('z')}
+                />
+              </div>
+            </Paper>
+          </Grid>
+          <Grid item sm={6}>
+            <Paper style={styles.paper}>
+              <h2>Coronal</h2>
+              <PlaneSVG viewType={'coronal'}
+                        patientId={this.state.patientId}
+                        width={this.state.dimensions.x}
+                        height={this.state.dimensions.z}
+                        colorX={'rgb(255, 0, 0)'}
+                        colorY={'rgb(0, 0, 255)'}
+                        roiX1={this.state.roiDimensions.x1}
+                        roiX2={this.state.roiDimensions.x2}
+                        roiY1={this.state.roiDimensions.z1}
+                        roiY2={this.state.roiDimensions.z2}
+                        posIndex={this.state.indices.y}
+              />
+              <div>
+                <TextField
+                    id="y"
+                    label="y"
+                    margin="normal"
+                    type="number"
+                    inputProps={{step: this.state.step}}
+                    value={this.state.indices.y}
+                    onChange={this.updateIndex('y')}
                 />
               </div>
             </Paper>

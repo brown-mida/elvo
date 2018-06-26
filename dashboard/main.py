@@ -113,7 +113,7 @@ def sagittal(patient_id, slice_k):
     return _send_slice(arr[:, :, slice_k])
 
 
-@app.route('/image/coronal/<patient_id>/<slice_j>')
+@app.route('/image/coronal/<patient_id>/<int:slice_j>')
 def coronal(patient_id, slice_j):
     arr = _download_arr(patient_id)
     return _send_slice(arr[:, slice_j, :])
@@ -121,12 +121,12 @@ def coronal(patient_id, slice_j):
 
 @app.route('/image/rendering/<patient_id>')
 def rendering(patient_id):
-    x1 = flask.request.args.get('x1')
-    x2 = flask.request.args.get('x2')
-    y1 = flask.request.args.get('y1')
-    y2 = flask.request.args.get('y2')
-    z1 = flask.request.args.get('z1')
-    z2 = flask.request.args.get('z2')
+    x1 = int(flask.request.args.get('x1'))
+    x2 = int(flask.request.args.get('x2'))
+    y1 = int(flask.request.args.get('y1'))
+    y2 = int(flask.request.args.get('y2'))
+    z1 = int(flask.request.args.get('z1'))
+    z2 = int(flask.request.args.get('z2'))
 
     arr = _download_arr(patient_id)
     roi = arr[min(x1, x2):max(x1, x2),
