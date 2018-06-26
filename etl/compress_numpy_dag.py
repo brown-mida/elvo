@@ -36,7 +36,7 @@ def compress_files():
         if len(arrays) > 10:
             logging.info(f'uploading arrays: {list(arrays.keys())}')
             save_arrays(arrays,
-                        'numpy_compressed/' + str(i),
+                        f'numpy_compressed/{i}.npz',
                         bucket)
             arrays = {}
             i += 1
@@ -50,7 +50,7 @@ def compress_files():
     if len(arrays) > 0:  # Upload remaining files
         logging.info(f'uploading arrays: {list(arrays.keys())}')
         save_arrays(arrays,
-                    'numpy_compressed/' + str(i),
+                    f'numpy_compressed/{i}.npz',
                     bucket)
 
 
