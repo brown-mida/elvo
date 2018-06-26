@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 
-import Grid from '@material-ui/core/Grid'
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper/";
 import axios from 'axios'
 import Button from "@material-ui/core/Button";
 
 import styles from './style.css';
+import PlaneSVG from './PlaneSVG';
 
 // TODO: Caching
 class App extends Component {
@@ -18,7 +18,7 @@ class App extends Component {
       searchValue: '0DQO9A6UXUQHR8RA',
       indices: {
         x: 125, // TODO: Rename to sagittalIndex
-        y: 0, // TODO: Rename to coronalIndex
+        y: 125, // TODO: Rename to coronalIndex
         z: 230, // TODO: Rename to axialIndex
       },
       threshold: 120,
@@ -35,7 +35,9 @@ class App extends Component {
         z1: 100,
         z2: 200,
       },
+      renderingParams: '',
       step: 4,
+      createdBy: '',
     };
 
     // Needed to bind this to class
@@ -43,6 +45,8 @@ class App extends Component {
     this.getImageDimensions = this.getImageDimensions.bind(this);
     this.updateBoundingBox = this.updateBoundingBox.bind(this);
     this.updateImageCache = this.updateImageCache.bind(this);
+    this.handleAnnotation = this.handleAnnotation.bind(this);
+    this.updateRenderingParams = this.updateRenderingParams.bind(this);
   }
 
   handleSearchKeyPress(event) {
@@ -61,7 +65,12 @@ class App extends Component {
         this.setState((state) => {
           state.roiDimensions[attr] = value;
           return state;
-        })
+        });
+      } else {
+        this.setState((state) => {
+          state.roiDimensions[attr] = undefined;
+          return state;
+        });
       }
     }
   }
@@ -116,296 +125,273 @@ class App extends Component {
         })
   }
 
-  render() {
-    console.log('in render, state is:', this.state);
-    const imagesToCache = this.updateImageCache();
+  updateRenderingParams() {
+    const renderingParams = (
+        `x1=${this.state.roiDimensions.x1}&` +
+        `x2=${this.state.roiDimensions.x2}&` +
+        `y1=${this.state.roiDimensions.y1}&` +
+        `y2=${this.state.roiDimensions.y2}&` +
+        `z1=${this.state.roiDimensions.z1}&` +
+        `z2=${this.state.roiDimensions.z2}`
+    );
+    this.setState({
+      renderingParams: renderingParams,
+    });
+  }
+
+  handleAnnotation(event) {
+    if (this.state.createdBy === '') {
+      console.error('Username cannot be empty');
+      return;
+    }
+    const data = {
+      created_by: this.state.createdBy,
+      x1: this.state.roiDimensions.x1,
+      x2: this.state.roiDimensions.x2,
+      y1: this.state.roiDimensions.y1,
+      y2: this.state.roiDimensions.y2,
+      z1: this.state.roiDimensions.z1,
+      z2: this.state.roiDimensions.z2,
+    };
+    axios.post('/roi', data)
+        .catch((error) => {
+          console.error('failed to insert annotation:', data);
+        });
+  }
+
+
+  static userGuide() {
     return (
-      <div>
-        <div className='guide'>
-          <Paper className='paper'>
-            <h2>User Guide</h2>
-            <p>Use the text fields below to set the bounding box.</p>
-            <p>To scroll, click on an input field and use the up/down arrow
-              keys.</p>
-            <p><em>Only use this app on Wi-Fi</em></p>
-            <h2>To Do</h2>
-            <p>Improve scrolling performance w/ image caching</p>
-          </Paper>
-        </div>
-        <div className='sagittal'>
-          <Paper className='paper'>
-            <h2>Sagittal</h2>
-            <svg height={this.state.dimensions.z}
-                 width={this.state.dimensions.y}
-            >
-              <image
-                  href={`/image/sagittal/${this.state.patientId}/${this.state.indices.x}`}/>
-              <line x1="0" y1={this.state.dimensions.z - this.state.indices.z}
-                    x2={this.state.dimensions.y}
-                    y2={this.state.dimensions.z - this.state.indices.z}
-                    style={{
-                      stroke: 'rgb(255, 255, 255)',
-                      strokeWidth: 2,
-                    }}
-              />
-              <line x1={this.state.roiDimensions.y1}
-                    y1={this.state.roiDimensions.z2}
-                    x2={this.state.roiDimensions.y2}
-                    y2={this.state.roiDimensions.z2}
-                    style={{
-                      stroke: 'rgb(0, 255, 0)',
-                      strokeWidth: 2,
-                    }}
-              />
-              <line x1={this.state.roiDimensions.y1}
-                    y1={this.state.roiDimensions.z1}
-                    x2={this.state.roiDimensions.y2}
-                    y2={this.state.roiDimensions.z1}
-                    style={{
-                      stroke: 'rgb(0, 255, 0)',
-                      strokeWidth: 2,
-                    }}
-              />
-              <line x1={this.state.roiDimensions.y1}
-                    y1={this.state.roiDimensions.z1}
-                    x2={this.state.roiDimensions.y1}
-                    y2={this.state.roiDimensions.z2}
-                    style={{
-                      stroke: 'rgb(0, 0, 255)',
-                      strokeWidth: 2,
-                    }}
-              />
-              <line x1={this.state.roiDimensions.y2}
-                    y1={this.state.roiDimensions.z1}
-                    x2={this.state.roiDimensions.y2}
-                    y2={this.state.roiDimensions.z2}
-                    style={{
-                      stroke: 'rgb(0, 0, 255)',
-                      strokeWidth: 2,
-                    }}
-              />
-            </svg>
-            <div>
-              <TextField
-                className='text'
-                id="x"
-                label="x"
-                margin="normal"
-                type="number"
-                inputProps={{step: this.state.step}}
-                value={this.state.indices.x}
-                onChange={this.updateIndex('x')}
-              />
-            </div>
-          </Paper>
-        </div>
-        <div className='input'>
-          <Paper className='paper'>
-            <TextField
-                id="search"
-                label="Patient Id"
-                type="search"
-                onChange={(event) => this.setState({
-                  searchValue: event.target.value,
-                })}
-                onKeyPress={this.handleSearchKeyPress}
-                margin="normal"
-                value={this.state.searchValue}
-            />
-            <br/>
-            <TextField
-                id="x1"
-                label="x1"
-                margin="normal"
-                value={this.state.roiDimensions.x1}
-                onChange={this.updateBoundingBox('x1')}
-            />
-            <TextField
-                id="x2"
-                label="x2"
-                margin="normal"
-                value={this.state.roiDimensions.x2}
-                onChange={this.updateBoundingBox('x2')}
-            />
-            <br/>
-            <TextField
-                id="y1"
-                label="y1"
-                margin="normal"
-                value={this.state.roiDimensions.y1}
-                onChange={this.updateBoundingBox('y1')}
-            />
-            <TextField
-                id="y2"
-                label="y2"
-                margin="normal"
-                value={this.state.roiDimensions.y2}
-                onChange={this.updateBoundingBox('y2')}
-            />
-            <br/>
-            <TextField
-                id="z1"
-                label="z1"
-                margin="normal"
-                value={this.state.roiDimensions.z1}
-                onChange={this.updateBoundingBox('z1')}
-            />
-            <TextField
+        <Paper className='paper'>
+          <h2>User Guide</h2>
+          <p>Use the text fields below to set the bounding box.</p>
+          <p>To scroll, click on an input field and use the up/down arrow
+            keys.</p>
+          <p><em>Only use this app on Wi-Fi</em></p>
+          <h2>To Do</h2>
+          <p>Improve scrolling performance w/ image caching</p>
+        </Paper>
+    )
+  }
+
+  annotationInputView() {
+    return (
+        <Paper className='paper'>
+          <TextField
+              id="search"
+              label="Patient Id"
+              type="search"
+              onChange={(event) => this.setState({
+                searchValue: event.target.value,
+              })}
+              onKeyPress={this.handleSearchKeyPress}
+              margin="normal"
+              value={this.state.searchValue}
+          />
+          <br/>
+          <TextField
+              id="x1"
+              label="x1"
+              margin="normal"
+              value={this.state.roiDimensions.x1}
+              onChange={this.updateBoundingBox('x1')}
+          />
+          <TextField
+              id="x2"
+              label="x2"
+              margin="normal"
+              value={this.state.roiDimensions.x2}
+              onChange={this.updateBoundingBox('x2')}
+          />
+          <br/>
+          <TextField
+              id="y1"
+              label="y1"
+              margin="normal"
+              value={this.state.roiDimensions.y1}
+              onChange={this.updateBoundingBox('y1')}
+          />
+          <TextField
+              id="y2"
+              label="y2"
+              margin="normal"
+              value={this.state.roiDimensions.y2}
+              onChange={this.updateBoundingBox('y2')}
+          />
+          <br/>
+          <TextField
+              id="z1"
+              label="z1"
+              margin="normal"
+              value={this.state.roiDimensions.z1}
+              onChange={this.updateBoundingBox('z1')}
+          />
+          <TextField
               id="z2"
               label="z2"
               margin="normal"
               value={this.state.roiDimensions.z2}
               onChange={this.updateBoundingBox('z2')}
-            />
-            <br/>
-            <Button
-                variant="contained"
-            >
-              Update
-            </Button>
-          </Paper>
-        </div>
-        <div className='axial'>
-          <Paper className='paper'>
-            <h2>Axial</h2>
-            <svg height={this.state.dimensions.x}
-                 width={this.state.dimensions.y}
-            >
-              <image
-                  href={`/image/axial/${this.state.patientId}/${this.state.indices.z}`}/>
-              <line x1={this.state.roiDimensions.x1}
-                    y1={this.state.roiDimensions.y1}
-                    x2={this.state.roiDimensions.x2}
-                    y2={this.state.roiDimensions.y1}
-                    style={{
-                      stroke: 'rgb(255, 0, 0)',
-                      strokeWidth: 2,
-                    }}
+          />
+          <br/>
+          <TextField
+              id="created_by"
+              label="Username"
+              onChange={(event) => this.setState({
+                createdBy: event.target.value,
+              })}
+              margin="normal"
+              value={this.state.createdBy}
+          />
+          <Button
+              variant="contained"
+              onClick={this.handleAnnotation}
+          >
+            Create Annotation
+          </Button>
+        </Paper>
+    )
+  }
+
+  render() {
+    console.log('in render, state is:', this.state);
+    const imagesToCache = this.updateImageCache();
+    return (
+        <div>
+          <div className='guide'>
+            {App.userGuide()}
+          </div>
+          <div className='sagittal'>
+            <Paper className='paper'>
+              <h2>Sagittal</h2>
+              <PlaneSVG viewType={'sagittal'} patientId={this.state.patientId}
+                        width={this.state.dimensions.y}
+                        height={this.state.dimensions.z}
+                        colorX={'rgb(0, 255, 0)'}
+                        colorY={'rgb(0, 0, 255)'}
+                        roiX1={this.state.roiDimensions.y1}
+                        roiX2={this.state.roiDimensions.y2}
+                        roiY1={this.state.roiDimensions.z1}
+                        roiY2={this.state.roiDimensions.z2}
+                        posIndex={this.state.indices.x}
+                        lineIndex={this.state.dimensions.z - this.state.indices.z}
               />
-              <line x1={this.state.roiDimensions.x1}
-                    y1={this.state.roiDimensions.y2}
-                    x2={this.state.roiDimensions.x2}
-                    y2={this.state.roiDimensions.y2}
-                    style={{
-                      stroke: 'rgb(255, 0, 0)',
-                      strokeWidth: 2,
-                    }}
+              <div>
+                <TextField
+                    className='text'
+                    id="x"
+                    label="x"
+                    margin="normal"
+                    type="number"
+                    inputProps={{step: this.state.step}}
+                    value={this.state.indices.x}
+                    onChange={this.updateIndex('x')}
+                />
+              </div>
+            </Paper>
+          </div>
+          <div className='input'>
+            {this.annotationInputView()}
+          </div>
+          <div className='axial'>
+            <div className='paper'>
+              <h2>Axial</h2>
+              <PlaneSVG viewType={'axial'}
+                        patientId={this.state.patientId}
+                        width={this.state.dimensions.x}
+                        height={this.state.dimensions.y}
+                        colorX={'rgb(255, 0, 0)'}
+                        colorY={'rgb(0, 255, 0)'}
+                        roiX1={this.state.roiDimensions.x1}
+                        roiX2={this.state.roiDimensions.x2}
+                        roiY1={this.state.roiDimensions.y1}
+                        roiY2={this.state.roiDimensions.y2}
+                        posIndex={this.state.indices.z}
               />
-              <line x1={this.state.roiDimensions.x1}
-                    y1={this.state.roiDimensions.y1}
-                    x2={this.state.roiDimensions.x1}
-                    y2={this.state.roiDimensions.y2}
-                    style={{
-                      stroke: 'rgb(0, 255, 0)',
-                      strokeWidth: 2,
-                    }}
-              />
-              <line x1={this.state.roiDimensions.x2}
-                    y1={this.state.roiDimensions.y1}
-                    x2={this.state.roiDimensions.x2}
-                    y2={this.state.roiDimensions.y2}
-                    style={{
-                      stroke: 'rgb(0, 255, 0)',
-                      strokeWidth: 2,
-                    }}
-              />
-            </svg>
-            <div>
-              <TextField
-                className='text'
-                id="z"
-                label="z"
-                margin="normal"
-                inputProps={{step: this.state.step}}
-                type="number"
-                value={this.state.indices.z}
-                onChange={this.updateIndex('z')}
+              <div>
+                <TextField
+                    className='axialText'
+                    id="z"
+                    label="z"
+                    margin="normal"
+                    inputProps={{step: this.state.step}}
+                    type="number"
+                    value={this.state.indices.z}
+                    onChange={this.updateIndex('z')}
+                />
+              </div>
+            </div>
+          </div>
+          <div className='threedimensions'>
+            <Paper className='paper'>
+              <h2>3D</h2>
+              <span>
+                <img
+                    src={`/image/rendering/${this.state.patientId}?${this.state.renderingParams}`}
+                    style={{maxWidth: 300, maxHeight: 300}}
+                />
+                <Button
+                    className='button'
+                    variant="contained"
+                    onClick={this.updateRenderingParams}
+                >
+                  Update Rendering
+                </Button>
+                </span>
+            </Paper>
+          </div>
+          <div className='mip'>
+            <div className='paper'>
+              <h2>Axial MIP</h2>
+              <PlaneSVG viewType={'axial_mip'}
+                        patientId={this.state.patientId}
+                        width={this.state.dimensions.x}
+                        height={this.state.dimensions.y}
+                        colorX={'rgb(255, 0, 0)'}
+                        colorY={'rgb(0, 255, 0)'}
+                        roiX1={this.state.roiDimensions.x1}
+                        roiX2={this.state.roiDimensions.x2}
+                        roiY1={this.state.roiDimensions.y1}
+                        roiY2={this.state.roiDimensions.y2}
+                        posIndex={this.state.indices.z}
               />
             </div>
-          </Paper>
+          </div>
+          <div className='coronal'>
+            <Paper className='paper'>
+              <h2>Coronal</h2>
+              <PlaneSVG viewType={'coronal'}
+                        patientId={this.state.patientId}
+                        width={this.state.dimensions.x}
+                        height={this.state.dimensions.z}
+                        colorX={'rgb(255, 0, 0)'}
+                        colorY={'rgb(0, 0, 255)'}
+                        roiX1={this.state.roiDimensions.x1}
+                        roiX2={this.state.roiDimensions.x2}
+                        roiY1={this.state.roiDimensions.z1}
+                        roiY2={this.state.roiDimensions.z2}
+                        posIndex={this.state.indices.y}
+              />
+              <div>
+                <TextField
+                    className='text'
+                    id="y"
+                    label="y"
+                    margin="normal"
+                    type="number"
+                    inputProps={{step: this.state.step}}
+                    value={this.state.indices.y}
+                    onChange={this.updateIndex('y')}
+                />
+              </div>
+            </Paper>
+          </div>
+          <div style={{display: 'hidden'}}>
+            {imagesToCache}
+          </div>
         </div>
-        <div className='threedimensions'>
-          <Paper className='paper'>
-            <h2>3D</h2>
-            <span>
-              {/*<img*/}
-              {/*src={`/image/rendering/${this.state.patientId}/${this.state.threshold}`}*/}
-              {/*style={{maxWidth: 300, maxHeight: 300}}*/}
-              {/*/>*/}
-              {/*<Button> /!* 'TODO: Actually re-render with ROI zoom' *!/*/}
-              {/*Re-Render*/}
-              {/*</Button>*/}
-              3D View Not Ready Yet
-              </span>
-          </Paper>
-        </div>
-        <div className='mip' >
-          <Paper className='paper'>
-            <h2>Axial MIP</h2>
-            <svg height={this.state.dimensions.x}
-                 width={this.state.dimensions.y}
-            >
-              <image
-                  href={`/image/axial_mip/${this.state.patientId}/${this.state.indices.z}`}/>
-              <line x1={this.state.roiDimensions.x1}
-                    y1={this.state.roiDimensions.y1}
-                    x2={this.state.roiDimensions.x2}
-                    y2={this.state.roiDimensions.y1}
-                    style={{
-                      stroke: 'rgb(255, 0, 0)',
-                      strokeWidth: 2,
-                    }}
-              />
-              <line x1={this.state.roiDimensions.x1}
-                    y1={this.state.roiDimensions.y2}
-                    x2={this.state.roiDimensions.x2}
-                    y2={this.state.roiDimensions.y2}
-                    style={{
-                      stroke: 'rgb(255, 0, 0)',
-                      strokeWidth: 2,
-                    }}
-              />
-              <line x1={this.state.roiDimensions.x1}
-                    y1={this.state.roiDimensions.y1}
-                    x2={this.state.roiDimensions.x1}
-                    y2={this.state.roiDimensions.y2}
-                    style={{
-                      stroke: 'rgb(0, 255, 0)',
-                      strokeWidth: 2,
-                    }}
-              />
-              <line x1={this.state.roiDimensions.x2}
-                    y1={this.state.roiDimensions.y1}
-                    x2={this.state.roiDimensions.x2}
-                    y2={this.state.roiDimensions.y2}
-                    style={{
-                      stroke: 'rgb(0, 255, 0)',
-                      strokeWidth: 2,
-                    }}
-              />
-            </svg>
-            <div>
-              <TextField
-                className='text'
-                id="z"
-                label="z"
-                margin="normal"
-                type="number"
-                inputProps={{step: this.state.step}}
-                value={this.state.indices.z}
-                onChange={this.updateIndex('z')}
-              />
-            </div>
-          </Paper>
-        </div>
-        <div style={{display: 'hidden'}}>
-          {imagesToCache}
-        </div>
-      </div>
     )
   }
 }
 
-ReactDOM.render(
-    <App/>
-    , document.getElementById('reactEntry'));
+ReactDOM.render(<App/>, document.getElementById('reactEntry'));
