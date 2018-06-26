@@ -48,14 +48,14 @@ def annotator():
 class Annotation(db.Model):
     __tablename__ = 'annotations'
     id_ = db.Column(db.Integer, primary_key=True)
-    created_by = db.Column(db.String(255))
-    created_at = db.Column(db.DateTime(timezone=True))
-    x1 = db.Column(db.Integer)
-    x2 = db.Column(db.Integer)
-    y1 = db.Column(db.Integer)
-    y2 = db.Column(db.Integer)
-    z1 = db.Column(db.Integer)
-    z2 = db.Column(db.Integer)
+    created_by = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False)
+    x1 = db.Column(db.Integer, nullable=False)
+    x2 = db.Column(db.Integer, nullable=False)
+    y1 = db.Column(db.Integer, nullable=False)
+    y2 = db.Column(db.Integer, nullable=False)
+    z1 = db.Column(db.Integer, nullable=False)
+    z2 = db.Column(db.Integer, nullable=False)
 
 
 @app.route('/roi', methods=['POST'])
@@ -106,7 +106,7 @@ def axial_mip(patient_id, slice_i):
 @app.route('/image/sagittal/<patient_id>/<int:slice_k>')
 def sagittal(patient_id, slice_k):
     arr = _download_arr(patient_id)
-    return _send_slice(np.flip(arr[:, :, slice_k], 0))
+    return _send_slice(arr[:, :, slice_k])
 
 
 @app.route('/image/coronal/<patient_id>/<slice_j>')

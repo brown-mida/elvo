@@ -1,9 +1,9 @@
-from dashboard import main
+from main import app
 
 
 def test_index():
-    main.app.testing = True
-    client = main.app.test_client()
+    app.testing = True
+    client = app.test_client()
 
     r = client.get('/')
     assert r.status_code == 200
@@ -11,4 +11,6 @@ def test_index():
 
 def test_roi():
     # TODO: Implement this test
-    pass
+    app.testing = True
+    client = app.test_client()
+    r = client.post('/roi')
