@@ -1,16 +1,19 @@
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
-
-import Grid from '@material-ui/core/Grid'
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper/";
 import axios from 'axios'
 import Button from "@material-ui/core/Button";
+import Drawer from '@material-ui/core/Drawer';
 
 import PlaneSVG from './PlaneSVG';
 
 const styles = {
   paper: {
+    padding: '10px',
+    paddingLeft: '240px',
+  },
+  dividerPaper: {
     padding: '10px',
   }
 };
@@ -66,7 +69,7 @@ class App extends Component {
 
   static userGuide() {
     return (
-        <Paper style={styles.paper}>
+        <Paper style={styles.dividerPaper}>
           <h2>User Guide</h2>
           <p>Use the text fields below to set the bounding box.</p>
           <p>To scroll, click on an input field and use the up/down arrow
@@ -177,7 +180,7 @@ class App extends Component {
 
   annotationInputView() {
     return (
-        <Paper style={styles.paper}>
+        <Paper style={styles.dividerPaper}>
           <TextField
               id="search"
               label="Patient Id"
@@ -258,11 +261,15 @@ class App extends Component {
     console.log('in render, state is:', this.state);
     const imagesToCache = this.updateImageCache();
     return (
-        <Grid container spacing={16}>
-          <Grid item sm={6}>
+        <div>
+          <Drawer
+              variant="permanent"
+              anchor="left"
+          >
             {App.userGuide()}
-          </Grid>
-          <Grid item sm={6}>
+            {this.annotationInputView()}
+          </Drawer>
+          <div style={{paddingLeft: 240}}>
             <Paper style={styles.paper}>
               <h2>Sagittal</h2>
               <PlaneSVG viewType={'sagittal'} patientId={this.state.patientId}
@@ -289,11 +296,6 @@ class App extends Component {
                 />
               </div>
             </Paper>
-          </Grid>
-          <Grid item sm={6}>
-            {this.annotationInputView()}
-          </Grid>
-          <Grid item sm={6}>
             <Paper style={styles.paper}>
               <h2>Axial</h2>
               <PlaneSVG viewType={'axial'}
@@ -320,8 +322,6 @@ class App extends Component {
                 />
               </div>
             </Paper>
-          </Grid>
-          <Grid item sm={6}>
             <Paper style={styles.paper}>
               <h2>3D</h2>
               <span>
@@ -337,8 +337,6 @@ class App extends Component {
                 </Button>
                 </span>
             </Paper>
-          </Grid>
-          <Grid item sm={6}>
             <Paper style={styles.paper}>
               <h2>Axial MIP</h2>
               <PlaneSVG viewType={'axial_mip'}
@@ -365,8 +363,6 @@ class App extends Component {
                 />
               </div>
             </Paper>
-          </Grid>
-          <Grid item sm={6}>
             <Paper style={styles.paper}>
               <h2>Coronal</h2>
               <PlaneSVG viewType={'coronal'}
@@ -393,11 +389,11 @@ class App extends Component {
                 />
               </div>
             </Paper>
-          </Grid>
+          </div>
           <div style={{display: 'hidden'}}>
             {imagesToCache}
           </div>
-        </Grid>
+        </div>
     )
   }
 }
