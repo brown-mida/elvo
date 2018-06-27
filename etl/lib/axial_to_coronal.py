@@ -4,6 +4,7 @@ import numpy as np
 from tensorflow.python.lib.io import file_io
 import cloud_management as cloud
 
+
 def configure_logger():
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.INFO)
@@ -13,6 +14,7 @@ def configure_logger():
     handler.setFormatter(formatter)
     root_logger.addHandler(handler)
 
+
 if __name__ == '__main__':
     configure_logger()
     client = cloud.authenticate()
@@ -20,7 +22,7 @@ if __name__ == '__main__':
 
     for in_blob in bucket.list_blobs(prefix='numpy'):
 
-        if in_blob.name <= 'numpy/CGQFS5PB627OWLL7.npy':
+        if in_blob.name <= 'numpy/JP2IRK8910EXF0IW.npy':
             continue
 
         # blacklist
