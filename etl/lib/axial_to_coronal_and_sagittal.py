@@ -22,9 +22,6 @@ if __name__ == '__main__':
 
     for in_blob in bucket.list_blobs(prefix='numpy'):
 
-        if in_blob.name <= 'numpy/JP2IRK8910EXF0IW.npy':
-            continue
-
         # blacklist
         if in_blob.name == 'numpy/LAUIHISOEZIM5ILF.npy':
             continue
@@ -38,6 +35,8 @@ if __name__ == '__main__':
         axial = cloud.download_array(in_blob)
         coronal = np.transpose(axial, (1, 0, 2))
         coronal = np.fliplr(coronal)
+        sagittal = np.transpose(axial, (2, 0, 1))
+        sagittal = np.fliplr(sagittal)
 
         file_id = in_blob.name.split('/')[1]
         file_id = file_id.split('.')[0]
@@ -48,6 +47,8 @@ if __name__ == '__main__':
                                    'w'), coronal)
             np.save(file_io.FileIO(f'gs://elvos/numpy/axial/{file_id}.npy',
                                    'w'), axial)
+            np.save(file_io.FileIO(f'gs://elvos/numpy/sagittal/{file_id}.npy',
+                                   'w'), sagittal)
         except Exception as e:
             logging.error(f'for patient ID: {file_id} {e}')
         logging.info(f'saved .npy file to cloud')
