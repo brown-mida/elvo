@@ -149,6 +149,7 @@ class App extends Component {
     }
     const data = {
       created_by: this.state.createdBy,
+      patient_id: this.state.patientId,
       x1: this.state.roiDimensions.x1,
       x2: this.state.roiDimensions.x2,
       y1: this.state.roiDimensions.y1,
