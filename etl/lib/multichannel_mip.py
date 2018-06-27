@@ -8,7 +8,9 @@ feature detection weights from ImageNet/CIFAR10.
 """
 
 import logging
+
 import numpy as np
+
 # from matplotlib import pyplot as plt
 import etl.lib.cloud_management as cloud
 import etl.lib.transforms as transforms
@@ -50,7 +52,7 @@ if __name__ == '__main__':
         normalized = transforms.normalize(axial, lower_bound=-400)
         # for i in range(3):
         #     plt.figure(figsize=(6, 6))
-        #     plt.imshow(axial[z], interpolation='none')
+        #     plt.imshow(axial[i], interpolation='none')
         #     plt.show()
         file_id = in_blob.name.split('/')[1]
         file_id = file_id.split('.')[0]
@@ -78,7 +80,7 @@ if __name__ == '__main__':
         normalized = transforms.normalize(axial, lower_bound=-400)
         # for i in range(3):
         #     plt.figure(figsize=(6, 6))
-        #     plt.imshow(axial[z], interpolation='none')
+        #     plt.imshow(axial[i], interpolation='none')
         #     plt.show()
         file_id = in_blob.name.split('/')[1]
         file_id = file_id.split('.')[0]
@@ -106,8 +108,9 @@ if __name__ == '__main__':
         axial = transforms.mip_array(not_extreme_arr, 'axial')
         logging.info(f'mip-ed CTA image')
         normalized = transforms.normalize(axial, lower_bound=-400)
+        # for i in range(3):
         #     plt.figure(figsize=(6, 6))
-        #     plt.imshow(axial[z], interpolation='none')
+        #     plt.imshow(axial[i], interpolation='none')
         #     plt.show()
         file_id = in_blob.name.split('/')[1]
         file_id = file_id.split('.')[0]

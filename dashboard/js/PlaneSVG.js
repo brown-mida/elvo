@@ -4,11 +4,6 @@ import PropTypes from 'prop-types';
 
 class PlaneSVG extends Component {
 
-  constructor(props) {
-    super(props);
-    this.boundingBoxSpecified = this.boundingBoxSpecified.bind(this);
-  }
-
   createLineElement() {
     return (
         <line x1="0"
@@ -21,11 +16,6 @@ class PlaneSVG extends Component {
               }}
         />
     );
-  }
-
-  boundingBoxSpecified() {
-    return (this.props.roiX1 && this.props.roiY1 &&
-            this.props.roiX2 && this.props.roiY2)
   }
 
   render() {
@@ -41,19 +31,16 @@ class PlaneSVG extends Component {
           <image
               href={`/image/${this.props.viewType}/${this.props.patientId}/${this.props.posIndex}`}/>
           {this.props.lineIndex ? this.createLineElement() : null}
-          {this.boundingBoxSpecified() &&
-            <line x1={this.props.roiX1}
-              y1={this.props.roiY1}
-              x2={this.props.roiX2}
-              y2={this.props.roiY1}
-              style={{
-                stroke: this.props.colorX,
-                strokeWidth: 2,
-              }}
-            />
-          }
-          {this.boundingBoxSpecified() &&
-            <line x1={this.props.roiX1}
+          <line x1={this.props.roiX1}
+                y1={this.props.roiY1}
+                x2={this.props.roiX2}
+                y2={this.props.roiY1}
+                style={{
+                  stroke: this.props.colorX,
+                  strokeWidth: 2,
+                }}
+          />
+          <line x1={this.props.roiX1}
                 y1={this.props.roiY2}
                 x2={this.props.roiX2}
                 y2={this.props.roiY2}
@@ -61,10 +48,8 @@ class PlaneSVG extends Component {
                   stroke: this.props.colorX,
                   strokeWidth: 2,
                 }}
-            />
-          }
-          {this.boundingBoxSpecified() &&
-            <line x1={this.props.roiX1}
+          />
+          <line x1={this.props.roiX1}
                 y1={this.props.roiY1}
                 x2={this.props.roiX1}
                 y2={this.props.roiY2}
@@ -72,10 +57,8 @@ class PlaneSVG extends Component {
                   stroke: this.props.colorY,
                   strokeWidth: 2,
                 }}
-            />
-          }
-          {this.boundingBoxSpecified() &&
-            <line x1={this.props.roiX2}
+          />
+          <line x1={this.props.roiX2}
                 y1={this.props.roiY1}
                 x2={this.props.roiX2}
                 y2={this.props.roiY2}
@@ -83,8 +66,7 @@ class PlaneSVG extends Component {
                   stroke: this.props.colorY,
                   strokeWidth: 2,
                 }}
-            />
-          }
+          />
         </svg>
     )
   }

@@ -1,13 +1,19 @@
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 
+import Grid from '@material-ui/core/Grid'
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper/";
 import axios from 'axios'
 import Button from "@material-ui/core/Button";
 
-import './style.css';
 import PlaneSVG from './PlaneSVG';
+
+const styles = {
+  paper: {
+    padding: '10px',
+  }
+};
 
 // TODO: Caching
 class App extends Component {
@@ -22,7 +28,6 @@ class App extends Component {
         z: 230, // TODO: Rename to axialIndex
       },
       threshold: 120,
-      scrollAmount: 2,
       dimensions: {
         z: 300,
         x: 250,
@@ -36,11 +41,6 @@ class App extends Component {
         z1: 100,
         z2: 200,
       },
-      holdingDown: false,
-      offset: {
-        x: 0,
-        y: 0,
-      },
       renderingParams: 'x1=100&x2=110&y1=100&y2=110&z1=100&z2=110',
       step: 4,
       createdBy: '',
@@ -53,10 +53,6 @@ class App extends Component {
     this.updateImageCache = this.updateImageCache.bind(this);
     this.handleAnnotation = this.handleAnnotation.bind(this);
     this.updateRenderingParams = this.updateRenderingParams.bind(this);
-    this.updateIndexScroll = this.updateIndexScroll.bind(this);
-    this.handleMouseDown = this.handleMouseDown.bind(this);
-    this.handleMouseMove = this.handleMouseMove.bind(this);
-    this.handleMouseUp = this.handleMouseUp.bind(this);
   }
 
   handleSearchKeyPress(event) {
@@ -68,61 +64,18 @@ class App extends Component {
     }
   }
 
-  updateBoundingBox(attr) {
-    return (event) => {
-      const value = parseInt(event.target.value);
-      if (!isNaN(value)) {
-        this.setState((state) => {
-          state.roiDimensions[attr] = value;
-          return state;
-        });
-      } else {
-        this.setState((state) => {
-          state.roiDimensions[attr] = undefined;
-          return state;
-        });
-      }
-    }
-  }
-
-  handleMouseDown(attr1, attr2) {
-    return (e) => {
-      let elem = e.target.getBoundingClientRect();
-      const x = e.clientX - elem.left;
-      const y = e.clientY - elem.top;
-      this.setState((state) => {
-        state.roiDimensions[`${attr1}1`] = x;
-        state.roiDimensions[`${attr2}1`] = y;
-        state.roiDimensions[`${attr1}2`] = x;
-        state.roiDimensions[`${attr2}2`] = y;
-        state.holdingDown = true;
-        state.offset = {
-          x: elem.left,
-          y: elem.top,
-        };
-        return state;
-      });
-    }
-  }
-
-  handleMouseMove(attr1, attr2) {
-    return (e) => {
-      if (this.state.holdingDown) {
-        const x = e.clientX - this.state.offset.x;
-        const y = e.clientY - this.state.offset.y;
-        this.setState((state) => {
-          state.roiDimensions[`${attr1}2`] = x;
-          state.roiDimensions[`${attr2}2`] = y;
-          return state;
-        });
-      }
-    }
-  }
-
-  handleMouseUp() {
-    this.setState({
-      holdingDown: false,
-    });
+  static userGuide() {
+    return (
+        <Paper style={styles.paper}>
+          <h2>User Guide</h2>
+          <p>Use the text fields below to set the bounding box.</p>
+          <p>To scroll, click on an input field and use the up/down arrow
+            keys.</p>
+          <p><em>Only use this app on Wi-Fi</em></p>
+          <h2>To Do</h2>
+          <p>Improve scrolling performance w/ image caching</p>
+        </Paper>
+    )
   }
 
   updateIndex(attr) {
@@ -134,25 +87,6 @@ class App extends Component {
           return state;
         })
       }
-    }
-  }
-
-  updateIndexScroll(attr) {
-    return (event) => {
-      let newValue;
-      if (event.deltaY > 0) {
-        newValue = this.state.indices[attr] - this.state.scrollAmount;
-      } else {
-        newValue = this.state.indices[attr] + this.state.scrollAmount;
-        if (newValue < 0) {
-          newValue = 0;
-        }
-      }
-
-      this.setState((state) => {
-        state.indices[attr] = newValue;
-        return state;
-      });
     }
   }
 
@@ -215,7 +149,6 @@ class App extends Component {
     }
     const data = {
       created_by: this.state.createdBy,
-      patient_id: this.state.patientId,
       x1: this.state.roiDimensions.x1,
       x2: this.state.roiDimensions.x2,
       y1: this.state.roiDimensions.y1,
@@ -229,24 +162,21 @@ class App extends Component {
         });
   }
 
-
-  static userGuide() {
-    return (
-        <Paper className='paper'>
-          <h2>User Guide</h2>
-          <p>Use the text fields below to set the bounding box.</p>
-          <p>To scroll, click on an input field and use the up/down arrow
-            keys.</p>
-          <p><em>Only use this app on Wi-Fi</em></p>
-          <h2>To Do</h2>
-          <p>Improve scrolling performance w/ image caching</p>
-        </Paper>
-    )
+  updateBoundingBox(attr) {
+    return (event) => {
+      const value = parseInt(event.target.value);
+      if (!isNaN(value)) {
+        this.setState((state) => {
+          state.roiDimensions[attr] = value;
+          return state;
+        })
+      }
+    }
   }
 
   annotationInputView() {
     return (
-        <Paper className='paper'>
+        <Paper style={styles.paper}>
           <TextField
               id="search"
               label="Patient Id"
@@ -327,12 +257,12 @@ class App extends Component {
     console.log('in render, state is:', this.state);
     const imagesToCache = this.updateImageCache();
     return (
-        <div>
-          <div className='guide'>
+        <Grid container spacing={16}>
+          <Grid item sm={6}>
             {App.userGuide()}
-          </div>
-          <div className='sagittal'>
-            <Paper className='paper'>
+          </Grid>
+          <Grid item sm={6}>
+            <Paper style={styles.paper}>
               <h2>Sagittal</h2>
               <PlaneSVG viewType={'sagittal'} patientId={this.state.patientId}
                         width={this.state.dimensions.y}
@@ -345,14 +275,9 @@ class App extends Component {
                         roiY2={this.state.roiDimensions.z2}
                         posIndex={this.state.indices.x}
                         lineIndex={this.state.dimensions.z - this.state.indices.z}
-                        scrollEvent={this.updateIndexScroll('x')}
-                        mouseDownEvent={this.handleMouseDown('y', 'z')}
-                        mouseMoveEvent={this.handleMouseMove('y', 'z')}
-                        mouseUpEvent={this.handleMouseUp}
               />
               <div>
                 <TextField
-                    className='text'
                     id="x"
                     label="x"
                     margin="normal"
@@ -363,12 +288,12 @@ class App extends Component {
                 />
               </div>
             </Paper>
-          </div>
-          <div className='input'>
+          </Grid>
+          <Grid item sm={6}>
             {this.annotationInputView()}
-          </div>
-          <div className='axial'>
-            <div className='paper'>
+          </Grid>
+          <Grid item sm={6}>
+            <Paper style={styles.paper}>
               <h2>Axial</h2>
               <PlaneSVG viewType={'axial'}
                         patientId={this.state.patientId}
@@ -381,14 +306,9 @@ class App extends Component {
                         roiY1={this.state.roiDimensions.y1}
                         roiY2={this.state.roiDimensions.y2}
                         posIndex={this.state.indices.z}
-                        scrollEvent={this.updateIndexScroll('z')}
-                        mouseDownEvent={this.handleMouseDown('x', 'y')}
-                        mouseMoveEvent={this.handleMouseMove('x', 'y')}
-                        mouseUpEvent={this.handleMouseUp}
               />
               <div>
                 <TextField
-                    className='axialText'
                     id="z"
                     label="z"
                     margin="normal"
@@ -398,10 +318,10 @@ class App extends Component {
                     onChange={this.updateIndex('z')}
                 />
               </div>
-            </div>
-          </div>
-          <div className='threedimensions'>
-            <Paper className='paper'>
+            </Paper>
+          </Grid>
+          <Grid item sm={6}>
+            <Paper style={styles.paper}>
               <h2>3D</h2>
               <span>
                 <img
@@ -409,7 +329,6 @@ class App extends Component {
                     style={{maxWidth: 300, maxHeight: 300}}
                 />
                 <Button
-                    className='button'
                     variant="contained"
                     onClick={this.updateRenderingParams}
                 >
@@ -417,9 +336,9 @@ class App extends Component {
                 </Button>
                 </span>
             </Paper>
-          </div>
-          <div className='mip'>
-            <div className='paper'>
+          </Grid>
+          <Grid item sm={6}>
+            <Paper style={styles.paper}>
               <h2>Axial MIP</h2>
               <PlaneSVG viewType={'axial_mip'}
                         patientId={this.state.patientId}
@@ -432,15 +351,22 @@ class App extends Component {
                         roiY1={this.state.roiDimensions.y1}
                         roiY2={this.state.roiDimensions.y2}
                         posIndex={this.state.indices.z}
-                        scrollEvent={this.updateIndexScroll('z')}
-                        mouseDownEvent={this.handleMouseDown('x', 'y')}
-                        mouseMoveEvent={this.handleMouseMove('x', 'y')}
-                        mouseUpEvent={this.handleMouseUp}
               />
-            </div>
-          </div>
-          <div className='coronal'>
-            <Paper className='paper'>
+              <div>
+                <TextField
+                    id="z"
+                    label="z"
+                    margin="normal"
+                    type="number"
+                    inputProps={{step: this.state.step}}
+                    value={this.state.indices.z}
+                    onChange={this.updateIndex('z')}
+                />
+              </div>
+            </Paper>
+          </Grid>
+          <Grid item sm={6}>
+            <Paper style={styles.paper}>
               <h2>Coronal</h2>
               <PlaneSVG viewType={'coronal'}
                         patientId={this.state.patientId}
@@ -453,15 +379,9 @@ class App extends Component {
                         roiY1={this.state.roiDimensions.z1}
                         roiY2={this.state.roiDimensions.z2}
                         posIndex={this.state.indices.y}
-                        lineIndex={this.state.dimensions.z - this.state.indices.z}
-                        scrollEvent={this.updateIndexScroll('y')}
-                        mouseDownEvent={this.handleMouseDown('x', 'z')}
-                        mouseMoveEvent={this.handleMouseMove('x', 'z')}
-                        mouseUpEvent={this.handleMouseUp}
               />
               <div>
                 <TextField
-                    className='text'
                     id="y"
                     label="y"
                     margin="normal"
@@ -472,11 +392,11 @@ class App extends Component {
                 />
               </div>
             </Paper>
-          </div>
+          </Grid>
           <div style={{display: 'hidden'}}>
             {imagesToCache}
           </div>
-        </div>
+        </Grid>
     )
   }
 }
