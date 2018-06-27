@@ -8,3 +8,4 @@ matplotlib==2.2.2
 google-cloud-storage==1.10.0
 scikit-image==0.14.0
 gspread==3.0.0
+google-api-python-client==1.7.3
