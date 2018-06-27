@@ -12,6 +12,7 @@ from google.cloud import storage
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from oauth2client.service_account import ServiceAccountCredentials
 from skimage import measure
+from werkzeug.contrib.cache import SimpleCache
 
 mpl.use('Agg')
 from matplotlib import image  # noqa: E402
@@ -41,10 +42,12 @@ spread_client = gspread.authorize(credentials)
 worksheet = spread_client.open_by_key(
     '1_j7mq_VypBxYRWA5Y7ef4mxXqU0EmBKDl0lkp62SsXA').worksheet('annotations')
 
+cache = SimpleCache()
+
 
 def configure_logger():
     root_logger = logging.getLogger()
-    root_logger.setLevel(logging.INFO)
+    root_logger.setLevel(logging.DEBUG)
     handler = logging.StreamHandler()
     formatter = logging.Formatter(
         fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -121,7 +124,7 @@ def roi():
 
 @app.route('/image/dimensions/<patient_id>/')
 def dimensions(patient_id):
-    arr = _download_arr(patient_id)
+    arr = _retrieve_arr(patient_id)
     shape = arr.shape
     return flask.json.dumps({
         'z': shape[0],
@@ -132,25 +135,25 @@ def dimensions(patient_id):
 
 @app.route('/image/axial/<patient_id>/<int:slice_i>')
 def axial(patient_id, slice_i):
-    arr = _download_arr(patient_id)
+    arr = _retrieve_arr(patient_id)
     return _send_slice(arr[slice_i])
 
 
 @app.route('/image/axial_mip/<patient_id>/<int:slice_i>')
 def axial_mip(patient_id, slice_i):
-    arr = _download_arr(patient_id)
+    arr = _retrieve_arr(patient_id)
     return _send_slice(arr[slice_i:slice_i + 24].max(axis=0))
 
 
 @app.route('/image/sagittal/<patient_id>/<int:slice_k>')
 def sagittal(patient_id, slice_k):
-    arr = _download_arr(patient_id)
+    arr = _retrieve_arr(patient_id)
     return _send_slice(arr[:, :, slice_k])
 
 
 @app.route('/image/coronal/<patient_id>/<int:slice_j>')
 def coronal(patient_id, slice_j):
-    arr = _download_arr(patient_id)
+    arr = _retrieve_arr(patient_id)
     return _send_slice(arr[:, slice_j, :])
 
 
@@ -163,7 +166,7 @@ def rendering(patient_id):
     z1 = int(flask.request.args.get('z1'))
     z2 = int(flask.request.args.get('z2'))
 
-    arr = _download_arr(patient_id)
+    arr = _retrieve_arr(patient_id)
     roi = arr[
           min(x1, x2):max(x1, x2),
           min(y1, y2):max(y1, y2),
@@ -210,12 +213,19 @@ def _save_3d(file, arr: np.ndarray, threshold=150):
     plt.savefig(file, format='png')
 
 
-def _download_arr(patient_id: str) -> np.ndarray:
+def _retrieve_arr(patient_id: str) -> np.ndarray:
+    cached_arr = cache.get(patient_id)
+    if cached_arr is not None:
+        logging.debug(f'loading {patient_id} from cache')
+        return cached_arr
+    logging.debug(f'downloading {patient_id} from GCS')
     blob = bucket.get_blob(f'numpy/{patient_id}.npy')
     in_stream = io.BytesIO()
     blob.download_to_file(in_stream)
     in_stream.seek(0)
-    return np.load(in_stream)
+    arr = np.load(in_stream)
+    cache.set(patient_id, arr)
+    return arr
 
 
 def _send_slice(arr: np.ndarray):
