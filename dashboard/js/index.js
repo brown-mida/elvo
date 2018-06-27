@@ -29,7 +29,8 @@ class App extends Component {
       indices: {
         x: 125, // TODO: Rename to sagittalIndex
         y: 125, // TODO: Rename to coronalIndex
-        z: 230, // TODO: Rename to axialIndex
+        z: 100, // TODO: Rename to axialIndex
+        zMip: 100,
       },
       threshold: 120,
       dimensions: {
@@ -46,7 +47,7 @@ class App extends Component {
         z2: 200,
       },
       renderingParams: 'x1=100&x2=110&y1=100&y2=110&z1=100&z2=110',
-      step: 4,
+      mipStep: 4,
       createdBy: '',
     };
 
@@ -54,7 +55,6 @@ class App extends Component {
     this.handleSearchKeyPress = this.handleSearchKeyPress.bind(this);
     this.getImageDimensions = this.getImageDimensions.bind(this);
     this.updateBoundingBox = this.updateBoundingBox.bind(this);
-    this.updateImageCache = this.updateImageCache.bind(this);
     this.handleAnnotation = this.handleAnnotation.bind(this);
     this.updateRenderingParams = this.updateRenderingParams.bind(this);
   }
@@ -102,26 +102,6 @@ class App extends Component {
     }
   }
 
-  updateImageCache() {
-    console.log('updating cache');
-    const imageElements = [];
-    for (let i = Math.max(0, this.state.indices.x + i - 5);
-         i <= Math.min(this.state.dimensions.x, this.state.indices.x + 5);
-         i += this.state.step) {
-      imageElements.push(<image
-          href={`/image/sagittal/${this.state.patientId}/${i}`}/>);
-    }
-    for (let i = Math.max(0, this.state.indices.z + i - 5);
-         i <= Math.min(this.state.dimensions.z, this.state.indices.z + 5);
-         i += this.state.step) {
-      imageElements.push(<image
-          href={`/image/axial/${this.state.patientId}/${i}`}/>);
-      imageElements.push(<image
-          href={`/image/axial/${this.state.patientId}/${i}`}/>);
-    }
-    return imageElements;
-  }
-
   getImageDimensions() {
     self = this;
     axios.get(`/image/dimensions/${this.state.patientId}`)
@@ -154,7 +134,7 @@ class App extends Component {
     });
   }
 
-  handleAnnotation(event) {
+  handleAnnotation() {
     if (this.state.createdBy === '') {
       console.error('Username cannot be empty');
       return;
@@ -170,7 +150,7 @@ class App extends Component {
       z2: this.state.roiDimensions.z2,
     };
     axios.post('/roi', data)
-        .catch((error) => {
+        .catch(() => {
           console.error('failed to insert annotation:', data);
         });
   }
@@ -204,45 +184,51 @@ class App extends Component {
           <br/>
           <TextField
               id="x1"
-              label="x1"
+              label="red1"
               margin="normal"
+              type="number"
               value={this.state.roiDimensions.x1}
               onChange={this.updateBoundingBox('x1')}
           />
           <TextField
               id="x2"
-              label="x2"
+              label="red2"
               margin="normal"
+              type="number"
               value={this.state.roiDimensions.x2}
               onChange={this.updateBoundingBox('x2')}
           />
           <br/>
           <TextField
               id="y1"
-              label="y1"
+              label="green1"
               margin="normal"
+              type="number"
               value={this.state.roiDimensions.y1}
               onChange={this.updateBoundingBox('y1')}
           />
           <TextField
               id="y2"
-              label="y2"
+              label="green2"
               margin="normal"
+              type="number"
               value={this.state.roiDimensions.y2}
               onChange={this.updateBoundingBox('y2')}
           />
           <br/>
           <TextField
               id="z1"
-              label="z1"
+              label="blue1"
               margin="normal"
+              type="number"
               value={this.state.roiDimensions.z1}
               onChange={this.updateBoundingBox('z1')}
           />
           <TextField
               id="z2"
-              label="z2"
+              label="blue2"
               margin="normal"
+              type="number"
               value={this.state.roiDimensions.z2}
               onChange={this.updateBoundingBox('z2')}
           />
@@ -268,7 +254,6 @@ class App extends Component {
 
   render() {
     console.log('in render, state is:', this.state);
-    const imagesToCache = this.updateImageCache();
     return (
         <div>
           <Drawer
@@ -291,18 +276,18 @@ class App extends Component {
                         roiX2={this.state.roiDimensions.x2}
                         roiY1={this.state.roiDimensions.y1}
                         roiY2={this.state.roiDimensions.y2}
-                        posIndex={this.state.indices.z}
+                        posIndex={this.state.indices.zMip}
                         lineIndex={this.state.indices.y}
               />
               <div>
                 <TextField
                     id="z"
-                    label="z"
+                    label="blue axis (mip)"
                     margin="normal"
                     type="number"
-                    inputProps={{step: this.state.step}}
-                    value={this.state.indices.z}
-                    onChange={this.updateIndex('z')}
+                    inputProps={{step: this.state.mipStep}}
+                    value={this.state.indices.zMip}
+                    onChange={this.updateIndex('zMip')}
                 />
               </div>
             </Paper>
@@ -324,9 +309,8 @@ class App extends Component {
               <div>
                 <TextField
                     id="z"
-                    label="z"
+                    label="blue axis"
                     margin="normal"
-                    inputProps={{step: this.state.step}}
                     type="number"
                     value={this.state.indices.z}
                     onChange={this.updateIndex('z')}
@@ -352,10 +336,9 @@ class App extends Component {
               <div>
                 <TextField
                     id="y"
-                    label="y"
+                    label="green axis"
                     margin="normal"
                     type="number"
-                    inputProps={{step: this.state.step}}
                     value={this.state.indices.y}
                     onChange={this.updateIndex('y')}
                 />
@@ -378,10 +361,9 @@ class App extends Component {
               <div>
                 <TextField
                     id="x"
-                    label="x"
+                    label="red axis"
                     margin="normal"
                     type="number"
-                    inputProps={{step: this.state.step}}
                     value={this.state.indices.x}
                     onChange={this.updateIndex('x')}
                 />
@@ -402,9 +384,6 @@ class App extends Component {
                 </Button>
                 </span>
             </Paper>
-          </div>
-          <div style={{display: 'hidden'}}>
-            {imagesToCache}
           </div>
         </div>
     )
