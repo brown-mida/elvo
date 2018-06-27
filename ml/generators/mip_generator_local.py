@@ -15,7 +15,8 @@ BLACKLIST = ['LAUIHISOEZIM5ILF',
 
 class MipGenerator(object):
 
-    def __init__(self, dims=(120, 120, 1), batch_size=16,
+    def __init__(self, data_loc='',
+                 dims=(120, 120, 1), batch_size=16,
                  shuffle=True,
                  validation=False,
                  split=0.2, extend_dims=True,
@@ -27,10 +28,10 @@ class MipGenerator(object):
         self.validation = validation
 
         self.datagen = ImageDataGenerator(
-            rotation_range=20,
+            rotation_range=15,
             width_shift_range=0.1,
             height_shift_range=0.1,
-            zoom_range=0.1,
+            zoom_range=[1.0, 1.1],
             horizontal_flip=True
         )
 
@@ -41,7 +42,7 @@ class MipGenerator(object):
         bucket = gcs_client.get_bucket('elvos')
 
         # Get file list
-        filelist = sorted([f for f in os.listdir('tmp/npy')])
+        filelist = sorted([f for f in os.listdir(data_loc)])
         print(filelist)
         files = []
         for file in filelist:
@@ -133,12 +134,13 @@ class MipGenerator(object):
         return images, labels
 
     def __transform_images(self, image):
+        image = np.moveaxis(image, 0, -1)
+
         # Set bounds
         image[image < -40] = -40
         image[image > 400] = 400
 
         # Normalize image and expand dims
-        image = transforms.normalize(image)
         if self.extend_dims:
             if len(self.dims) == 2:
                 image = np.expand_dims(image, axis=-1)
@@ -151,6 +153,7 @@ class MipGenerator(object):
             image = self.datagen.random_transform(image)
 
         # Interpolate axis to reduce to specified dimensions
+        # image = transforms.normalize(image)
         dims = np.shape(image)
         image = zoom(image, (self.dims[0] / dims[0],
                              self.dims[1] / dims[1],
