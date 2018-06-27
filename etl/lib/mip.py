@@ -11,7 +11,7 @@ import cloud_management as cloud
 import transforms
 
 WHENCE = ['numpy',
-          'mip_data/from_numpy/coronal']
+          'numpy/coronal']
 
 def configure_logger():
     root_logger = logging.getLogger()
