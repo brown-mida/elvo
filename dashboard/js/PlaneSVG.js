@@ -20,9 +20,7 @@ class PlaneSVG extends Component {
 
   render() {
     return (
-        <svg height={this.props.height}
-             width={this.props.width}
-        >
+        <svg viewBox={`0 0 ${this.props.width} ${this.props.height}`}>
           <image
               href={`/image/${this.props.viewType}/${this.props.patientId}/${this.props.posIndex}`}/>
           {this.props.lineIndex ? this.createLineElement() : null}
