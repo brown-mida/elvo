@@ -22,11 +22,6 @@ class PlaneSVG extends Component {
     return (
         <svg height={this.props.height}
              width={this.props.width}
-             onWheel={this.props.scrollEvent}
-             onMouseDown={this.props.mouseDownEvent}
-             onMouseMove={this.props.mouseMoveEvent}
-             onMouseUp={this.props.mouseUpEvent}
-             className='svg'
         >
           <image
               href={`/image/${this.props.viewType}/${this.props.patientId}/${this.props.posIndex}`}/>
@@ -85,7 +80,6 @@ PlaneSVG.propTypes = {
   roiY2: PropTypes.number.isRequired,
   posIndex: PropTypes.number.isRequired,
   lineIndex: PropTypes.number,
-  scrollEvent: PropTypes.func.isRequired,
 };
 
 
