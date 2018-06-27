@@ -7,7 +7,7 @@ from keras.models import Model, load_model
 from keras.layers import Dense, GlobalAveragePooling2D, Dropout, Input
 from keras.optimizers import Adam, SGD
 from keras.applications.resnet50 import ResNet50
-from ml.generators.mip_generator import MipGenerator
+from ml.generators.mip_generator_local import MipGenerator
 
 
 def sensitivity(y_true, y_pred):
@@ -25,6 +25,7 @@ def specificity(y_true, y_pred):
 def save_features():
     model = ResNet50(weights='imagenet', include_top=False)
     gen = MipGenerator(
+        data_loc='data/mip',
         dims=(220, 220, 3),
         batch_size=4,
         augment_data=True,
@@ -36,11 +37,12 @@ def save_features():
         generator=gen.generate(),
         steps=gen.get_steps_per_epoch(),
         verbose=1
-     )
+    )
     np.save('tmp/features_train.npy', features_train)
     np.save('tmp/labels_train.npy', gen.labels)
 
     gen = MipGenerator(
+        data_loc='data/mip',
         dims=(220, 220, 3),
         batch_size=4,
         augment_data=False,
@@ -61,7 +63,7 @@ def save_features():
 
 def train_top_model():
     train_data = np.load('tmp/features_train.npy')
-    train_labels = np.load('tmp/labels_train.npy')[:1404]# [:1576]
+    train_labels = np.load('tmp/labels_train.npy')[:1404]
     test_data = np.load('tmp/features_test.npy')
     test_labels = np.load('tmp/labels_test.npy')[:84]# [:84]
 
@@ -201,8 +203,8 @@ def fine_tune_2():
     model.save('tmp/trained_resnet_2')
 
 
-# save_features()
-train_top_model()
+save_features()
+# train_top_model()
 # train_top_model_2()
 # fine_tune()
 # fine_tune_2()

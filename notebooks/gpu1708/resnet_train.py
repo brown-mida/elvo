@@ -48,7 +48,8 @@ def specificity(y_true, y_pred):
 
 
 def build_model():
-    resnet = applications.ResNet50(include_top=False, input_shape=(200, 200, 3))
+    resnet = applications.ResNet50(include_top=False,
+                                   input_shape=(200, 200, 3))
 
     x = resnet.output
     x = layers.GlobalAveragePooling2D()(x)

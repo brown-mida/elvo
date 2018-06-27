@@ -100,7 +100,7 @@ class MipGenerator(object):
                 labels = labels[:int(len(labels) * split)]
         elif test:
             if split_test:
-                files = files[int(len(files) * split / 2): 
+                files = files[int(len(files) * split / 2):
                               int(len(files) * split)]
                 labels = labels[int(len(labels) * split / 2):
                                 int(len(labels) * split)]
