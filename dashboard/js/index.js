@@ -271,28 +271,28 @@ class App extends Component {
           </Drawer>
           <div style={{paddingLeft: 240}}>
             <Paper style={styles.paper}>
-              <h2>Sagittal</h2>
-              <PlaneSVG viewType={'sagittal'} patientId={this.state.patientId}
-                        width={this.state.dimensions.y}
-                        height={this.state.dimensions.z}
-                        colorX={'rgb(0, 255, 0)'}
-                        colorY={'rgb(0, 0, 255)'}
-                        roiX1={this.state.roiDimensions.y1}
-                        roiX2={this.state.roiDimensions.y2}
-                        roiY1={this.state.roiDimensions.z1}
-                        roiY2={this.state.roiDimensions.z2}
-                        posIndex={this.state.indices.x}
-                        lineIndex={this.state.dimensions.z - this.state.indices.z}
+              <h2>Axial MIP</h2>
+              <PlaneSVG viewType={'axial_mip'}
+                        patientId={this.state.patientId}
+                        width={this.state.dimensions.x}
+                        height={this.state.dimensions.y}
+                        colorX={'rgb(255, 0, 0)'}
+                        colorY={'rgb(0, 255, 0)'}
+                        roiX1={this.state.roiDimensions.x1}
+                        roiX2={this.state.roiDimensions.x2}
+                        roiY1={this.state.roiDimensions.y1}
+                        roiY2={this.state.roiDimensions.y2}
+                        posIndex={this.state.indices.z}
               />
               <div>
                 <TextField
-                    id="x"
-                    label="x"
+                    id="z"
+                    label="z"
                     margin="normal"
                     type="number"
                     inputProps={{step: this.state.step}}
-                    value={this.state.indices.x}
-                    onChange={this.updateIndex('x')}
+                    value={this.state.indices.z}
+                    onChange={this.updateIndex('z')}
                 />
               </div>
             </Paper>
@@ -323,47 +323,6 @@ class App extends Component {
               </div>
             </Paper>
             <Paper style={styles.paper}>
-              <h2>3D</h2>
-              <span>
-                <img
-                    src={`/image/rendering/${this.state.patientId}?${this.state.renderingParams}`}
-                    style={{maxWidth: 300, maxHeight: 300}}
-                />
-                <Button
-                    variant="contained"
-                    onClick={this.updateRenderingParams}
-                >
-                  Update Rendering
-                </Button>
-                </span>
-            </Paper>
-            <Paper style={styles.paper}>
-              <h2>Axial MIP</h2>
-              <PlaneSVG viewType={'axial_mip'}
-                        patientId={this.state.patientId}
-                        width={this.state.dimensions.x}
-                        height={this.state.dimensions.y}
-                        colorX={'rgb(255, 0, 0)'}
-                        colorY={'rgb(0, 255, 0)'}
-                        roiX1={this.state.roiDimensions.x1}
-                        roiX2={this.state.roiDimensions.x2}
-                        roiY1={this.state.roiDimensions.y1}
-                        roiY2={this.state.roiDimensions.y2}
-                        posIndex={this.state.indices.z}
-              />
-              <div>
-                <TextField
-                    id="z"
-                    label="z"
-                    margin="normal"
-                    type="number"
-                    inputProps={{step: this.state.step}}
-                    value={this.state.indices.z}
-                    onChange={this.updateIndex('z')}
-                />
-              </div>
-            </Paper>
-            <Paper style={styles.paper}>
               <h2>Coronal</h2>
               <PlaneSVG viewType={'coronal'}
                         patientId={this.state.patientId}
@@ -388,6 +347,47 @@ class App extends Component {
                     onChange={this.updateIndex('y')}
                 />
               </div>
+            </Paper>
+            <Paper style={styles.paper}>
+              <h2>Sagittal</h2>
+              <PlaneSVG viewType={'sagittal'} patientId={this.state.patientId}
+                        width={this.state.dimensions.y}
+                        height={this.state.dimensions.z}
+                        colorX={'rgb(0, 255, 0)'}
+                        colorY={'rgb(0, 0, 255)'}
+                        roiX1={this.state.roiDimensions.y1}
+                        roiX2={this.state.roiDimensions.y2}
+                        roiY1={this.state.roiDimensions.z1}
+                        roiY2={this.state.roiDimensions.z2}
+                        posIndex={this.state.indices.x}
+                        lineIndex={this.state.dimensions.z - this.state.indices.z}
+              />
+              <div>
+                <TextField
+                    id="x"
+                    label="x"
+                    margin="normal"
+                    type="number"
+                    inputProps={{step: this.state.step}}
+                    value={this.state.indices.x}
+                    onChange={this.updateIndex('x')}
+                />
+              </div>
+            </Paper>
+            <Paper style={styles.paper}>
+              <h2>3D</h2>
+              <span>
+                <img
+                    src={`/image/rendering/${this.state.patientId}?${this.state.renderingParams}`}
+                    style={{maxWidth: 300, maxHeight: 300}}
+                />
+                <Button
+                    variant="contained"
+                    onClick={this.updateRenderingParams}
+                >
+                  Update Rendering
+                </Button>
+                </span>
             </Paper>
           </div>
           <div style={{display: 'hidden'}}>
