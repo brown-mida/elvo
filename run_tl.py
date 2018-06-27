@@ -45,9 +45,9 @@ def save_features():
         batch_size=4,
         augment_data=False,
         extend_dims=False,
-        test=True,
+        validation=True,
         split_test=True,
-        shuffle=True,
+        shuffle=False,
         split=0.2
     )
     features_test = model.predict_generator(
@@ -63,13 +63,15 @@ def train_top_model():
     train_data = np.load('tmp/features_train.npy')
     train_labels = np.load('tmp/labels_train.npy')[:1404]# [:1576]
     test_data = np.load('tmp/features_test.npy')
-    test_labels = np.load('tmp/labels_test.npy')[:172]# [:84]
+    test_labels = np.load('tmp/labels_test.npy')[:84]# [:84]
 
     inp = Input(shape=train_data.shape[1:])
     x = GlobalAveragePooling2D(name='t_pool')(inp)
-    x = Dense(1024, activation='relu', name='t_dense_1')(x)
+    x = Dense(1024, activation='relu', 
+              name='t_dense_1')(x)
     x = Dropout(0.5, name='t_do_1')(x)
-    x = Dense(1024, activation='relu', name='t_dense_2')(x)
+    x = Dense(1024, activation='relu',
+              name='t_dense_2')(x)
     x = Dropout(0.5, name='t_do_2')(x)
     outp = Dense(1, activation='sigmoid', name='t_dense_3')(x)
     model = Model(input=inp, output=outp)
@@ -199,8 +201,8 @@ def fine_tune_2():
     model.save('tmp/trained_resnet_2')
 
 
-save_features()
-# train_top_model()
+# save_features()
+train_top_model()
 # train_top_model_2()
 # fine_tune()
 # fine_tune_2()
