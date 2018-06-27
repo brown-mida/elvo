@@ -6,7 +6,7 @@ import Paper from "@material-ui/core/Paper/";
 import axios from 'axios'
 import Button from "@material-ui/core/Button";
 
-import styles from './style.css';
+import './style.css';
 import PlaneSVG from './PlaneSVG';
 
 // TODO: Caching
@@ -55,7 +55,7 @@ class App extends Component {
     this.updateRenderingParams = this.updateRenderingParams.bind(this);
     this.updateIndexScroll = this.updateIndexScroll.bind(this);
     this.handleMouseDown = this.handleMouseDown.bind(this);
-    this.handleMouseMove = this.handleMouseMove.bind(this)
+    this.handleMouseMove = this.handleMouseMove.bind(this);
     this.handleMouseUp = this.handleMouseUp.bind(this);
   }
 
@@ -215,6 +215,7 @@ class App extends Component {
     }
     const data = {
       created_by: this.state.createdBy,
+      patient_id: this.state.patientId,
       x1: this.state.roiDimensions.x1,
       x2: this.state.roiDimensions.x2,
       y1: this.state.roiDimensions.y1,

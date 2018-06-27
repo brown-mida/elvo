@@ -4,11 +4,13 @@ import logging
 import os
 
 import flask
+import gspread
 import matplotlib as mpl
 import numpy as np
 from flask_sqlalchemy import SQLAlchemy
 from google.cloud import storage
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+from oauth2client.service_account import ServiceAccountCredentials
 from skimage import measure
 
 mpl.use('Agg')
@@ -21,12 +23,23 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# client = storage.Client(project='elvo-198322')
-# bucket = client.bucket('elvos')
-gcs_client = storage.Client.from_service_account_json(
-    '../credentials/client_secret.json'
+client = storage.Client(project='elvo-198322')
+bucket = client.bucket('elvos')
+# TODO: We can't import from the parent dir on the deployed version
+# gcs_client = storage.Client.from_service_account_json(
+#     '../credentials/client_secret.json'
+# )
+# bucket = gcs_client.get_bucket('elvos')
+
+scope = ['https://spreadsheets.google.com/feeds',
+         'https://www.googleapis.com/auth/drive']
+credentials = ServiceAccountCredentials.from_json_keyfile_name(
+    os.environ['SPREADSHEET_CREDENTIALS'],
+    scope
 )
-bucket = gcs_client.get_bucket('elvos')
+spread_client = gspread.authorize(credentials)
+worksheet = spread_client.open_by_key(
+    '1_j7mq_VypBxYRWA5Y7ef4mxXqU0EmBKDl0lkp62SsXA').worksheet('annotations')
 
 
 def configure_logger():
@@ -52,6 +65,7 @@ def annotator():
 class Annotation(db.Model):
     __tablename__ = 'annotations'
     id_ = db.Column(db.Integer, primary_key=True)
+    patient_id = db.Column(db.String(255), nullable=False)
     created_by = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
     x1 = db.Column(db.Integer, nullable=False)
@@ -67,6 +81,7 @@ def roi():
     data = flask.request.json
     logging.info(f'creating annotation: {data}')
     created_by = data['created_by']
+    patient_id = data['patient_id']
     x1 = data['x1']
     x2 = data['x2']
     y1 = data['y1']
@@ -74,8 +89,11 @@ def roi():
     z1 = data['z1']
     z2 = data['z2']
 
+    created_at = datetime.datetime.utcnow()
+
     ann = Annotation(created_by=created_by,
-                     created_at=datetime.datetime.utcnow(),
+                     created_at=created_at,
+                     patient_id=patient_id,
                      x1=x1,
                      x2=x2,
                      y1=y1,
@@ -85,6 +103,19 @@ def roi():
     db.session.add(ann)
     db.session.commit()
     logging.info(f'inserted annotation: {ann}')
+    values = [
+        ann.patient_id,
+        ann.created_by,
+        created_at.isoformat(),
+        ann.x1,
+        ann.x2,
+        ann.y1,
+        ann.y2,
+        ann.z1,
+        ann.z2,
+    ]
+    worksheet.append_row(values)
+    logging.info(f'added to spreadsheet: {values}')
     return str(ann.id_)
 
 
