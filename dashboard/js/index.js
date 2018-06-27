@@ -15,6 +15,7 @@ const styles = {
   },
   dividerPaper: {
     padding: '10px',
+    width: '400px',
   }
 };
 
@@ -71,12 +72,20 @@ class App extends Component {
     return (
         <Paper style={styles.dividerPaper}>
           <h2>User Guide</h2>
-          <p>Use the text fields below to set the bounding box.</p>
-          <p>To scroll, click on an input field and use the up/down arrow
+          <p>Enter patient ids from the <a
+              href="https://docs.google.com/spreadsheets/d/1hndSmw8dxQVp1d8Fohb8yLOq7_PuCMKlyVS1-6PzLl4/edit#gid=0">
+            Elvo Key
+          </a> into the text box below
+          </p>
+          <p>Use the x1/y1/... fields to set the bounding box.</p>
+          <p>To scroll, click on an input field to the right and use the up/down
+            arrow
             keys.</p>
+          <p>Uploaded annotations are listed in the <a
+              href="https://docs.google.com/spreadsheets/d/1_j7mq_VypBxYRWA5Y7ef4mxXqU0EmBKDl0lkp62SsXA/edit#gid=0">
+            Annotation spreasheet
+          </a></p>
           <p><em>Only use this app on Wi-Fi</em></p>
-          <h2>To Do</h2>
-          <p>Improve scrolling performance w/ image caching</p>
         </Paper>
     )
   }
