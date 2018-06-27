@@ -38,6 +38,8 @@ if __name__ == '__main__':
         sagittal = np.transpose(axial, (2, 0, 1))
         sagittal = np.fliplr(sagittal)
 
+
+
         file_id = in_blob.name.split('/')[1]
         file_id = file_id.split('.')[0]
 

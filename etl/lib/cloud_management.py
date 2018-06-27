@@ -1,7 +1,7 @@
 import logging
 import io
 from tensorflow.python.lib.io import file_io
-import imageio
+# import imageio
 import numpy as np
 from google.cloud import storage
 
@@ -24,7 +24,7 @@ def upload_png(arr: np.ndarray, id: str, type: str, bucket: storage.Bucket):
     """
     try:
         out_stream = io.BytesIO()
-        imageio.imwrite(out_stream, arr, format='png')
+        # imageio.imwrite(out_stream, arr, format='png')
         out_filename = f'mip_data/{id}/{type}_mip.png'
         print(out_filename)
         out_blob = storage.Blob(out_filename, bucket)
