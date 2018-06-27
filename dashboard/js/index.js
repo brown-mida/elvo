@@ -292,6 +292,7 @@ class App extends Component {
                         roiY1={this.state.roiDimensions.y1}
                         roiY2={this.state.roiDimensions.y2}
                         posIndex={this.state.indices.z}
+                        lineIndex={this.state.indices.y}
               />
               <div>
                 <TextField
@@ -318,6 +319,7 @@ class App extends Component {
                         roiY1={this.state.roiDimensions.y1}
                         roiY2={this.state.roiDimensions.y2}
                         posIndex={this.state.indices.z}
+                        lineIndex={this.state.indices.y}
               />
               <div>
                 <TextField
@@ -344,6 +346,8 @@ class App extends Component {
                         roiY1={this.state.roiDimensions.z1}
                         roiY2={this.state.roiDimensions.z2}
                         posIndex={this.state.indices.y}
+                        lineIndex={this.state.indices.z}
+
               />
               <div>
                 <TextField
@@ -369,7 +373,7 @@ class App extends Component {
                         roiY1={this.state.roiDimensions.z1}
                         roiY2={this.state.roiDimensions.z2}
                         posIndex={this.state.indices.x}
-                        lineIndex={this.state.dimensions.z - this.state.indices.z}
+                        lineIndex={this.state.indices.z}
               />
               <div>
                 <TextField

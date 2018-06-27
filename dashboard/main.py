@@ -136,13 +136,18 @@ def dimensions(patient_id):
 @app.route('/image/axial/<patient_id>/<int:slice_i>')
 def axial(patient_id, slice_i):
     arr = _retrieve_arr(patient_id)
-    return _send_slice(arr[slice_i])
+    reverse_i = len(arr) - slice_i
+    reoriented = np.flip(np.flip(arr[reverse_i], axis=0), axis=1)
+    return _send_slice(reoriented)
 
 
 @app.route('/image/axial_mip/<patient_id>/<int:slice_i>')
 def axial_mip(patient_id, slice_i):
     arr = _retrieve_arr(patient_id)
-    return _send_slice(arr[slice_i:slice_i + 24].max(axis=0))
+    reverse_i = len(arr) - slice_i
+    mipped = arr[reverse_i:reverse_i + 24].max(axis=0)
+    reoriented = np.flip(np.flip(mipped, axis=0), axis=1)
+    return _send_slice(reoriented)
 
 
 @app.route('/image/sagittal/<patient_id>/<int:slice_k>')
