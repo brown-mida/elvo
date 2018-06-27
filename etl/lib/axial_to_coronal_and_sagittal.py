@@ -42,13 +42,19 @@ if __name__ == '__main__':
         file_id = file_id.split('.')[0]
 
         try:
-            print(f'gs://elvos/mip_data/from_numpy/coronal/{file_id}.npy')
-            np.save(file_io.FileIO(f'gs://elvos/numpy/coronal/{file_id}.npy',
-                                   'w'), coronal)
-            np.save(file_io.FileIO(f'gs://elvos/numpy/axial/{file_id}.npy',
-                                   'w'), axial)
-            np.save(file_io.FileIO(f'gs://elvos/numpy/sagittal/{file_id}.npy',
-                                   'w'), sagittal)
+            coronal_io = file_io.FileIO(f'gs://elvos/numpy/coronal/'
+                                        f'{file_id}.npy', 'w')
+            np.save(coronal_io, coronal)
+            axial_io = file_io.FileIO(f'gs://elvos/numpy/axial/'
+                                      f'{file_id}.npy', 'w')
+            np.save(axial_io, axial)
+            sagittal_io = file_io.FileIO(f'gs://elvos/numpy/sagittal/'
+                                         f'{file_id}.npy', 'w')
+            np.save(sagittal_io, sagittal)
+            coronal_io.close()
+            axial_io.close()
+            sagittal_io.close()
+
         except Exception as e:
             logging.error(f'for patient ID: {file_id} {e}')
             break
