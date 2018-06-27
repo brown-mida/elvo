@@ -18,6 +18,7 @@ class MipGenerator(object):
                  dims=(120, 120, 1), batch_size=16,
                  shuffle=True,
                  validation=False,
+                 test=False, split_test=False,
                  split=0.2, extend_dims=True,
                  augment_data=True):
         self.data_loc = data_loc
@@ -60,12 +61,6 @@ class MipGenerator(object):
                 if self.augment_data and not self.validation:
                     self.__add_augmented(files, file)
 
-        # Split based on validation
-        if validation:
-            files = files[:int(len(files) * split)]
-        else:
-            files = files[int(len(files) * split):]
-
         # Get label data from Google Cloud Storage
         blob = storage.Blob('labels.csv', bucket)
         blob.download_to_filename('tmp/labels.csv')
@@ -85,9 +80,33 @@ class MipGenerator(object):
         # Take into account shuffling
         if shuffle:
             tmp = list(zip(files, labels))
-            random.shuffle(tmp)
+            random.Random(192382491).shuffle(tmp)
             files, labels = zip(*tmp)
             labels = np.array(labels)
+
+        # Split based on validation
+        if validation:
+            if split_test:
+                files = files[:int(len(files) * split / 2)]
+                labels = labels[:int(len(labels) * split / 2)]
+            else:
+                files = files[:int(len(files) * split)]
+                labels = labels[:int(len(labels) * split)]
+        elif test:
+            if split_test:
+                files = files[int(len(files) * split / 2):
+                              int(len(files) * split)]
+                labels = labels[int(len(labels) * split / 2):
+                                int(len(labels) * split)]
+            else:
+                raise ValueError('must set split_test to True if test')
+        else:
+            files = files[int(len(files) * split):]
+            labels = labels[int(len(labels) * split):]
+        print(np.shape(files))
+        print(np.shape(labels))
+        print("Negatives: {}".format(np.count_nonzero(labels == 0)))
+        print("Positives: {}".format(np.count_nonzero(labels)))
 
         self.files = files
         self.labels = labels
