@@ -51,4 +51,5 @@ if __name__ == '__main__':
                                    'w'), sagittal)
         except Exception as e:
             logging.error(f'for patient ID: {file_id} {e}')
+            break
         logging.info(f'saved .npy file to cloud')
