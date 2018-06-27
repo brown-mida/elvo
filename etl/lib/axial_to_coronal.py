@@ -44,10 +44,10 @@ if __name__ == '__main__':
 
         try:
             print(f'gs://elvos/mip_data/from_numpy/coronal/{file_id}.npy')
-            np.save(file_io.FileIO(f'gs://elvos/mip_data/from_numpy/'
-                                   f'coronal/{file_id}.npy', 'w'), coronal)
-            np.save(file_io.FileIO(f'gs://elvos/mip_data/from_numpy/'
-                                   f'axial/{file_id}.npy', 'w'), axial)
+            np.save(file_io.FileIO(f'gs://elvos/numpy/coronal/{file_id}.npy',
+                                   'w'), coronal)
+            np.save(file_io.FileIO(f'gs://elvos/numpy/axial/{file_id}.npy',
+                                   'w'), axial)
         except Exception as e:
             logging.error(f'for patient ID: {file_id} {e}')
         logging.info(f'saved .npy file to cloud')

@@ -1,8 +1,9 @@
 import logging
 import numpy as np
-from matplotlib import pyplot as plt
+# from matplotlib import pyplot as plt
 from tensorflow.python.lib.io import file_io
 import cloud_management as cloud
+
 
 def configure_logger():
     root_logger = logging.getLogger()
@@ -12,6 +13,7 @@ def configure_logger():
         fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
     root_logger.addHandler(handler)
+
 
 if __name__ == '__main__':
     configure_logger()
@@ -36,15 +38,15 @@ if __name__ == '__main__':
         file_id = in_blob.name.split('/')[1]
         file_id = file_id.split('.')[0]
 
-        for i in range(0, len(sagittal), 10):
-            plt.figure(figsize=(6, 6))
-            plt.imshow(sagittal[i], interpolation='none')
-            plt.show()
+        # for i in range(0, len(sagittal), 10):
+        #     plt.figure(figsize=(6, 6))
+        #     plt.imshow(sagittal[i], interpolation='none')
+        #     plt.show()
 
         try:
             print(f'gs://elvos/mip_data/from_numpy/sagittal/{file_id}.npy')
-            np.save(file_io.FileIO(f'gs://elvos/mip_data/from_numpy/'
-                                   f'sagittal/{file_id}.npy', 'w'), sagittal)
+            np.save(file_io.FileIO(f'gs://elvos/numpy/sagittal/{file_id}.npy',
+                                   'w'), sagittal)
         except Exception as e:
             logging.error(f'for patient ID: {file_id} {e}')
         logging.info(f'saved .npy file to cloud')
