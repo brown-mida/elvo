@@ -10,6 +10,7 @@ import logging
 import os
 import shutil
 import subprocess
+import datetime
 from typing import List
 
 import numpy as np
@@ -108,11 +109,18 @@ def create_labels_csv(bucket, positives_df, negatives_df) -> None:
     """
     labels = []
     blob: storage.Blob
+
     for blob in bucket.list_blobs(prefix=ELVOS_ANON + '/'):
         if blob.name.endswith('.csv'):
             continue  # Ignore the metadata CSV
 
+        if ' ' in blob.name:
+            continue  # Ignore random helper files
+
         patient_id = blob.name[len(ELVOS_ANON) + 1: -EXTENSION_LENGTH]
+
+        if patient_id == 'READM':
+            continue  # Ignore README
 
         if patient_id in positives_df['Anon ID'].values:
             labels.append((patient_id, 1))
@@ -128,6 +136,15 @@ def create_labels_csv(bucket, positives_df, negatives_df) -> None:
     labels_blob = storage.Blob('labels.csv', bucket=bucket)
     labels_blob.upload_from_filename('labels.csv')
     logging.info(f'label value counts {labels_df["label"].value_counts()}')
+
+
+def get_labels_df(bucket):
+    old_label_blob = bucket.get_blob('labels.csv')
+    old_label_bytes = old_label_blob.download_as_string()
+    old_label_str = old_label_bytes.decode('utf-8')
+    old_label_df = pd.read_csv(io.StringIO(old_label_str))
+
+    return old_label_df
 
 
 def preprocess_scan(slices: List[pydicom.FileDataset]) -> np.array:
@@ -148,12 +165,25 @@ def main():
 
     blob: storage.Blob
     for blob in input_bucket.list_blobs(prefix=ELVOS_ANON + '/'):
+
+        # ignore previously created stuff
+        # if blob.time_created.date() != datetime.date(2018, 6, 21):
+        #     continue
+
         if blob.name.endswith('.csv'):
             continue  # Ignore the metadata CSV
+
+        # if blob.name < 'ELVOs_anon/XHF16O9O7LFK1JNI.npy':
+        #     print(blob.name)
+        #     continue
+
+        if blob.time_created.date() >= datetime.date(2018, 6, 21):
+            continue
 
         try:
             logging.info(f'processing blob {blob.name}')
             patient_id = blob.name[len(ELVOS_ANON) + 1: -EXTENSION_LENGTH]
+            # new_labels.append((patient_id, 0))
 
             if blob.name.endswith('.cab'):
                 process_cab(blob, patient_id)
