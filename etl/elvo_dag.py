@@ -6,10 +6,10 @@ from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.slack_operator import SlackAPIPostOperator
 
-import encode_labels
-import spreadsheet_to_gcs
 from compress_numpy import compress_numpy
 from dicom_to_npy import dicom_to_npy
+from encode_labels import encode_labels
+from spreadsheet_to_gcs import spreadsheet_to_gcs
 
 default_args = {
     'owner': 'luke',
