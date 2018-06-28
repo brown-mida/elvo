@@ -110,6 +110,7 @@ def dicom_to_npy(in_dir, out_dir):
     gcs_client = storage.Client(project='elvo-198322')
     bucket = gcs_client.get_bucket('elvos')
 
+    shutil.rmtree('tmp', ignore_errors=True)  # in case the last run failed
     blob: storage.Blob
     for blob in bucket.list_blobs(prefix=in_dir):
         if blob.name.endswith('.csv'):
