@@ -36,7 +36,7 @@ def process_cab(blob: storage.Blob, patient_id: str) -> np.ndarray:
     :param patient_id:
     :return:
     """
-    os.makedirs('tmp')
+    os.makedirs('tmp', exist_ok=True)
     os.chdir('tmp')
 
     blob.download_to_filename(patient_id + '.cab')
@@ -65,7 +65,7 @@ def process_zip(blob: storage.Blob, patient_id: str) -> np.ndarray:
     :param patient_id:
     :return:
     """
-    os.makedirs('tmp')
+    os.makedirs('tmp', exist_ok=True)
     os.chdir('tmp')
 
     blob.download_to_filename(patient_id + '.zip')
