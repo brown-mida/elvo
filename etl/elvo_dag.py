@@ -20,7 +20,7 @@ COMPRESSED_NUMPY = 'airflow/npz/'
 
 dag = DAG(dag_id='elvo_main', default_args=default_args)
 
-dropbox_to_gcs = BashOperator(task_id='dropbox_to_gcs_op',
+dropbox_to_gcs = BashOperator(task_id='dropbox_to_gcs',
                               bash_command='python3 /home/lukezhu/'
                                            'elvo-analysis/'
                                            'etl/dropbox_to_gcs.py',
@@ -33,11 +33,11 @@ elvos_anon_to_numpy_op = PythonOperator(task_id='elvos_anon_to_numpy',
 
 compress_numpy_op = PythonOperator(task_id='compress_numpy',
                                    python_callable=lambda: compress_numpy(
-                                       RAW_NUMPY, ELVOS_ANON),
+                                       RAW_NUMPY, COMPRESSED_NUMPY),
                                    dag=dag)
 
 slack_confirmation = SlackAPIPostOperator(
-    task_id='slack_comfirmation',
+    task_id='slack_confirmation',
     channel='i-utra',
     username='airflow',
     token=os.environ['SLACK_TOKEN'],

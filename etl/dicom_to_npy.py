@@ -119,7 +119,10 @@ def dicom_to_npy(in_dir, out_dir):
         patient_id = blob.name[len(in_dir): -len('.cab')]
         outpath = f'{out_dir}{patient_id}.npy'
 
-        if blob.name.endswith('.cab'):
+        if storage.Blob(outpath, bucket).exists():
+            logging.info(f'blob {blob.name} already exists')
+            continue
+        elif blob.name.endswith('.cab'):
             processed_scan = process_cab(blob, patient_id)
             save_to_gcs(processed_scan, outpath, bucket)
         elif blob.name.endswith('.zip'):
