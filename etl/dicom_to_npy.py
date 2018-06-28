@@ -97,6 +97,7 @@ def save_to_gcs(processed_scan, outpath, bucket):
     stream.seek(0)
     processed_blob.upload_from_file(stream)
     logging.info(f'saving dicom data to GCS in {outpath}')
+    stream.close()
 
 
 def preprocess_scan(slices: List[pydicom.FileDataset]) -> np.array:
