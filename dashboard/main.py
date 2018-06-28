@@ -12,7 +12,6 @@ from google.cloud import storage
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from oauth2client.service_account import ServiceAccountCredentials
 from skimage import measure
-from werkzeug.contrib.cache import SimpleCache
 
 mpl.use('Agg')
 from matplotlib import image  # noqa: E402
@@ -42,7 +41,7 @@ spread_client = gspread.authorize(credentials)
 worksheet = spread_client.open_by_key(
     '1_j7mq_VypBxYRWA5Y7ef4mxXqU0EmBKDl0lkp62SsXA').worksheet('annotations')
 
-cache = SimpleCache(threshold=3, default_timeout=60)
+cache = {}
 
 
 def configure_logger():
@@ -229,7 +228,9 @@ def _retrieve_arr(patient_id: str) -> np.ndarray:
     blob.download_to_file(in_stream)
     in_stream.seek(0)
     arr = np.load(in_stream)
-    cache.set(patient_id, arr)
+    if len(cache) >= 5:
+        cache.popitem()
+    cache[patient_id] = arr
     return arr
 
 
