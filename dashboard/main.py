@@ -42,7 +42,7 @@ spread_client = gspread.authorize(credentials)
 worksheet = spread_client.open_by_key(
     '1_j7mq_VypBxYRWA5Y7ef4mxXqU0EmBKDl0lkp62SsXA').worksheet('annotations')
 
-cache = SimpleCache()
+cache = SimpleCache(threshold=3, default_timeout=60)
 
 
 def configure_logger():
