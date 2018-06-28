@@ -36,7 +36,7 @@ def process_cab(blob: storage.Blob, patient_id: str) -> np.ndarray:
     :param patient_id:
     :return:
     """
-    os.mkdir('tmp')
+    os.makedirs('tmp')
     os.chdir('tmp')
 
     blob.download_to_filename(patient_id + '.cab')
@@ -65,7 +65,7 @@ def process_zip(blob: storage.Blob, patient_id: str) -> np.ndarray:
     :param patient_id:
     :return:
     """
-    os.mkdir('tmp')
+    os.makedirs('tmp')
     os.chdir('tmp')
 
     blob.download_to_filename(patient_id + '.zip')
@@ -110,7 +110,6 @@ def dicom_to_npy(in_dir, out_dir):
     gcs_client = storage.Client(project='elvo-198322')
     bucket = gcs_client.get_bucket('elvos')
 
-    shutil.rmtree('tmp', ignore_errors=True)  # in case the last run failed
     blob: storage.Blob
     for blob in bucket.list_blobs(prefix=in_dir):
         if len(blob.name) < 4 or blob.name[-4:] not in ('.zip', '.cab'):
