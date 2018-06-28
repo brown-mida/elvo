@@ -8,6 +8,7 @@ import logging
 import os
 import shutil
 import subprocess
+import time
 from typing import List
 
 import numpy as np
@@ -36,8 +37,11 @@ def process_cab(blob: storage.Blob, patient_id: str) -> np.ndarray:
     :param patient_id:
     :return:
     """
-    os.makedirs('tmp', exist_ok=True)
-    os.chdir('tmp')
+    # TODO: Fix issues with process_cab workingdir failing
+    old_wd = os.getcwd()
+    dirname = f'/tmp/dicom_to_npy-{int(time.time())}'
+    os.makedirs(dirname, exist_ok=True)
+    os.chdir(dirname)
 
     blob.download_to_filename(patient_id + '.cab')
     subprocess.call(['cabextract', patient_id + '.cab'])
@@ -47,8 +51,8 @@ def process_cab(blob: storage.Blob, patient_id: str) -> np.ndarray:
     logging.info(f'loading scans from {dirpath}')
     processed_scan = _process_cab(dirpath)
 
-    os.chdir('..')
-    shutil.rmtree('tmp')
+    os.chdir(old_wd)
+    shutil.rmtree(dirname)
     return processed_scan
 
 
@@ -65,8 +69,10 @@ def process_zip(blob: storage.Blob, patient_id: str) -> np.ndarray:
     :param patient_id:
     :return:
     """
-    os.makedirs('tmp', exist_ok=True)
-    os.chdir('tmp')
+    old_wd = os.getcwd()
+    dirname = f'/tmp/dicom_to_npy-{int(time.time())}'
+    os.makedirs(dirname, exist_ok=True)
+    os.chdir(dirname)
 
     blob.download_to_filename(patient_id + '.zip')
     logging.info('extracting zip file')
@@ -78,8 +84,8 @@ def process_zip(blob: storage.Blob, patient_id: str) -> np.ndarray:
     processed_scan = preprocess_scan(scan)
     logging.info(f'processing dicom data')
 
-    os.chdir('..')
-    shutil.rmtree('tmp')
+    os.chdir(old_wd)
+    shutil.rmtree(dirname)
     return processed_scan
 
 
