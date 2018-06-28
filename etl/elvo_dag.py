@@ -6,6 +6,8 @@ from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.slack_operator import SlackAPIPostOperator
 
+import encode_labels
+import spreadsheet_to_gcs
 from compress_numpy import compress_numpy
 from dicom_to_npy import dicom_to_npy
 
@@ -36,6 +38,14 @@ compress_numpy_op = PythonOperator(task_id='compress_numpy',
                                        RAW_NUMPY, COMPRESSED_NUMPY),
                                    dag=dag)
 
+spreadsheet_to_gcs_op = PythonOperator(task_id='spreadsheet_to_gcs',
+                                       python_callable=spreadsheet_to_gcs,
+                                       dag=dag)
+
+encode_labels_op = PythonOperator(task_id='encode_labels',
+                                  python_callable=encode_labels,
+                                  dag=dag)
+
 slack_confirmation = SlackAPIPostOperator(
     task_id='slack_confirmation',
     channel='i-utra',
@@ -46,6 +56,6 @@ slack_confirmation = SlackAPIPostOperator(
 )
 
 dropbox_to_gcs >> elvos_anon_to_numpy_op
+spreadsheet_to_gcs_op >> encode_labels_op
 elvos_anon_to_numpy_op >> compress_numpy_op
 compress_numpy_op >> slack_confirmation
-# TODO: Add spreadsheet_to_gcs and encode_labels to the DAG

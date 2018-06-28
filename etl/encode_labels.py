@@ -50,9 +50,13 @@ def create_labels_csv(bucket, positives_df, negatives_df) -> None:
     logging.info(f'label value counts {labels_df["label"].value_counts()}')
 
 
-if __name__ == '__main__':
+def encode_labels():
     gcs_client = storage.Client(project='elvo-198322')
     input_bucket = gcs_client.get_bucket('elvos')
 
     positives_df, negatives_df = load_metadata(input_bucket)
     create_labels_csv(input_bucket, positives_df, negatives_df)
+
+
+if __name__ == '__main__':
+    encode_labels()
