@@ -113,7 +113,8 @@ def dicom_to_npy(in_dir, out_dir):
     shutil.rmtree('tmp', ignore_errors=True)  # in case the last run failed
     blob: storage.Blob
     for blob in bucket.list_blobs(prefix=in_dir):
-        if len(blob.name) < 4 or blob.name[:-4] not in ('.zip', '.cab'):
+        if len(blob.name) < 4 or blob.name[-4:] not in ('.zip', '.cab'):
+            logging.info(f'ignoring non-data file {blob.name}')
             continue
 
         logging.info(f'processing blob {blob.name}')
