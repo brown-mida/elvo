@@ -44,8 +44,8 @@ def create_labels_csv(bucket, positives_df, negatives_df) -> None:
             labels.append((patient_id, 0))
     labels_df = pd.DataFrame(labels, columns=['patient_id', 'label'])
     labels_df.to_csv('labels.csv', index=False)
-    logging.info('uploading labels to the gs://elvos/labels.csv')
-    labels_blob = storage.Blob('labels.csv', bucket=bucket)
+    logging.info('uploading labels to the gs://elvos/processed/labels.csv')
+    labels_blob = storage.Blob('processed/labels.csv', bucket=bucket)
     labels_blob.upload_from_filename('labels.csv')
     logging.info(f'label value counts {labels_df["label"].value_counts()}')
 
