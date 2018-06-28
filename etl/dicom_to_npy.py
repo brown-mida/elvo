@@ -121,7 +121,7 @@ def dicom_to_npy(in_dir, out_dir):
         outpath = f'{out_dir}{patient_id}.npy'
 
         if storage.Blob(outpath, bucket).exists():
-            logging.info(f'blob {blob.name} already exists')
+            logging.info(f'outfile {outpath} already exists')
             continue
         elif blob.name.endswith('.cab'):
             processed_scan = process_cab(blob, patient_id)
