@@ -29,8 +29,9 @@ def create_labels_csv(bucket, positives_df, negatives_df) -> None:
     labels = []
     blob: storage.Blob
     for blob in bucket.list_blobs(prefix=IN_DIR):
-        if blob.name.endswith('.csv'):
-            continue  # Ignore the metadata CSV
+        if len(blob.name) < 4 or blob.name[-4:] not in ('.zip', '.cab'):
+            logging.info(f'ignoring non-data file {blob.name}')
+            continue
 
         patient_id = blob.name[len(IN_DIR): -len('.npy')]
 
