@@ -2,12 +2,31 @@ import numpy as np
 
 from keras import backend as K
 
+import keras.metrics as metrics
+from keras.utils import multi_gpu_model
 from keras.callbacks import ModelCheckpoint
 from keras.models import Model, load_model
 from keras.layers import Dense, GlobalAveragePooling2D, Dropout, Input
 from keras.optimizers import Adam, SGD
 from keras.applications.resnet50 import ResNet50
 from ml.generators.mip_generator_local import MipGenerator
+
+
+class ModelMGPU(Model):
+    def __init__(self, ser_model, gpus):
+        pmodel = multi_gpu_model(ser_model, gpus)
+        self.__dict__.update(pmodel.__dict__)
+        self._smodel = ser_model
+    
+    def __getattribute__(self, attrname):
+        '''Override load and save methods to be used from the serial-model. The
+        serial-model holds references to the weights in the multi-gpu model.
+                                                                    '''
+        # return Model.__getattribute__(self, attrname)
+        if 'load' in attrname or 'save' in attrname:
+            return getattr(self._smodel, attrname)
+
+        return super(ModelMGPU, self).__getattribute__(attrname)
 
 
 def sensitivity(y_true, y_pred):
@@ -117,35 +136,36 @@ def fine_tune():
     x = l4(x)
     x = l5(x)
     outp = l6(x)
-    model = Model(input=model_1.input, output=outp)
+    model = Model(inputs=model_1.input, outputs=outp)
 
-    print(l2.get_weights())
     model.load_weights('tmp/stage_1_resnet_weights', by_name=True)
-    print(l2.get_weights())
-
-    for layer in model.layers[:38]:  # 38, 79, 141
+    for layer in model.layers[:141]:  # 38, 79, 141
         layer.trainable = False
-    model.compile(optimizer=SGD(lr=1e-4, momentum=0.9),
+    gpu_model = ModelMGPU(model, 2)
+    gpu_model.compile(optimizer=SGD(lr=1e-4, momentum=0.9),
                   loss='binary_crossentropy',
                   metrics=['accuracy', sensitivity, specificity])
 
     train_gen = MipGenerator(
+        data_loc='data/mip',
         dims=(220, 220, 3),
-        batch_size=16,
+        batch_size=48,
         augment_data=True,
         extend_dims=False,
         shuffle=True,
-        split=0.1
+        split=0.2
     )
 
     test_gen = MipGenerator(
+        data_loc='data/mip',
         dims=(220, 220, 3),
         batch_size=4,
         augment_data=False,
         extend_dims=False,
         validation=True,
-        shuffle=True,
-        split=0.1
+        split_test=True,
+        shuffle=False,
+        split=0.2
     )
 
     mc_callback = ModelCheckpoint(filepath='tmp/stage_2_resnet',
@@ -154,7 +174,7 @@ def fine_tune():
                                   mode='max',
                                   verbose=1)
 
-    model.fit_generator(
+    gpu_model.fit_generator(
         generator=train_gen.generate(),
         steps_per_epoch=train_gen.get_steps_per_epoch(),
         validation_data=test_gen.generate(),
@@ -166,41 +186,54 @@ def fine_tune():
 
 
 def fine_tune_2():
-    model = load_model('tmp/trained_resnet')
+    metrics.sensitivity = sensitivity
+    metrics.specificity = specificity
 
-    for layer in model.layers[:39]:
+    model = load_model('tmp/stage_2_resnet')
+    for layer in model.layers[:141]:
         layer.trainable = False
-    model.compile(optimizer=SGD(lr=1e-5, momentum=0.9),
+    gpu_model = ModelMGPU(model, 4)
+    gpu_model.compile(optimizer=SGD(lr=1e-4, momentum=0.9),
                   loss='binary_crossentropy',
-                  metrics=['accuracy'])
+                  metrics=['accuracy', sensitivity, specificity])
 
     train_gen = MipGenerator(
+        data_loc='data/mip',
         dims=(220, 220, 3),
-        batch_size=16,
+        batch_size=48,
         augment_data=True,
         extend_dims=False,
-        shuffle=False
+        shuffle=True,
+        split=0.2
     )
 
     test_gen = MipGenerator(
+        data_loc='data/mip',
         dims=(220, 220, 3),
         batch_size=4,
         augment_data=False,
         extend_dims=False,
         validation=True,
-        shuffle=False
+        split_test=True,
+        shuffle=False,
+        split=0.2
     )
 
-    model.fit_generator(
+    mc_callback = ModelCheckpoint(filepath='tmp/stage_3_resnet',
+                                  save_best_only=True,
+                                  monitor='val_acc',
+                                  mode='max',
+                                  verbose=1)
+
+    gpu_model.fit_generator(
         generator=train_gen.generate(),
         steps_per_epoch=train_gen.get_steps_per_epoch(),
         validation_data=test_gen.generate(),
         validation_steps=test_gen.get_steps_per_epoch(),
-        epochs=500,
-        verbose=1
+        epochs=5000,
+        verbose=1,
+        callbacks=[mc_callback]
     )
-
-    model.save('tmp/trained_resnet_2')
 
 
 save_features()
