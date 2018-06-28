@@ -18,7 +18,7 @@ ELVOS_ANON = 'ELVOs_anon/'
 RAW_NUMPY = 'airflow/npy/'
 COMPRESSED_NUMPY = 'airflow/npz/'
 
-dag = DAG(dag_id='compress_numpy', default_args=default_args)
+dag = DAG(dag_id='elvo_main', default_args=default_args)
 
 dropbox_to_gcs = BashOperator(task_id='dropbox_to_gcs_op',
                               bash_command='python3 /home/lukezhu/'
