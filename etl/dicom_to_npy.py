@@ -1,9 +1,7 @@
 """To run this GOOGLE_APPLICATION_CREDENTIALS should be set.
 
-This script converts the compressed patient info in ELVOs_anon
-into numpy files, saved in the numpy folder of the elvo bucket.
-
-This script also creates the labels.csv file.
+This script converts the compressed files containing dicom files
+to numpy files.
 """
 import io
 import logging
@@ -19,10 +17,6 @@ from google.cloud import storage
 from lib import parsers
 from lib import transforms
 
-IN_DIR = 'ELVOs_anon/'
-OUT_DIR = 'raw_numpy/'
-EXTENSION_LENGTH = len('.cab')  # == 4
-
 
 def configure_logger():
     root_logger = logging.getLogger()
@@ -34,7 +28,14 @@ def configure_logger():
     root_logger.addHandler(handler)
 
 
-def process_cab(blob: storage.Blob, patient_id: str) -> None:
+def process_cab(blob: storage.Blob, patient_id: str) -> np.ndarray:
+    """
+    Downloads the blob and return a 3D standardized numpy array.
+
+    :param blob:
+    :param patient_id:
+    :return:
+    """
     os.mkdir('tmp')
     os.chdir('tmp')
 
@@ -48,8 +49,7 @@ def process_cab(blob: storage.Blob, patient_id: str) -> None:
 
     os.chdir('..')
     shutil.rmtree('tmp')
-
-    save_to_gcs(processed_scan, patient_id, blob.bucket)
+    return processed_scan
 
 
 def _process_cab(dirpath: str) -> np.array:
@@ -58,7 +58,13 @@ def _process_cab(dirpath: str) -> np.array:
     return processed_scan
 
 
-def process_zip(blob: storage.Blob, patient_id: str) -> None:
+def process_zip(blob: storage.Blob, patient_id: str) -> np.ndarray:
+    """
+    Downloads the blob and returns a 3D standardized numpy array.
+    :param blob:
+    :param patient_id:
+    :return:
+    """
     os.mkdir('tmp')
     os.chdir('tmp')
 
@@ -74,11 +80,10 @@ def process_zip(blob: storage.Blob, patient_id: str) -> None:
 
     os.chdir('..')
     shutil.rmtree('tmp')
-    save_to_gcs(processed_scan, patient_id, blob.bucket)
+    return processed_scan
 
 
-def save_to_gcs(processed_scan, patient_id, bucket):
-    outpath = f'{OUT_DIR}{patient_id}.npy'
+def save_to_gcs(processed_scan, outpath, bucket):
     stream = io.BytesIO()
     np.save(stream, processed_scan)
     processed_blob = storage.Blob(outpath, bucket=bucket)
@@ -96,22 +101,30 @@ def preprocess_scan(slices: List[pydicom.FileDataset]) -> np.array:
     return scan
 
 
-def main():
+def dicom_to_npy(in_dir, out_dir):
+    """
+    :param in_dir: directory in gs://elvos to load from. must end with /
+    :param out_dir: directory in gs://elvos to save to. must end with /
+    :return:
+    """
     gcs_client = storage.Client(project='elvo-198322')
-    input_bucket = gcs_client.get_bucket('elvos')
+    bucket = gcs_client.get_bucket('elvos')
 
     blob: storage.Blob
-    for blob in input_bucket.list_blobs(prefix=IN_DIR):
+    for blob in bucket.list_blobs(prefix=in_dir):
         if blob.name.endswith('.csv'):
             continue  # Ignore the metadata CSV
 
         logging.info(f'processing blob {blob.name}')
-        patient_id = blob.name[len(IN_DIR): -EXTENSION_LENGTH]
+        patient_id = blob.name[len(in_dir): -len('.cab')]
+        outpath = f'{out_dir}{patient_id}.npy'
 
         if blob.name.endswith('.cab'):
-            process_cab(blob, patient_id)
+            processed_scan = process_cab(blob, patient_id)
+            save_to_gcs(processed_scan, outpath, bucket)
         elif blob.name.endswith('.zip'):
-            process_zip(blob, patient_id)
+            processed_scan = process_zip(blob, patient_id)
+            save_to_gcs(processed_scan, outpath, bucket)
         else:
             logging.info(f'file extension must be .cab or .zip,'
                          f' got {blob.name}')
@@ -119,4 +132,4 @@ def main():
 
 if __name__ == '__main__':
     configure_logger()
-    main()
+    dicom_to_npy('ELVOs_anon/', 'raw_numpy/')
