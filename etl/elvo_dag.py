@@ -11,7 +11,7 @@ from dicom_to_npy import dicom_to_npy
 
 default_args = {
     'owner': 'luke',
-    'start_date': datetime(2018, 6, 26, 8),
+    'start_date': datetime(2018, 6, 28, 5),
 }
 
 ELVOS_ANON = 'ELVOs_anon/'
