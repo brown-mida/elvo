@@ -32,7 +32,7 @@ def spreadsheet_to_gcs():
     sheet_pos = sheet.get_worksheet(0)
     data = sheet_pos.get_all_records()
     keys = data[0].keys()
-    with open('elvo_keys_positive.csv', 'w') as output_file:
+    with open('/tmp/elvo_keys_positive.csv', 'w') as output_file:
         dict_writer = csv.DictWriter(output_file, keys)
         dict_writer.writeheader()
         dict_writer.writerows(data)
@@ -41,7 +41,7 @@ def spreadsheet_to_gcs():
     sheet_neg = sheet.get_worksheet(1)
     data = sheet_neg.get_all_records()
     keys = data[0].keys()
-    with open('elvo_keys_negative.csv', 'w') as output_file:
+    with open('/tmp/elvo_keys_negative.csv', 'w') as output_file:
         dict_writer = csv.DictWriter(output_file, keys)
         dict_writer.writeheader()
         dict_writer.writerows(data)
@@ -54,13 +54,13 @@ def spreadsheet_to_gcs():
     bucket = gcs_client.get_bucket('elvos')
 
     blob = storage.Blob('metadata/positives.csv', bucket)
-    blob.upload_from_filename('elvo_keys_positive.csv')
+    blob.upload_from_filename('/tmp/elvo_keys_positive.csv')
     blob = storage.Blob('metadata/negatives.csv', bucket)
-    blob.upload_from_filename('elvo_keys_negative.csv')
+    blob.upload_from_filename('/tmp/elvo_keys_negative.csv')
 
     # Cleanup
-    os.remove('elvo_keys_positive.csv')
-    os.remove('elvo_keys_negative.csv')
+    os.remove('/tmp/elvo_keys_positive.csv')
+    os.remove('/tmp/elvo_keys_negative.csv')
     print("Done.")
 
 
