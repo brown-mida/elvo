@@ -137,7 +137,7 @@ def dimensions(patient_id):
 def axial(patient_id, slice_i):
     arr = _retrieve_arr(patient_id)
     reverse_i = len(arr) - slice_i
-    reoriented = np.flip(np.flip(arr[reverse_i], axis=0), axis=1)
+    reoriented = np.flip(arr[reverse_i], axis=0)
     return _send_slice(reoriented)
 
 
@@ -146,7 +146,7 @@ def axial_mip(patient_id, slice_i):
     arr = _retrieve_arr(patient_id)
     reverse_i = len(arr) - slice_i
     mipped = arr[reverse_i:reverse_i + 24].max(axis=0)
-    reoriented = np.flip(np.flip(mipped, axis=0), axis=1)
+    reoriented = np.flip(mipped, axis=0)
     return _send_slice(reoriented)
 
 
