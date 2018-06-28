@@ -17,14 +17,15 @@ print("Authenticating to Google Drive...")
 scope = ['https://spreadsheets.google.com/feeds']
 # TODO: Credentials should be kept in secrets/
 creds = ServiceAccountCredentials.from_json_keyfile_name(
-    '../credentials/client_secret.json', scope
+    os.environ['DRIVE_KEYFILE'],
+    scope
 )
 client = gspread.authorize(creds)
 
 # Get the Google Spreadsheet data
 print("Opening spreadsheet...")
 # sheet = client.open_by_key("1hndSmw8dxQVp1d8Fohb8yLOq7_PuCMKlyVS1-6PzLl4")
-sheet = client.open_by_key("1ho920hPecJY3pL65_IMXlU9ggqFntFMnZihnMT3h8gs")
+sheet = client.open_by_key("1DJcOW4In-KRbR9aQ4zG3iwczs3Opr5w-pQLLkBe-J3Q")
 
 print("Get positive data...")
 sheet_pos = sheet.get_worksheet(0)
@@ -47,7 +48,7 @@ with open('elvo_keys_negative.csv', 'w') as output_file:
 # Upload to Google Cloud
 print("Uploading to Google Cloud...")
 gcs_client = storage.Client.from_service_account_json(
-    '../credentials/client_secret.json'
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS']
 )
 bucket = gcs_client.get_bucket('elvos')
 
