@@ -44,4 +44,4 @@ slack_confirmation = SlackAPIPostOperator(
 )
 
 axial_to_coronal_and_sagittal_op >> normal_mip_op >> \
-multichannel_mip_op >> overlap_mip_op >> slack_confirmation
+    multichannel_mip_op >> overlap_mip_op >> slack_confirmation
