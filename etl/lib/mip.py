@@ -24,7 +24,7 @@ def configure_logger():
     root_logger.addHandler(handler)
 
 
-if __name__ == '__main__':
+def normal_mip():
     configure_logger()
     client = cloud.authenticate()
     bucket = client.get_bucket('elvos')
@@ -69,3 +69,7 @@ if __name__ == '__main__':
             file_id = file_id.split('.')[0]
             # save to the numpy generator source directory
             cloud.save_npy_to_cloud(mip_arr, file_id, location, 'normal')
+
+
+if __name__ == '__main__':
+    normal_mip()
