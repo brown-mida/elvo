@@ -80,6 +80,7 @@ def crop_normal_axial(arr: np.ndarray, whence: str):
         to_return = arr[len(arr) - 40:]
     return to_return
 
+
 def crop_strip_skull(arr: np.ndarray, whence: str):
     # from numpy
     if whence == 'numpy/axial':

@@ -14,15 +14,12 @@ def configure_logger():
     root_logger.addHandler(handler)
 
 
-if __name__ == '__main__':
+def axial_to_coronal_and_sagittal():
     configure_logger()
     client = cloud.authenticate()
     bucket = client.get_bucket('elvos')
 
     for in_blob in bucket.list_blobs(prefix='numpy/axial'):
-
-        if in_blob.name < 'numpy/U5ZUK9GYCAM4FYK4.npy':
-            continue
 
         # blacklist
         if in_blob.name == 'numpy/LAUIHISOEZIM5ILF.npy':
@@ -57,3 +54,6 @@ if __name__ == '__main__':
             logging.error(f'for patient ID: {file_id} {e}')
             break
         logging.info(f'saved .npy file to cloud')
+
+if __name__ == '__main__':
+    axial_to_coronal_and_sagittal()

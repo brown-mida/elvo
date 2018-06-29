@@ -44,7 +44,7 @@ def multichannel_mip():
             logging.info(f'downloading {in_blob.name}')
             input_arr = cloud.download_array(in_blob)
             logging.info(f"blob shape: {input_arr.shape}")
-            if location == 'numpy/axial':
+            if location == 'airflow/npy':
                 cropped_arr = transforms.crop_multichannel_axial(input_arr,
                                                                  location)
             else:

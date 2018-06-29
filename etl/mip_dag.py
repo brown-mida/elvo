@@ -5,6 +5,7 @@ from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.slack_operator import SlackAPIPostOperator
 
+from axial_to_coronal_and_sagittal import axial_to_coronal_and_sagittal
 from mip import normal_mip
 from multichannel_mip import multichannel_mip
 from overlap_mip import overlap_mip
@@ -14,11 +15,12 @@ default_args = {
     'start_date': datetime(2018, 6, 28, 5),
 }
 
-ELVOS_ANON = 'ELVOs_anon/'
-RAW_NUMPY = 'airflow/npy/'
-COMPRESSED_NUMPY = 'airflow/npz/'
-
 dag = DAG(dag_id='mip_dag', default_args=default_args)
+
+axial_to_coronal_and_sagittal_op = \
+    PythonOperator(task_id='axial_to coronal_and_sagittal',
+                   python_callable=axial_to_coronal_and_sagittal(),
+                   dag=dag)
 
 normal_mip_op = PythonOperator(task_id='normal_mip',
                                python_callable=normal_mip,
@@ -41,4 +43,5 @@ slack_confirmation = SlackAPIPostOperator(
     dag=dag,
 )
 
-normal_mip_op >> multichannel_mip_op >> overlap_mip_op >> slack_confirmation
+axial_to_coronal_and_sagittal_op >> normal_mip_op >> \
+multichannel_mip_op >> overlap_mip_op >> slack_confirmation
