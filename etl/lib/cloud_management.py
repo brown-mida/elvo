@@ -40,7 +40,6 @@ def save_npy_to_cloud(arr: np.ndarray, id: str, type: str, view: str):
         id>_mip.npy
     """
     try:
-        perspective= type.split('/')[1]
         print(f'gs://elvos/mip_data/{view}/{perspective}/{id}.npy')
         np.save(file_io.FileIO(f'gs://elvos/mip_data/{view}/{perspective}/'
                                f'{id}.npy',
