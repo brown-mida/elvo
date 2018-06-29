@@ -18,7 +18,7 @@ ELVOS_ANON = 'ELVOs_anon/'
 RAW_NUMPY = 'airflow/npy/'
 COMPRESSED_NUMPY = 'airflow/npz/'
 
-dag = DAG(dag_id='elvo_main', default_args=default_args)
+dag = DAG(dag_id='mip_dag', default_args=default_args)
 
 normal_mip_op = PythonOperator(task_id='normal_mip',
                                python_callable=normal_mip,
