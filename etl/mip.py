@@ -7,8 +7,7 @@ down into a single 2D array.
 # TODO: preprocess coronal and sagittal scans so they have mips too
 import logging
 from matplotlib import pyplot as plt
-import cloud_management as cloud
-import transforms
+from lib import transforms, cloud_management as cloud
 
 WHENCE = ['numpy/axial',
           'numpy/coronal']

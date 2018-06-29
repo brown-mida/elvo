@@ -1,7 +1,7 @@
 import logging
 import numpy as np
 from tensorflow.python.lib.io import file_io
-import cloud_management as cloud
+from lib import cloud_management as cloud
 
 
 def configure_logger():

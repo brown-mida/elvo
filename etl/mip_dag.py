@@ -5,9 +5,9 @@ from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.slack_operator import SlackAPIPostOperator
 
-from lib.mip import normal_mip
-from lib.multichannel_mip import multichannel_mip
-from lib.overlap_mip import overlap_mip
+from mip import normal_mip
+from multichannel_mip import multichannel_mip
+from overlap_mip import overlap_mip
 
 default_args = {
     'owner': 'luke',
