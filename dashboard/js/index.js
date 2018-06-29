@@ -73,7 +73,7 @@ class App extends Component {
         <Paper style={styles.dividerPaper}>
           <h2>User Guide</h2>
           <p>Enter patient ids from the <a
-              href="https://docs.google.com/spreadsheets/d/1hndSmw8dxQVp1d8Fohb8yLOq7_PuCMKlyVS1-6PzLl4/edit#gid=0">
+              href="https://docs.google.com/spreadsheets/d/1RVl0Zs3XtKEYSIK6vXsc5ZXonIwh1pJtpkDcPFKE3aw/edit#gid=0">
             Elvo Key
           </a> into the text box below
           </p>
