@@ -1,2 +1,0 @@
-- Environment variables are set in /home/lukezhu/.bashrc
-- Use the airflow.cfg in /home/lukezhu/elvo-analysis
