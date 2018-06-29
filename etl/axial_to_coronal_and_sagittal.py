@@ -55,5 +55,6 @@ def axial_to_coronal_and_sagittal():
             break
         logging.info(f'saved .npy file to cloud')
 
+
 if __name__ == '__main__':
     axial_to_coronal_and_sagittal()
