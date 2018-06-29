@@ -223,7 +223,7 @@ def _retrieve_arr(patient_id: str) -> np.ndarray:
         logging.debug(f'loading {patient_id} from cache')
         return cached_arr
     logging.debug(f'downloading {patient_id} from GCS')
-    blob = bucket.get_blob(f'numpy/{patient_id}.npy')
+    blob = bucket.get_blob(f'airflow/npy/{patient_id}.npy')
     in_stream = io.BytesIO()
     blob.download_to_file(in_stream)
     in_stream.seek(0)
