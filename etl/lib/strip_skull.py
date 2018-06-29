@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 import cloud_management as cloud
 import transforms
 
-location = 'numpy'
+location = 'numpy/axial'
 prefix = location + '/'
 
 def configure_logger():
@@ -34,12 +34,11 @@ def get_og_mip(cropped_arr: np.ndarray):
     plt.show()
 
 def get_stripped_mip():
-
     for in_blob in set_cloud().list_blobs(prefix=prefix):
 
         # test: only using one patient's mipped scans for now
-        if in_blob.name != prefix + '0RB9KGMO90G1YQZD.npy':
-            continue
+        # if in_blob.name != prefix + '0RB9KGMO90G1YQZD.npy':
+        #     continue
 
         # perform the normal MIPing procedure
         logging.info(f'downloading {in_blob.name}')
@@ -49,9 +48,13 @@ def get_stripped_mip():
         logging.info(f"mipping numpy array")
         mip_arr = transforms.mip_normal(cropped_arr)
 
+        print(mip_arr)
+
         # strip skull and segment blood vessels
         logging.info(f"segment blood vessels")
         stripped_arr = transforms.segment_vessels(mip_arr, location)
+
+        print(stripped_arr)
 
         get_og_mip(cropped_arr)
 
