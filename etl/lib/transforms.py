@@ -80,6 +80,16 @@ def crop_normal(arr: np.ndarray, whence: str):
         to_return = arr[len(arr) - 40:]
     return to_return
 
+def crop_strip_skull(arr: np.ndarray, whence: str):
+    # from numpy
+    if whence == 'numpy':
+        initial_slice_num = len(arr) - 70
+        to_return = arr[initial_slice_num - 24:initial_slice_num]
+    # from luke
+    else:
+        to_return = arr[len(arr) - 40:]
+    return to_return
+
 
 def crop_multichannel(arr: np.ndarray, whence: str):
     num_slices = 3
@@ -146,3 +156,15 @@ def normalize(image, lower_bound=None, upper_bound=None):
     image[image < lower_bound] = lower_bound
 
     return (image - image.mean()) / image.std()
+
+def segment_vessels(arr: np.ndarray, whence: str):
+    # from numpy
+    if whence == 'numpy':
+        a = arr > 400
+        b = arr < 100
+        arr[a] = -50
+        arr[b] = -50
+        return arr
+    # from luke
+    # else:
+    #     to_return = arr[len(arr) - 40:]
