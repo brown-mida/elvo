@@ -8,7 +8,7 @@ from google.cloud import storage
 
 def authenticate():
     return storage.Client.from_service_account_json(
-        'credentials/client_secret.json'
+        '/home/lukezhu/elvo-analysis/credentials/client_secret.json'
     )
 
 
