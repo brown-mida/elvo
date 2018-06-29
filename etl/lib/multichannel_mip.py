@@ -8,7 +8,7 @@ feature detection weights from ImageNet/CIFAR10.
 """
 
 import logging
-from matplotlib import pyplot as plt
+# from matplotlib import pyplot as plt
 import cloud_management as cloud
 import transforms
 
@@ -26,7 +26,7 @@ def configure_logger():
     root_logger.addHandler(handler)
 
 
-if __name__ == '__main__':
+def multichannel_mip():
     configure_logger()
     client = cloud.authenticate()
     bucket = client.get_bucket('elvos')
@@ -54,9 +54,9 @@ if __name__ == '__main__':
             not_extreme_arr = transforms.remove_extremes(cropped_arr)
             logging.info(f'removed array extremes')
             mip_arr = transforms.mip_multichannel(not_extreme_arr)
-            plt.figure(figsize=(6, 6))
-            plt.imshow(mip_arr[1], interpolation='none')
-            plt.show()
+            # plt.figure(figsize=(6, 6))
+            # plt.imshow(mip_arr[1], interpolation='none')
+            # plt.show()
 
             # if the source directory is one of the luke ones
             # if location != 'numpy':
@@ -71,3 +71,7 @@ if __name__ == '__main__':
             file_id = file_id.split('.')[0]
             # save to the numpy generator source directory
             cloud.save_npy_to_cloud(mip_arr, file_id, location, 'multichannel')
+
+
+if __name__ == '__main__':
+    multichannel_mip()

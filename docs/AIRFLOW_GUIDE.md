@@ -6,6 +6,7 @@ After your changes are on `origin/airflow`, run the following commmands in your 
 
 ```
 gcloud compute ssh lukezhu@airflow
+cd elvo-analysis
 git pull
 ```
 
