@@ -1,6 +1,5 @@
 import logging
 import numpy as np
-# from matplotlib import pyplot as plt
 from tensorflow.python.lib.io import file_io
 import cloud_management as cloud
 
@@ -20,7 +19,10 @@ if __name__ == '__main__':
     client = cloud.authenticate()
     bucket = client.get_bucket('elvos')
 
-    for in_blob in bucket.list_blobs(prefix='numpy'):
+    for in_blob in bucket.list_blobs(prefix='numpy/axial'):
+
+        if in_blob.name < 'numpy/U5ZUK9GYCAM4FYK4.npy':
+            continue
 
         # blacklist
         if in_blob.name == 'numpy/LAUIHISOEZIM5ILF.npy':
@@ -38,8 +40,6 @@ if __name__ == '__main__':
         sagittal = np.transpose(axial, (2, 0, 1))
         sagittal = np.fliplr(sagittal)
 
-
-
         file_id = in_blob.name.split('/')[1]
         file_id = file_id.split('.')[0]
 
@@ -47,14 +47,10 @@ if __name__ == '__main__':
             coronal_io = file_io.FileIO(f'gs://elvos/numpy/coronal/'
                                         f'{file_id}.npy', 'w')
             np.save(coronal_io, coronal)
-            axial_io = file_io.FileIO(f'gs://elvos/numpy/axial/'
-                                      f'{file_id}.npy', 'w')
-            np.save(axial_io, axial)
             sagittal_io = file_io.FileIO(f'gs://elvos/numpy/sagittal/'
                                          f'{file_id}.npy', 'w')
             np.save(sagittal_io, sagittal)
             coronal_io.close()
-            axial_io.close()
             sagittal_io.close()
 
         except Exception as e:

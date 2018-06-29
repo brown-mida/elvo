@@ -10,8 +10,9 @@ from matplotlib import pyplot as plt
 import cloud_management as cloud
 import transforms
 
-WHENCE = ['numpy/axial',
-          'numpy/coronal']
+WHENCE = [#'numpy/axial',
+          # 'numpy/coronal',
+          'numpy/sagittal']
 
 
 def configure_logger():
@@ -46,15 +47,19 @@ if __name__ == '__main__':
             if location == 'numpy/axial':
                 cropped_arr = transforms.crop_normal_axial(input_arr, location)
             else:
-                cropped_arr = transforms.crop_normal_coronal(input_arr, location)
+                cropped_arr = transforms.crop_normal_sagittal(input_arr, location)
             not_extreme_arr = transforms.remove_extremes(cropped_arr)
             logging.info(f'removed array extremes')
             mip_arr = transforms.mip_normal(not_extreme_arr)
+            # for i in range(0, 20, 3):
+                # plt.figure(figsize=(6, 6))
+                # plt.imshow(mip_arr[i], interpolation='none')
+                # plt.show()
             plt.figure(figsize=(6, 6))
             plt.imshow(mip_arr, interpolation='none')
             plt.show()
 
-            # # if the source directory is one of the luke ones
+            # if the source directory is one of the luke ones
             # if location != 'numpy':
             #     file_id = in_blob.name.split('/')[2]
             #     file_id = file_id.split('.')[0]
@@ -63,7 +68,7 @@ if __name__ == '__main__':
             #     cloud.save_npy_to_cloud(mip_arr, file_id, 'processed')
             # # otherwise it's from numpy
             # else:
-            file_id = in_blob.name.split('/')[2]
-            file_id = file_id.split('.')[0]
-            # save to the numpy generator source directory
-            cloud.save_npy_to_cloud(mip_arr, file_id, location, 'normal')
+            #     file_id = in_blob.name.split('/')[1]
+            #     file_id = file_id.split('.')[0]
+            #     # save to the numpy generator source directory
+            #     cloud.save_npy_to_cloud(mip_arr, file_id, location)

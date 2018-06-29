@@ -8,11 +8,11 @@ feature detection weights from ImageNet/CIFAR10.
 """
 
 import logging
-# from matplotlib import pyplot as plt
+from matplotlib import pyplot as plt
 import cloud_management as cloud
 import transforms
 
-WHENCE = ['numpy',
+WHENCE = ['numpy/axial',
           'numpy/coronal']
 
 
@@ -45,24 +45,27 @@ if __name__ == '__main__':
             logging.info(f'downloading {in_blob.name}')
             input_arr = cloud.download_array(in_blob)
             logging.info(f"blob shape: {input_arr.shape}")
-            cropped_arr = transforms.crop_multichannel(input_arr, location)
+            if location == 'numpy/axial':
+                cropped_arr = transforms.crop_multichannel_axial(input_arr, location)
+            else:
+                cropped_arr = transforms.crop_multichannel_coronal(input_arr, location)
             not_extreme_arr = transforms.remove_extremes(cropped_arr)
             logging.info(f'removed array extremes')
             mip_arr = transforms.mip_multichannel(not_extreme_arr)
-            # plt.figure(figsize=(6, 6))
-            # plt.imshow(mip_arr[1], interpolation='none')
-            # plt.show()
+            plt.figure(figsize=(6, 6))
+            plt.imshow(mip_arr[1], interpolation='none')
+            plt.show()
 
             # if the source directory is one of the luke ones
-            if location != 'numpy':
-                file_id = in_blob.name.split('/')[2]
-                file_id = file_id.split('.')[0]
-                # save to both a training and validation split
-                # and a potential generator source directory
-                cloud.save_npy_to_cloud(mip_arr, file_id, 'processed')
-            # otherwise it's from numpy
-            else:
-                file_id = in_blob.name.split('/')[1]
-                file_id = file_id.split('.')[0]
-                # save to the numpy generator source directory
-                cloud.save_npy_to_cloud(mip_arr, file_id, location)
+            # if location != 'numpy':
+            #     file_id = in_blob.name.split('/')[2]
+            #     file_id = file_id.split('.')[0]
+            #     # save to both a training and validation split
+            #     # and a potential generator source directory
+            #     cloud.save_npy_to_cloud(mip_arr, file_id, 'processed')
+            # # otherwise it's from numpy
+            # else:
+            file_id = in_blob.name.split('/')[2]
+            file_id = file_id.split('.')[0]
+            # save to the numpy generator source directory
+            cloud.save_npy_to_cloud(mip_arr, file_id, location, 'multichannel')
