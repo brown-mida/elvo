@@ -26,14 +26,6 @@ def compress_numpy(in_dir, out_dir):
     arrays = {}
     i = 0
     for blob in bucket.list_blobs(prefix=in_dir):
-        if blob.name.count('/') > 1:
-            # This code is needed to deal with the presence of
-            # subdirectories within the input bucket.
-            # We ignore these because of a past issue.
-            # This code should be removed at some point
-            logging.info(f'ignoring subdirectory blob: {blob.name}')
-            continue
-
         patient_id = blob.name[len(in_dir): -len('.npy')]
         if len(arrays) >= 10:
             logging.info(f'uploading arrays: {list(arrays.keys())}')
@@ -54,7 +46,3 @@ def compress_numpy(in_dir, out_dir):
         save_arrays(arrays,
                     f'{out_dir}{i}.npz',
                     bucket)
-
-
-if __name__ == '__main__':
-    compress_numpy('numpy/', 'numpy_compressed/')
