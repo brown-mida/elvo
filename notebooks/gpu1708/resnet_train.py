@@ -3,6 +3,7 @@ import pathlib
 
 import numpy as np
 import pandas as pd
+import tensorflow as tf
 from keras import (
     applications,
     layers,
@@ -47,10 +48,23 @@ def specificity(y_true, y_pred):
     return true_negatives / (possible_negatives + K.epsilon())
 
 
-def build_model():
-    resnet = applications.ResNet50(include_top=False,
-                                   input_shape=(200, 200, 3))
+def as_keras_metric(method):
+    import functools
+    from keras import backend as K
+    import tensorflow as tf
+    @functools.wraps(method)
+    def wrapper(self, args, **kwargs):
+        """ Wrapper for turning tensorflow metrics into keras metrics """
+        value, update_op = method(self, args, **kwargs)
+        K.get_session().run(tf.local_variables_initializer())
+        with tf.control_dependencies([update_op]):
+            value = tf.identity(value)
+        return value
+    return wrapper
 
+
+def build_resnet_model():
+    resnet = applications.ResNet50(include_top=False, input_shape=(220, 220, 3))
     x = resnet.output
     x = layers.GlobalAveragePooling2D()(x)
     x = layers.Dense(1024, activation='relu')(x)
@@ -58,46 +72,57 @@ def build_model():
     x = layers.Dense(1024, activation='relu')(x)
     x = layers.Dropout(0.5)(x)
     predictions = layers.Dense(1, activation='sigmoid')(x)
+    
+#     for layer in resnet.layers:
+#         layer.trainable = False
 
     model = models.Model(resnet.input, predictions)
-
-    #     for layer in model.layers[:10]:
-    #         layer.trainable = False
-
+    
+    auc_roc = as_keras_metric(tf.metrics.auc)
+    true_positives = as_keras_metric(tf.metrics.true_positives)
+    precision = as_keras_metric(tf.metrics.precision)
+    recall = as_keras_metric(tf.metrics.recall)
     model.compile(optimizer=optimizers.Adam(lr=1e-5),
                   loss='binary_crossentropy',
-                  metrics=['acc', sensitivity, specificity])
+                  metrics=['acc', auc_roc, precision, recall, true_positives])
 
     return model
 
 
 if __name__ == '__main__':
-    data = load_data('/home/lzhu7/elvo-analysis/data/mip_three')
-    labels = pd.read_csv('/home/lzhu7/elvo-analysis/data/labels_mip_three.csv',
-                         index_col='patient_id')
+    data = load_data('/home/lzhu7/elvo-analysis/data/mip_three16/')
+    labels = pd.read_csv('/home/lzhu7/elvo-analysis/data/labels_mip_three16.csv',
+                         index_col='Anon ID')[['occlusion_exists']]
+    print('seeding to 0')
+    np.random.seed(42)
     x, y = to_arrays(data, labels)
 
-    x_train = x[0:800]
-    y_train = y[0:800]
-    x_valid = x[800:]
-    y_valid = y[800:]
-    print('training positives:', y_train.sum())
-    print('validation positives:', y_valid.sum())
+    x_train = x[0:900]
+    y_train = y[0:900]
+    x_valid = x[900:]
+    y_valid = y[900:]
+    print('training positives:', y_train.sum(), 'training negatives', len(y_train) - y_train.sum())
+    print('validation positives:', y_valid.sum(),  'validation negatives', len(y_valid) - y_valid.sum())
+    print('x_train mean:', x_train.mean(), 'x_train std:', x_train.std())
 
-    datagen = image.ImageDataGenerator(featurewise_center=True,
-                                       featurewise_std_normalization=True,
-                                       rotation_range=30,
+    datagen = image.ImageDataGenerator(rotation_range=15,
                                        width_shift_range=0.1,
                                        height_shift_range=0.1,
-                                       shear_range=0.1,
+                                       zoom_range=[1.0, 1.1],
                                        horizontal_flip=True)
     datagen.fit(x_train)
-    train_gen = datagen.flow(x_train, y_train)
-    valid_gen = datagen.flow(x_valid, y_valid)
+    train_gen = datagen.flow(x_train, y_train, batch_size=48)
+    valid_gen = datagen.flow(x_valid, y_valid, batch_size=48)
+    
+    train_arr = train_gen.next()[0]
+    valid_arr = valid_gen.next()[0]
+    print('shape:', train_arr.shape, 'mean:', train_arr.mean(), 'std:', train_arr.std())
+    print('shape:', valid_arr.shape, 'mean:', valid_arr.mean(), 'std:', valid_arr.std())
 
-    model = build_model()
-    checkpointer = callbacks.ModelCheckpoint(filepath='weights2.hdf5',
+    model = build_resnet_model()
+    model.summary()
+    checkpointer = callbacks.ModelCheckpoint(filepath='weights-13.hdf5',
                                              verbose=1, save_best_only=True)
-    early_stopper = callbacks.EarlyStopping(patience=5)
+    early_stopper = callbacks.EarlyStopping(patience=10)
     model.fit_generator(train_gen, epochs=100, validation_data=valid_gen,
                         callbacks=[checkpointer, early_stopper])
