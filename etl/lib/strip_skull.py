@@ -39,6 +39,7 @@ def get_og_mip(cropped_arr: np.ndarray):
 def save_to_cloud(arr: np.ndarray, in_blob):
     file_id = in_blob.name.split('/')[2]
     file_id = file_id.split('.')[0]
+    print(file_id)
     cloud.save_stripped_npy(arr, file_id, "axial_single_channel")
 
 
