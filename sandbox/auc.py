@@ -2,7 +2,7 @@ from keras import backend as K
 from keras.models import Model, load_model
 from keras.applications.resnet50 import ResNet50
 import keras.metrics as metrics
-from ml.generators.mip_generator import MipGenerator
+from ml.generators.mip_generator_memory import MipGenerator
 import numpy as np
 
 from sklearn.metrics import roc_curve, auc, classification_report
@@ -26,14 +26,15 @@ metrics.specificity = specificity
 
 
 def get_pred():
-    model_1 = ResNet50(weights='imagenet', include_top=False)
-    model_2 = load_model('sandbox/stage_1_resnet')
-    model = Model(input=model_1.input, output=model_2(model_1.output))
+    # model_1 = ResNet50(weights='imagenet', include_top=False)
+    model = load_model('sandbox/stage_2_resnet')
+    # model = Model(input=model_1.input, output=model_2(model_1.output))
     model.compile(optimizer='adam',
                   loss='binary_crossentropy',
                   metrics=['accuracy'])
 
     gen = MipGenerator(
+        data_loc='data/mip_transform',
         dims=(220, 220, 3),
         batch_size=4,
         augment_data=False,
@@ -62,6 +63,7 @@ def get_pred():
 
 def get_validation():
     gen = MipGenerator(
+        data_loc='data/mip_transform',
         dims=(220, 220, 3),
         batch_size=4,
         augment_data=False,
@@ -120,5 +122,5 @@ def get_auc():
 
 
 get_pred()
-# get_validation()
+get_validation()
 get_auc()

@@ -86,7 +86,7 @@ class MipGenerator(object):
         # Take into account shuffling
         if shuffle:
             tmp = list(zip(files, labels))
-            random.Random(192382491).shuffle(tmp)
+            random.Random(93749284).shuffle(tmp)
             files, labels = zip(*tmp)
             labels = np.array(labels)
 

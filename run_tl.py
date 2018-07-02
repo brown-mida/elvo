@@ -156,7 +156,7 @@ def fine_tune(data_loc):
         augment_data=True,
         extend_dims=False,
         shuffle=True,
-        split=0.2
+        split=0.3
     )
 
     test_gen = MipGenerator(
@@ -168,7 +168,7 @@ def fine_tune(data_loc):
         validation=True,
         split_test=True,
         shuffle=True,
-        split=0.2
+        split=0.3
     )
 
     mc_callback = ModelCheckpoint(filepath='tmp/stage_2_resnet',
@@ -192,7 +192,7 @@ def fine_tune_2():
     metrics.sensitivity = sensitivity
     metrics.specificity = specificity
 
-    model = load_model('tmp/stage_3_resnet')
+    model = load_model('tmp/stage_2_resnet')
     for layer in model.layers:
         layer.trainable = True
     for layer in model.layers[:141]:
