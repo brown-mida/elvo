@@ -8,9 +8,9 @@ feature detection weights from ImageNet/CIFAR10.
 """
 
 import logging
-from matplotlib import pyplot as plt
-import cloud_management as cloud
-import transforms
+# from matplotlib import pyplot as plt
+import lib.cloud_management as cloud
+import lib.transforms as transforms
 
 WHENCE = ['numpy/axial',
           'numpy/coronal']
@@ -20,7 +20,6 @@ FAILURE_ANALYSIS = ['SSQSB70QYC5L5CJJ',
                     'GKDV3FW4M56I3IKV',
                     'BMFSUHVBPJ7RY56P',
                     'NWO33W453F6ZJ4BU',
-                    'NWO33W453F6ZJ4BU',
                     '8TLM2DUBYEE2GDH0',
                     'J3JHPC3E15NZGX34',
                     'J3JHPC3E15NZGX35',
@@ -29,14 +28,12 @@ FAILURE_ANALYSIS = ['SSQSB70QYC5L5CJJ',
                     '5H94IH9XGI83T610',
                     'UGXVSPJLHJL6AHSW',
                     '2KMKXR2G1BLD0C2G',
-                    '2KMKXR2G1BLD0C2G',
                     'PCNMFAZL5VWWK7RP',
                     'VVGO45TQNOASBLZM',
                     'NHXCOHZ4HH53NLQ6',
                     'F8W2RDY3D6L2EOFT',
                     'KK2Y9XHUUUC5LISA',
                     'HZLBHRHYLSY9TXJ4',
-                    '0RB9KGMO90G1YQZD',
                     '0RB9KGMO90G1YQZD',
                     'J2JPFK8ZOICHFG34',
                     'HLXOSVDF27JWNCMJ',
@@ -52,7 +49,6 @@ FAILURE_ANALYSIS = ['SSQSB70QYC5L5CJJ',
                     'HXLMZWH3SFX3SPAN',
                     'GHVG2CNNRZ65UBEU',
                     'TSDXCC6X3M7PG91E',
-                    'TSDXCC6X3M7PG91E',
                     'IP4X9W512RO56NQ7',
                     'LNU3P20QOML7YGMZ',
                     '56GX2GI8AGT0BIHN',
@@ -66,7 +62,6 @@ FAILURE_ANALYSIS = ['SSQSB70QYC5L5CJJ',
                     'PB7YJZRJU74HFKTS',
                     'EUNTRXNEDB7VDVIS',
                     'JQWIIAADGKE2YMJS',
-                    'NXLFQLVZRLUEK2UF',
                     'NXLFQLVZRLUEK2UF',
                     'RHWTMTHC7HIWZ2YZ',
                     'RW13S0OR03CO7OP5',
@@ -120,9 +115,9 @@ def overlap_mip():
             not_extreme_arr = transforms.remove_extremes(cropped_arr)
             logging.info(f'removed array extremes')
             mip_arr = transforms.mip_overlap(not_extreme_arr)
-            plt.figure(figsize=(6, 6))
-            plt.imshow(mip_arr[10], interpolation='none')
-            plt.show()
+            # plt.figure(figsize=(6, 6))
+            # plt.imshow(mip_arr[10], interpolation='none')
+            # plt.show()
 
             # if the source directory is one of the luke ones
             # if location != 'numpy':
