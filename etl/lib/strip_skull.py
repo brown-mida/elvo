@@ -66,4 +66,10 @@ def get_stripped_mip():
         # plt.show()
 
 
-get_stripped_mip()
+def main():
+    set_cloud()
+    get_stripped_mip()
+
+
+if __name__ == '__main__':
+    main()
