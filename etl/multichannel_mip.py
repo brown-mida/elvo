@@ -97,14 +97,18 @@ def multichannel_mip():
             if in_blob.name == prefix + 'LAUIHISOEZIM5ILF.npy':
                 continue
 
+            file_id = in_blob.name.split('/')[2]
+            file_id = file_id.split('.')[0]
+
             # perform the normal MIPing procedure
             logging.info(f'downloading {in_blob.name}')
             input_arr = cloud.download_array(in_blob)
             logging.info(f"blob shape: {input_arr.shape}")
             if file_id in FAILURE_ANALYSIS:
                 if location == 'numpy/axial':
-                    cropped_arr = transforms.crop_multichannel_axial_fa(input_arr,
-                                                                        location)
+                    cropped_arr = \
+                        transforms.crop_multichannel_axial_fa(input_arr,
+                                                              location)
             else:
                 if location == 'numpy/axial':
                     cropped_arr = transforms.crop_normal_axial(input_arr,
@@ -128,8 +132,6 @@ def multichannel_mip():
             #     cloud.save_npy_to_cloud(mip_arr, file_id, 'processed')
             # # otherwise it's from numpy
             # else:
-            file_id = in_blob.name.split('/')[2]
-            file_id = file_id.split('.')[0]
             # save to the numpy generator source directory
             cloud.save_npy_to_cloud(mip_arr, file_id, location, 'multichannel')
 

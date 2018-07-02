@@ -97,6 +97,9 @@ def overlap_mip():
             if in_blob.name == prefix + 'LAUIHISOEZIM5ILF.npy':
                 continue
 
+            file_id = in_blob.name.split('/')[2]
+            file_id = file_id.split('.')[0]
+
             # perform the normal MIPing procedure
             logging.info(f'downloading {in_blob.name}')
             input_arr = cloud.download_array(in_blob)
@@ -128,8 +131,6 @@ def overlap_mip():
             #     cloud.save_npy_to_cloud(mip_arr, file_id, 'processed')
             # # otherwise it's from numpy
             # else:
-            file_id = in_blob.name.split('/')[2]
-            file_id = file_id.split('.')[0]
             # save to the numpy generator source directory
             cloud.save_npy_to_cloud(mip_arr, file_id, location, 'overlap')
 
