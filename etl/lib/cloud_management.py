@@ -55,9 +55,9 @@ def save_npy_to_cloud(arr: np.ndarray, id: str, type: str, view: str):
 
 def save_stripped_npy(arr: np.ndarray, id: str, type: str):
     """Uploads mipped and stripped .npy files to
-        gs://elvos/stripped_data/{view}/<patient id>_mip.npy"""
+        gs://elvos/stripped_data/{view}/<patient id>_strip.npy"""
     try:
-        print(f'gs://elvos/stripped_data/{type}/{id}_mip.npy')
+        print(f'gs://elvos/stripped_data/{type}/{id}_strip.npy')
         np.save(file_io.FileIO(f'gs://elvos/stripped_data/{type}/'
                                f'{id}_strip.npy', 'w'), arr)
         print('success')

@@ -36,6 +36,12 @@ def get_og_mip(cropped_arr: np.ndarray):
     plt.show()
 
 
+def save_to_cloud(arr: np.ndarray, in_blob):
+    file_id = in_blob.name.split('/')[2]
+    file_id = file_id.split('.')[0]
+    cloud.save_stripped_npy(arr, file_id, "axial_single_channel")
+
+
 def get_stripped_mip():
     for in_blob in set_cloud().list_blobs(prefix=prefix):
         # perform the normal MIPing procedure
@@ -57,12 +63,6 @@ def get_stripped_mip():
         # plt.figure(figsize=(6, 6))
         # plt.imshow(stripped_arr, interpolation='none')
         # plt.show()
-
-
-def save_to_cloud(arr: np.ndarray, in_blob):
-    file_id = in_blob.name.split('/')[2]
-    file_id = file_id.split('.')[0]
-    cloud.save_stripped_npy(arr, file_id, "axial_single_channel")
 
 
 get_stripped_mip()
