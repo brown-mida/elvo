@@ -39,7 +39,7 @@ slack_confirmation = SlackAPIPostOperator(
     channel='i-utra',
     username='airflow',
     token=os.environ['SLACK_TOKEN'],
-    text=f'Coronal and axial scans MIPed',
+    text='Coronal and axial scans MIPed',
     dag=dag,
 )
 
