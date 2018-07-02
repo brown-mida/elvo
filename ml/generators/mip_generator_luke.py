@@ -6,7 +6,7 @@ from scipy.ndimage.interpolation import zoom
 from keras.preprocessing.image import ImageDataGenerator
 
 from google.cloud import storage
-from etl.lib import transforms
+from lib import transforms
 
 BLACKLIST = ['LAUIHISOEZIM5ILF',
              '2018050121043822',
@@ -148,7 +148,6 @@ class MipGenerator(object):
 
         # Download files to tmp/npy/
         for i, file in enumerate(files):
-            print(file)
             blob = self.bucket.get_blob(file['name'])
             file_id = file['name'].split('/')[-1]
             file_id = file_id.split('.')[0]

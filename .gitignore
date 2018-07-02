@@ -14,13 +14,15 @@ data/*
 !data/ABCDE\ SAMPLE
 !data/DEFGH\ SAMPLE2
 data-*/*
-sandbox/*
 *.npy
 *.zip
+*.swp
+tmp/
 
 # Models (weights)
 results/
 models/
+notebooks/tmp/*.hdf5
 
 # Config
 secrets/

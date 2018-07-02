@@ -6,7 +6,6 @@ from scipy.ndimage.interpolation import zoom
 from keras.preprocessing.image import ImageDataGenerator
 
 from google.cloud import storage
-from etl.lib import transforms
 
 BLACKLIST = ['LAUIHISOEZIM5ILF',
              '2018050121043822',
@@ -18,6 +17,7 @@ class MipGenerator(object):
     def __init__(self, dims=(120, 120, 1), batch_size=16,
                  shuffle=True,
                  validation=False,
+                 test=False, split_test=False,
                  split=0.2, extend_dims=True,
                  augment_data=True):
         self.dims = dims
@@ -27,10 +27,10 @@ class MipGenerator(object):
         self.validation = validation
 
         self.datagen = ImageDataGenerator(
-            rotation_range=20,
+            rotation_range=15,
             width_shift_range=0.1,
             height_shift_range=0.1,
-            zoom_range=0.1,
+            zoom_range=[1.0, 1.1],
             horizontal_flip=True
         )
 
@@ -65,12 +65,6 @@ class MipGenerator(object):
                 if self.augment_data and not self.validation:
                     self.__add_augmented(files, file)
 
-        # Split based on validation
-        if validation:
-            files = files[:int(len(files) * split)]
-        else:
-            files = files[int(len(files) * split):]
-
         # Get label data from Google Cloud Storage
         blob = storage.Blob('labels.csv', bucket)
         blob.download_to_filename('tmp/labels.csv')
@@ -92,10 +86,33 @@ class MipGenerator(object):
         # Take into account shuffling
         if shuffle:
             tmp = list(zip(files, labels))
-            random.shuffle(tmp)
+            random.Random(192382491).shuffle(tmp)
             files, labels = zip(*tmp)
             labels = np.array(labels)
 
+        # Split based on validation
+        if validation:
+            if split_test:
+                files = files[:int(len(files) * split / 2)]
+                labels = labels[:int(len(labels) * split / 2)]
+            else:
+                files = files[:int(len(files) * split)]
+                labels = labels[:int(len(labels) * split)]
+        elif test:
+            if split_test:
+                files = files[int(len(files) * split / 2):
+                              int(len(files) * split)]
+                labels = labels[int(len(labels) * split / 2):
+                                int(len(labels) * split)]
+            else:
+                raise ValueError('must set split_test to True if test')
+        else:
+            files = files[int(len(files) * split):]
+            labels = labels[int(len(labels) * split):]
+        print(np.shape(files))
+        print(np.shape(labels))
+        print("Negatives: {}".format(np.count_nonzero(labels == 0)))
+        print("Positives: {}".format(np.count_nonzero(labels)))
         self.files = files
         self.labels = labels
         self.bucket = bucket
@@ -110,7 +127,7 @@ class MipGenerator(object):
         steps = self.get_steps_per_epoch()
         while True:
             for i in range(steps):
-                print(i)
+                # print(i)
                 x, y = self.__data_generation(i)
                 yield x, y
 
@@ -132,13 +149,13 @@ class MipGenerator(object):
                 'tmp/npy/{}.npy'.format(file_id)
             )
             img = np.load('tmp/npy/{}.npy'.format(file_id))
-            os.remove('tmp/npy/{}.npy'.format(file_id))
+            # os.remove('tmp/npy/{}.npy'.format(file_id))
             img = self.__transform_images(img)
             # print(np.shape(img))
             images.append(img)
         images = np.array(images)
-        print("Loaded entire batch.")
-        print(np.shape(images))
+        # print("Loaded entire batch.")
+        # print(np.shape(images))
         return images, labels
 
     def __transform_images(self, image):
@@ -149,7 +166,6 @@ class MipGenerator(object):
         image[image > 400] = 400
 
         # Normalize image and expand dims
-        image = transforms.normalize(image)
         if self.extend_dims:
             if len(self.dims) == 2:
                 image = np.expand_dims(image, axis=-1)
@@ -162,6 +178,7 @@ class MipGenerator(object):
             image = self.datagen.random_transform(image)
 
         # Interpolate axis to reduce to specified dimensions
+        # image = transforms.normalize(image)
         dims = np.shape(image)
         image = zoom(image, (self.dims[0] / dims[0],
                              self.dims[1] / dims[1],

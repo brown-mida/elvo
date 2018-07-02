@@ -64,7 +64,7 @@ elif model == 'simple':
 elif model == 'all_conv':
     Mod = AllConvModelBuilder
 elif model == 'fusionnet3d':
-    Mod = FusionNet3DBuilder
+    Mod = FusionNet3dBuilder
 else:
     raise ValueError('Invalid Model')
 
