@@ -81,6 +81,16 @@ def crop_normal_axial(arr: np.ndarray, whence: str):
     return to_return
 
 
+def crop_normal_axial_fa(arr: np.ndarray, whence: str):
+    # from numpy
+    if whence == 'numpy/axial':
+        to_return = arr[len(arr) - 50 - 64:len(arr) - 50]
+    # from luke
+    else:
+        to_return = arr[len(arr) - 40:]
+    return to_return
+
+
 def crop_normal_coronal(arr: np.ndarray, whence: str):
     print(arr.shape)
     # from numpy
@@ -127,6 +137,29 @@ def crop_multichannel_axial(arr: np.ndarray, whence: str):
     return to_return
 
 
+def crop_multichannel_axial_fa(arr: np.ndarray, whence: str):
+    num_slices = 3
+    # from numpy
+    if whence == 'numpy/axial':
+        to_return = np.zeros((3, 25, len(arr[0]), len(arr[0][0])))
+        print(to_return.shape)
+        chunk_start = 45
+        chunk_end = chunk_start + 25
+        inc = 25
+        # from luke
+    else:
+        to_return = np.zeros((3, 21, len(arr[0]), len(arr[0][0])))
+        print(to_return.shape)
+        chunk_start = 1
+        chunk_end = chunk_start + 21
+        inc = 21
+    for i in range(num_slices):
+        to_return[i] = arr[len(arr) - chunk_end:len(arr) - chunk_start]
+        chunk_start += inc
+        chunk_end += inc
+    return to_return
+
+
 def crop_multichannel_coronal(arr: np.ndarray, whence: str):
     num_slices = 3
     # from numpy
@@ -157,6 +190,30 @@ def crop_overlap_axial(arr: np.ndarray, whence: str):
         to_return = np.zeros((num_slices, 25, len(arr[0]), len(arr[0][0])))
         print(to_return.shape)
         chunk_start = 15
+        chunk_end = chunk_start + 25
+        inc = 5
+    # from luke
+    else:
+        to_return = np.zeros((num_slices, 10, len(arr[0]), len(arr[0][0])))
+        print(to_return.shape)
+        chunk_start = 4
+        chunk_end = chunk_start + 10
+        inc = 3
+
+    for i in range(num_slices):
+        to_return[i] = arr[len(arr) - chunk_end:len(arr) - chunk_start]
+        chunk_start += inc
+        chunk_end += inc
+    return to_return
+
+
+def crop_overlap_axial_fa(arr: np.ndarray, whence: str):
+    num_slices = 20
+    # from numpy
+    if whence == 'numpy/axial':
+        to_return = np.zeros((num_slices, 25, len(arr[0]), len(arr[0][0])))
+        print(to_return.shape)
+        chunk_start = 30
         chunk_end = chunk_start + 25
         inc = 5
     # from luke
