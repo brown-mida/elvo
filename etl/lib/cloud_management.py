@@ -59,6 +59,7 @@ def save_stripped_npy(arr: np.ndarray, id: str, type: str):
     try:
         print(f'gs://elvos/stripped_data/{type}/{id}_mip.npy')
         np.save(file_io.FileIO(f'gs://elvos/stripped_data/{type}/'
-                               f'{id}_mip.npy', 'w'), arr)
+                               f'{id}_strip.npy', 'w'), arr)
+        print('success')
     except Exception as e:
         logging.error(f'for patient ID: {id} {e}')
