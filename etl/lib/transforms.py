@@ -81,11 +81,10 @@ def crop_normal_axial(arr: np.ndarray, whence: str):
     return to_return
 
 
-def crop_strip_skull(arr: np.ndarray, whence: str):
+def crop_normal_axial_fa(arr: np.ndarray, whence: str):
     # from numpy
     if whence == 'numpy/axial':
-        initial_slice_num = len(arr) - 70
-        to_return = arr[initial_slice_num - 24:initial_slice_num]
+        to_return = arr[len(arr) - 50 - 64:len(arr) - 50]
     # from luke
     else:
         to_return = arr[len(arr) - 40:]
@@ -122,6 +121,29 @@ def crop_multichannel_axial(arr: np.ndarray, whence: str):
         to_return = np.zeros((3, 25, len(arr[0]), len(arr[0][0])))
         print(to_return.shape)
         chunk_start = 30
+        chunk_end = chunk_start + 25
+        inc = 25
+        # from luke
+    else:
+        to_return = np.zeros((3, 21, len(arr[0]), len(arr[0][0])))
+        print(to_return.shape)
+        chunk_start = 1
+        chunk_end = chunk_start + 21
+        inc = 21
+    for i in range(num_slices):
+        to_return[i] = arr[len(arr) - chunk_end:len(arr) - chunk_start]
+        chunk_start += inc
+        chunk_end += inc
+    return to_return
+
+
+def crop_multichannel_axial_fa(arr: np.ndarray, whence: str):
+    num_slices = 3
+    # from numpy
+    if whence == 'numpy/axial':
+        to_return = np.zeros((3, 25, len(arr[0]), len(arr[0][0])))
+        print(to_return.shape)
+        chunk_start = 45
         chunk_end = chunk_start + 25
         inc = 25
         # from luke
@@ -185,6 +207,30 @@ def crop_overlap_axial(arr: np.ndarray, whence: str):
     return to_return
 
 
+def crop_overlap_axial_fa(arr: np.ndarray, whence: str):
+    num_slices = 20
+    # from numpy
+    if whence == 'numpy/axial':
+        to_return = np.zeros((num_slices, 25, len(arr[0]), len(arr[0][0])))
+        print(to_return.shape)
+        chunk_start = 30
+        chunk_end = chunk_start + 25
+        inc = 5
+    # from luke
+    else:
+        to_return = np.zeros((num_slices, 10, len(arr[0]), len(arr[0][0])))
+        print(to_return.shape)
+        chunk_start = 4
+        chunk_end = chunk_start + 10
+        inc = 3
+
+    for i in range(num_slices):
+        to_return[i] = arr[len(arr) - chunk_end:len(arr) - chunk_start]
+        chunk_start += inc
+        chunk_end += inc
+    return to_return
+
+
 def crop_overlap_coronal(arr: np.ndarray, whence: str):
     num_slices = 20
     # from numpy
@@ -227,16 +273,3 @@ def normalize(image, lower_bound=None, upper_bound=None):
     image[image < lower_bound] = lower_bound
 
     return (image - image.mean()) / image.std()
-
-
-def segment_vessels(arr: np.ndarray, whence: str):
-    # from numpy
-    if whence == 'numpy/axial':
-        a = arr > 520
-        b = arr < 120
-        arr[a] = -50
-        arr[b] = -50
-        return arr
-    # from luke
-    # else:
-    #     to_return = arr[len(arr) - 40:]
