@@ -33,7 +33,7 @@ class MipGenerator(object):
             width_shift_range=0.1,
             height_shift_range=0.1,
             zoom_range=[1.0, 1.1],
-            horizontal_flip=True
+            horizontal_flip=True,
         )
 
         # Access Google Cloud Storage
@@ -54,12 +54,17 @@ class MipGenerator(object):
 
             if not blacklisted:
                 # Add all data augmentation methods
+                file_id = file.split('/')[-1]
+                file_id = file_id.split('.')[0]
+                img = np.load('{}/{}.npy'.format(self.data_loc, file_id))
                 files.append({
                     "name": file,
+                    "img": img
                 })
 
                 if self.augment_data and not self.validation:
-                    self.__add_augmented(files, file)
+                    self.__add_augmented(files, file, img)
+
 
         # Get label data from Google Cloud Storage
         blob = storage.Blob('labels.csv', bucket)
@@ -113,10 +118,11 @@ class MipGenerator(object):
         self.labels = labels
         self.bucket = bucket
 
-    def __add_augmented(self, files, file):
+    def __add_augmented(self, files, file, img):
         for i in range(1):
             files.append({
                 "name": file,
+                "img": img
             })
 
     def generate(self):
@@ -138,9 +144,7 @@ class MipGenerator(object):
 
         # Download files to tmp/npy/
         for i, file in enumerate(files):
-            file_id = file['name'].split('/')[-1]
-            file_id = file_id.split('.')[0]
-            img = np.load('{}/{}.npy'.format(self.data_loc, file_id))
+            img = file['img']
             img = self.__transform_images(img)
             images.append(img)
         images = np.array(images)
@@ -162,8 +166,8 @@ class MipGenerator(object):
         #                           self.dims[2], axis=2)
 
         # Data augmentation methods
-        # if self.augment_data and not self.validation:
-        #     image = self.datagen.random_transform(image)
+        if self.augment_data and not self.validation:
+            image = self.datagen.random_transform(image)
 
         # Interpolate axis to reduce to specified dimensions
         # image = transforms.normalize(image)
@@ -171,8 +175,4 @@ class MipGenerator(object):
         # image = zoom(image, (self.dims[0] / dims[0],
         #                      self.dims[1] / dims[1],
         #                      1))
-
-        # Data augmentation methods
-        if self.augment_data and not self.validation:
-            image = self.datagen.random_transform(image)
         return image

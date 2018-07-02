@@ -9,7 +9,8 @@ from keras.models import Model, load_model
 from keras.layers import Dense, GlobalAveragePooling2D, Dropout, Input
 from keras.optimizers import Adam, SGD
 from keras.applications.resnet50 import ResNet50
-from ml.generators.mip_generator_local import MipGenerator
+# from ml.generators.mip_generator_local import MipGenerator
+from ml.generators.mip_generator_memory import MipGenerator
 
 
 class ModelMGPU(Model):
@@ -41,10 +42,10 @@ def specificity(y_true, y_pred):
     return true_negatives / (possible_negatives + K.epsilon())
 
 
-def save_features():
+def save_features(data_loc):
     model = ResNet50(weights='imagenet', include_top=False)
     gen = MipGenerator(
-        data_loc='data/mip',
+        data_loc=data_loc,
         dims=(220, 220, 3),
         batch_size=4,
         augment_data=True,
@@ -61,14 +62,14 @@ def save_features():
     np.save('tmp/labels_train.npy', gen.labels)
 
     gen = MipGenerator(
-        data_loc='data/mip',
+        data_loc=data_loc,
         dims=(220, 220, 3),
         batch_size=4,
         augment_data=False,
         extend_dims=False,
         validation=True,
         split_test=True,
-        shuffle=False,
+        shuffle=True,
         split=0.2
     )
     features_test = model.predict_generator(
@@ -82,9 +83,9 @@ def save_features():
 
 def train_top_model():
     train_data = np.load('tmp/features_train.npy')
-    train_labels = np.load('tmp/labels_train.npy')[:1404]
+    train_labels = np.load('tmp/labels_train.npy')[:len(train_data)]
     test_data = np.load('tmp/features_test.npy')
-    test_labels = np.load('tmp/labels_test.npy')[:84]# [:84]
+    test_labels = np.load('tmp/labels_test.npy')[:len(test_data)]
 
     inp = Input(shape=train_data.shape[1:])
     x = GlobalAveragePooling2D(name='t_pool')(inp)
@@ -120,8 +121,10 @@ def train_top_model():
     model.save_weights('tmp/top_weights')
 
 
-def fine_tune():
+def fine_tune(data_loc):
     model_1 = ResNet50(weights='imagenet', include_top=False)
+    # for layer in model_1.layers[:141]:
+    #     layer.trainable = False
 
     l1 = GlobalAveragePooling2D(name='t_pool')
     l2 = Dense(1024, activation='relu', name='t_dense_1')
@@ -138,16 +141,16 @@ def fine_tune():
     outp = l6(x)
     model = Model(inputs=model_1.input, outputs=outp)
 
-    model.load_weights('tmp/stage_1_resnet_weights', by_name=True)
-    for layer in model.layers[:141]:  # 38, 79, 141
-        layer.trainable = False
-    gpu_model = ModelMGPU(model, 2)
-    gpu_model.compile(optimizer=SGD(lr=1e-4, momentum=0.9),
+    # model.load_weights('tmp/stage_1_resnet_weights', by_name=True)
+    # for layer in model.layers[:141]:  # 38, 79, 141
+    #     layer.trainable = False
+    gpu_model = ModelMGPU(model, 4)
+    gpu_model.compile(optimizer=Adam(lr=1e-5),
                   loss='binary_crossentropy',
                   metrics=['accuracy', sensitivity, specificity])
 
     train_gen = MipGenerator(
-        data_loc='data/mip',
+        data_loc=data_loc,
         dims=(220, 220, 3),
         batch_size=48,
         augment_data=True,
@@ -157,14 +160,14 @@ def fine_tune():
     )
 
     test_gen = MipGenerator(
-        data_loc='data/mip',
+        data_loc=data_loc,
         dims=(220, 220, 3),
         batch_size=4,
         augment_data=False,
         extend_dims=False,
         validation=True,
         split_test=True,
-        shuffle=False,
+        shuffle=True,
         split=0.2
     )
 
@@ -189,11 +192,13 @@ def fine_tune_2():
     metrics.sensitivity = sensitivity
     metrics.specificity = specificity
 
-    model = load_model('tmp/stage_2_resnet')
+    model = load_model('tmp/stage_3_resnet')
+    for layer in model.layers:
+        layer.trainable = True
     for layer in model.layers[:141]:
         layer.trainable = False
     gpu_model = ModelMGPU(model, 4)
-    gpu_model.compile(optimizer=SGD(lr=1e-4, momentum=0.9),
+    gpu_model.compile(optimizer=SGD(lr=1e-5, momentum=0.9),
                   loss='binary_crossentropy',
                   metrics=['accuracy', sensitivity, specificity])
 
@@ -215,7 +220,7 @@ def fine_tune_2():
         extend_dims=False,
         validation=True,
         split_test=True,
-        shuffle=False,
+        shuffle=True,
         split=0.2
     )
 
@@ -236,8 +241,8 @@ def fine_tune_2():
     )
 
 
-save_features()
+# save_features('data/mip_transform')
 # train_top_model()
 # train_top_model_2()
-# fine_tune()
+fine_tune('data/mip_transform')
 # fine_tune_2()
