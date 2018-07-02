@@ -44,7 +44,11 @@ def save_to_cloud(arr: np.ndarray, in_blob):
 
 
 def get_stripped_mip():
-    for in_blob in set_cloud().list_blobs(prefix=prefix):
+    configure_logger()
+    client = cloud.authenticate()
+    bucket = client.get_bucket('elvos')
+
+    for in_blob in bucket.list_blobs(prefix=prefix):
         # perform the normal MIPing procedure
         logging.info(f"downloading {in_blob.name}")
         input_arr = cloud.download_array(in_blob)
@@ -66,10 +70,5 @@ def get_stripped_mip():
         # plt.show()
 
 
-def main():
-    set_cloud()
-    get_stripped_mip()
-
-
 if __name__ == '__main__':
-    main()
+    get_stripped_mip()
