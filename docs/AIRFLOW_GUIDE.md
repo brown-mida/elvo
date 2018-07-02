@@ -27,6 +27,13 @@ for more tips on how to get started.
 
 For this part, just push your commits to `airflow`.
 
+To run airflow commands, do the following within the
+`elvo-analysis` dir:
+
+```
+source venv/bin/activate
+```
+
 
 ## Tips:
 - Prefer `PythonOperator` over `bash operator`
