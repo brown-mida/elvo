@@ -6,7 +6,7 @@ down into a single 2D array.
 
 # TODO: preprocess coronal and sagittal scans so they have mips too
 import logging
-from matplotlib import pyplot as plt
+# from matplotlib import pyplot as plt
 from lib import transforms, cloud_management as cloud
 
 WHENCE = ['numpy/axial',
@@ -51,9 +51,9 @@ def normal_mip():
             not_extreme_arr = transforms.remove_extremes(cropped_arr)
             logging.info(f'removed array extremes')
             mip_arr = transforms.mip_normal(not_extreme_arr)
-            plt.figure(figsize=(6, 6))
-            plt.imshow(mip_arr, interpolation='none')
-            plt.show()
+            # plt.figure(figsize=(6, 6))
+            # plt.imshow(mip_arr, interpolation='none')
+            # plt.show()
 
             # # if the source directory is one of the luke ones
             # if location != 'numpy':
