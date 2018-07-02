@@ -7,6 +7,7 @@ import transforms
 location = 'numpy/axial'
 prefix = location + '/'
 
+
 def configure_logger():
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.INFO)
@@ -57,9 +58,11 @@ def get_stripped_mip():
         # plt.imshow(stripped_arr, interpolation='none')
         # plt.show()
 
+
 def save_to_cloud(arr: np.ndarray, in_blob):
     file_id = in_blob.name.split('/')[2]
     file_id = file_id.split('.')[0]
     cloud.save_stripped_npy(arr, file_id, "axial_single_channel")
+
 
 get_stripped_mip()

@@ -80,6 +80,7 @@ def crop_normal(arr: np.ndarray, whence: str):
         to_return = arr[len(arr) - 40:]
     return to_return
 
+
 def crop_strip_skull(arr: np.ndarray, whence: str):
     # from numpy
     if whence == 'numpy/axial':
@@ -156,6 +157,7 @@ def normalize(image, lower_bound=None, upper_bound=None):
     image[image < lower_bound] = lower_bound
 
     return (image - image.mean()) / image.std()
+
 
 def segment_vessels(arr: np.ndarray, whence: str):
     # from numpy
