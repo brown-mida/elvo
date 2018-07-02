@@ -9,10 +9,9 @@ feature detection weights from ImageNet/CIFAR10.
 
 import logging
 # from matplotlib import pyplot as plt
-import cloud_management as cloud
-import transforms
+from lib import transforms, cloud_management as cloud
 
-WHENCE = ['numpy',
+WHENCE = ['numpy/axial',
           'numpy/coronal']
 
 
@@ -26,7 +25,7 @@ def configure_logger():
     root_logger.addHandler(handler)
 
 
-if __name__ == '__main__':
+def overlap_mip():
     configure_logger()
     client = cloud.authenticate()
     bucket = client.get_bucket('elvos')
@@ -45,7 +44,12 @@ if __name__ == '__main__':
             logging.info(f'downloading {in_blob.name}')
             input_arr = cloud.download_array(in_blob)
             logging.info(f"blob shape: {input_arr.shape}")
-            cropped_arr = transforms.crop_overlap(input_arr, location)
+            if location == 'airflow/npy':
+                cropped_arr = transforms.crop_overlap_axial(input_arr,
+                                                            location)
+            else:
+                cropped_arr = transforms.crop_overlap_coronal(input_arr,
+                                                              location)
             not_extreme_arr = transforms.remove_extremes(cropped_arr)
             logging.info(f'removed array extremes')
             mip_arr = transforms.mip_overlap(not_extreme_arr)
@@ -54,15 +58,19 @@ if __name__ == '__main__':
             # plt.show()
 
             # if the source directory is one of the luke ones
-            if location != 'numpy':
-                file_id = in_blob.name.split('/')[2]
-                file_id = file_id.split('.')[0]
-                # save to both a training and validation split
-                # and a potential generator source directory
-                cloud.save_npy_to_cloud(mip_arr, file_id, 'processed')
-            # otherwise it's from numpy
-            else:
-                file_id = in_blob.name.split('/')[1]
-                file_id = file_id.split('.')[0]
-                # save to the numpy generator source directory
-                cloud.save_npy_to_cloud(mip_arr, file_id, location)
+            # if location != 'numpy':
+            #     file_id = in_blob.name.split('/')[2]
+            #     file_id = file_id.split('.')[0]
+            #     # save to both a training and validation split
+            #     # and a potential generator source directory
+            #     cloud.save_npy_to_cloud(mip_arr, file_id, 'processed')
+            # # otherwise it's from numpy
+            # else:
+            file_id = in_blob.name.split('/')[2]
+            file_id = file_id.split('.')[0]
+            # save to the numpy generator source directory
+            cloud.save_npy_to_cloud(mip_arr, file_id, location, 'overlap')
+
+
+if __name__ == '__main__':
+    overlap_mip()
