@@ -52,15 +52,18 @@ def save_npy_to_cloud(arr: np.ndarray, id: str, type: str, view: str):
     except Exception as e:
         logging.error(f'for patient ID: {id} {e}')
 
-def save_segmented_npy_to_cloud(arr: np.ndarray, id: str, type: str, view: str):
+
+def save_segmented_npy_to_cloud(arr: np.ndarray,
+                                id: str, type: str, view: str):
     """Uploads MIP .npy files to gs://elvos/mip_data/from_numpy/<patient
         id>_mip.npy
     """
     try:
         perspective = type.split('/')[1]
         print(f'gs://elvos/stripped_mip_data/{view}/{perspective}/{id}.npy')
-        np.save(file_io.FileIO(f'gs://elvos/stripped_mip_data/{view}/{perspective}/'
-                               f'{id}.npy',
-                               'w'), arr)
+        np.save(file_io.FileIO(
+            f'gs://elvos/stripped_mip_data/{view}/{perspective}/'
+            f'{id}.npy',
+            'w'), arr)
     except Exception as e:
         logging.error(f'for patient ID: {id} {e}')
