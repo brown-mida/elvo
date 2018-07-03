@@ -18,8 +18,8 @@ default_args = {
 dag = DAG(dag_id='mip_dag', default_args=default_args)
 
 axial_to_coronal_and_sagittal_op = \
-    PythonOperator(task_id='axial_to coronal_and_sagittal',
-                   python_callable=axial_to_coronal_and_sagittal(),
+    PythonOperator(task_id='axial_to_coronal_and_sagittal',
+                   python_callable=axial_to_coronal_and_sagittal,
                    dag=dag)
 
 normal_mip_op = PythonOperator(task_id='normal_mip',
@@ -39,7 +39,7 @@ slack_confirmation = SlackAPIPostOperator(
     channel='i-utra',
     username='airflow',
     token=os.environ['SLACK_TOKEN'],
-    text=f'Coronal and axial scans MIPed',
+    text='Coronal and axial scans MIPed',
     dag=dag,
 )
 

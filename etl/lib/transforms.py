@@ -18,16 +18,18 @@ def get_pixels_hu(slices):
                       for s in slices])
 
     # Convert the pixels Hounsfield units (HU)
+    intercept = 0
     for i, s in enumerate(slices):
         intercept = s.RescaleIntercept
-        assert intercept == -1024
         slope = s.RescaleSlope
-        assert slope == 1
+        if slope != 1:
+            image[i] = slope * image[i].astype(np.float64)
+            image[i] = image[i].astype(np.int16)
         image[i] += np.int16(intercept)
 
     # Some scans use -2000 as the default value for pixels not in the body
     # We set these pixels to -1000, the HU for air
-    image[image == -1024 - 2000] = -1000
+    image[image == intercept - 2000] = -1000
 
     return image
 
