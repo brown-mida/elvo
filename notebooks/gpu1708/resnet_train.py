@@ -117,41 +117,26 @@ def evaluate_generator(gen):
     print('generator mean:', gen.mean, 'generator std:', gen.std, )
 
 
-if __name__ == '__main__':
-    args = {
-        'data_dir': '/home/lzhu7/elvo-analysis/data/processed-standard/arrays/',
-        'labels_path':
-            '/home/lzhu7/elvo-analysis/data/processed-standard/labels.csv',
-        'index_col': 'Anon ID',
-        'label_col': 'occlusion_exists',
-        'model_path': f'/home/lzhu7/elvo-analysis/models/'
-                      f'model-{int(time.time())}.hdf5',
-        'seed': 42,
-        'split_idx': 900,
-        'input_shape': (200, 200, 3),
-        'batch_size': 64,
-        # TODO: Arguments for data augmentation parameters, dropout, etc.
-        'dropout_rate1': 0.7,
-        'dropout_rate2': 0.7,
-        'rotation_range': 20,
-    }
+def split_data(x, y, split_idx):
+    print(f'splitting data to {split_idx} training samples',
+          f' {len(x) - split_idx} validation samples')
 
-    arrays = load_arrays(args['data_dir'])
-    labels = pd.read_csv(args['labels_path'],
-                         index_col=args['index_col'])[[args['label_col']]]
+    x_train = x[:split_idx]
+    y_train = y[:split_idx]
+    x_valid = x[split_idx:]
+    y_valid = y[split_idx:]
 
-    print(f'seeding to {args["seed"]}')
-    np.random.seed(args["seed"])
+    print('training positives:', y_train.sum(),
+          'training negatives', len(y_train) - y_train.sum())
+    print('validation positives:', y_valid.sum(),
+          'validation negatives', len(y_valid) - y_valid.sum())
+    print('x_train mean:', x_train.mean(),
+          'x_train std:', x_train.std())
 
-    x, y = to_shuffled_arrays(arrays, labels)
+    return x_train, y_train, x_valid, y_valid
 
-    print(f'splitting data to {args["split_idx"]} training samples',
-          f' {len(x) - args["split_idx"]} validation samples')
-    x_train = x[:args['split_idx']]
-    y_train = y[:args['split_idx']]
-    x_valid = x[args['split_idx']:]
-    y_valid = y[args['split_idx']:]
 
+def create_model(x_train, y_train, x_valid, y_valid, params):
     print('training positives:', y_train.sum(),
           'training negatives', len(y_train) - y_train.sum())
     print('validation positives:', y_valid.sum(),
@@ -161,7 +146,7 @@ if __name__ == '__main__':
 
     train_datagen = ImageDataGenerator(featurewise_center=True,
                                        featurewise_std_normalization=True,
-                                       rotation_range=args['rotation_range'],
+                                       rotation_range=params['rotation_range'],
                                        width_shift_range=0.1,
                                        height_shift_range=0.1,
                                        horizontal_flip=True)
@@ -171,28 +156,92 @@ if __name__ == '__main__':
     valid_datagen.fit(x_train)
 
     train_gen = train_datagen.flow(x_train, y_train,
-                                   batch_size=args['batch_size'])
+                                   batch_size=params['batch_size'])
     valid_gen = valid_datagen.flow(x_valid, y_valid,
-                                   batch_size=args['batch_size'])
+                                   batch_size=params['batch_size'])
 
     evaluate_generator(train_datagen)
     evaluate_generator(valid_datagen)
 
-    model = build_model(input_shape=args['input_shape'],
-                        dropout_rate1=args['dropout_rate1'],
-                        dropout_rate2=args['dropout_rate2'])
-    model.summary()
+    model = build_model(input_shape=params['input_shape'],
+                        dropout_rate1=params['dropout_rate1'],
+                        dropout_rate2=params['dropout_rate2'])
 
-    checkpointer = keras.callbacks.ModelCheckpoint(filepath=args['model_path'],
-                                                   monitor='val_acc',
-                                                   verbose=1,
-                                                   save_best_only=True)
+    # TODO: Add back checkpointer later
+    # checkpointer = keras.callbacks.ModelCheckpoint(
+    #     filepath=params['model_path'],
+    #     verbose=1,
+    #     save_best_only=True)
     early_stopper = keras.callbacks.EarlyStopping(patience=10)
+
     x_valid_standardized = ((x_valid - valid_datagen.mean) /
                             valid_datagen.std)
     auc = AucCallback(x_valid_standardized, y_valid)
 
-    model.fit_generator(train_gen,
-                        epochs=100,
-                        validation_data=valid_gen,
-                        callbacks=[auc, checkpointer, early_stopper])
+    out = model.fit_generator(train_gen,
+                              epochs=100,
+                              validation_data=valid_gen,
+                              verbose=2,
+                              callbacks=[auc, early_stopper])
+    return out, model
+
+
+if __name__ == '__main__':
+    args = {
+        'data_dir': [
+            '/home/lzhu7/elvo-analysis/data/processed-standard/arrays/',
+            '/home/lzhu7/elvo-analysis/data/processed-220/arrays/',
+            '/home/lzhu7/elvo-analysis/data/processed-no-basvert/arrays/'
+        ],
+        'labels_path': [
+            '/home/lzhu7/elvo-analysis/data/processed-standard/labels.csv',
+            '/home/lzhu7/elvo-analysis/data/processed-220/labels.csv',
+            '/home/lzhu7/elvo-analysis/data/processed-no-basvert/labels.csv',
+        ],
+        'index_col': 'Anon ID',
+        'label_col': 'occlusion_exists',
+        'model_path': f'/home/lzhu7/elvo-analysis/models/'
+                      f'model-{int(time.time())}.hdf5',
+        ''
+        'seed': 42,
+        'input_shape': [
+            (200, 200, 3),
+            (220, 220, 3),
+            (200, 200, 3),
+        ],
+        'split_idx': [700, 800, 900],
+        'batch_size': [8, 16, 32, 64, 128],
+        # TODO: Arguments for data augmentation parameters, etc.
+        'dropout_rate1': [0.5, 0.6, 0.7],
+        'dropout_rate2': [0.5, 0.6, 0.7],
+        'rotation_range': [10, 20, 30],
+    }
+
+    for i in range(len(args['data_dir'])):
+        print(f'using data {args["data_dir"][i]}')
+        print(f'using labels {args["labels_path"][i]}')
+        arrays = load_arrays(args['data_dir'][i])
+        labels = pd.read_csv(args['labels_path'][i],
+                             index_col=args['index_col'])[[args['label_col']]]
+
+        print(f'seeding to {args["seed"]}')
+        np.random.seed(args["seed"])
+
+        x, y = to_shuffled_arrays(arrays, labels)
+        for batch_size in args['batch_size']:
+            for dropout_rate1 in args['dropout_rate1']:
+                for dropout_rate2 in args['dropout_rate2']:
+                    for rotation_range in args['rotation_range']:
+                        for split_idx in args['split_idx']:
+                            params = {
+                                'batch_size': batch_size,
+                                'dropout_rate1': dropout_rate1,
+                                'dropout_rate2': dropout_rate2,
+                                'rotation_range': rotation_range,
+                                'input_shape': args['input_shape'][i],
+                            }
+                            print(f'using params, {params}')
+                            x_train, y_train, x_valid, y_valid = split_data(
+                                x, y, split_idx)
+                            create_model(x_train, y_train, x_valid, y_valid,
+                                         params=params)

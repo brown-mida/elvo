@@ -235,6 +235,18 @@ def process_array(arr: np.ndarray,
         arr = arr.transpose((1, 2, 0))
         assert arr.shape == (220, 220, 3)
         return arr
+
+    if preconfig == 'lower-crop-mip':
+        arr = crop(arr,
+                   (75, 200, 200),
+                   height_offset=40)
+        arr = np.stack([arr[:25], arr[25:50], arr[50:75]])
+        arr = bound_pixels(arr, -40, 400)
+        arr = arr.max(axis=1)
+        arr = arr.transpose((1, 2, 0))
+        assert arr.shape == (200, 200, 3)
+        return arr
+
     # TODO: Optimize height offset, MIP thickness,
     # MIP overlap, (M)IP variations, bounding values, input shape
     # Save different configs as different if-statement blocks.
