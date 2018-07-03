@@ -31,16 +31,6 @@ bucket = client.bucket('elvos')
 # )
 # bucket = gcs_client.get_bucket('elvos')
 
-scope = ['https://spreadsheets.google.com/feeds',
-         'https://www.googleapis.com/auth/drive']
-credentials = ServiceAccountCredentials.from_json_keyfile_name(
-    os.environ['SPREADSHEET_CREDENTIALS'],
-    scope
-)
-spread_client = gspread.authorize(credentials)
-worksheet = spread_client.open_by_key(
-    '1_j7mq_VypBxYRWA5Y7ef4mxXqU0EmBKDl0lkp62SsXA').worksheet('annotations')
-
 cache = {}
 
 
@@ -102,8 +92,10 @@ def roi():
                      y2=y2,
                      z1=z1,
                      z2=z2)
-    db.session.add(ann)
-    db.session.commit()
+    # TODO: Incorporate db functionality again at
+    #  some other point
+    # db.session.add(ann)
+    # db.session.commit()
     logging.info(f'inserted annotation: {ann}')
     values = [
         ann.patient_id,
@@ -116,6 +108,17 @@ def roi():
         ann.z1,
         ann.z2,
     ]
+
+    # Put here for now since it's not working for everybody
+    scope = ['https://spreadsheets.google.com/feeds']
+    logging.debug('getting service account credentials')
+    credentials = ServiceAccountCredentials.from_json_keyfile_name(
+        os.environ['SPREADSHEET_CREDENTIALS'],
+        scope
+    )
+    spread_client = gspread.authorize(credentials)
+    worksheet = spread_client.open_by_key(
+        '1_j7mq_VypBxYRWA5Y7ef4mxXqU0EmBKDl0lkp62SsXA').worksheet('annotations')
     worksheet.append_row(values)
     logging.info(f'added to spreadsheet: {values}')
     return str(ann.id_)
