@@ -18,13 +18,6 @@ def configure_logger():
     root_logger.addHandler(handler)
 
 
-def set_cloud():
-    configure_logger()
-    client = cloud.authenticate()
-    bucket = client.get_bucket('elvos')
-    return bucket
-
-
 def get_og_mip(cropped_arr: np.ndarray):
     # perform the normal MIPing procedure
     not_extreme_arr = transforms.remove_extremes(cropped_arr)
@@ -43,7 +36,7 @@ def save_to_cloud(arr: np.ndarray, in_blob):
     cloud.save_stripped_npy(arr, file_id, "axial_single_channel")
 
 
-def get_stripped_mip():
+def get_stripped_mip():s
     configure_logger()
     client = cloud.authenticate()
     bucket = client.get_bucket('elvos')
