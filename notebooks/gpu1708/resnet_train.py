@@ -1,4 +1,5 @@
 import pathlib
+import time
 import typing
 
 import numpy as np
@@ -16,7 +17,7 @@ from keras import backend as K
 from keras.preprocessing import image
 
 
-def load_data(data_dir: str) -> typing.Dict[str, np.ndarray]:
+def load_arrays(data_dir: str) -> typing.Dict[str, np.ndarray]:
     data_dict = {}
     for filename in os.listdir(data_dir):
         patient_id = filename[:-4]  # remove .npy extension
@@ -26,6 +27,7 @@ def load_data(data_dir: str) -> typing.Dict[str, np.ndarray]:
 
 def to_shuffled_arrays(data: typing.Dict[str, np.ndarray],
                        labels: pd.DataFrame) -> typing.Tuple[
+
     np.ndarray, np.ndarray]:
     shuffled_ids = list(data.keys())
     np.random.shuffle(shuffled_ids)
@@ -105,15 +107,20 @@ def build_resnet_model(input_shape,
 
 if __name__ == '__main__':
     args = {
-        'data_dir': '/home/lzhu7/elvo-analysis/data/mip_three11/',
-        'labels_path': '/home/lzhu7/elvo-analysis/data/labels_mip_three11.csv',
+        'data_dir': '/home/lzhu7/elvo-analysis/data/processed-220/arrays/',
+        'labels_path': '/home/lzhu7/elvo-analysis/data/processed-220/labels.csv',
         'index_col': 'Anon ID',
         'label_col': 'occlusion_exists',
+        'model_path': f'/home/lzhu7/elvo-analysis/models/'
+                      f'model-{int(time.time())}',
         'seed': 42,
-        'split_idx': 900,
+        'split_idx': 800,
+        'input_shape': (220, 220, 3),
+        'batch_size': 32,
+        # TODO: Arguments for data augmentation parameters, dropout, etc.
     }
 
-    data = load_data(args['data_dir'])
+    data = load_arrays(args['data_dir'])
     labels = pd.read_csv(args['labels_path'],
                          index_col=args['index_col'])[[args['label_col']]]
 
@@ -122,8 +129,8 @@ if __name__ == '__main__':
 
     x, y = to_shuffled_arrays(data, labels)
 
-    x_train = x[0:args['split_idx']]
-    y_train = y[0:args['split_idx']]
+    x_train = x[:args['split_idx']]
+    y_train = y[:args['split_idx']]
     x_valid = x[args['split_idx']:]
     y_valid = y[args['split_idx']:]
 
@@ -134,19 +141,21 @@ if __name__ == '__main__':
     print('x_train mean:', x_train.mean(),
           'x_train std:', x_train.std())
 
-    datagen = image.ImageDataGenerator(rotation_range=15,
+    datagen = image.ImageDataGenerator(featurewise_center=True,
+                                       featurewise_std_normalization=True,
+                                       rotation_range=30,
                                        width_shift_range=0.1,
                                        height_shift_range=0.1,
+                                       shear_range=0.1,
                                        zoom_range=[1.0, 1.1],
                                        horizontal_flip=True)
     datagen.fit(x_train)
 
-    train_gen = datagen.flow(x_train, y_train, batch_size=48)
-    valid_gen = datagen.flow(x_valid, y_valid, batch_size=48)
+    train_gen = datagen.flow(x_train, y_train, batch_size=args['batch_size'])
+    valid_gen = datagen.flow(x_valid, y_valid, batch_size=args['batch_size'])
 
     train_arr = train_gen.next()[0]
     valid_arr = valid_gen.next()[0]
-
     print('train_gen sample batch:',
           'shape:', train_arr.shape,
           'mean:', train_arr.mean(),
@@ -156,10 +165,12 @@ if __name__ == '__main__':
           'mean:', valid_arr.mean(),
           'std:', valid_arr.std())
 
-    model = build_resnet_model((200, 200, 3))
+    model = build_resnet_model(input_shape=args['input_shape'],
+                               dropout_rate1=0.5,
+                               dropout_rate2=0.5)
     model.summary()
 
-    checkpointer = callbacks.ModelCheckpoint(filepath='weights-11.hdf5',
+    checkpointer = callbacks.ModelCheckpoint(filepath=args['model_path'],
                                              verbose=1,
                                              save_best_only=True)
     early_stopper = callbacks.EarlyStopping(patience=10)
