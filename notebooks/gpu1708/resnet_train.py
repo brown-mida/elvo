@@ -2,19 +2,15 @@ import pathlib
 import time
 import typing
 
+import functools
+import keras
 import numpy as np
 import os
 import pandas as pd
+import sklearn.metrics
 import tensorflow as tf
-from keras import (
-    applications,
-    layers,
-    models,
-    optimizers,
-    callbacks,
-)
 from keras import backend as K
-from keras.preprocessing import image
+from keras.preprocessing.image import ImageDataGenerator
 
 
 def load_arrays(data_dir: str) -> typing.Dict[str, np.ndarray]:
@@ -39,6 +35,14 @@ def to_shuffled_arrays(data: typing.Dict[str, np.ndarray],
     return np.stack(X_list), np.stack(y_list)
 
 
+def true_positives(y_true, y_pred):
+    return K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+
+
+def false_negatives(y_true, y_pred):
+    return K.sum(K.round(K.clip(y_true * (1 - y_pred), 0, 1)))
+
+
 def sensitivity(y_true, y_pred):
     true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
     possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
@@ -52,10 +56,6 @@ def specificity(y_true, y_pred):
 
 
 def as_keras_metric(method):
-    import functools
-    from keras import backend as K
-    import tensorflow as tf
-
     @functools.wraps(method)
     def wrapper(self, args, **kwargs):
         """ Wrapper for turning tensorflow metrics into keras metrics """
@@ -68,33 +68,43 @@ def as_keras_metric(method):
     return wrapper
 
 
+class AucCallback(keras.callbacks.Callback):
+
+    def __init__(self, x_valid_standardized, y_valid):
+        super().__init__()
+        self.x_valid_standardized = x_valid_standardized
+        self.y_valid = y_valid
+
+    def on_epoch_end(self, epoch, logs=None):
+        y_pred = self.model.predict(self.x_valid_standardized)
+        score = sklearn.metrics.roc_auc_score(self.y_valid, y_pred)
+        print(f'\nvalidation auc: {score}')
+
+
 def build_resnet_model(input_shape,
                        dropout_rate1=0.5,
                        dropout_rate2=0.5,
-                       optimizer=optimizers.Adam(lr=1e-5),
-                       metrics=None) -> models.Model:
-    resnet = applications.ResNet50(include_top=False, input_shape=input_shape)
+                       optimizer=keras.optimizers.Adam(lr=1e-5),
+                       metrics=None) -> keras.models.Model:
+    resnet = keras.applications.ResNet50(include_top=False,
+                                         input_shape=input_shape)
     x = resnet.output
-    x = layers.GlobalAveragePooling2D()(x)
-    x = layers.Dense(1024, activation='relu')(x)
-    x = layers.Dropout(dropout_rate1)(x)
-    x = layers.Dense(1024, activation='relu')(x)
-    x = layers.Dropout(dropout_rate2)(x)
-    predictions = layers.Dense(1, activation='sigmoid')(x)
+    x = keras.layers.GlobalAveragePooling2D()(x)
+    x = keras.layers.Dense(1024, activation='relu')(x)
+    x = keras.layers.Dropout(dropout_rate1)(x)
+    x = keras.layers.Dense(1024, activation='relu')(x)
+    x = keras.layers.Dropout(dropout_rate2)(x)
+    predictions = keras.layers.Dense(1, activation='sigmoid')(x)
 
-    model = models.Model(resnet.input, predictions)
+    model = keras.models.Model(resnet.input, predictions)
 
     if metrics is None:
-        print('Using default metrics: acc, auc, precision, recall, tp, fn')
-        auc_roc = as_keras_metric(tf.metrics.auc)
-        true_positives = as_keras_metric(tf.metrics.true_positives)
-        false_negatives = as_keras_metric(tf.metrics.false_negatives)
-        precision = as_keras_metric(tf.metrics.precision)
-        recall = as_keras_metric(tf.metrics.recall)
+        print('Using default metrics: acc, sensitivity, specificity, tp, fn')
+        auc = as_keras_metric(tf.metrics.auc)
         metrics = ['acc',
-                   auc_roc,
-                   precision,
-                   recall,
+                   auc,
+                   sensitivity,
+                   specificity,
                    true_positives,
                    false_negatives]
 
@@ -108,7 +118,8 @@ def build_resnet_model(input_shape,
 if __name__ == '__main__':
     args = {
         'data_dir': '/home/lzhu7/elvo-analysis/data/processed-220/arrays/',
-        'labels_path': '/home/lzhu7/elvo-analysis/data/processed-220/labels.csv',
+        'labels_path':
+            '/home/lzhu7/elvo-analysis/data/processed-220/labels.csv',
         'index_col': 'Anon ID',
         'label_col': 'occlusion_exists',
         'model_path': f'/home/lzhu7/elvo-analysis/models/'
@@ -118,6 +129,8 @@ if __name__ == '__main__':
         'input_shape': (220, 220, 3),
         'batch_size': 32,
         # TODO: Arguments for data augmentation parameters, dropout, etc.
+        'dropout_rate1': 0.7,
+        'dropout_rate2': 0.7,
     }
 
     data = load_arrays(args['data_dir'])
@@ -141,7 +154,7 @@ if __name__ == '__main__':
     print('x_train mean:', x_train.mean(),
           'x_train std:', x_train.std())
 
-    datagen = image.ImageDataGenerator(featurewise_center=True,
+    train_datagen = ImageDataGenerator(featurewise_center=True,
                                        featurewise_std_normalization=True,
                                        rotation_range=30,
                                        width_shift_range=0.1,
@@ -149,10 +162,15 @@ if __name__ == '__main__':
                                        shear_range=0.1,
                                        zoom_range=[1.0, 1.1],
                                        horizontal_flip=True)
-    datagen.fit(x_train)
+    valid_datagen = ImageDataGenerator(featurewise_center=True,
+                                       featurewise_std_normalization=True)
+    train_datagen.fit(x_train)
+    valid_datagen.fit(x_valid)
 
-    train_gen = datagen.flow(x_train, y_train, batch_size=args['batch_size'])
-    valid_gen = datagen.flow(x_valid, y_valid, batch_size=args['batch_size'])
+    train_gen = train_datagen.flow(x_train, y_train,
+                                   batch_size=args['batch_size'])
+    valid_gen = valid_datagen.flow(x_valid, y_valid,
+                                   batch_size=args['batch_size'])
 
     train_arr = train_gen.next()[0]
     valid_arr = valid_gen.next()[0]
@@ -166,16 +184,19 @@ if __name__ == '__main__':
           'std:', valid_arr.std())
 
     model = build_resnet_model(input_shape=args['input_shape'],
-                               dropout_rate1=0.5,
-                               dropout_rate2=0.5)
+                               dropout_rate1=args['dropout_rate1'],
+                               dropout_rate2=args['dropout_rate2'])
     model.summary()
 
-    checkpointer = callbacks.ModelCheckpoint(filepath=args['model_path'],
-                                             verbose=1,
-                                             save_best_only=True)
-    early_stopper = callbacks.EarlyStopping(patience=10)
+    checkpointer = keras.callbacks.ModelCheckpoint(filepath=args['model_path'],
+                                                   verbose=1,
+                                                   save_best_only=True)
+    early_stopper = keras.callbacks.EarlyStopping(patience=10)
+    x_valid_standardized = ((x_valid - valid_datagen.mean) /
+                            valid_datagen.std)
+    auc = AucCallback(x_valid_standardized, y_valid)
 
     model.fit_generator(train_gen,
                         epochs=100,
                         validation_data=valid_gen,
-                        callbacks=[checkpointer, early_stopper])
+                        callbacks=[auc, checkpointer, early_stopper])
