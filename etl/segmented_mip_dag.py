@@ -14,7 +14,7 @@ default_args = {
     'start_date': datetime(2018, 6, 28, 5),
 }
 
-dag = DAG(dag_id='mip_dag', default_args=default_args)
+dag = DAG(dag_id='segmented_mip_dag', default_args=default_args)
 
 
 normal_mip_op = PythonOperator(task_id='normal_mip',
