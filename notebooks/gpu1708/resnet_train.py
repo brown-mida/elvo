@@ -119,20 +119,21 @@ def evaluate_generator(gen):
 
 if __name__ == '__main__':
     args = {
-        'data_dir': '/home/lzhu7/elvo-analysis/data/processed-220/arrays/',
+        'data_dir': '/home/lzhu7/elvo-analysis/data/processed-standard/arrays/',
         'labels_path':
-            '/home/lzhu7/elvo-analysis/data/processed-220/labels.csv',
+            '/home/lzhu7/elvo-analysis/data/processed-standard/labels.csv',
         'index_col': 'Anon ID',
         'label_col': 'occlusion_exists',
         'model_path': f'/home/lzhu7/elvo-analysis/models/'
-                      f'model-{int(time.time())}',
+                      f'model-{int(time.time())}.hdf5',
         'seed': 42,
         'split_idx': 800,
-        'input_shape': (220, 220, 3),
+        'input_shape': (200, 200, 3),
         'batch_size': 32,
         # TODO: Arguments for data augmentation parameters, dropout, etc.
         'dropout_rate1': 0.7,
         'dropout_rate2': 0.7,
+        'rotation_range': 20,
     }
 
     arrays = load_arrays(args['data_dir'])
@@ -160,7 +161,7 @@ if __name__ == '__main__':
 
     train_datagen = ImageDataGenerator(featurewise_center=True,
                                        featurewise_std_normalization=True,
-                                       rotation_range=20,
+                                       rotation_range=args['rotation_range'],
                                        width_shift_range=0.1,
                                        height_shift_range=0.1,
                                        shear_range=0.1,

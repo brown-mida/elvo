@@ -71,6 +71,40 @@ def clean_data(arrays: typing.Dict[str, np.ndarray],
     return filtered_arrays, filtered_labels
 
 
+def filter_data(arrays: typing.Dict[str, np.ndarray],
+                labels: pd.DataFrame,
+                variant: str):
+    print(f'Using filter variant {variant}')
+    if variant == 'simple':
+        filtered_arrays = {id_: arr for id_, arr in arrays.items()
+                           if arr.shape[0] != 1}  # Remove the bad array
+        filtered_labels = labels.loc[filtered_arrays.keys()]
+    elif variant == 'no-basvert':
+        # Also remove array of height 1
+        filtered_arrays = {id_: arr for id_, arr in arrays.items()
+                           if arr.shape[0] != 1}  # Remove the bad array
+
+        filtered_arrays = filtered_arrays.copy()
+        col_name = 'Location of occlusions on CTA (Matt verified)'
+
+        def condition(row):
+            to_exclude = ('basilar', 'l vertebral', 'r vertebral',
+                          'r vert', 'l vert')
+            return (row[col_name] is np.nan
+                    or row[col_name].lower().strip() not in to_exclude)
+
+        filtered_ids = [id_ for id_ in list(filtered_arrays)
+                        if condition(labels.loc[id_])]
+        for id_ in list(filtered_arrays):
+            if id_ not in filtered_ids:
+                del filtered_arrays[id_]
+        filtered_labels = labels.loc[filtered_ids]
+    else:
+        raise ValueError('Unsupported variant')
+    assert len(filtered_arrays) == len(filtered_labels)
+    return filtered_arrays, filtered_labels
+
+
 def plot_images(data: typing.Dict[str, np.ndarray],
                 labels: pd.DataFrame,
                 num_cols=5,
@@ -212,28 +246,6 @@ def process_data(arrays, labels, preconfig):
     return processed_arrays, processed_labels
 
 
-def filter_data(arrays: typing.Dict[str, np.ndarray],
-                labels: pd.DataFrame,
-                variant: str):
-    if variant == 'simple':
-        filtered_arrays = {id_: arr for id_, arr in arrays.items()
-                           if arr.shape[0] != 1}  # Remove the bad array
-        filtered_labels = labels.loc[filtered_arrays.keys()]
-    elif variant == 'in-progress':  # TODO: Better name
-        filtered_arrays = arrays.copy()
-        col_name = 'Location of occlusions on CTA (Matt verified)'
-        filtered_ids = [id_ for id_ in list(filtered_arrays) if
-                        labels.loc[id_][col_name] not in ('')]  # TODO
-        for id_ in list(filtered_arrays):
-            if id_ not in filtered_ids:
-                del filtered_arrays[id_]
-        filtered_labels = labels.loc[filtered_ids]
-    else:
-        raise ValueError('Unsupported variant')
-    assert len(filtered_arrays) == len(filtered_labels)
-    return filtered_arrays, filtered_labels
-
-
 def save_plots(arrays, labels, dirpath: str):
     os.mkdir(dirpath)
     num_plots = (len(arrays) + 19) // 20
@@ -257,22 +269,22 @@ def save_data(arrays: typing.Dict[str, np.ndarray],
     if with_plots:
         save_plots(arrays, labels, plots_dir)
 
-
-if __name__ == '__main__':
-    args = {
-        'arrays_dir': '/home/lzhu7/elvo-analysis/data/numpy_compressed/',
-        'labels_dir': '/home/lzhu7/elvo-analysis/data/metadata/',
-        'processed_dir': '/home/lzhu7/elvo-analysis/data/processed/',
-        'filter_variant': 'simple',
-        'process_variant': 'standard-crop-mip',
-    }
-    raw_arrays = load_compressed_arrays(args['arrays_dir'])
-    raw_labels = load_labels(args['labels_dir'])
-    cleaned_arrays, cleaned_labels = clean_data(raw_arrays, raw_labels)
-    filtered_arrays, filtered_labels = filter_data(cleaned_arrays,
-                                                   cleaned_labels,
-                                                   args['filter_variant'])
-    processed_arrays, processed_labels = process_data(filtered_arrays,
-                                                      filtered_labels,
-                                                      args['process_variant'])
-    save_data(processed_arrays, processed_labels, args['processed_dir'])
+# TODO: Uncomment before commit
+# if __name__ == '__main__':
+#     args = {
+#         'arrays_dir': '/home/lzhu7/elvo-analysis/data/numpy_compressed/',
+#         'labels_dir': '/home/lzhu7/elvo-analysis/data/metadata/',
+#         'processed_dir': '/home/lzhu7/elvo-analysis/data/processed/',
+#         'filter_variant': 'simple',
+#         'process_variant': 'standard-crop-mip',
+#     }
+#     raw_arrays = load_compressed_arrays(args['arrays_dir'])
+#     raw_labels = load_labels(args['labels_dir'])
+#     cleaned_arrays, cleaned_labels = clean_data(raw_arrays, raw_labels)
+#     filtered_arrays, filtered_labels = filter_data(cleaned_arrays,
+#                                                    cleaned_labels,
+#                                                    args['filter_variant'])
+#     processed_arrays, processed_labels = process_data(filtered_arrays,
+#                                                       filtered_labels,
+#                                                       args['process_variant'])
+#     save_data(processed_arrays, processed_labels, args['processed_dir'])
