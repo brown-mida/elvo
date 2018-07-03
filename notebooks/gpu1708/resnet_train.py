@@ -81,11 +81,11 @@ class AucCallback(keras.callbacks.Callback):
         print(f'\nvalidation auc: {score}')
 
 
-def build_resnet_model(input_shape,
-                       dropout_rate1=0.5,
-                       dropout_rate2=0.5,
-                       optimizer=keras.optimizers.Adam(lr=1e-5),
-                       metrics=None) -> keras.models.Model:
+def build_model(input_shape,
+                dropout_rate1=0.5,
+                dropout_rate2=0.5,
+                optimizer=keras.optimizers.Adam(lr=1e-5),
+                metrics=None) -> keras.models.Model:
     resnet = keras.applications.ResNet50(include_top=False,
                                          input_shape=input_shape)
     x = resnet.output
@@ -100,9 +100,7 @@ def build_resnet_model(input_shape,
 
     if metrics is None:
         print('Using default metrics: acc, sensitivity, specificity, tp, fn')
-        auc = as_keras_metric(tf.metrics.auc)
         metrics = ['acc',
-                   auc,
                    sensitivity,
                    specificity,
                    true_positives,
@@ -113,6 +111,10 @@ def build_resnet_model(input_shape,
                   metrics=metrics)
 
     return model
+
+
+def evaluate_generator(gen):
+    print('generator mean:', gen.mean, 'generator std:', gen.std, )
 
 
 if __name__ == '__main__':
@@ -133,15 +135,17 @@ if __name__ == '__main__':
         'dropout_rate2': 0.7,
     }
 
-    data = load_arrays(args['data_dir'])
+    arrays = load_arrays(args['data_dir'])
     labels = pd.read_csv(args['labels_path'],
                          index_col=args['index_col'])[[args['label_col']]]
 
     print(f'seeding to {args["seed"]}')
     np.random.seed(args["seed"])
 
-    x, y = to_shuffled_arrays(data, labels)
+    x, y = to_shuffled_arrays(arrays, labels)
 
+    print(f'splitting data to {args["split_idx"]} training samples',
+          f' {len(x) - args["split_idx"]} validation samples')
     x_train = x[:args['split_idx']]
     y_train = y[:args['split_idx']]
     x_valid = x[args['split_idx']:]
@@ -156,7 +160,7 @@ if __name__ == '__main__':
 
     train_datagen = ImageDataGenerator(featurewise_center=True,
                                        featurewise_std_normalization=True,
-                                       rotation_range=30,
+                                       rotation_range=20,
                                        width_shift_range=0.1,
                                        height_shift_range=0.1,
                                        shear_range=0.1,
@@ -165,27 +169,19 @@ if __name__ == '__main__':
     valid_datagen = ImageDataGenerator(featurewise_center=True,
                                        featurewise_std_normalization=True)
     train_datagen.fit(x_train)
-    valid_datagen.fit(x_valid)
+    valid_datagen.fit(x_train)
 
     train_gen = train_datagen.flow(x_train, y_train,
                                    batch_size=args['batch_size'])
     valid_gen = valid_datagen.flow(x_valid, y_valid,
                                    batch_size=args['batch_size'])
 
-    train_arr = train_gen.next()[0]
-    valid_arr = valid_gen.next()[0]
-    print('train_gen sample batch:',
-          'shape:', train_arr.shape,
-          'mean:', train_arr.mean(),
-          'std:', train_arr.std())
-    print('test_gen sample batch:',
-          'shape:', valid_arr.shape,
-          'mean:', valid_arr.mean(),
-          'std:', valid_arr.std())
+    evaluate_generator(train_datagen)
+    evaluate_generator(valid_datagen)
 
-    model = build_resnet_model(input_shape=args['input_shape'],
-                               dropout_rate1=args['dropout_rate1'],
-                               dropout_rate2=args['dropout_rate2'])
+    model = build_model(input_shape=args['input_shape'],
+                        dropout_rate1=args['dropout_rate1'],
+                        dropout_rate2=args['dropout_rate2'])
     model.summary()
 
     checkpointer = keras.callbacks.ModelCheckpoint(filepath=args['model_path'],
