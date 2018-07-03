@@ -53,13 +53,13 @@ def save_npy_to_cloud(arr: np.ndarray, id: str, type: str, view: str):
         logging.error(f'for patient ID: {id} {e}')
 
 
-def save_stripped_npy(arr: np.ndarray, id: str, type: str):
+def save_stripped_npy(arr: np.ndarray, patient_id: str, view: str):
     """Uploads mipped and stripped .npy files to
-        gs://elvos/stripped_data/{view}/<patient id>_strip.npy"""
+        gs://elvos/stripped_data/{view}/<patient_id>_strip.npy"""
     try:
-        print(f'gs://elvos/stripped_data/{type}/{id}_strip.npy')
-        np.save(file_io.FileIO(f'gs://elvos/stripped_data/{type}/'
-                               f'{id}_strip.npy', 'w'), arr)
+        print(f'gs://elvos/stripped_data/{view}/{patient_id}_strip.npy')
+        np.save(file_io.FileIO(f'gs://elvos/stripped_data/{view}/'
+                               f'{patient_id}_strip.npy', 'w'), arr)
         print('success')
     except Exception as e:
-        logging.error(f'for patient ID: {id} {e}')
+        logging.error(f'for patient ID: {patient_id} {e}')

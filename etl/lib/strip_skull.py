@@ -18,13 +18,6 @@ def configure_logger():
     root_logger.addHandler(handler)
 
 
-def set_cloud():
-    configure_logger()
-    client = cloud.authenticate()
-    bucket = client.get_bucket('elvos')
-    return bucket
-
-
 def get_og_mip(cropped_arr: np.ndarray):
     # perform the normal MIPing procedure
     not_extreme_arr = transforms.remove_extremes(cropped_arr)
