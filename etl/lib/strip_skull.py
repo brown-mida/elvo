@@ -36,7 +36,7 @@ def save_to_cloud(arr: np.ndarray, in_blob):
     cloud.save_stripped_npy(arr, file_id, "axial_single_channel")
 
 
-def get_stripped_mip():s
+def get_stripped_mip():
     configure_logger()
     client = cloud.authenticate()
     bucket = client.get_bucket('elvos')
