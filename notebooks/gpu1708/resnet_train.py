@@ -127,9 +127,9 @@ if __name__ == '__main__':
         'model_path': f'/home/lzhu7/elvo-analysis/models/'
                       f'model-{int(time.time())}.hdf5',
         'seed': 42,
-        'split_idx': 800,
+        'split_idx': 900,
         'input_shape': (200, 200, 3),
-        'batch_size': 32,
+        'batch_size': 64,
         # TODO: Arguments for data augmentation parameters, dropout, etc.
         'dropout_rate1': 0.7,
         'dropout_rate2': 0.7,
@@ -164,8 +164,6 @@ if __name__ == '__main__':
                                        rotation_range=args['rotation_range'],
                                        width_shift_range=0.1,
                                        height_shift_range=0.1,
-                                       shear_range=0.1,
-                                       zoom_range=[1.0, 1.1],
                                        horizontal_flip=True)
     valid_datagen = ImageDataGenerator(featurewise_center=True,
                                        featurewise_std_normalization=True)

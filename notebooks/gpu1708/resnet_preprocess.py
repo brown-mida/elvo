@@ -172,6 +172,12 @@ def crop(image3d: np.ndarray,
     return cropped
 
 
+def crop_new(image3d: np.ndarray,
+             output_shape,
+             height_offset):
+    pass
+
+
 def bound_pixels(arr: np.ndarray,
                  min_bound: float,
                  max_bound: float) -> np.ndarray:
@@ -212,6 +218,16 @@ def process_array(arr: np.ndarray,
     if preconfig == '220-crop-mip':
         arr = crop(arr,
                    (75, 220, 220),
+                   height_offset=30)
+        arr = np.stack([arr[:25], arr[25:50], arr[50:75]])
+        arr = bound_pixels(arr, -40, 400)
+        arr = arr.max(axis=1)
+        arr = arr.transpose((1, 2, 0))
+        assert arr.shape == (220, 220, 3)
+        return arr
+    if preconfig == 'new-crop':
+        arr = crop(arr,
+                   (75, 20, 220),
                    height_offset=30)
         arr = np.stack([arr[:25], arr[25:50], arr[50:75]])
         arr = bound_pixels(arr, -40, 400)
