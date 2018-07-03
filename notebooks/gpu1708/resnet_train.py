@@ -186,6 +186,7 @@ if __name__ == '__main__':
     model.summary()
 
     checkpointer = keras.callbacks.ModelCheckpoint(filepath=args['model_path'],
+                                                   monitor='val_acc',
                                                    verbose=1,
                                                    save_best_only=True)
     early_stopper = keras.callbacks.EarlyStopping(patience=10)
