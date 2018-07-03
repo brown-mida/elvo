@@ -133,7 +133,8 @@ def multichannel_mip():
             # # otherwise it's from numpy
             # else:
             # save to the numpy generator source directory
-            cloud.save_segmented_npy_to_cloud(mip_arr, file_id, location, 'multichannel')
+            cloud.save_segmented_npy_to_cloud(mip_arr, file_id, location,
+                                              'multichannel')
 
 
 if __name__ == '__main__':
