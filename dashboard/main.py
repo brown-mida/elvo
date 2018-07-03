@@ -121,10 +121,12 @@ def roi():
     return str(ann.id_)
 
 
-@app.route('/image/dimensions/<patient_id>/')
+@app.route('/image/dimensions/<patient_id>')
 def dimensions(patient_id):
+    logging.debug(f'getting dimensions for patient {patient_id}')
     arr = _retrieve_arr(patient_id)
     shape = arr.shape
+    logging.debug(f'patient has shape {shape}')
     return flask.json.dumps({
         'z': shape[0],
         'x': shape[1],
