@@ -297,22 +297,22 @@ def save_data(arrays: typing.Dict[str, np.ndarray],
     if with_plots:
         save_plots(arrays, labels, plots_dir)
 
-# TODO: Uncomment before commit
-# if __name__ == '__main__':
-#     args = {
-#         'arrays_dir': '/home/lzhu7/elvo-analysis/data/numpy_compressed/',
-#         'labels_dir': '/home/lzhu7/elvo-analysis/data/metadata/',
-#         'processed_dir': '/home/lzhu7/elvo-analysis/data/processed/',
-#         'filter_variant': 'simple',
-#         'process_variant': 'standard-crop-mip',
-#     }
-#     raw_arrays = load_compressed_arrays(args['arrays_dir'])
-#     raw_labels = load_labels(args['labels_dir'])
-#     cleaned_arrays, cleaned_labels = clean_data(raw_arrays, raw_labels)
-#     filtered_arrays, filtered_labels = filter_data(cleaned_arrays,
-#                                                    cleaned_labels,
-#                                                    args['filter_variant'])
-#     processed_arrays, processed_labels = process_data(filtered_arrays,
-#                                                       filtered_labels,
-#                                                       args['process_variant'])
-#     save_data(processed_arrays, processed_labels, args['processed_dir'])
+
+if __name__ == '__main__':
+    args = {
+        'arrays_dir': '/home/lzhu7/elvo-analysis/data/numpy_compressed/',
+        'labels_dir': '/home/lzhu7/elvo-analysis/data/metadata/',
+        'processed_dir': '/home/lzhu7/elvo-analysis/data/processed/',
+        'filter_variant': 'simple',
+        'process_variant': 'standard-crop-mip',
+    }
+    raw_arrays = load_compressed_arrays(args['arrays_dir'])
+    raw_labels = load_labels(args['labels_dir'])
+    cleaned_arrays, cleaned_labels = clean_data(raw_arrays, raw_labels)
+    filtered_arrays, filtered_labels = filter_data(cleaned_arrays,
+                                                   cleaned_labels,
+                                                   args['filter_variant'])
+    processed_arrays, processed_labels = process_data(filtered_arrays,
+                                                      filtered_labels,
+                                                      args['process_variant'])
+    save_data(processed_arrays, processed_labels, args['processed_dir'])
