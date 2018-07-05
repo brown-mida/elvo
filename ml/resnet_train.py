@@ -284,7 +284,7 @@ if __name__ == '__main__':
                 'labels_path': '/home/lzhu7/elvo-analysis/data/processed-standard/labels.csv',
             },
             {
-                'data_dir': '/home/lzhu7/elvo-analysis/data/processed-lower',
+                'data_dir': '/home/lzhu7/elvo-analysis/data/processed-lower/arrays/',
                 'labels_path': '/home/lzhu7/elvo-analysis/data/processed-lower/labels.csv',
             }
         ],
