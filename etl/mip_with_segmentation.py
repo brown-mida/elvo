@@ -115,7 +115,7 @@ def normal_mip():
                 else:
                     cropped_arr = transforms.crop_normal_coronal(input_arr,
                                                                  location)
-            not_extreme_arr = transforms.segment_vessels(cropped_arr)
+            not_extreme_arr = transforms.segment_vessels(cropped_arr, )
             logging.info(f'removed array extremes')
             mip_arr = transforms.mip_normal(not_extreme_arr)
             # plt.figure(figsize=(6, 6))
