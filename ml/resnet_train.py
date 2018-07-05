@@ -236,6 +236,8 @@ def hyperoptimize(hyperparams):
                                 'dropout_rate2': dropout_rate2,
                                 'rotation_range': rotation_range,
                                 'input_shape': hyperparams['input_shape'][i],
+                                'data_dir': hyperparams["data_dir"][i],
+                                'labels_path': hyperparams["labels_path"][i],
                             }
                             print(f'using params, {params}')
                             x_train, y_train, x_valid, y_valid = split_data(
