@@ -260,6 +260,7 @@ def hyperoptimize(args):
                                     })
         p.start()
         p.join()
+        time.sleep(5)  # Sleep to avoid memory errors
 
 
 if __name__ == '__main__':
