@@ -113,23 +113,51 @@ def specificity(y_true, y_pred):
 
 
 def build_model(input_shape,
+                architecture='resnet',
                 dropout_rate1=0.5,
                 dropout_rate2=0.5,
                 optimizer=keras.optimizers.Adam(lr=1e-5),
                 metrics=None) -> keras.models.Model:
     """Returns a compiled model ready for transfer learning.
     """
-    resnet = keras.applications.ResNet50(include_top=False,
-                                         input_shape=input_shape)
-    x = resnet.output
-    x = keras.layers.GlobalAveragePooling2D()(x)
-    x = keras.layers.Dense(1024, activation='relu')(x)
-    x = keras.layers.Dropout(dropout_rate1)(x)
-    x = keras.layers.Dense(1024, activation='relu')(x)
-    x = keras.layers.Dropout(dropout_rate2)(x)
-    predictions = keras.layers.Dense(1, activation='sigmoid')(x)
+    if architecture == 'resnet':
+        resnet = keras.applications.ResNet50(include_top=False,
+                                             input_shape=input_shape)
+        x = resnet.output
+        x = keras.layers.GlobalAveragePooling2D()(x)
+        x = keras.layers.Dense(1024, activation='relu')(x)
+        x = keras.layers.Dropout(dropout_rate1)(x)
+        x = keras.layers.Dense(1024, activation='relu')(x)
+        x = keras.layers.Dropout(dropout_rate2)(x)
+        predictions = keras.layers.Dense(1, activation='sigmoid')(x)
 
-    model = keras.models.Model(resnet.input, predictions)
+        model = keras.models.Model(resnet.input, predictions)
+    elif architecture == 'inception-v3':
+        inception = keras.applications.InceptionV3(include_top=False,
+                                                   input_shape=input_shape)
+        x = inception.output
+        x = keras.layers.GlobalAveragePooling2D()(x)
+        x = keras.layers.Dense(1024, activation='relu')(x)
+        x = keras.layers.Dropout(dropout_rate1)(x)
+        x = keras.layers.Dense(1024, activation='relu')(x)
+        x = keras.layers.Dropout(dropout_rate2)(x)
+        predictions = keras.layers.Dense(1, activation='sigmoid')(x)
+
+        model = keras.models.Model(inception.input, predictions)
+    elif architecture == 'inception-resnet':
+        inception = keras.applications.InceptionResNetV2(
+            include_top=False, input_shape=input_shape)
+        x = inception.output
+        x = keras.layers.GlobalAveragePooling2D()(x)
+        x = keras.layers.Dense(1024, activation='relu')(x)
+        x = keras.layers.Dropout(dropout_rate1)(x)
+        x = keras.layers.Dense(1024, activation='relu')(x)
+        x = keras.layers.Dropout(dropout_rate2)(x)
+        predictions = keras.layers.Dense(1, activation='sigmoid')(x)
+
+        model = keras.models.Model(inception.input, predictions)
+    else:
+        raise ValueError(f'{architecture} is not a valid architecture.')
 
     if metrics is None:
         print('Using default metrics: acc, sensitivity, specificity, tp, fn')
@@ -210,6 +238,7 @@ def create_model(x_train, y_train, x_valid, y_valid, params):
                                              params['rotation_range'],
                                              params['batch_size'])
     model = build_model(input_shape=x_train.shape[1:],
+                        architecture=params['architecture'],
                         dropout_rate1=params['dropout_rate1'],
                         dropout_rate2=params['dropout_rate2'])
 
@@ -300,11 +329,15 @@ if __name__ == '__main__':
         'index_col': 'Anon ID',
         'label_col': 'occlusion_exists',
 
-        'model_path': f'/home/lzhu7/elvo-analysis/models/'
-                      f'model-{int(time.time())}.hdf5',
+        'model_save_path': f'/home/lzhu7/elvo-analysis/models/'
+                           f'model-{int(time.time())}.hdf5',
 
         'seed': [0, 42],
         'val_split': [0.1, 0.2, 0.3],
+
+        # TODO: architecture is not the best option (doesn't scale well to
+        # other models
+        'architecture': ['resnet', 'inception-v3', 'inception-resnet'],
         'batch_size': [8, 32, 128],
         # TODO: Arguments for data augmentation parameters, etc.
         'dropout_rate1': [0.6, 0.7, 0.8],
