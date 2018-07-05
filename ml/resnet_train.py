@@ -62,15 +62,14 @@ def load_arrays(data_dir: str) -> typing.Dict[str, np.ndarray]:
     return data_dict
 
 
-def to_shuffled_arrays(data: typing.Dict[str, np.ndarray],
-                       labels: pd.DataFrame) -> typing.Tuple[
+def to_arrays(data: typing.Dict[str, np.ndarray],
+              labels: pd.DataFrame) -> typing.Tuple[
 
     np.ndarray, np.ndarray]:
-    shuffled_ids = list(data.keys())
-    np.random.shuffle(shuffled_ids)
+    patient_ids = list(data.keys())
     X_list = []
     y_list = []
-    for id_ in shuffled_ids:
+    for id_ in patient_ids:
         X_list.append(data[id_])
         y_list.append(labels.loc[id_])
     return np.stack(X_list), np.stack(y_list)
@@ -212,12 +211,14 @@ def hyperoptimize(args):
         labels = pd.read_csv(params['labels_path'],
                              index_col=args['index_col'])[[args['label_col']]]
 
+        x, y = to_arrays(arrays, labels)
         print(f'seeding to {args["seed"]} before shuffling')
-        np.random.seed(args["seed"])
-        x, y = to_shuffled_arrays(arrays, labels)
+
         x_train, x_valid, y_train, y_valid = \
             model_selection.train_test_split(
-                x, y, test_size=params['val_split'])
+                x, y,
+                test_size=params['val_split'],
+                random_state=args["seed"])
 
         print('training positives:', y_train.sum(),
               'training negatives',

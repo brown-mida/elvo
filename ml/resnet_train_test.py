@@ -35,7 +35,7 @@ def test_to_shuffled_arrays():
         index=['a', 'b', 'c'],
     )
 
-    x_arr, y_arr = resnet_train.to_shuffled_arrays(x_dict, y_df)
+    x_arr, y_arr = resnet_train.to_arrays(x_dict, y_df)
     assert np.all(x_arr == y_arr)
 
 
