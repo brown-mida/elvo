@@ -279,7 +279,7 @@ def normalize(image, lower_bound=None, upper_bound=None):
 
 def segment_vessels(arr: np.ndarray):
     # from numpy
-    #if whence == 'numpy/axial':
+    # if whence == 'numpy/axial':
     a = arr > 500
     b = arr < 120
     arr[a] = -50
