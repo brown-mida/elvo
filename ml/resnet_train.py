@@ -203,65 +203,47 @@ def create_model(x_train, y_train, x_valid, y_valid, params):
     return out, model
 
 
-def hyperoptimize(hyperparams):
-    for i in range(len(hyperparams['data_dir']))[1:]:  # TODO: Remove [1:]
-        print(f'using data {hyperparams["data_dir"][i]}')
-        print(f'using labels {hyperparams["labels_path"][i]}')
-        arrays = load_arrays(hyperparams['data_dir'][i])
-        labels = pd.read_csv(hyperparams['labels_path'][i],
-                             index_col=hyperparams['index_col'])[
-            [hyperparams['label_col']]]
+def hyperoptimize(args):
+    hyperparams = {k: v for k, v in args.items() if isinstance(v, list)}
+    param_grid = model_selection.ParameterGrid(hyperparams)
+    for params in param_grid:
+        print(f'params: {params}')
+        arrays = load_arrays(params['data_dir'])
+        labels = pd.read_csv(params['labels_path'],
+                             index_col=args['index_col'])[[args['label_col']]]
 
-        print(f'seeding to {hyperparams["seed"]} before shuffling')
-        np.random.seed(hyperparams["seed"])
+        print(f'seeding to {args["seed"]} before shuffling')
+        np.random.seed(args["seed"])
         x, y = to_shuffled_arrays(arrays, labels)
+        x_train, x_valid, y_train, y_valid = \
+            model_selection.train_test_split(
+                x, y, test_size=params['val_split'])
 
-        # TODO: Replace with more readable, generalizeable permutation code
-        for batch_size in hyperparams['batch_size']:
-            for dropout_rate1 in hyperparams['dropout_rate1']:
-                for dropout_rate2 in hyperparams['dropout_rate2']:
-                    for rotation_range in hyperparams['rotation_range']:
-                        for val_split in hyperparams['val_split']:
-                            params = {
-                                'batch_size': batch_size,
-                                'dropout_rate1': dropout_rate1,
-                                'dropout_rate2': dropout_rate2,
-                                'rotation_range': rotation_range,
-                                'val_split': val_split,
-                                'input_shape': hyperparams['input_shape'][i],
-                                'data_dir': hyperparams["data_dir"][i],
-                                'labels_path': hyperparams["labels_path"][i],
-                            }
-                            print(f'using params, {params}')
-                            x_train, y_train, x_valid, y_valid = \
-                                model_selection.train_test_split(
-                                    x, y, test_size=val_split)
+        print('training positives:', y_train.sum(),
+              'training negatives',
+              len(y_train) - y_train.sum())
+        print('validation positives:', y_valid.sum(),
+              'validation negatives',
+              len(y_valid) - y_valid.sum())
+        print('x_train mean:', x_train.mean(),
+              'x_train std:', x_train.std())
 
-                            print('training positives:', y_train.sum(),
-                                  'training negatives',
-                                  len(y_train) - y_train.sum())
-                            print('validation positives:', y_valid.sum(),
-                                  'validation negatives',
-                                  len(y_valid) - y_valid.sum())
-                            print('x_train mean:', x_train.mean(),
-                                  'x_train std:', x_train.std())
-
-                            # Run in a separate process to avoid memory
-                            # issues
-                            # TODO: Use tensorflow to utilize more GPU compute
-                            p = multiprocessing.Process(target=create_model,
-                                                        args=(x_train, y_train,
-                                                              x_valid, y_valid),
-                                                        kwargs={
-                                                            'params': params,
-                                                        })
-                            p.start()
-                            p.join()
+        # Run in a separate process to avoid memory
+        # issues
+        # TODO: Use tensorflow to utilize more GPU compute
+        p = multiprocessing.Process(target=create_model,
+                                    args=(x_train, y_train,
+                                          x_valid, y_valid),
+                                    kwargs={
+                                        'params': params,
+                                    })
+        p.start()
+        p.join()
 
 
 if __name__ == '__main__':
     # TODO: Consider a config file or command-line params for args
-    args = {
+    arguments = {
         # Note: data_dir, labels_path, and input_shape must have the same
         # length.
         'data_dir': [
@@ -284,7 +266,7 @@ if __name__ == '__main__':
         'model_path': f'/home/lzhu7/elvo-analysis/models/'
                       f'model-{int(time.time())}.hdf5',
         'seed': 42,
-        'split_idx': [700, 800, 900],
+        'val_split': [0.1, 0.2, 0.3],
         'batch_size': [8, 16, 32, 64, 128],
         # TODO: Arguments for data augmentation parameters, etc.
         'dropout_rate1': [0.7, 0.8, 0.9],
@@ -292,4 +274,4 @@ if __name__ == '__main__':
         'rotation_range': [10, 20, 30],
     }
 
-    hyperoptimize(args)
+    hyperoptimize(arguments)
