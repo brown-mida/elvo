@@ -254,6 +254,7 @@ def hyperoptimize(hyperparams):
 
                             # Run in a separate process to avoid memory
                             # issues
+                            # TODO: Use tensorflow to utilize more GPU compute
                             p = multiprocessing.Process(target=create_model,
                                                         args=(x_train, y_train,
                                                               x_valid, y_valid),
@@ -272,12 +273,12 @@ if __name__ == '__main__':
         'data_dir': [
             '/home/lzhu7/elvo-analysis/data/processed-standard/arrays/',
             '/home/lzhu7/elvo-analysis/data/processed-no-basvert/arrays/',
-            '/home/lzhu7/elvo-analysis/data/processed-220/labels.csv',
+            '/home/lzhu7/elvo-analysis/data/processed-220/arrays/',
         ],
         'labels_path': [
             '/home/lzhu7/elvo-analysis/data/processed-standard/labels.csv',
             '/home/lzhu7/elvo-analysis/data/processed-no-basvert/labels.csv',
-            '/home/lzhu7/elvo-analysis/data/processed-220/arrays/',
+            '/home/lzhu7/elvo-analysis/data/processed-220/labels.csv',
         ],
         'input_shape': [
             (200, 200, 3),
