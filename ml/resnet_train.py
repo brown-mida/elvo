@@ -81,7 +81,6 @@ def split_data(x, y, split_idx):
     y_train = y[:split_idx]
     x_valid = x[split_idx:]
     y_valid = y[split_idx:]
-
     return x_train, y_train, x_valid, y_valid
 
 
@@ -158,7 +157,10 @@ def create_generators(x_train, y_train, x_valid, y_valid, params):
     return train_gen, valid_gen
 
 
-def create_callbacks(x_train, y_train, x_valid, y_valid):
+def create_callbacks(x_train: np.ndarray,
+                     y_train: np.ndarray,
+                     x_valid: np.ndarray,
+                     y_valid: np.ndarray):
     # TODO: Add back checkpointer later
     # checkpointer = keras.callbacks.ModelCheckpoint(
     #     filepath=params['model_path'],
@@ -166,7 +168,14 @@ def create_callbacks(x_train, y_train, x_valid, y_valid):
     #     save_best_only=True)
     early_stopper = keras.callbacks.EarlyStopping(patience=10)
 
-    x_valid_standardized = (x_valid - x_train.mean) / x_train.std
+    x_mean = np.array([x_train[:, :, :, 0].mean(),
+                       x_train[:, :, :, 1].mean(),
+                       x_train[:, :, :, 2].mean()])
+    x_std = np.array([x_train[:, :, :, 0].std(),
+                      x_train[:, :, :, 1].std(),
+                      x_train[:, :, :, 2].std()])
+    x_valid_standardized = (x_valid - x_mean) / x_std
+
     auc = AucCallback(x_valid_standardized, y_valid)
     return [early_stopper, auc]
 
@@ -181,7 +190,7 @@ class AucCallback(keras.callbacks.Callback):
     def on_epoch_end(self, epoch, logs=None):
         y_pred = self.model.predict(self.x_valid_standardized)
         score = sklearn.metrics.roc_auc_score(self.y_valid, y_pred)
-        print(f'\nvalidation auc: {score}')
+        print(f'\nval_auc: {score}')
 
 
 def create_model(x_train, y_train, x_valid, y_valid, params):
