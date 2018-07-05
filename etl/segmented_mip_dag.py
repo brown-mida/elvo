@@ -10,7 +10,7 @@ from multichannel_mip_with_segmentation import multichannel_mip
 from overlap_mip_with_segmentation import overlap_mip
 
 default_args = {
-    'owner': 'luke',
+    'owner': 'amy',
     'start_date': datetime(2018, 6, 28, 5),
 }
 
