@@ -51,6 +51,7 @@ import pandas as pd
 import sklearn.metrics
 from keras import backend as K
 from keras.preprocessing.image import ImageDataGenerator
+from sklearn import model_selection
 
 
 def load_arrays(data_dir: str) -> typing.Dict[str, np.ndarray]:
@@ -73,15 +74,6 @@ def to_shuffled_arrays(data: typing.Dict[str, np.ndarray],
         X_list.append(data[id_])
         y_list.append(labels.loc[id_])
     return np.stack(X_list), np.stack(y_list)
-
-
-def split_data(x, y, split_idx):
-    # TODO: split fraction instead of index
-    x_train = x[:split_idx]
-    y_train = y[:split_idx]
-    x_valid = x[split_idx:]
-    y_valid = y[split_idx:]
-    return x_train, y_train, x_valid, y_valid
 
 
 def true_positives(y_true, y_pred):
@@ -229,19 +221,21 @@ def hyperoptimize(hyperparams):
             for dropout_rate1 in hyperparams['dropout_rate1']:
                 for dropout_rate2 in hyperparams['dropout_rate2']:
                     for rotation_range in hyperparams['rotation_range']:
-                        for split_idx in hyperparams['split_idx']:
+                        for val_split in hyperparams['val_split']:
                             params = {
                                 'batch_size': batch_size,
                                 'dropout_rate1': dropout_rate1,
                                 'dropout_rate2': dropout_rate2,
                                 'rotation_range': rotation_range,
+                                'val_split': val_split,
                                 'input_shape': hyperparams['input_shape'][i],
                                 'data_dir': hyperparams["data_dir"][i],
                                 'labels_path': hyperparams["labels_path"][i],
                             }
                             print(f'using params, {params}')
-                            x_train, y_train, x_valid, y_valid = split_data(
-                                x, y, split_idx)
+                            x_train, y_train, x_valid, y_valid = \
+                                model_selection.train_test_split(
+                                    x, y, test_size=val_split)
 
                             print('training positives:', y_train.sum(),
                                   'training negatives',
@@ -289,7 +283,6 @@ if __name__ == '__main__':
         'label_col': 'occlusion_exists',
         'model_path': f'/home/lzhu7/elvo-analysis/models/'
                       f'model-{int(time.time())}.hdf5',
-        ''
         'seed': 42,
         'split_idx': [700, 800, 900],
         'batch_size': [8, 16, 32, 64, 128],
