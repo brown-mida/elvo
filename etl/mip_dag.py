@@ -11,7 +11,7 @@ from multichannel_mip import multichannel_mip
 from overlap_mip import overlap_mip
 
 default_args = {
-    'owner': 'luke',
+    'owner': 'hal',
     'start_date': datetime(2018, 6, 28, 5),
 }
 
