@@ -97,8 +97,8 @@ def normal_mip():
             file_id = in_blob.name.split('/')[2]
             file_id = file_id.split('.')[0]
 
-            if file_id not in FAILURE_ANALYSIS:
-                continue
+            # if file_id not in FAILURE_ANALYSIS:
+            #     continue
 
             # perform the normal MIPing procedure
             logging.info(f'downloading {in_blob.name}')
