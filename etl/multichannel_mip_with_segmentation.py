@@ -116,7 +116,7 @@ def multichannel_mip():
                 else:
                     cropped_arr = transforms.crop_normal_coronal(input_arr,
                                                                  location)
-            not_extreme_arr = transforms.remove_extremes(cropped_arr)
+            not_extreme_arr = transforms.segment_vessels(cropped_arr)
             logging.info(f'removed array extremes')
             mip_arr = transforms.mip_multichannel(not_extreme_arr)
             # plt.figure(figsize=(6, 6))
@@ -133,7 +133,8 @@ def multichannel_mip():
             # # otherwise it's from numpy
             # else:
             # save to the numpy generator source directory
-            cloud.save_npy_to_cloud(mip_arr, file_id, location, 'multichannel')
+            cloud.save_segmented_npy_to_cloud(mip_arr, file_id, location,
+                                              'multichannel')
 
 
 if __name__ == '__main__':
