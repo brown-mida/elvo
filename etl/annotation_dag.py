@@ -13,7 +13,8 @@ default_args = {
 }
 
 dag = DAG(dag_id='load_annotations',
-          description='Load the annotations from Drive to GCS')
+          description='Load the annotations from Drive to GCS',
+          default_args=default_args)
 
 load_op = PythonOperator(task_id='load',
                          python_callable=roi_to_gcs,
