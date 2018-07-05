@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import pytest
 from keras.preprocessing import image
 
 import resnet_train
@@ -11,13 +12,10 @@ def test_create_generators_same_mean_std():
     x_valid = np.random.rand(400, 200, 200, 3)
     y_valid = np.random.randint(0, 2, size=(400,))
 
-    params = {
-        'rotation_range': 20,
-        'batch_size': 32,
-    }
     train_gen, valid_gen = resnet_train.create_generators(x_train, y_train,
                                                           x_valid, y_valid,
-                                                          params=params)
+                                                          rotation_range=20,
+                                                          batch_size=32)
     train_datagen: image.ImageDataGenerator = train_gen.image_data_generator
     valid_datagen: image.ImageDataGenerator = valid_gen.image_data_generator
     assert np.all(train_datagen.mean == valid_datagen.mean)
@@ -39,9 +37,12 @@ def test_to_shuffled_arrays():
     assert np.all(x_arr == y_arr)
 
 
+# TODO
+@pytest.mark.skip
 def test_sensitivity():
     raise NotImplementedError()
 
 
+@pytest.mark.skip
 def test_specificity():
     raise NotImplementedError()

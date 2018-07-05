@@ -38,8 +38,8 @@ def load_labels(labels_dir: str) -> pd.DataFrame:
 
 
 def clean_data(arrays: typing.Dict[str, np.ndarray],
-               labels: pd.DataFrame) -> typing.Tuple[
-    typing.Dict[str, np.ndarray], pd.DataFrame]:
+               labels: pd.DataFrame) -> \
+        typing.Tuple[typing.Dict[str, np.ndarray], pd.DataFrame]:
     """
     Handle duplicates in the dataframe and removes
     missing labels/arrays.
