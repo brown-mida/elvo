@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import pytest
 from keras.preprocessing import image
 
 import resnet_train
@@ -35,14 +34,3 @@ def test_to_shuffled_arrays():
 
     x_arr, y_arr = resnet_train.to_arrays(x_dict, y_df)
     assert np.all(x_arr == y_arr)
-
-
-# TODO
-@pytest.mark.skip
-def test_sensitivity():
-    raise NotImplementedError()
-
-
-@pytest.mark.skip
-def test_specificity():
-    raise NotImplementedError()
