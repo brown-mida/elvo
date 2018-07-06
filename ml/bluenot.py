@@ -208,7 +208,7 @@ def hyperoptimize(hyperparams: dict) -> None:
 
         # Start the model training job
         # Run in a separate process to avoid memory issues
-        os.environ['CUDA_VISIBLE_DEVICES'] = str(gpu_index)
+        os.environ['CUDA_VISIBLE_DEVICES'] = f'{gpu_index}'
         process = multiprocessing.Process(target=start_job,
                                           args=(x_train, y_train,
                                                 x_valid, y_valid),
@@ -219,12 +219,15 @@ def hyperoptimize(hyperparams: dict) -> None:
         gpu_index %= config.NUM_GPUS
         logging.debug(f'gpu_index is now {gpu_index}')
         process.start()
+        processes.append(process)
         if gpu_index == 0:
-            logging.info('all gpus used, calling join')
+            logging.info(f'all gpus used, calling join on processes:'
+                         f' {processes}')
+            p: multiprocessing.Process
             for p in processes:
                 p.join()
             processes = []
-            time.sleep(10)
+            time.sleep(60)
 
 
 if __name__ == '__main__':
