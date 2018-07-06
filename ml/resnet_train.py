@@ -44,15 +44,17 @@ import multiprocessing
 import pathlib
 import time
 import typing
+from pprint import pprint
 
 import keras
 import numpy as np
 import os
 import pandas as pd
-import sklearn.metrics
-from keras import backend as K
 from keras.preprocessing.image import ImageDataGenerator
 from sklearn import model_selection
+
+import utils
+from models import luke
 
 
 def load_arrays(data_dir: str) -> typing.Dict[str, np.ndarray]:
@@ -90,88 +92,6 @@ def to_arrays(data: typing.Dict[str, np.ndarray],
         if id_ not in patient_ids:
             print(f'{id_} in labels was not present in data')
     return np.stack(X_list), np.stack(y_list)
-
-
-def true_positives(y_true, y_pred):
-    return K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
-
-
-def false_negatives(y_true, y_pred):
-    return K.sum(K.round(K.clip(y_true * (1 - y_pred), 0, 1)))
-
-
-def sensitivity(y_true, y_pred):
-    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
-    possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
-    return true_positives / (possible_positives + K.epsilon())
-
-
-def specificity(y_true, y_pred):
-    true_negatives = K.sum(K.round(K.clip((1 - y_true) * (1 - y_pred), 0, 1)))
-    possible_negatives = K.sum(K.round(K.clip(1 - y_true, 0, 1)))
-    return true_negatives / (possible_negatives + K.epsilon())
-
-
-def build_model(input_shape,
-                architecture='resnet',
-                dropout_rate1=0.5,
-                dropout_rate2=0.5,
-                optimizer=keras.optimizers.Adam(lr=1e-5),
-                metrics=None) -> keras.models.Model:
-    """Returns a compiled model ready for transfer learning.
-    """
-    if architecture == 'resnet':
-        resnet = keras.applications.ResNet50(include_top=False,
-                                             input_shape=input_shape)
-        x = resnet.output
-        x = keras.layers.GlobalAveragePooling2D()(x)
-        x = keras.layers.Dense(1024, activation='relu')(x)
-        x = keras.layers.Dropout(dropout_rate1)(x)
-        x = keras.layers.Dense(1024, activation='relu')(x)
-        x = keras.layers.Dropout(dropout_rate2)(x)
-        predictions = keras.layers.Dense(1, activation='sigmoid')(x)
-
-        model = keras.models.Model(resnet.input, predictions)
-    elif architecture == 'inception-v3':
-        inception = keras.applications.InceptionV3(include_top=False,
-                                                   input_shape=input_shape)
-        x = inception.output
-        x = keras.layers.GlobalAveragePooling2D()(x)
-        x = keras.layers.Dense(1024, activation='relu')(x)
-        x = keras.layers.Dropout(dropout_rate1)(x)
-        x = keras.layers.Dense(1024, activation='relu')(x)
-        x = keras.layers.Dropout(dropout_rate2)(x)
-        predictions = keras.layers.Dense(1, activation='sigmoid')(x)
-
-        model = keras.models.Model(inception.input, predictions)
-    elif architecture == 'inception-resnet':
-        inception = keras.applications.InceptionResNetV2(
-            include_top=False, input_shape=input_shape)
-        x = inception.output
-        x = keras.layers.GlobalAveragePooling2D()(x)
-        x = keras.layers.Dense(1024, activation='relu')(x)
-        x = keras.layers.Dropout(dropout_rate1)(x)
-        x = keras.layers.Dense(1024, activation='relu')(x)
-        x = keras.layers.Dropout(dropout_rate2)(x)
-        predictions = keras.layers.Dense(1, activation='sigmoid')(x)
-
-        model = keras.models.Model(inception.input, predictions)
-    else:
-        raise ValueError(f'{architecture} is not a valid architecture.')
-
-    if metrics is None:
-        print('Using default metrics: acc, sensitivity, specificity, tp, fn')
-        metrics = ['acc',
-                   sensitivity,
-                   specificity,
-                   true_positives,
-                   false_negatives]
-
-    model.compile(optimizer=optimizer,
-                  loss='binary_crossentropy',
-                  metrics=metrics)
-
-    return model
 
 
 def create_generators(x_train, y_train, x_valid, y_valid,
@@ -214,33 +134,35 @@ def create_callbacks(x_train: np.ndarray,
                       x_train[:, :, :, 2].std()])
     x_valid_standardized = (x_valid - x_mean) / x_std
 
-    auc = AucCallback(x_valid_standardized, y_valid)
+    auc = utils.AucCallback(x_valid_standardized, y_valid)
     return [early_stopper, auc]
 
 
-class AucCallback(keras.callbacks.Callback):
-
-    def __init__(self, x_valid_standardized, y_valid):
-        super().__init__()
-        self.x_valid_standardized = x_valid_standardized
-        self.y_valid = y_valid
-
-    def on_epoch_end(self, epoch, logs=None):
-        y_pred = self.model.predict(self.x_valid_standardized)
-        score = sklearn.metrics.roc_auc_score(self.y_valid, y_pred)
-        print(f'\nval_auc: {score}')
-
-
-def create_model(x_train, y_train, x_valid, y_valid, params):
-    """Fits a model"""
+def create_job(x_train, y_train, x_valid, y_valid, model_params):
+    """Builds, fits, and evaluates a model"""
+    # TODO: Not all future models will use this generator
     train_gen, valid_gen = create_generators(x_train, y_train,
                                              x_valid, y_valid,
-                                             params['rotation_range'],
-                                             params['batch_size'])
-    model = build_model(input_shape=x_train.shape[1:],
-                        architecture=params['architecture'],
-                        dropout_rate1=params['dropout_rate1'],
-                        dropout_rate2=params['dropout_rate2'])
+                                             model_params['rotation_range'],
+                                             model_params['batch_size'])
+
+    # TODO: Not all models will have the following parameters
+    model = model_params['model_callable'](
+        input_shape=x_train.shape[1:],
+        dropout_rate1=model_params['dropout_rate1'],
+        dropout_rate2=model_params['dropout_rate2']
+    )
+
+    print('Using default metrics: acc, sensitivity, specificity, tp, fn')
+    metrics = ['acc',
+               utils.sensitivity,
+               utils.specificity,
+               utils.true_positives,
+               utils.false_negatives]
+
+    model.compile(optimizer=model_params['optimizer'],
+                  loss='binary_crossentropy',
+                  metrics=metrics)
 
     callbacks = create_callbacks(x_train, y_train, x_valid, y_valid)
     out = model.fit_generator(train_gen,
@@ -248,19 +170,22 @@ def create_model(x_train, y_train, x_valid, y_valid, params):
                               validation_data=valid_gen,
                               verbose=2,
                               callbacks=callbacks)
+
     return out, model
 
 
-def hyperoptimize(args):
-    hyperparams = {k: v for k, v in args.items() if isinstance(v, list)}
-    param_grid = model_selection.ParameterSampler(hyperparams, n_iter=50)
+def hyperoptimize(hyperparams):
+    param_grid = model_selection.ParameterSampler(hyperparams, n_iter=10)
     for params in param_grid:
-        print(f'params: {params}')
-        arrays = load_arrays(params['data']['data_dir'])
-        labels = pd.read_csv(params['data']['labels_path'],
-                             index_col=args['index_col'])[[args['label_col']]]
+        pprint(f'params:\n{params}', indent=4)
+        data_params = params['data']
+        array_dict = load_arrays(data_params['data_dir'])
+        index_col = data_params['index_col']
+        label_col = data_params['label_col']
+        label_df = pd.read_csv(data_params['labels_path'],
+                               index_col=index_col)[[label_col]]
 
-        x, y = to_arrays(arrays, labels)
+        x, y = to_arrays(array_dict, label_df)
         print(f'seeding to {params["seed"]} before shuffling')
 
         x_train, x_valid, y_train, y_valid = \
@@ -281,20 +206,22 @@ def hyperoptimize(args):
         # Run in a separate process to avoid memory
         # issues
         # TODO: Use tensorflow to utilize more GPU compute
-        p = multiprocessing.Process(target=create_model,
+        p = multiprocessing.Process(target=create_job,
                                     args=(x_train, y_train,
                                           x_valid, y_valid),
                                     kwargs={
-                                        'params': params,
+                                        'model_params': params['model'],
                                     })
         p.start()
         p.join()
-        time.sleep(5)  # Sleep to avoid memory errors
+        time.sleep(10)  # Sleep to avoid memory errors
 
 
 if __name__ == '__main__':
     # TODO: Consider a config file or command-line params for args
     # TODO: Consider turning the dict into a class for better attribute clarity
+
+    # All top-level values should be lists
     arguments = {
         'data': [
             {
@@ -305,12 +232,16 @@ if __name__ == '__main__':
                 # A CSV file generated by saving a pandas DataFrame
                 'labels_path': '/home/lzhu7/elvo-analysis/data/'
                                'processed-standard/labels.csv',
+                'index_col': 'Anon ID',
+                'label_col': 'occlusion_exists',
             },
             {
                 'data_dir': '/home/lzhu7/elvo-analysis/data/'
                             'processed-no-basvert/arrays/',
                 'labels_path': '/home/lzhu7/elvo-analysis/data/'
                                'processed-no-basvert/labels.csv',
+                'index_col': 'Anon ID',
+                'label_col': 'occlusion_exists',
             },
             {
                 'data_dir': '/home/lzhu7/elvo-analysis/data/'
@@ -318,31 +249,50 @@ if __name__ == '__main__':
                 # TODO: This is not ideal
                 'labels_path': '/home/lzhu7/elvo-analysis/data/'
                                'processed-standard/labels.csv',
+                'index_col': 'Anon ID',
+                'label_col': 'occlusion_exists',
             },
             {
                 'data_dir': '/home/lzhu7/elvo-analysis/data/'
                             'processed-lower/arrays/',
                 'labels_path': '/home/lzhu7/elvo-analysis/data/'
                                'processed-lower/labels.csv',
+                'index_col': 'Anon ID',
+                'label_col': 'occlusion_exists',
             }
         ],
-        'index_col': 'Anon ID',
-        'label_col': 'occlusion_exists',
 
-        'model_save_path': f'/home/lzhu7/elvo-analysis/models/'
-                           f'model-{int(time.time())}.hdf5',
+        # 'model_save_path': f'/home/lzhu7/elvo-analysis/models/'
+        #                    f'model-{int(time.time())}.hdf5',
 
         'seed': [0, 42],
-        'val_split': [0.1, 0.2, 0.3],
+        'val_split': [0.2, 0.3],
 
-        # TODO: architecture is not the best option (doesn't scale well to
-        # other models
-        'architecture': ['resnet', 'inception-v3', 'inception-resnet'],
-        'batch_size': [8, 32, 128],
-        # TODO: Arguments for data augmentation parameters, etc.
-        'dropout_rate1': [0.6, 0.7, 0.8],
-        'dropout_rate2': [0.6, 0.8, 0.9],
-        'rotation_range': [20],
+        # TODO: Reduce complexity
+        'model': [{
+            'model_callable': luke.resnet,
+            'dropout_rate1': 0.8,
+            'dropout_rate2': 0.8,
+            'batch_size': 8,
+            'rotation_range': 20,
+            'optimizer': keras.optimizers.Adam(lr=1e-5)
+
+        }, {
+            'model_callable': luke.resnet,
+            'dropout_rate1': 0.8,
+            'dropout_rate2': 0.8,
+            'batch_size': 8,
+            'rotation_range': 20,
+            'optimizer': keras.optimizers.Adam(lr=1e-5)
+
+        }, {
+            'model_callable': luke.resnet,
+            'dropout_rate1': 0.8,
+            'dropout_rate2': 0.8,
+            'batch_size': 8,
+            'rotation_range': 20,
+            'optimizer': keras.optimizers.Adam(lr=1e-5)
+        }],
     }
 
     hyperoptimize(arguments)
