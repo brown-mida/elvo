@@ -110,10 +110,10 @@ def overlap_mip():
                                                                    location)
             else:
                 if location == 'numpy/axial':
-                    cropped_arr = transforms.crop_normal_axial(input_arr,
+                    cropped_arr = transforms.crop_overlap_axial(input_arr,
                                                                location)
                 else:
-                    cropped_arr = transforms.crop_normal_coronal(input_arr,
+                    cropped_arr = transforms.crop_overlap_coronal(input_arr,
                                                                  location)
             not_extreme_arr = transforms.remove_extremes(cropped_arr)
             logging.info(f'removed array extremes')
