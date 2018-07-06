@@ -3,7 +3,8 @@ import keras
 
 def resnet(input_shape=(224, 224, 3),
            dropout_rate1=0.5,
-           dropout_rate2=0.5) -> keras.models.Model:
+           dropout_rate2=0.5,
+           **kwargs) -> keras.models.Model:
     """Returns a uncompiled, pretrained ResNet50.
     """
     resnet = keras.applications.ResNet50(include_top=False,
@@ -22,7 +23,8 @@ def resnet(input_shape=(224, 224, 3),
 
 def inception(input_shape=(224, 224, 3),
               dropout_rate1=0.5,
-              dropout_rate2=0.5) -> keras.models.Model:
+              dropout_rate2=0.5,
+              **kwargs) -> keras.models.Model:
     """Returns a uncompiled, inceptionV3 model.
     """
     inception = keras.applications.InceptionV3(include_top=False,
@@ -41,7 +43,8 @@ def inception(input_shape=(224, 224, 3),
 
 def inception_resnet(input_shape=(224, 224, 3),
                      dropout_rate1=0.5,
-                     dropout_rate2=0.5) -> keras.models.Model:
+                     dropout_rate2=0.5,
+                     **kwargs) -> keras.models.Model:
     """Returns a uncompiled, inception-resnet model.
     """
     inception = keras.applications.InceptionResNetV2(

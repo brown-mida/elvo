@@ -74,6 +74,7 @@ def clean_data(arrays: typing.Dict[str, np.ndarray],
 def filter_data(arrays: typing.Dict[str, np.ndarray],
                 labels: pd.DataFrame,
                 variant: str):
+    # TODO: Replace variant with parameters
     print(f'Using filter variant {variant}')
     if variant == 'simple':
         filtered_arrays = {id_: arr for id_, arr in arrays.items()
@@ -205,6 +206,7 @@ def distance_intensity_projection():
 
 def process_array(arr: np.ndarray,
                   preconfig: str):
+    # TODO: Replace preconfig with parameters
     if preconfig == 'standard-crop-mip':
         arr = crop(arr,
                    (75, 200, 200),
@@ -287,10 +289,11 @@ def save_data(arrays: typing.Dict[str, np.ndarray],
               labels: pd.DataFrame,
               dirpath: str,
               with_plots=True):
+    # noinspection PyTypeChecker
     os.makedirs(pathlib.Path(dirpath) / 'arrays')
     for id_, arr in arrays.items():
-        # noinspection PyTypeChecker
         print(f'saving {id_}')
+        # noinspection PyTypeChecker
         np.save(pathlib.Path(dirpath) / 'arrays' / f'{id_}.npy', arr)
     labels.to_csv(pathlib.Path(dirpath) / 'labels.csv')
     plots_dir = str(pathlib.Path(dirpath) / 'plots')
@@ -298,14 +301,7 @@ def save_data(arrays: typing.Dict[str, np.ndarray],
         save_plots(arrays, labels, plots_dir)
 
 
-if __name__ == '__main__':
-    args = {
-        'arrays_dir': '/home/lzhu7/elvo-analysis/data/numpy_compressed/',
-        'labels_dir': '/home/lzhu7/elvo-analysis/data/metadata/',
-        'processed_dir': '/home/lzhu7/elvo-analysis/data/processed/',
-        'filter_variant': 'simple',
-        'process_variant': 'standard-crop-mip',
-    }
+def bluenop(args):
     raw_arrays = load_compressed_arrays(args['arrays_dir'])
     raw_labels = load_labels(args['labels_dir'])
     cleaned_arrays, cleaned_labels = clean_data(raw_arrays, raw_labels)
@@ -316,3 +312,14 @@ if __name__ == '__main__':
                                                       filtered_labels,
                                                       args['process_variant'])
     save_data(processed_arrays, processed_labels, args['processed_dir'])
+
+
+if __name__ == '__main__':
+    arguments = {
+        'arrays_dir': '/home/lzhu7/elvo-analysis/data/numpy_compressed/',
+        'labels_dir': '/home/lzhu7/elvo-analysis/data/metadata/',
+        'processed_dir': '/home/lzhu7/elvo-analysis/data/processed/',
+        'filter_variant': 'simple',
+        'process_variant': 'standard-crop-mip',
+    }
+    bluenop(arguments)
