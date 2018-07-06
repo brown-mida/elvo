@@ -55,8 +55,9 @@ def mip_normal(array: np.ndarray) -> np.ndarray:
 
 def mip_multichannel(array: np.ndarray) -> np.ndarray:
     num_slices = 3
-    #to_return = np.zeros((num_slices, len(array[0][0]), len(array[0][0][0])))
-    to_return = np.zeros((num_slices, len(array[0]), len(array[0][0])))
+    print(array.shape)
+    to_return = np.zeros((num_slices, len(array[0][0]), len(array[0][0][0])))
+    #to_return = np.zeros((num_slices, len(array[0]), len(array[0][0])))
     print(to_return.shape)
     for i in range(num_slices):
         print(array[i].shape)
