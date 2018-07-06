@@ -28,7 +28,7 @@ def create_chunks():
 
         arr = cloud.download_array(in_blob)
         arr = np.transpose(arr, (1, 2, 0))
-        arr = transforms.segment_vessels(arr)
+        # arr = transforms.segment_vessels(arr)
         # print(arr.shape)
         arr = roi_transforms.convert_multiple_32(arr)
         # print(arr.shape)
@@ -37,17 +37,16 @@ def create_chunks():
         for i in range(0, len(arr), 32):
             for j in range(0, len(arr[0]), 32):
                 for k in range(0, len(arr[0][0]), 32):
-                    print(i, j, k)
-                    chunk = arr[i:i+32][j:j+32][k:k+32]
+                    chunk = arr[i:(i + 32), j:(j + 32), k:(k + 32)]
                     # print(file_id)
-                    print(chunk.shape)
 
-                    airspace = np.where(chunk == -50)
-                    if (len(airspace) / chunk.size) < 0.9:
+                    airspace = np.where(chunk < 0)
+                    airspace_size = airspace[0].size + airspace[1].size + airspace[2].size
+                    print(airspace_size)
+                    if (airspace_size / chunk.size) < 0.9:
                         chunks.append(chunk.tolist())
 
-        chunks = np.ndarray(chunks)
-        print(chunks.shape)
+        print(len(chunks),len(chunks[0]),len(chunks[0][0]),len(chunks[0][0][0]))
 
 
 if __name__ == '__main__':
