@@ -7,7 +7,6 @@ import flask
 import gspread
 import matplotlib as mpl
 import numpy as np
-from flask_sqlalchemy import SQLAlchemy
 from google.cloud import storage
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from oauth2client.service_account import ServiceAccountCredentials
@@ -18,10 +17,6 @@ from matplotlib import image  # noqa: E402
 from matplotlib import pyplot as plt  # noqa: E402
 
 app = flask.Flask(__name__)
-
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
 
 client = storage.Client(project='elvo-198322')
 bucket = client.bucket('elvos')
@@ -54,20 +49,6 @@ def annotator():
     return flask.render_template('annotator.html')
 
 
-class Annotation(db.Model):
-    __tablename__ = 'annotations'
-    id_ = db.Column(db.Integer, primary_key=True)
-    patient_id = db.Column(db.String(255), nullable=False)
-    created_by = db.Column(db.String(255), nullable=False)
-    created_at = db.Column(db.DateTime(timezone=True), nullable=False)
-    x1 = db.Column(db.Integer, nullable=False)
-    x2 = db.Column(db.Integer, nullable=False)
-    y1 = db.Column(db.Integer, nullable=False)
-    y2 = db.Column(db.Integer, nullable=False)
-    z1 = db.Column(db.Integer, nullable=False)
-    z2 = db.Column(db.Integer, nullable=False)
-
-
 @app.route('/roi', methods=['POST'])
 def roi():
     data = flask.request.json
@@ -83,30 +64,16 @@ def roi():
 
     created_at = datetime.datetime.utcnow()
 
-    ann = Annotation(created_by=created_by,
-                     created_at=created_at,
-                     patient_id=patient_id,
-                     x1=x1,
-                     x2=x2,
-                     y1=y1,
-                     y2=y2,
-                     z1=z1,
-                     z2=z2)
-    # TODO: Incorporate db functionality again at
-    #  some other point
-    # db.session.add(ann)
-    # db.session.commit()
-    logging.info(f'inserted annotation: {ann}')
     values = [
-        ann.patient_id,
-        ann.created_by,
+        patient_id,
+        created_by,
         created_at.isoformat(),
-        ann.x1,
-        ann.x2,
-        ann.y1,
-        ann.y2,
-        ann.z1,
-        ann.z2,
+        x1,
+        x2,
+        y1,
+        y2,
+        z1,
+        z2,
     ]
 
     # Put here for now since it's not working for everybody
@@ -121,7 +88,7 @@ def roi():
         '1_j7mq_VypBxYRWA5Y7ef4mxXqU0EmBKDl0lkp62SsXA').worksheet('annotations')
     worksheet.append_row(values)
     logging.info(f'added to spreadsheet: {values}')
-    return str(ann.id_)
+    return str('')
 
 
 @app.route('/image/dimensions/<patient_id>')
