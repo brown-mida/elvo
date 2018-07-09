@@ -64,6 +64,15 @@ def roi():
 
     created_at = datetime.datetime.utcnow()
 
+    # TODO: Incorporate db functionality again at
+    #  some other point
+    # db.session.add(ann)
+    # db.session.commit()
+
+    query_string = f'{flask.request.url_root}annotator?' \
+                   f'x1={x1}&x2={x2}&y1={y1}&y2={y2}' \
+                   f'&z1={z1}&z2={z2}&patientId={patient_id}'
+    print(query_string)
     values = [
         patient_id,
         created_by,
@@ -74,7 +83,10 @@ def roi():
         y2,
         z1,
         z2,
+        query_string,
     ]
+
+    values.extend([''] * 10)  # Pad so it doesn't shift left.
 
     # Put here for now since it's not working for everybody
     scope = ['https://spreadsheets.google.com/feeds']
@@ -88,7 +100,7 @@ def roi():
         '1_j7mq_VypBxYRWA5Y7ef4mxXqU0EmBKDl0lkp62SsXA').worksheet('annotations')
     worksheet.append_row(values)
     logging.info(f'added to spreadsheet: {values}')
-    return str('')
+    return str('<DATABASE_ID>')
 
 
 @app.route('/image/dimensions/<patient_id>')

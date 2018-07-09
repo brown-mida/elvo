@@ -23,9 +23,30 @@ const styles = {
 class App extends Component {
   constructor(props) {
     super(props);
+
+    let initialPatientId;
+    let x1 = 100;
+    let x2 = 200;
+    let y1 = 100;
+    let y2 = 200;
+    let z1 = 100;
+    let z2 = 200;
+
+    if (App.getQueryVariable('patientId')) {
+      console.log('loading state from query string');
+      initialPatientId = App.getQueryVariable('patientId');
+      x1 = App.getQueryVariable('x1');
+      x2 = App.getQueryVariable('x2');
+      y1 = App.getQueryVariable('y1');
+      y2 = App.getQueryVariable('y2');
+      z1 = App.getQueryVariable('z1');
+      z2 = App.getQueryVariable('z2');
+      console.log('initial state:', initialPatientId, x1, x2, y1, y2, z1, z2)
+    }
+
     this.state = {
-      patientId: '0DQO9A6UXUQHR8RA',
-      searchValue: '0DQO9A6UXUQHR8RA',
+      patientId: initialPatientId,
+      searchValue: initialPatientId,
       indices: {
         x: 125, // TODO: Rename to sagittalIndex
         y: 125, // TODO: Rename to coronalIndex
@@ -39,12 +60,12 @@ class App extends Component {
         y: 250,
       },
       roiDimensions: {
-        x1: 100,
-        x2: 200,
-        y1: 100,
-        y2: 200,
-        z1: 100,
-        z2: 200,
+        x1: parseInt(x1),
+        x2: parseInt(x2),
+        y1: parseInt(y1),
+        y2: parseInt(y2),
+        z1: parseInt(z1),
+        z2: parseInt(z2),
       },
       renderingParams: 'x1=100&x2=110&y1=100&y2=110&z1=100&z2=110',
       mipStep: 4,
@@ -66,6 +87,18 @@ class App extends Component {
       console.log('searching for patient:', this.state.patientId);
       this.getImageDimensions();
     }
+  }
+
+  static getQueryVariable(variable) {
+    const query = window.location.search.substring(1);
+    const vars = query.split("&");
+    for (let i = 0; i < vars.length; i++) {
+      const pair = vars[i].split("=");
+      if (pair[0] === variable) {
+        return pair[1];
+      }
+    }
+    return (false);
   }
 
   static userGuide() {
