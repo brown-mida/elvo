@@ -5,7 +5,7 @@ import numpy as np
 from scipy.ndimage.interpolation import zoom
 
 from google.cloud import storage
-from etl.lib import transforms
+from lib import transforms
 
 BLACKLIST = ['preprocess_luke/validation/LAUIHISOEZIM5ILF.npy']
 
