@@ -28,25 +28,38 @@ def create_chunks():
 
         arr = cloud.download_array(in_blob)
         arr = np.transpose(arr, (1, 2, 0))
-        # arr = transforms.segment_vessels(arr)
-        # print(arr.shape)
         arr = roi_transforms.convert_multiple_32(arr)
-        # print(arr.shape)
+        stripped = transforms.segment_vessels(arr)
+        point_cloud = transforms.point_cloud(arr)
 
         chunks = []
+        stripped_chunks = []
+        pc_chunks = []
         for i in range(0, len(arr), 32):
             for j in range(0, len(arr[0]), 32):
                 for k in range(0, len(arr[0][0]), 32):
-                    chunk = arr[i:(i + 32), j:(j + 32), k:(k + 32)]
-                    # print(file_id)
 
-                    airspace = np.where(chunk < 0)
-                    airspace_size = airspace[0].size + airspace[1].size + airspace[2].size
-                    print(airspace_size)
-                    if (airspace_size / chunk.size) < 0.9:
+                    chunk = arr[i:(i + 32), j:(j + 32), k:(k + 32)]
+                    airspace = np.where(chunk < -300)
+                    if (airspace[0].size / chunk.size) < 0.9:
                         chunks.append(chunk.tolist())
 
-        print(len(chunks),len(chunks[0]),len(chunks[0][0]),len(chunks[0][0][0]))
+                    stripped_chunk = stripped[i:(i + 32), j:(j + 32), k:(k + 32)]
+                    stripped_airspace = np.where(stripped_chunk <= -50)
+                    if (stripped_airspace[0].size / stripped_chunk.size) < 0.9:
+                        stripped_chunks.append(stripped_chunk.tolist())
+
+                    pc_chunk = point_cloud[i:(i + 32), j:(j + 32), k:(k + 32)]
+                    pc_airspace = np.where(pc_chunk == 0)
+                    if (pc_airspace[0].size / pc_chunk.size) < 0.9:
+                        pc_chunks.append(pc_chunk.tolist())
+
+        np_chunks = np.asarray(chunks)
+        np_stripped_chunks = np.asarray(stripped_chunks)
+        np_pc_chunks = np.asarray(pc_chunks)
+        cloud.save_chunks_to_cloud(np_chunks, 'normal', file_id)
+        cloud.save_chunks_to_cloud(np_stripped_chunks, 'stripped', file_id)
+        cloud.save_chunks_to_cloud(np_pc_chunks, 'point_cloud', file_id)
 
 
 if __name__ == '__main__':
