@@ -9,6 +9,7 @@ import os
 import shutil
 import subprocess
 import time
+import traceback
 from typing import List
 
 import numpy as np
@@ -119,26 +120,30 @@ def dicom_to_npy(in_dir, out_dir):
 
     blob: storage.Blob
     for blob in bucket.list_blobs(prefix=in_dir):
-        if len(blob.name) < 4 or blob.name[-4:] not in ('.zip', '.cab'):
-            logging.info(f'ignoring non-data file {blob.name}')
-            continue
+        try:
+            if len(blob.name) < 4 or blob.name[-4:] not in ('.zip', '.cab'):
+                logging.info(f'ignoring non-data file {blob.name}')
+                continue
 
-        logging.info(f'processing blob {blob.name}')
-        patient_id = blob.name[len(in_dir): -len('.cab')]
-        outpath = f'{out_dir}{patient_id}.npy'
+            logging.info(f'processing blob {blob.name}')
+            patient_id = blob.name[len(in_dir): -len('.cab')]
+            outpath = f'{out_dir}{patient_id}.npy'
 
-        if storage.Blob(outpath, bucket).exists():
-            logging.info(f'outfile {outpath} already exists')
-            continue
-        elif blob.name.endswith('.cab'):
-            processed_scan = process_cab(blob, patient_id)
-            save_to_gcs(processed_scan, outpath, bucket)
-        elif blob.name.endswith('.zip'):
-            processed_scan = process_zip(blob, patient_id)
-            save_to_gcs(processed_scan, outpath, bucket)
-        else:
-            logging.info(f'file extension must be .cab or .zip,'
-                         f' got {blob.name}')
+            if storage.Blob(outpath, bucket).exists():
+                logging.info(f'outfile {outpath} already exists')
+                continue
+            elif blob.name.endswith('.cab'):
+                processed_scan = process_cab(blob, patient_id)
+                save_to_gcs(processed_scan, outpath, bucket)
+            elif blob.name.endswith('.zip'):
+                processed_scan = process_zip(blob, patient_id)
+                save_to_gcs(processed_scan, outpath, bucket)
+            else:
+                logging.info(f'file extension must be .cab or .zip,'
+                             f' got {blob.name}')
+        except Exception as e:
+            logging.error(e)
+            logging.error(traceback.format_exc())
 
 
 if __name__ == '__main__':
