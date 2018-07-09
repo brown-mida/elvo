@@ -229,7 +229,7 @@ def process_array(arr: np.ndarray,
         return arr
     if preconfig == 'new-crop':
         arr = crop(arr,
-                   (75, 20, 220),
+                   (75, 220, 220),
                    height_offset=30)
         arr = np.stack([arr[:25], arr[25:50], arr[50:75]])
         arr = bound_pixels(arr, -40, 400)
@@ -289,6 +289,15 @@ def save_data(arrays: typing.Dict[str, np.ndarray],
               labels: pd.DataFrame,
               dirpath: str,
               with_plots=True):
+    """
+    Saves the arrays and labels in the given dirpath.
+
+    :param arrays:
+    :param labels:
+    :param dirpath:
+    :param with_plots:
+    :return:
+    """
     # noinspection PyTypeChecker
     os.makedirs(pathlib.Path(dirpath) / 'arrays')
     for id_, arr in arrays.items():
@@ -301,7 +310,13 @@ def save_data(arrays: typing.Dict[str, np.ndarray],
         save_plots(arrays, labels, plots_dir)
 
 
-def bluenop(args):
+def bluenop(args: dict):
+    """
+    Runs a preprocessing job with the args.
+
+    :param args: The config dictionary for the processing job
+    :return:
+    """
     raw_arrays = load_compressed_arrays(args['arrays_dir'])
     raw_labels = load_labels(args['labels_dir'])
     cleaned_arrays, cleaned_labels = clean_data(raw_arrays, raw_labels)

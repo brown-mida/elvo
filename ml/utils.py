@@ -6,16 +6,14 @@ import keras
 import matplotlib
 import numpy as np
 import requests
-import sklearn
+import sklearn.metrics
 from keras import backend as K
 
 import config
 
-matplotlib.use('Agg')  # Needed to avoid errorss
+matplotlib.use('Agg')  # noqa: E402
 from matplotlib import pyplot as plt
 
-
-# TODO: Do not commit at all costs
 
 def true_positives(y_true, y_pred):
     return K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
@@ -52,36 +50,40 @@ class AucCallback(keras.callbacks.Callback):
         print(f'\nval_auc: {score}')
 
 
-def create_callbacks(x_train: np.ndarray,
-                     y_train: np.ndarray,
-                     x_valid: np.ndarray,
-                     y_valid: np.ndarray,
-                     filename: str):
+def create_callbacks(x_train: np.ndarray, y_train: np.ndarray,
+                     x_valid: np.ndarray, y_valid: np.ndarray, filename: str,
+                     normalize=True):
     """
     Instantiates a list of callbacks:
     - AUC
     - LR adjustment
     - TODO: model checkpoint
 
+    :param normalize:
     :param x_train:
     :param y_train:
     :param x_valid:
     :param y_valid:
     :return:
     """
-    logger = keras.callbacks.CSVLogger(filename, append=True)
-    lr_callback = keras.callbacks.ReduceLROnPlateau()
+    callbacks = []
+    callbacks.append(keras.callbacks.CSVLogger(filename, append=True))
+    callbacks.append(keras.callbacks.ReduceLROnPlateau())
 
-    x_mean = np.array([x_train[:, :, :, 0].mean(),
-                       x_train[:, :, :, 1].mean(),
-                       x_train[:, :, :, 2].mean()])
-    x_std = np.array([x_train[:, :, :, 0].std(),
-                      x_train[:, :, :, 1].std(),
-                      x_train[:, :, :, 2].std()])
-    x_valid_standardized = (x_valid - x_mean) / x_std
+    if normalize:
+        x_mean = np.array([x_train[:, :, :, 0].mean(),
+                           x_train[:, :, :, 1].mean(),
+                           x_train[:, :, :, 2].mean()])
+        x_std = np.array([x_train[:, :, :, 0].std(),
+                          x_train[:, :, :, 1].std(),
+                          x_train[:, :, :, 2].std()])
+        x_valid_standardized = (x_valid - x_mean) / x_std
 
-    auc = AucCallback(x_valid_standardized, y_valid)
-    return [lr_callback, logger, auc]
+    if y_valid.ndim == 1:
+        # TODO: ROC for softmax
+        callbacks.append(AucCallback(x_valid_standardized, y_valid))
+
+    return callbacks
 
 
 def save_history(history: keras.callbacks.History):
@@ -99,10 +101,11 @@ def save_history(history: keras.callbacks.History):
         return
 
     epochs = range(1, len(history.history[loss_list[0]]) + 1)
-    plt.figure(1)
+    plt.figure()
     for l in loss_list:
-        plt.plot(epochs, history.history[l], 'b', label='Training loss (' + str(
-            str(format(history.history[l][-1], '.5f')) + ')'))
+        plt.plot(epochs, history.history[l], 'b',
+                 label='Training loss (' + str(
+                     str(format(history.history[l][-1], '.5f')) + ')'))
     for l in val_loss_list:
         plt.plot(epochs, history.history[l], 'g',
                  label='Validation loss (' + str(
@@ -115,7 +118,7 @@ def save_history(history: keras.callbacks.History):
     # TODO: Refactor so it's testable and no hard coded path
     plt.savefig('/tmp/loss.png')
 
-    plt.figure(2)
+    plt.figure()
     for l in acc_list:
         plt.plot(epochs, history.history[l], 'b',
                  label='Training accuracy (' + str(
@@ -170,7 +173,7 @@ def save_confusion_matrix(cm, classes,
     plt.savefig('/tmp/cm.png')
 
 
-def full_multiclass_report(model: keras.Model,
+def full_multiclass_report(model: keras.models.Model,
                            x,
                            y_true,
                            classes,
@@ -180,10 +183,14 @@ def full_multiclass_report(model: keras.Model,
         y_true = np.argmax(y_true, axis=1)
 
     y_proba = model.predict(x, batch_size=batch_size)
-    if y_proba.shape[-1] > 1:
+
+    if y_proba.ndim > 1:
         y_pred = y_proba.argmax(axis=-1)
     else:
         y_pred = (y_proba > 0.5).astype('int32')
+
+    assert y_pred.shape == y_true.shape, \
+        f'y_pred.shape: {y_pred.shape} must equal y_true.shape: {y_true.shape}'
 
     comment = "Accuracy : " + str(
         sklearn.metrics.accuracy_score(y_true, y_pred))
@@ -224,10 +231,10 @@ def slack_report(x_train: np.ndarray,
                  y_train: np.ndarray,
                  x_valid: np.ndarray,
                  y_valid: np.ndarray,
-                 model: keras.Model,
+                 model: keras.models.Model,
                  history: keras.callbacks.History,
                  name: str,
-                 model_params: dict):
+                 params: dict):
     """
     Uploads a loss graph, accuacy, and confusion matrix plots in addition
     to useful data about the model to Slack.
@@ -239,12 +246,12 @@ def slack_report(x_train: np.ndarray,
     :param model:
     :param history:
     :param name:
-    :param model_params:
+    :param params:
     :return:
     """
     save_history(history)
-    upload_to_slack('/tmp/loss.png', f'{name}-{str(model_params)}')
-    upload_to_slack('/tmp/acc.png', f'{name}-{str(model_params)}')
+    upload_to_slack('/tmp/loss.png', f'{name}\n\nparams:\n{str(params)}')
+    upload_to_slack('/tmp/acc.png', f'{name}\n\nparams:\n{str(params)}')
 
     x_mean = np.array([x_train[:, :, :, 0].mean(),
                        x_train[:, :, :, 1].mean(),
@@ -254,10 +261,15 @@ def slack_report(x_train: np.ndarray,
                       x_train[:, :, :, 2].std()])
     x_valid_standardized = (x_valid - x_mean) / x_std
 
+    if y_valid.ndim == 1:
+        binary = True
+    else:
+        binary = False
+
     report = full_multiclass_report(model,
                                     x_valid_standardized,
                                     y_valid,
                                     [0, 1],
-                                    batch_size=model_params['batch_size'],
-                                    binary=True)
+                                    batch_size=params['model']['batch_size'],
+                                    binary=binary)
     upload_to_slack('/tmp/cm.png', report)

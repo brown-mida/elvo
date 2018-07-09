@@ -52,18 +52,17 @@ import pathlib
 import time
 import typing
 
-import os
-
-# So that the parent process cannot access gpus
-import config
-
-os.environ['CUDA_VISIBLE_DEVICES'] = ''
 import numpy as np
 import os
 import pandas as pd
+import sklearn
 from sklearn import model_selection
 
+import config
 import utils
+
+os.environ['CUDA_VISIBLE_DEVICES'] = ''
+import keras  # noqa: E402
 
 
 def load_arrays(data_dir: str) -> typing.Dict[str, np.ndarray]:
@@ -75,7 +74,7 @@ def load_arrays(data_dir: str) -> typing.Dict[str, np.ndarray]:
 
 
 def to_arrays(data: typing.Dict[str, np.ndarray],
-              labels: pd.DataFrame) -> typing.Tuple[np.ndarray, np.ndarray]:
+              labels: pd.Series) -> typing.Tuple[np.ndarray, np.ndarray]:
     """
     Converts the data and labels into numpy arrays.
 
@@ -105,25 +104,83 @@ def to_arrays(data: typing.Dict[str, np.ndarray],
     return np.stack(X_list), np.stack(y_list)
 
 
-def start_job(x_train: np.ndarray,
-              y_train: np.ndarray,
-              x_valid: np.ndarray,
-              y_valid: np.ndarray,
-              name: str = None,
-              params: dict = None) -> None:
+def prepare_data(params: dict) -> typing.Tuple[np.ndarray,
+                                               np.ndarray,
+                                               np.ndarray,
+                                               np.ndarray]:
+    logging.info(f'using params:\n{params}')
+    # Load the arrays and labels
+    data_params = params['data']
+    array_dict = load_arrays(data_params['data_dir'])
+    index_col = data_params['index_col']
+    label_col = data_params['label_col']
+    label_series = pd.read_csv(data_params['labels_path'],
+                               index_col=index_col)[label_col]
+    # Convert to split numpy arrays
+    x, y = to_arrays(array_dict, label_series)
+    # Match dimensions of the labels to the model
+    if isinstance(params['model']['loss'], str):
+        raise ValueError('Only loss functions are supported')
+    if params['model']['loss'] != keras.losses.binary_crossentropy:
+        # TODO: Move/refactor hacky code below
+        def categorize(label):
+            if any([x in label.lower() for x in ['m1', 'm2', 'm3', 'mca']]):
+                return 0  # mca
+            if 'nan' in str(label):
+                return 2
+            else:
+                return 1  # other
+
+        try:
+            y = np.array([categorize(label) for label in y])
+            label_encoder = sklearn.preprocessing.LabelEncoder()
+            y = label_encoder.fit_transform(y)
+            logging.debug(
+                f'label encoder classes: {label_encoder.classes_}')
+        except Exception:
+            pass
+
+        y = y.reshape(-1, 1)
+        one_hot = sklearn.preprocessing.OneHotEncoder(sparse=False)
+        y: np.ndarray = one_hot.fit_transform(y)
+    logging.debug(f'x shape: {x.shape}')
+    logging.debug(f'y shape: {y.shape}')
+    logging.info(f'seeding to {params["seed"]} before shuffling')
+    x_train, x_valid, y_train, y_valid = \
+        model_selection.train_test_split(
+            x, y,
+            test_size=params['val_split'],
+            random_state=params["seed"])
+    return x_train, x_valid, y_train, y_valid
+
+
+def start_job(x_train: np.ndarray, y_train: np.ndarray, x_valid: np.ndarray,
+              y_valid: np.ndarray, name: str = None, params: dict = None,
+              redirect: bool = True, epochs=100) -> None:
     """Builds, fits, and evaluates a model.
 
     Uploads a report to Slack at the end
     """
+    logging.info(f'using params:\n{params}')
+
+    # TODO: Clean up conditionals (put them where it makes sense)
+    if y_train.ndim == 1:
+        num_classes = 1
+    else:
+        num_classes = y_train.shape[1]
+
     if name is None:
         name = params['data']['data_dir'].split('/')[-3]
+        name += f'_{num_classes}-classes'
 
     # Configure the job to log all output to a specific file
+
     isostr = datetime.datetime.utcnow().isoformat()
     log_filename = f'{config.BLUENO_HOME}logs/{name}-{isostr}.log'
-    config.configure_job_logger(log_filename)
-    contextlib.redirect_stdout(log_filename)
-    contextlib.redirect_stderr(log_filename)
+    if redirect:
+        config.configure_job_logger(log_filename)
+        contextlib.redirect_stdout(log_filename)
+        contextlib.redirect_stderr(log_filename)
 
     logging.debug(f'in start_job,'
                   f' using gpu {os.environ["CUDA_VISIBLE_DEVICES"]}')
@@ -136,8 +193,11 @@ def start_job(x_train: np.ndarray,
                                                model_params['rotation_range'],
                                                model_params['batch_size'])
 
+    logging.debug(f'num_classes is: {num_classes}')
+
     # Construct the uncompiled model
     model = model_params['model_callable'](input_shape=x_train.shape[1:],
+                                           num_classes=num_classes,
                                            **model_params)
 
     logging.debug(
@@ -157,7 +217,7 @@ def start_job(x_train: np.ndarray,
                                        csv_filename)
     logging.info('training model')
     history = model.fit_generator(train_gen,
-                                  epochs=100,
+                                  epochs=epochs,
                                   validation_data=valid_gen,
                                   verbose=2,
                                   callbacks=callbacks)
@@ -166,50 +226,47 @@ def start_job(x_train: np.ndarray,
     utils.slack_report(x_train, y_train,
                        x_valid, y_valid,
                        model, history,
-                       name, model_params)
+                       name, params)
 
 
-def hyperoptimize(hyperparams: dict) -> None:
-    param_grid = model_selection.ParameterGrid(hyperparams)
+def hyperoptimize(hyperparams: dict, n_iter) -> None:
+    """
+    Runs n_iter model training jobs on the hyperparameters.
+
+    :param hyperparams: A dictionary of string key to iterable pairs. See
+    config.py for an example of a hyperparameter dict.
+    :param n_iter: The number of jobs to run.
+    :return:
+    """
+    param_list = model_selection.ParameterSampler(hyperparams, n_iter)
 
     gpu_index = 0
 
     processes = []
-    for params in param_grid:
-        logging.info(f'using params:\n{params}')
+    for params in param_list:
+        x_train, x_valid, y_train, y_valid = prepare_data(params)
 
-        # Load the arrays and labels
-        data_params = params['data']
-        array_dict = load_arrays(data_params['data_dir'])
-        index_col = data_params['index_col']
-        label_col = data_params['label_col']
-        label_df = pd.read_csv(data_params['labels_path'],
-                               index_col=index_col)[[label_col]]
-
-        # Convert to split numpy arrays
-        x, y = to_arrays(array_dict, label_df)
-
-        logging.info(f'seeding to {params["seed"]} before shuffling')
-        x_train, x_valid, y_train, y_valid = \
-            model_selection.train_test_split(
-                x, y,
-                test_size=params['val_split'],
-                random_state=params["seed"])
-
-        logging.debug(f'training positives: {y_train.sum()}')
-        logging.debug(f'training negatives:'
-                      f' {len(y_train) - y_train.sum()}')
-        logging.debug(f'validation positives:'
-                      f' {y_valid.sum()}')
-        logging.debug(f'validation negatives:'
-                      f' {len(y_valid) - y_valid.sum()}')
-        logging.debug(f'x_train mean: {x_train.mean()}')
-        logging.debug(f'x_train std: {x_train.std()}')
+        # TODO: Generalize to work with multi-label
+        # logging.debug(f'training positives: {y_train.sum()}')
+        # logging.debug(f'training negatives:'
+        #               f' {len(y_train) - y_train.sum()}')
+        # logging.debug(f'validation positives:'
+        #               f' {y_valid.sum()}')
+        # logging.debug(f'validation negatives:'
+        #               f' {len(y_valid) - y_valid.sum()}')
+        # logging.debug(f'x_train mean: {x_train.mean()}')
+        # logging.debug(f'x_train std: {x_train.std()}')
 
         # Start the model training job
         # Run in a separate process to avoid memory issues
         os.environ['CUDA_VISIBLE_DEVICES'] = f'{gpu_index}'
-        process = multiprocessing.Process(target=start_job,
+
+        if 'job_fn' in params:
+            job_fn = params['job_fn']
+        else:
+            job_fn = start_job
+
+        process = multiprocessing.Process(target=job_fn,
                                           args=(x_train, y_train,
                                                 x_valid, y_valid),
                                           kwargs={
@@ -217,6 +274,7 @@ def hyperoptimize(hyperparams: dict) -> None:
                                           })
         gpu_index += 1
         gpu_index %= config.NUM_GPUS
+
         logging.debug(f'gpu_index is now {gpu_index}')
         process.start()
         processes.append(process)
@@ -232,4 +290,4 @@ def hyperoptimize(hyperparams: dict) -> None:
 
 if __name__ == '__main__':
     config.configure_parent_logger()
-    hyperoptimize(config.arguments)
+    hyperoptimize(config.arguments, config.NUM_ITERS)
