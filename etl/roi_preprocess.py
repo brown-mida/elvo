@@ -1,5 +1,3 @@
-# TODO: labels???
-
 from lib import roi_transforms, transforms, cloud_management as cloud
 import logging
 import numpy as np
