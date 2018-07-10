@@ -238,7 +238,8 @@ def start_job(x_train: np.ndarray, y_train: np.ndarray, x_valid: np.ndarray,
     utils.save_misclassification_plot(x_valid,
                                       y_valid,
                                       y_pred)
-    utils.upload_to_slack('/tmp/misclassify.png', 'testaloha')
+    utils.upload_to_slack('/tmp/misclassify.png', 'testaloha',
+                          token=config.SLACK_TOKEN)
 
 
 def hyperoptimize(hyperparams: dict) -> None:

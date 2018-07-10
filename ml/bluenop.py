@@ -296,13 +296,12 @@ def bluenop(args: dict):
                                                       args['process_variant'])
     save_data(processed_arrays, processed_labels, args['processed_dir'])
 
-
-if __name__ == '__main__':
-    arguments = {
-        'arrays_dir': '/home/lzhu7/elvo-analysis/data/numpy_compressed/',
-        'labels_dir': '/home/lzhu7/elvo-analysis/data/metadata/',
-        'processed_dir': '/home/lzhu7/elvo-analysis/data/processed/',
-        'filter_variant': 'simple',
-        'process_variant': 'standard-crop-mip',
-    }
-    bluenop(arguments)
+# if __name__ == '__main__':
+#     arguments = {
+#         'arrays_dir': '/home/lzhu7/elvo-analysis/data/numpy_compressed/',
+#         'labels_dir': '/home/lzhu7/elvo-analysis/data/metadata/',
+#         'processed_dir': '/home/lzhu7/elvo-analysis/data/processed/',
+#         'filter_variant': 'simple',
+#         'process_variant': 'standard-crop-mip',
+#     }
+#     bluenop(arguments)

@@ -7,16 +7,12 @@ import typing
 import keras
 import matplotlib
 import numpy as np
-import os
 import pandas as pd
 import requests
 import sklearn.metrics
 from keras import backend as K
 
-if 'LUKE' in os.environ:
-    import config_luke as config
-else:
-    import config
+import config
 
 matplotlib.use('Agg')  # noqa: E402
 from matplotlib import pyplot as plt
@@ -218,7 +214,7 @@ def full_multiclass_report(model: keras.models.Model,
     return comment
 
 
-def upload_to_slack(filename, comment):
+def upload_to_slack(filename, comment, token=config.SLACK_TOKEN):
     my_file = {
         'file': (filename, open(filename, 'rb'), 'png')
     }
@@ -227,7 +223,7 @@ def upload_to_slack(filename, comment):
 
     payload = {
         "filename": "history.png",
-        "token": config.SLACK_TOKEN,
+        "token": token,
         'initial_comment': comment,
         "channels": ['#model-results'],
     }
