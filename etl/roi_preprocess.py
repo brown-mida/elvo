@@ -28,6 +28,8 @@ def create_chunks(annotations_df: pd.DataFrame):
         # get the file id
         file_id = in_blob.name.split('/')[2]
         file_id = file_id.split('.')[0]
+
+        print(f'chunking {file_id}')
         # copy ROI if there's a positive match in the ROI annotations
         roi_df = annotations_df[annotations_df['patient_id'].str.match(file_id)]
         # if it's empty, this brain is ELVO negative
@@ -158,6 +160,9 @@ def create_labels(annotations_df: pd.DataFrame):
         # get the file id
         file_id = in_blob.name.split('/')[2]
         file_id = file_id.split('.')[0]
+
+        print(f'labeling {file_id}')
+
         # copy ROI if there's a positive match in the ROI annotations
         roi_df = annotations_df[annotations_df['patient_id'].str.match(file_id)]
         # if it's empty, this brain is ELVO negative
