@@ -228,16 +228,15 @@ def start_job(x_train: np.ndarray, y_train: np.ndarray, x_valid: np.ndarray,
                        name, params)
 
 
-def hyperoptimize(hyperparams: dict, n_iter) -> None:
+def hyperoptimize(hyperparams: dict) -> None:
     """
     Runs n_iter model training jobs on the hyperparameters.
 
     :param hyperparams: A dictionary of string key to iterable pairs. See
     config.py for an example of a hyperparameter dict.
-    :param n_iter: The number of jobs to run.
     :return:
     """
-    param_list = model_selection.ParameterSampler(hyperparams, n_iter)
+    param_list = model_selection.ParameterGrid(hyperparams)
 
     gpu_index = 0
 
@@ -289,4 +288,4 @@ def hyperoptimize(hyperparams: dict, n_iter) -> None:
 
 if __name__ == '__main__':
     config.configure_parent_logger()
-    hyperoptimize(config.arguments, config.NUM_ITERS)
+    hyperoptimize(config.arguments)
