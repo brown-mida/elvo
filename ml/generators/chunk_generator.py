@@ -4,49 +4,46 @@ import random
 import numpy as np
 from scipy.ndimage.interpolation import zoom
 from keras.preprocessing.image import ImageDataGenerator
+
 from google.cloud import storage
 from lib import transforms
 
 BLACKLIST = []
 
-class Generator(object):
+
+class ChunkGenerator(object):
 
     def __init__(self, dims=(32, 32, 32), batch_size=16,
                  shuffle=True,
                  validation=False,
-                 test=False, split_test=False,
                  split=0.2, extend_dims=True,
                  augment_data=True):
         self.dims = dims
         self.batch_size = batch_size
         self.extend_dims = extend_dims
         self.augment_data = augment_data
+        self.validation = validation
 
         self.datagen = ImageDataGenerator(
-            rotation_range=15,
+            rotation_range=20,
             width_shift_range=0.1,
             height_shift_range=0.1,
-            zoom_range=[1.0, 1.1],
-            horizontal_flip=True
+            zoom_range=0.1,
+            horizontal_flip=True,
+            vertical_flip=True
         )
 
-        # Delete all content in tmp/npy/
-        filelist = [f for f in os.listdir('tmp/npy')]
-        for f in filelist:
-            os.remove(os.path.join('tmp/npy', f))
-
-        # Get npy files from Google Cloud Storage
+        # Access Google Cloud Storage
         gcs_client = storage.Client.from_service_account_json(
             'credentials/client_secret.json'
         )
         bucket = gcs_client.get_bucket('elvos')
-        negative_blobs = bucket.list_blobs(prefix='chunk_data/normal/negative')
-        positive_blobs = bucket.list_blobs(prefix='chunk_data/normal/positive')
 
-        negatives = []
-        for blob in negative_blobs:
-            file = blob.name
-
+        # Get file list
+        filelist = sorted([f for f in os.listdir('tmp/npy')])
+        print(filelist)
+        files = []
+        for file in filelist:
             # Check blacklist
             blacklisted = False
             for each in BLACKLIST:
@@ -55,31 +52,18 @@ class Generator(object):
 
             if not blacklisted:
                 # Add all data augmentation methods
-                negatives.append({
+                files.append({
                     "name": file,
                 })
 
                 if self.augment_data and not self.validation:
-                    self.__add_augmented(negatives, file)
+                    self.__add_augmented(files, file)
 
-        positives = []
-        for blob in positive_blobs:
-            file = blob.name
-
-            # Check blacklist
-            blacklisted = False
-            for each in BLACKLIST:
-                if each in file:
-                    blacklisted = True
-
-            if not blacklisted:
-                # Add all data augmentation methods
-                positives.append({
-                    "name": file,
-                })
-
-                if self.augment_data and not self.validation:
-                    self.__add_augmented(positives, file)
+        # Split based on validation
+        if validation:
+            files = files[:int(len(files) * split)]
+        else:
+            files = files[int(len(files) * split):]
 
         # Get label data from Google Cloud Storage
         blob = storage.Blob('labels.csv', bucket)
@@ -88,52 +72,22 @@ class Generator(object):
         with open('tmp/labels.csv', 'r') as pos_file:
             reader = csv.reader(pos_file, delimiter=',')
             for row in reader:
-                if row[1] != 'label':
+                if row[1] != 'labels':
                     label_data[row[0]] = int(row[1])
 
-        labels = np.zeros(len(positives) + len(negatives))
-        for i, file in enumerate(positives):
+        labels = np.zeros(len(files))
+        for i, file in enumerate(files):
             filename = file['name']
-            filename = filename.split('/')[-1]
-            filename = filename.split('.')[0]
-            labels[i] = label_data[filename]
-
-        for i, file in enumerate(negatives):
-            filename = file['name']
-            filename = filename.split('/')[-1]
-            filename = filename.split('.')[0]
+            # filename = filename.split('_')[0]
             labels[i] = label_data[filename]
 
         # Take into account shuffling
         if shuffle:
             tmp = list(zip(files, labels))
-            random.Random(192382491).shuffle(tmp)
+            random.shuffle(tmp)
             files, labels = zip(*tmp)
             labels = np.array(labels)
 
-        # Split based on validation
-        if validation:
-            if split_test:
-                files = files[:int(len(files) * split / 2)]
-                labels = labels[:int(len(labels) * split / 2)]
-            else:
-                files = files[:int(len(files) * split)]
-                labels = labels[:int(len(labels) * split)]
-        elif test:
-            if split_test:
-                files = files[int(len(files) * split / 2):
-                              int(len(files) * split)]
-                labels = labels[int(len(labels) * split / 2):
-                                    int(len(labels) * split)]
-            else:
-                raise ValueError('must set split_test to True if test')
-        else:
-            files = files[int(len(files) * split):]
-            labels = labels[int(len(labels) * split):]
-        print(np.shape(files))
-        print(np.shape(labels))
-        print("Negatives: {}".format(np.count_nonzero(labels == 0)))
-        print("Positives: {}".format(np.count_nonzero(labels)))
         self.files = files
         self.labels = labels
         self.bucket = bucket
@@ -146,9 +100,11 @@ class Generator(object):
 
     def generate(self):
         steps = self.get_steps_per_epoch()
+        # print(steps)
         while True:
             for i in range(steps):
                 # print(i)
+                # print("D")
                 x, y = self.__data_generation(i)
                 yield x, y
 
@@ -163,14 +119,10 @@ class Generator(object):
 
         # Download files to tmp/npy/
         for i, file in enumerate(files):
-            blob = self.bucket.get_blob(file['name'])
             file_id = file['name'].split('/')[-1]
             file_id = file_id.split('.')[0]
-            blob.download_to_filename(
-                'tmp/npy/{}.npy'.format(file_id)
-            )
+            print(file_id)
             img = np.load('tmp/npy/{}.npy'.format(file_id))
-            # os.remove('tmp/npy/{}.npy'.format(file_id))
             img = self.__transform_images(img)
             # print(np.shape(img))
             images.append(img)
@@ -180,13 +132,12 @@ class Generator(object):
         return images, labels
 
     def __transform_images(self, image):
-        image = np.moveaxis(image, 0, -1)
-
         # Set bounds
         image[image < -40] = -40
         image[image > 400] = 400
 
         # Normalize image and expand dims
+        image = transforms.normalize(image)
         if self.extend_dims:
             if len(self.dims) == 2:
                 image = np.expand_dims(image, axis=-1)
@@ -199,7 +150,6 @@ class Generator(object):
             image = self.datagen.random_transform(image)
 
         # Interpolate axis to reduce to specified dimensions
-        # image = transforms.normalize(image)
         dims = np.shape(image)
         image = zoom(image, (self.dims[0] / dims[0],
                              self.dims[1] / dims[1],
