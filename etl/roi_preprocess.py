@@ -104,8 +104,6 @@ def create_chunks(annotations_df: pd.DataFrame):
                                                            file_id + str(h))
                         h += 1
 
-                print(label_dict)
-
         # else it's elvo negative
         else:
             h = 0
