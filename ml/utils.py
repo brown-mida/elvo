@@ -1,6 +1,7 @@
 """Custom metrics, callbacks, and plots.
 """
 import itertools
+import logging
 
 import keras
 import matplotlib
@@ -56,7 +57,7 @@ def create_callbacks(x_train: np.ndarray, y_train: np.ndarray,
     """
     Instantiates a list of callbacks:
     - AUC
-    - LR adjustment
+    - Early stopping
     - TODO: model checkpoint
 
     :param normalize:
@@ -68,7 +69,8 @@ def create_callbacks(x_train: np.ndarray, y_train: np.ndarray,
     """
     callbacks = []
     callbacks.append(keras.callbacks.CSVLogger(filename, append=True))
-    callbacks.append(keras.callbacks.ReduceLROnPlateau())
+    callbacks.append(keras.callbacks.EarlyStopping(monitor='val_acc',
+                                                   patience=10))
 
     if normalize:
         x_mean = np.array([x_train[:, :, :, 0].mean(),
@@ -78,6 +80,8 @@ def create_callbacks(x_train: np.ndarray, y_train: np.ndarray,
                           x_train[:, :, :, 1].std(),
                           x_train[:, :, :, 2].std()])
         x_valid_standardized = (x_valid - x_mean) / x_std
+    else:
+        x_valid_standardized = x_valid
 
     if y_valid.ndim == 1:
         # TODO: ROC for softmax
@@ -184,10 +188,11 @@ def full_multiclass_report(model: keras.models.Model,
 
     y_proba = model.predict(x, batch_size=batch_size)
 
-    if y_proba.ndim > 1:
-        y_pred = y_proba.argmax(axis=-1)
-    else:
+    if y_proba.shape[-1] == 1:
+        logging.debug('in multiclass_report, using >0.5 branch')
         y_pred = (y_proba > 0.5).astype('int32')
+    else:
+        y_pred = y_proba.argmax(axis=-1)
 
     assert y_pred.shape == y_true.shape, \
         f'y_pred.shape: {y_pred.shape} must equal y_true.shape: {y_true.shape}'

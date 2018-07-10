@@ -48,12 +48,12 @@ import contextlib
 import datetime
 import logging
 import multiprocessing
+import os
 import pathlib
 import time
 import typing
 
 import numpy as np
-import os
 import pandas as pd
 import sklearn
 from sklearn import model_selection
@@ -161,8 +161,6 @@ def start_job(x_train: np.ndarray, y_train: np.ndarray, x_valid: np.ndarray,
 
     Uploads a report to Slack at the end
     """
-    logging.info(f'using params:\n{params}')
-
     # TODO: Clean up conditionals (put them where it makes sense)
     if y_train.ndim == 1:
         num_classes = 1
@@ -181,6 +179,7 @@ def start_job(x_train: np.ndarray, y_train: np.ndarray, x_valid: np.ndarray,
         config.configure_job_logger(log_filename)
         contextlib.redirect_stdout(log_filename)
         contextlib.redirect_stderr(log_filename)
+        logging.info(f'using params:\n{params}')
 
     logging.debug(f'in start_job,'
                   f' using gpu {os.environ["CUDA_VISIBLE_DEVICES"]}')
