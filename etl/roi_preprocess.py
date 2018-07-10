@@ -18,7 +18,6 @@ def configure_logger():
 def create_chunks(annotations_df: pd.DataFrame):
     client = cloud.authenticate()
     bucket = client.get_bucket('elvos')
-    label_dict = {}
 
     # loop through every array on GCS
     for in_blob in bucket.list_blobs(prefix='airflow/npy'):
@@ -145,10 +144,6 @@ def create_chunks(annotations_df: pd.DataFrame):
                                                        'point_cloud/negative',
                                                        file_id + str(h))
                         h += 1
-
-    # convert the labels to a df
-    labels_df = pd.DataFrame.from_dict(label_dict, orient='index', columns=['label'])
-    labels_df.to_csv('annotated_labels.csv')
 
 
 def create_labels(annotations_df: pd.DataFrame):
