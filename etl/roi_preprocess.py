@@ -1,4 +1,4 @@
-from lib import roi_transforms, transforms, cloud_management as cloud
+from lib import cloud_management as cloud  # , roi_transforms, transforms
 import logging
 import numpy as np
 import pandas as pd
@@ -18,7 +18,6 @@ def configure_logger():
 def create_chunks(annotations_df: pd.DataFrame):
     client = cloud.authenticate()
     bucket = client.get_bucket('elvos')
-    label_dict = {}
 
     # loop through every array on GCS
     for in_blob in bucket.list_blobs(prefix='airflow/npy'):
@@ -29,6 +28,8 @@ def create_chunks(annotations_df: pd.DataFrame):
         # get the file id
         file_id = in_blob.name.split('/')[2]
         file_id = file_id.split('.')[0]
+
+        print(f'chunking {file_id}')
         # copy ROI if there's a positive match in the ROI annotations
         roi_df = annotations_df[annotations_df['patient_id'].str.match(file_id)]
         # if it's empty, this brain is ELVO negative
@@ -39,8 +40,8 @@ def create_chunks(annotations_df: pd.DataFrame):
 
         # do preprocessing
         arr = cloud.download_array(in_blob)
-        stripped = transforms.segment_vessels(arr)
-        point_cloud = transforms.point_cloud(arr)
+        # stripped = transforms.segment_vessels(arr)
+        # point_cloud = transforms.point_cloud(arr)
 
         # if it's elvo positive
         if elvo_positive:
@@ -56,7 +57,6 @@ def create_chunks(annotations_df: pd.DataFrame):
                         if i == int(roi_df['blue1'].iloc[0]) \
                                 and j == int(roi_df['green1'].iloc[0]) \
                                 and k == int(roi_df['red1'].iloc[0]):
-                            print('hi')
                             elvo_chunk = True
 
                         # copy the chunk
@@ -65,6 +65,10 @@ def create_chunks(annotations_df: pd.DataFrame):
                         airspace = np.where(chunk < -300)
                         # if the chunk is more than 90% airspace
                         if (airspace[0].size / chunk.size) < 0.9:
+                            # cloud.save_chunks_to_cloud(np.asarray(chunk),
+                            #                            'normal',
+                            #                            file_id + str(h))
+
                             # if it's the positive chunk, set the label to
                             #   1 and save
                             if elvo_chunk:
@@ -78,34 +82,32 @@ def create_chunks(annotations_df: pd.DataFrame):
                                                            'normal/negative',
                                                            file_id + str(h))
 
-                        # do the same thing with stripped array
-                        stripped_chunk = stripped[i:(i + 32), j:(j + 32), k:(k + 32)]
-                        stripped_airspace = np.where(stripped_chunk <= -50)
-                        if (stripped_airspace[0].size / stripped_chunk.size) < 0.9:
-                            if elvo_chunk:
-                                cloud.save_chunks_to_cloud(np.asarray(chunk),
-                                                           'stripped/positive',
-                                                           file_id + str(h))
-                            else:
-                                cloud.save_chunks_to_cloud(np.asarray(chunk),
-                                                           'stripped/negative',
-                                                           file_id + str(h))
-
-                        # do the same thing with point cloud array
-                        pc_chunk = point_cloud[i:(i + 32), j:(j + 32), k:(k + 32)]
-                        pc_airspace = np.where(pc_chunk == 0)
-                        if (pc_airspace[0].size / pc_chunk.size) < 0.9:
-                            if elvo_chunk:
-                                cloud.save_chunks_to_cloud(np.asarray(chunk),
-                                                           'point_cloud/positive',
-                                                           file_id + str(h))
-                            else:
-                                cloud.save_chunks_to_cloud(np.asarray(chunk),
-                                                           'point_cloud/negative',
-                                                           file_id + str(h))
+                        # # do the same thing with stripped array
+                        # stripped_chunk = stripped[i:(i + 32), j:(j + 32), k:(k + 32)]
+                        # stripped_airspace = np.where(stripped_chunk <= -50)
+                        # if (stripped_airspace[0].size / stripped_chunk.size) < 0.9:
+                        #     if elvo_chunk:
+                        #         cloud.save_chunks_to_cloud(np.asarray(chunk),
+                        #                                    'stripped/positive',
+                        #                                    file_id + str(h))
+                        #     else:
+                        #         cloud.save_chunks_to_cloud(np.asarray(chunk),
+                        #                                    'stripped/negative',
+                        #                                    file_id + str(h))
+                        #
+                        # # do the same thing with point cloud array
+                        # pc_chunk = point_cloud[i:(i + 32), j:(j + 32), k:(k + 32)]
+                        # pc_airspace = np.where(pc_chunk == 0)
+                        # if (pc_airspace[0].size / pc_chunk.size) < 0.9:
+                        #     if elvo_chunk:
+                        #         cloud.save_chunks_to_cloud(np.asarray(chunk),
+                        #                                    'point_cloud/positive',
+                        #                                    file_id + str(h))
+                        #     else:
+                        #         cloud.save_chunks_to_cloud(np.asarray(chunk),
+                        #                                    'point_cloud/negative',
+                        #                                    file_id + str(h))
                         h += 1
-
-                print(label_dict)
 
         # else it's elvo negative
         else:
@@ -121,34 +123,33 @@ def create_chunks(annotations_df: pd.DataFrame):
                         airspace = np.where(chunk < -300)
                         # if it's less than 90% airspace
                         if (airspace[0].size / chunk.size) < 0.9:
-                            # save the label as 0 and save it to the cloud
+                            # cloud.save_chunks_to_cloud(np.asarray(chunk),
+                            #                            'normal',
+                            #                            file_id + str(h))
+                            # # save the label as 0 and save it to the cloud
                             cloud.save_chunks_to_cloud(np.asarray(chunk),
                                                        'normal/negative',
                                                        file_id + str(h))
 
-                        # do the same thing for stripped
-                        stripped_chunk = \
-                            stripped[i:(i + 32), j:(j + 32), k:(k + 32)]
-                        stripped_airspace = np.where(stripped_chunk <= -50)
-                        if (stripped_airspace[0].size / stripped_chunk.size) \
-                                < 0.9:
-                            cloud.save_chunks_to_cloud(np.asarray(chunk),
-                                                       'stripped/negative',
-                                                       file_id + str(h))
-
-                        # do the same thing for point cloud
-                        pc_chunk = \
-                            point_cloud[i:(i + 32), j:(j + 32), k:(k + 32)]
-                        pc_airspace = np.where(pc_chunk == 0)
-                        if (pc_airspace[0].size / pc_chunk.size) < 0.9:
-                            cloud.save_chunks_to_cloud(np.asarray(chunk),
-                                                       'point_cloud/negative',
-                                                       file_id + str(h))
+                        # # do the same thing for stripped
+                        # stripped_chunk = \
+                        #     stripped[i:(i + 32), j:(j + 32), k:(k + 32)]
+                        # stripped_airspace = np.where(stripped_chunk <= -50)
+                        # if (stripped_airspace[0].size / stripped_chunk.size) \
+                        #         < 0.9:
+                        #     cloud.save_chunks_to_cloud(np.asarray(chunk),
+                        #                                'stripped/negative',
+                        #                                file_id + str(h))
+                        #
+                        # # do the same thing for point cloud
+                        # pc_chunk = \
+                        #     point_cloud[i:(i + 32), j:(j + 32), k:(k + 32)]
+                        # pc_airspace = np.where(pc_chunk == 0)
+                        # if (pc_airspace[0].size / pc_chunk.size) < 0.9:
+                        #     cloud.save_chunks_to_cloud(np.asarray(chunk),
+                        #                                'point_cloud/negative',
+                        #                                file_id + str(h))
                         h += 1
-
-    # convert the labels to a df
-    labels_df = pd.DataFrame.from_dict(label_dict, orient='index', columns=['label'])
-    labels_df.to_csv('annotated_labels.csv')
 
 
 def create_labels(annotations_df: pd.DataFrame):
@@ -165,6 +166,9 @@ def create_labels(annotations_df: pd.DataFrame):
         # get the file id
         file_id = in_blob.name.split('/')[2]
         file_id = file_id.split('.')[0]
+
+        print(f'labeling {file_id}')
+
         # copy ROI if there's a positive match in the ROI annotations
         roi_df = annotations_df[annotations_df['patient_id'].str.match(file_id)]
         # if it's empty, this brain is ELVO negative
@@ -190,7 +194,6 @@ def create_labels(annotations_df: pd.DataFrame):
                         if i == int(roi_df['blue1'].iloc[0]) \
                                 and j == int(roi_df['green1'].iloc[0]) \
                                 and k == int(roi_df['red1'].iloc[0]):
-                            print('hi')
                             elvo_chunk = True
 
                         # copy the chunk
@@ -201,15 +204,12 @@ def create_labels(annotations_df: pd.DataFrame):
                         if (airspace[0].size / chunk.size) < 0.9:
                             # if it's the positive chunk, set the label to 1
                             if elvo_chunk:
-                                print('setting label and saving')
                                 label_dict[file_id + str(h)] = 1
 
                             # else set the label to 0
                             else:
                                 label_dict[file_id + str(h)] = 0
                         h += 1
-
-                print(label_dict)
 
         # else it's elvo negative
         else:
@@ -229,7 +229,6 @@ def create_labels(annotations_df: pd.DataFrame):
 
                         h += 1
 
-    print(label_dict)
     # convert the labels to a df
     labels_df = pd.DataFrame.from_dict(label_dict, orient='index', columns=['label'])
     print(labels_df)
@@ -260,5 +259,5 @@ def process_labels():
 if __name__ == '__main__':
     configure_logger()
     annotations_df = process_labels()
-    create_labels(annotations_df)
+    # create_labels(annotations_df)
     create_chunks(annotations_df)
