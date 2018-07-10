@@ -1,4 +1,4 @@
-from lib import roi_transforms, transforms, cloud_management as cloud
+from lib import cloud_management as cloud  # , roi_transforms, transforms
 import logging
 import numpy as np
 import pandas as pd
@@ -252,5 +252,5 @@ def process_labels():
 if __name__ == '__main__':
     configure_logger()
     annotations_df = process_labels()
-    create_labels(annotations_df)
+    # create_labels(annotations_df)
     create_chunks(annotations_df)
