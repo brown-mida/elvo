@@ -2,15 +2,21 @@
 """
 import itertools
 import logging
+import typing
 
 import keras
 import matplotlib
 import numpy as np
+import os
+import pandas as pd
 import requests
 import sklearn.metrics
 from keras import backend as K
 
-import config
+if 'LUKE' in os.environ:
+    import config_luke as config
+else:
+    import config
 
 matplotlib.use('Agg')  # noqa: E402
 from matplotlib import pyplot as plt
@@ -277,4 +283,77 @@ def slack_report(x_train: np.ndarray,
                                     [0, 1],
                                     batch_size=params['model']['batch_size'],
                                     binary=binary)
-    upload_to_slack('/tmp/cm.png', report)
+
+
+def plot_images(data: typing.Dict[str, np.ndarray],
+                labels: pd.DataFrame,
+                num_cols=5,
+                limit=20,
+                offset=0):
+    """
+    Plots limit images in a single plot.
+
+    :param data:
+    :param labels:
+    :param num_cols:
+    :param limit: the number of images to plot
+    :param offset:
+    :return:
+    """
+    # Ceiling function of len(data) / num_cols
+    num_rows = (min(len(data), limit) + num_cols - 1) // num_cols
+    fig = plt.figure(figsize=(10, 10))
+    for i, patient_id in enumerate(data):
+        if i < offset:
+            continue
+        if i >= offset + limit:
+            break
+        plot_num = i - offset + 1
+        ax = fig.add_subplot(num_rows, num_cols, plot_num)
+        ax.set_title(f'patient: {patient_id[:4]}...')
+        label = ('positive' if labels.loc[patient_id]['occlusion_exists']
+                 else 'negative')
+        ax.set_xlabel(f'label: {label}')
+        plt.imshow(data[patient_id])
+    fig.tight_layout()
+    plt.plot()
+
+
+def save_misclassification_plot(x_valid,
+                                y_valid,
+                                y_pred):
+    plot_misclassification(x_valid, y_valid, y_pred)
+    plt.savefig('/tmp/misclassify.png')
+
+
+def plot_misclassification(x,
+                           y_true,
+                           y_pred,
+                           num_cols=5,
+                           limit=20,
+                           offset=0):
+    """
+    Plots the figures with labels and predictions.
+
+    :param x:
+    :param y_true:
+    :param y_pred:
+    :param num_cols:
+    :param limit:
+    :param offset:
+    :return:
+    """
+    num_rows = (min(len(x), limit) + num_cols - 1) // num_cols
+    fig = plt.figure(figsize=(10, 10))
+    for i, arr in enumerate(x):
+        if i < offset:
+            continue
+        if i >= offset + limit:
+            break
+        plot_num = i - offset + 1
+        ax = fig.add_subplot(num_rows, num_cols, plot_num)
+        ax.set_title(f'patient: {i}')
+        ax.set_xlabel(f'y_true: {y_true[i]} y_pred: {y_pred[i]}')
+        plt.imshow(arr)  # Multiply by 255 here for
+    fig.tight_layout()
+    plt.plot()

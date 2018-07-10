@@ -44,21 +44,21 @@ Standard charts and graphs for each model type
 Full learned parameters of the model
 Summary statistics for model visualization
 """
+import argparse
 import contextlib
 import datetime
 import logging
 import multiprocessing
-import os
 import pathlib
 import time
 import typing
 
 import numpy as np
+import os
 import pandas as pd
 import sklearn
 from sklearn import model_selection
 
-import config
 import utils
 
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
@@ -227,6 +227,19 @@ def start_job(x_train: np.ndarray, y_train: np.ndarray, x_valid: np.ndarray,
                        model, history,
                        name, params)
 
+    # TODO: Turn into a function
+    x_valid_standardized = x_valid
+    y_pred = model.predict(x_valid_standardized)
+
+    if y_valid.shape[-1] >= 2:
+        y_valid = y_valid.argmax(axis=1)
+        y_pred = y_pred.argmax(axis=1)
+
+    utils.save_misclassification_plot(x_valid,
+                                      y_valid,
+                                      y_pred)
+    utils.upload_to_slack('/tmp/misclassify.png', 'testaloha')
+
 
 def hyperoptimize(hyperparams: dict) -> None:
     """
@@ -257,7 +270,8 @@ def hyperoptimize(hyperparams: dict) -> None:
 
         # Start the model training job
         # Run in a separate process to avoid memory issues
-        os.environ['CUDA_VISIBLE_DEVICES'] = f'{gpu_index}'
+        # Note how this depends on offset
+        os.environ['CUDA_VISIBLE_DEVICES'] = f'{gpu_index + gpu_offset}'
 
         if 'job_fn' in params:
             job_fn = params['job_fn']

@@ -6,6 +6,8 @@ import os
 import pandas as pd
 from matplotlib import pyplot as plt
 
+from utils import plot_images
+
 
 def load_arrays(data_dir: str) -> typing.Dict[str, np.ndarray]:
     data_dict = {}
@@ -104,40 +106,6 @@ def filter_data(arrays: typing.Dict[str, np.ndarray],
         raise ValueError('Unsupported variant')
     assert len(filtered_arrays) == len(filtered_labels)
     return filtered_arrays, filtered_labels
-
-
-def plot_images(data: typing.Dict[str, np.ndarray],
-                labels: pd.DataFrame,
-                num_cols=5,
-                limit=20,
-                offset=0):
-    """
-    Plots limit images in a single plot.
-
-    :param data:
-    :param labels:
-    :param num_cols:
-    :param limit: the number of images to plot
-    :param offset:
-    :return:
-    """
-    # Ceiling function of len(data) / num_cols
-    num_rows = (min(len(data), limit) + num_cols - 1) // num_cols
-    fig = plt.figure(figsize=(10, 10))
-    for i, patient_id in enumerate(data):
-        if i < offset:
-            continue
-        if i >= offset + limit:
-            break
-        plot_num = i - offset + 1
-        ax = fig.add_subplot(num_rows, num_cols, plot_num)
-        ax.set_title(f'patient: {patient_id[:4]}...')
-        label = ('positive' if labels.loc[patient_id]['occlusion_exists']
-                 else 'negative')
-        ax.set_xlabel(f'label: {label}')
-        plt.imshow(data[patient_id])
-    fig.tight_layout()
-    plt.plot()
 
 
 def crop(image3d: np.ndarray,

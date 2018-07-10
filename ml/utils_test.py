@@ -1,4 +1,6 @@
+import keras
 import numpy as np
+import os
 import pytest
 import sklearn.preprocessing
 
@@ -51,3 +53,24 @@ def test_full_multiclass_report_multiclass():
                                  y,
                                  classes=[0, 1, 2],
                                  binary=False)
+
+
+def test_save_misclassification_plot():
+    os.environ['CUDA_VISIBLE_DEVICES'] = ''
+    model = keras.Sequential([
+        keras.layers.Flatten(input_shape=(224, 224, 3)),
+        keras.layers.Dense(3, activation='softmax'),
+    ])
+    X = np.random.rand(10, 224, 224, 3)
+    y = np.random.randint(0, 3, size=(10,))
+    y = sklearn.preprocessing.label_binarize(y, [0, 1, 2])
+    y_pred = model.predict(X)
+    print(y, y_pred)
+    y_valid = y.argmax(axis=1)
+    y_pred = y_pred.argmax(axis=1)
+    print('starting save')
+    utils.save_misclassification_plot(X,
+                                      y_valid,
+                                      y_pred)
+    utils.upload_to_slack('/tmp/misclassify.png',
+                          'testaloha')
