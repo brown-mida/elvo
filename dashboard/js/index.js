@@ -83,9 +83,10 @@ class App extends Component {
   handleSearchKeyPress(event) {
     if (event.key === 'Enter') {
       console.log('enter');
-      this.setState({patientId: this.state.searchValue});
-      console.log('searching for patient:', this.state.patientId);
-      this.getImageDimensions();
+      this.setState({patientId: this.state.searchValue}, () => {
+        console.log('searching for patient:', this.state.patientId);
+        this.getImageDimensions();
+      });
     }
   }
 
