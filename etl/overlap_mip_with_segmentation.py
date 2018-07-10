@@ -8,6 +8,7 @@ feature detection weights from ImageNet/CIFAR10.
 """
 
 import logging
+
 # from matplotlib import pyplot as plt
 import lib.cloud_management as cloud
 import lib.transforms as transforms
@@ -111,10 +112,10 @@ def overlap_mip():
             else:
                 if location == 'numpy/axial':
                     cropped_arr = transforms.crop_overlap_axial(input_arr,
-                                                               location)
+                                                                location)
                 else:
                     cropped_arr = transforms.crop_overlap_coronal(input_arr,
-                                                                 location)
+                                                                  location)
             not_extreme_arr = transforms.segment_vessels(cropped_arr)
             logging.info(f'removed array extremes')
             mip_arr = transforms.mip_overlap(not_extreme_arr)
