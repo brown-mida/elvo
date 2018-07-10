@@ -209,8 +209,6 @@ def create_labels(annotations_df: pd.DataFrame):
                                 label_dict[file_id + str(h)] = 0
                         h += 1
 
-                print(label_dict)
-
         # else it's elvo negative
         else:
             h = 0
@@ -229,7 +227,6 @@ def create_labels(annotations_df: pd.DataFrame):
 
                         h += 1
 
-    print(label_dict)
     # convert the labels to a df
     labels_df = pd.DataFrame.from_dict(label_dict, orient='index', columns=['label'])
     print(labels_df)
