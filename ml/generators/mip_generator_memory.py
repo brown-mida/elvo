@@ -20,7 +20,8 @@ class MipGenerator(object):
                  validation=False,
                  test=False, split_test=False,
                  split=0.2, extend_dims=True,
-                 augment_data=True):
+                 augment_data=True,
+                 img_gen=None):
         self.data_loc = data_loc
         self.dims = dims
         self.batch_size = batch_size
@@ -28,13 +29,16 @@ class MipGenerator(object):
         self.augment_data = augment_data
         self.validation = validation
 
-        self.datagen = ImageDataGenerator(
-            rotation_range=15,
-            width_shift_range=0.1,
-            height_shift_range=0.1,
-            zoom_range=[1.0, 1.1],
-            horizontal_flip=True,
-        )
+        if img_gen == None:
+            self.datagen = ImageDataGenerator(
+                rotation_range=15,
+                width_shift_range=0.1,
+                height_shift_range=0.1,
+                zoom_range=[1.0, 1.1],
+                horizontal_flip=True
+            )
+        else:
+            self.datagen = img_gen
 
         # Access Google Cloud Storage
         gcs_client = storage.Client.from_service_account_json(
@@ -62,8 +66,8 @@ class MipGenerator(object):
                     "img": img
                 })
 
-                if self.augment_data and not self.validation:
-                    self.__add_augmented(files, file, img)
+                # if self.augment_data and not self.validation:
+                #    self.__add_augmented(files, file, img)
 
 
         # Get label data from Google Cloud Storage
@@ -76,17 +80,21 @@ class MipGenerator(object):
                 if row[0] != 'patient_id':
                     label_data[row[0]] = int(row[1])
 
-        labels = np.zeros(len(files))
+        labels = []
+        tmp = []
         for i, file in enumerate(files):
             filename = file['name']
             filename = filename.split('_')[0]
             filename = filename.split('.')[0]
-            labels[i] = label_data[filename]
+            if filename in label_data.keys():
+                labels.append(label_data[filename])
+                tmp.append(file)
+        files = tmp
 
         # Take into account shuffling
         if shuffle:
             tmp = list(zip(files, labels))
-            random.Random(93749284).shuffle(tmp)
+            random.Random(92382491).shuffle(tmp)
             files, labels = zip(*tmp)
             labels = np.array(labels)
 

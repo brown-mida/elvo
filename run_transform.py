@@ -24,17 +24,20 @@ def get_transform(data_loc, dest_loc):
 
 
 def transform_image(image):
-    image = np.moveaxis(image, 0, -1)
+    # image = np.moveaxis(image, 0, -1)
 
     # Set bounds
-    image[image < -40] = -40
-    image[image > 400] = 400
+    image[image != -50] = 1
+    image[image == -50] = 0
+
+    # Normalize
+    # image = (image - image.mean()) / image.std()
 
     # Interpolate axis
-    dims = np.shape(image)
-    image = zoom(image, (220 / dims[0],
-                         220 / dims[1],
-                         1))
+    # dims = np.shape(image)
+    # image = zoom(image, (220 / dims[0],
+    #                      220 / dims[1],
+    #                      1))
     return image
 
-get_transform('data/mip_axial', 'data/mip_transform')
+get_transform('data/vessel_0', 'data/vessel_0_transform')
