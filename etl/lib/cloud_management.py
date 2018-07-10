@@ -63,3 +63,17 @@ def save_stripped_npy(arr: np.ndarray, patient_id: str, view: str):
         print('success')
     except Exception as e:
         logging.error(f'for patient ID: {patient_id} {e}')
+
+def save_roi_npy(arr: np.ndarray, id: str, type: str, view: str):
+    """Uploads ROI-cropped .npy files to gs://elvos/roi_data/{view}
+        /{perspective}/<patient
+        id>_mip.npy
+    """
+    try:
+        perspective = type.split('/')[1]
+        print(f'gs://elvos/roi_data/{view}/{perspective}/{id}.npy')
+        np.save(file_io.FileIO(f'gs://elvos/roi_data/{view}/{perspective}/'
+                               f'{id}.npy',
+                               'w'), arr)
+    except Exception as e:
+        logging.error(f'for patient ID: {id} {e}')
