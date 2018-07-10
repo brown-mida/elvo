@@ -119,7 +119,7 @@ def create_chunks(annotations_df: pd.DataFrame):
 
 
 def create_labels():
-    annotations_df = pd.read_csv('/Users/haltriedman/Desktop/annotations.csv')
+    annotations_df = pd.read_csv('/home/harold_triedman/elvo-analysis/annotations.csv')
     annotations_df = annotations_df.drop(['created_by',
                                           'created_at',
                                           'ROI Link',
