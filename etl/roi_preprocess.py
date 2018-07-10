@@ -190,7 +190,6 @@ def create_labels(annotations_df: pd.DataFrame):
                         if i == int(roi_df['blue1'].iloc[0]) \
                                 and j == int(roi_df['green1'].iloc[0]) \
                                 and k == int(roi_df['red1'].iloc[0]):
-                            print('hi')
                             elvo_chunk = True
 
                         # copy the chunk
@@ -201,7 +200,6 @@ def create_labels(annotations_df: pd.DataFrame):
                         if (airspace[0].size / chunk.size) < 0.9:
                             # if it's the positive chunk, set the label to 1
                             if elvo_chunk:
-                                print('setting label and saving')
                                 label_dict[file_id + str(h)] = 1
 
                             # else set the label to 0
