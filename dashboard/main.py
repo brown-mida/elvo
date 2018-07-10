@@ -20,11 +20,6 @@ app = flask.Flask(__name__)
 
 client = storage.Client(project='elvo-198322')
 bucket = client.bucket('elvos')
-# TODO: We can't import from the parent dir on the deployed version
-# gcs_client = storage.Client.from_service_account_json(
-#     '../credentials/client_secret.json'
-# )
-# bucket = gcs_client.get_bucket('elvos')
 
 cache = {}
 
@@ -96,8 +91,8 @@ def roi():
         scope
     )
     spread_client = gspread.authorize(credentials)
-    worksheet = spread_client.open_by_key(
-        '1_j7mq_VypBxYRWA5Y7ef4mxXqU0EmBKDl0lkp62SsXA').worksheet('annotations')
+    key = '1_j7mq_VypBxYRWA5Y7ef4mxXqU0EmBKDl0lkp62SsXA'
+    worksheet = spread_client.open_by_key(key).worksheet('annotations')
     worksheet.append_row(values)
     logging.info(f'added to spreadsheet: {values}')
     return str('<DATABASE_ID>')
