@@ -65,22 +65,22 @@ def create_chunks(annotations_df: pd.DataFrame):
                         airspace = np.where(chunk < -300)
                         # if the chunk is more than 90% airspace
                         if (airspace[0].size / chunk.size) < 0.9:
-                            cloud.save_chunks_to_cloud(np.asarray(chunk),
-                                                       'normal',
-                                                       file_id + str(h))
+                            # cloud.save_chunks_to_cloud(np.asarray(chunk),
+                            #                            'normal',
+                            #                            file_id + str(h))
 
-                            # # if it's the positive chunk, set the label to
-                            # #   1 and save
-                            # if elvo_chunk:
-                            #     cloud.save_chunks_to_cloud(np.asarray(chunk),
-                            #                                'normal/positive',
-                            #                                file_id + str(h))
-                            #
-                            # # else set the label to 0 and save
-                            # else:
-                            #     cloud.save_chunks_to_cloud(np.asarray(chunk),
-                            #                                'normal/negative',
-                            #                                file_id + str(h))
+                            # if it's the positive chunk, set the label to
+                            #   1 and save
+                            if elvo_chunk:
+                                cloud.save_chunks_to_cloud(np.asarray(chunk),
+                                                           'normal/positive',
+                                                           file_id + str(h))
+
+                            # else set the label to 0 and save
+                            else:
+                                cloud.save_chunks_to_cloud(np.asarray(chunk),
+                                                           'normal/negative',
+                                                           file_id + str(h))
 
                         # # do the same thing with stripped array
                         # stripped_chunk = stripped[i:(i + 32), j:(j + 32), k:(k + 32)]
@@ -123,13 +123,13 @@ def create_chunks(annotations_df: pd.DataFrame):
                         airspace = np.where(chunk < -300)
                         # if it's less than 90% airspace
                         if (airspace[0].size / chunk.size) < 0.9:
-                            cloud.save_chunks_to_cloud(np.asarray(chunk),
-                                                       'normal',
-                                                       file_id + str(h))
-                            # # save the label as 0 and save it to the cloud
                             # cloud.save_chunks_to_cloud(np.asarray(chunk),
-                            #                            'normal/negative',
+                            #                            'normal',
                             #                            file_id + str(h))
+                            # # save the label as 0 and save it to the cloud
+                            cloud.save_chunks_to_cloud(np.asarray(chunk),
+                                                       'normal/negative',
+                                                       file_id + str(h))
 
                         # # do the same thing for stripped
                         # stripped_chunk = \
