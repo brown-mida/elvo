@@ -3,6 +3,7 @@ import io
 from tensorflow.python.lib.io import file_io
 # import imageio
 import numpy as np
+import pandas as pd
 from google.cloud import storage
 
 
@@ -75,5 +76,14 @@ def save_roi_npy(arr: np.ndarray, id: str, type: str, view: str):
         np.save(file_io.FileIO(f'gs://elvos/roi_data/{view}/{perspective}/'
                                f'{id}.npy',
                                'w'), arr)
+    except Exception as e:
+        logging.error(f'for patient ID: {id} {e}')
+
+def save_chunks_to_cloud(arr: np.ndarray, type: str, id: str):
+    """Uploads MIP .npy files to gs://elvos/chunk_data/<patient_id>.npy
+    """
+    try:
+        print(f'gs://elvos/chunk_data/{type}/{id}.npy')
+        np.save(file_io.FileIO(f'gs://elvos/chunk_data/{type}/{id}.npy', 'w'), arr)
     except Exception as e:
         logging.error(f'for patient ID: {id} {e}')
