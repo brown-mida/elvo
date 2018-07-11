@@ -200,7 +200,6 @@ def full_multiclass_report(model: keras.models.Model,
     y_proba = model.predict(x, batch_size=batch_size)
     assert y_true.shape == y_proba.shape
 
-    max_class = len(y_true[0]) - 1
     if y_proba.shape[-1] == 1:
         y_pred = (y_proba > 0.5).astype('int32')
     else:
@@ -215,13 +214,18 @@ def full_multiclass_report(model: keras.models.Model,
     comment += '\n'
 
     # Assuming max_class is the negative label
-    y_true_binary = y_true == max_class
-    y_pred_binary = y_pred == max_class
+    y_true_binary = y_true > 0
+    y_pred_binary = y_pred > 0
     score = sklearn.metrics.roc_auc_score(y_true_binary,
                                           y_pred_binary)
+
+    save_misclassification_plots(x,
+                                 y_true_binary,
+                                 y_pred_binary)
+
     comment += f'AUC: {score}\n'
 
-    comment += f'Assuming {max_class} is the negative label'
+    comment += f'Assuming {0} is the negative label'
     comment += '\n\n'
 
     comment += "Classification Report\n"
@@ -231,7 +235,6 @@ def full_multiclass_report(model: keras.models.Model,
     comment += '\n'
     comment += str(cnf_matrix)
     save_confusion_matrix(cnf_matrix, classes=classes)
-
     return comment
 
 
@@ -298,18 +301,10 @@ def slack_report(x_train: np.ndarray,
                                     [0, 1],
                                     batch_size=params['model']['batch_size'])
     upload_to_slack('/tmp/cm.png', report, token)
-
-    # TODO (#76): Refactor shape issues
-    y_pred = model.predict(x_valid_standardized)
-
-    if y_valid.shape[-1] >= 2:
-        y_valid = y_valid.argmax(axis=1)
-        y_pred = y_pred.argmax(axis=1)
-
-    save_misclassification_plot(x_valid,
-                                y_valid,
-                                y_pred)
-    upload_to_slack('/tmp/misclassify.png', 'testaloha', token)
+    upload_to_slack('/tmp/false_positives.png', 'false positives', token)
+    upload_to_slack('/tmp/false_negatives.png', 'false negatives', token)
+    upload_to_slack('/tmp/true_positives.png', 'true positives', token)
+    upload_to_slack('/tmp/true_negatives.png', 'true negatives', token)
 
 
 def plot_images(data: typing.Dict[str, np.ndarray],
@@ -346,11 +341,48 @@ def plot_images(data: typing.Dict[str, np.ndarray],
     plt.plot()
 
 
-def save_misclassification_plot(x_valid,
-                                y_valid,
-                                y_pred):
-    plot_misclassification(x_valid, y_valid, y_pred)
-    plt.savefig('/tmp/misclassify.png')
+def save_misclassification_plots(x_valid,
+                                 y_true,
+                                 y_pred):
+    """Saves true positive and false negative plots.
+
+    The y inputs must be binary and 1 dimensional.
+    """
+    assert len(x_valid) == len(y_true)
+    if y_true.max() > 1 or y_pred.max() > 1:
+        raise ValueError('y_true/y_pred should be binary 0/1')
+
+    fn = np.logical_and(y_true == 1, y_pred == 0)
+
+    x_fn = np.array([x_valid[i] for i, truth in enumerate(fn)
+                     if truth])
+    plot_misclassification(x_fn,
+                           y_true[fn],
+                           y_pred[fn])
+    plt.savefig('/tmp/false_negatives.png')
+    fp = np.logical_and(y_true == 0, y_pred == 1)
+    x_fp = np.array([x_valid[i] for i, truth in enumerate(fp)
+                     if truth])
+    plot_misclassification(x_fp,
+                           y_true[fp],
+                           y_pred[fp])
+    plt.savefig('/tmp/false_positives.png')
+
+    tp = np.logical_and(y_true == 1, y_pred == 1)
+    x_tp = np.array([x_valid[i] for i, truth in enumerate(tp)
+                     if truth])
+    plot_misclassification(x_tp,
+                           y_true[tp],
+                           y_pred[tp])
+    plt.savefig('/tmp/true_positives.png')
+
+    tn = np.logical_and(y_true == 0, y_pred == 0)
+    x_tn = np.array([x_valid[i] for i, truth in enumerate(tn)
+                     if truth])
+    plot_misclassification(x_tn,
+                           y_true[tn],
+                           y_pred[tn])
+    plt.savefig('/tmp/true_negatives.png')
 
 
 def plot_misclassification(x,

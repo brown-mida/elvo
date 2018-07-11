@@ -1,14 +1,13 @@
+import os
+
 import keras
 import numpy as np
-import os
 import pandas as pd
 import pytest
 
 import bluenot
-import config
 import generators.luke
 import models.luke
-import utils
 
 
 def test_to_arrays():
@@ -108,7 +107,7 @@ def test_prepare_data_correct_dims():
 
 @pytest.mark.skipif(os.uname().nodename != 'gpu1708',
                     reason='Test uses data only on gpu1708')
-def test_prepare_and_upload():
+def test_prepare_and_job():
     params = {
         'data': {
             # A directory containing a list of numpy files with
@@ -129,7 +128,7 @@ def test_prepare_and_upload():
 
         'model': {
             # The callable must take in **kwargs as an argument
-            'model_callable': models.luke.inception_resnet,
+            'model_callable': models.luke.resnet,
             'dropout_rate1': 0.8,
             'dropout_rate2': 0.7,
             'batch_size': 8,
@@ -139,7 +138,9 @@ def test_prepare_and_upload():
         },
     }
     x_train, x_valid, y_train, y_valid = bluenot.prepare_data(params)
-    y_pred = y_valid
-    utils.save_misclassification_plot(x_valid, y_valid, y_pred)
-    utils.upload_to_slack('/tmp/misclassify.png', '',
-                          config.SLACK_TOKEN)
+    bluenot.start_job(x_train,
+                      y_train,
+                      x_valid,
+                      y_valid,
+                      name='test_prepare_and_job',
+                      params=params)

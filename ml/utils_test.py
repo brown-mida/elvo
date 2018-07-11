@@ -66,25 +66,37 @@ def test_full_multiclass_report_multiclass():
 
 @pytest.mark.skipif(os.uname().nodename != 'gpu1708',
                     reason='Test uses token only on gpu1708')
-def test_save_misclassification_plot():
+def test_save_misclassification_plots():
     os.environ['CUDA_VISIBLE_DEVICES'] = ''
     model = keras.Sequential([
         keras.layers.Flatten(input_shape=(224, 224, 3)),
         keras.layers.Dense(3, activation='softmax'),
     ])
-    X = np.random.rand(10, 224, 224, 3)
-    y = np.random.randint(0, 3, size=(10,))
+    X = np.random.rand(50, 224, 224, 3)
+    y = np.random.randint(0, 3, size=(50,))
     y = sklearn.preprocessing.label_binarize(y, [0, 1, 2])
     y_pred = model.predict(X)
-    print(y, y_pred)
+
     y_valid = y.argmax(axis=1)
+    y_valid_binary = y_valid > 0
     y_pred = y_pred.argmax(axis=1)
+    y_pred_binary = y_pred > 0
+
     print('starting save')
-    utils.save_misclassification_plot(X,
-                                      y_valid,
-                                      y_pred)
-    utils.upload_to_slack('/tmp/misclassify.png',
-                          'testaloha',
+    utils.save_misclassification_plots(X,
+                                       y_valid_binary,
+                                       y_pred_binary)
+    utils.upload_to_slack('/tmp/false_positives.png',
+                          'false positives',
+                          config.SLACK_TOKEN)
+    utils.upload_to_slack('/tmp/false_negatives.png',
+                          'false negatives',
+                          config.SLACK_TOKEN)
+    utils.upload_to_slack('/tmp/true_positives.png',
+                          'true positives',
+                          config.SLACK_TOKEN)
+    utils.upload_to_slack('/tmp/true_negatives.png',
+                          'true negatives',
                           config.SLACK_TOKEN)
 
 
