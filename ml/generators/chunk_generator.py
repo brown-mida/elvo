@@ -28,11 +28,6 @@ class ChunkGenerator(object):
             zoom_range=[1.0, 1.1],
         )
 
-        # Delete all content in tmp/npy/
-        # filelist = [f for f in os.listdir('tmp/npy')]
-        # for f in filelist:
-        #     os.remove(os.path.join('tmp/npy', f))
-
         # Access Google Cloud Storage
         gcs_client = storage.Client.from_service_account_json(
             'credentials/client_secret.json'
