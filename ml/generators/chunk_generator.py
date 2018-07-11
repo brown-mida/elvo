@@ -52,7 +52,7 @@ class ChunkGenerator(object):
         # Get 8000 random negatives from the label data to feed into our generator
         negative_counter = 0
         negative_label_data = {}
-        while negative_counter < 8000:
+        while negative_counter < 12096:
             id_, label = random.choice(list(prelim_label_data.items()))
             if label == 0:
                 negative_label_data[id_] = label
