@@ -12,6 +12,7 @@ import requests
 import sklearn.metrics
 from keras import backend as K
 
+# TODO(#66): Reference config only in bluenot
 import config
 
 matplotlib.use('Agg')  # noqa: E402
@@ -60,7 +61,7 @@ def create_callbacks(x_train: np.ndarray, y_train: np.ndarray,
     Instantiates a list of callbacks:
     - AUC
     - Early stopping
-    - TODO: model checkpoint
+    - TODO(#71): model checkpoint
 
     :param normalize:
     :param x_train:
@@ -86,7 +87,7 @@ def create_callbacks(x_train: np.ndarray, y_train: np.ndarray,
         x_valid_standardized = x_valid
 
     if y_valid.ndim == 1:
-        # TODO: ROC for softmax
+        # TODO(#72): ROC for softmax
         callbacks.append(AucCallback(x_valid_standardized, y_valid))
 
     return callbacks
@@ -121,7 +122,7 @@ def save_history(history: keras.callbacks.History):
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
     plt.legend()
-    # TODO: Refactor so it's testable and no hard coded path
+    # TODO(#73): Refactor so it's testable and no hard coded path
     plt.savefig('/tmp/loss.png')
 
     plt.figure()
@@ -138,7 +139,7 @@ def save_history(history: keras.callbacks.History):
     plt.xlabel('Epochs')
     plt.ylabel('Accuracy')
     plt.legend()
-    # TODO: Refactor so it's testable and no hard coded path
+    # TODO(#73): Refactor so it's testable and no hard coded path
     plt.savefig('/tmp/acc.png')
 
 

@@ -1,3 +1,5 @@
+import typing
+
 import numpy as np
 from keras.preprocessing.image import ImageDataGenerator
 
@@ -7,7 +9,8 @@ def standard_generators(x_train: np.ndarray,
                         x_valid: np.ndarray,
                         y_valid: np.ndarray,
                         rotation_range: float,
-                        batch_size: int):
+                        batch_size: int,
+                        zoom_range: typing.List[int] = [1.0, 1.0]):
     """
     Creates a standard training and validation generator
     from the input data.
@@ -25,6 +28,8 @@ def standard_generators(x_train: np.ndarray,
                                        rotation_range=rotation_range,
                                        width_shift_range=0.1,
                                        height_shift_range=0.1,
+                                       # TODO(#63): As config paramaters
+                                       zoom_range=zoom_range,
                                        horizontal_flip=True)
     valid_datagen = ImageDataGenerator(featurewise_center=True,
                                        featurewise_std_normalization=True)

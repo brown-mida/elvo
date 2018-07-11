@@ -24,25 +24,6 @@ The script assumes that:
 - you have ssh access to one of our configured cloud GPU
 - you are able to get processed data onto that computer
 - you are familiar with Python and the terminal
-
-# TODO: Better model evaluation:
-- more plots generation (PR curve, t-SNE, etc.)
-
-# TODO: Incorporate preprocessing
-- hyperparameter optimization on crop, etc.
-
-
-TODO: from Michelangelo:
-Who trained the model
-Start and end time of the training job
-Full model configuration (features used, hyper-parameter values, etc.)
-Reference to training and test data sets
-Distribution and relative importance of each feature
-Model accuracy metrics
-Standard charts and graphs for each model type
-(e.g. ROC curve, PR curve, and confusion matrix for a binary classifier)
-Full learned parameters of the model
-Summary statistics for model visualization
 """
 import argparse
 import contextlib
@@ -122,7 +103,7 @@ def prepare_data(params: dict) -> typing.Tuple[np.ndarray,
     if isinstance(params['model']['loss'], str):
         raise ValueError('Only loss functions are supported')
     if params['model']['loss'] != keras.losses.binary_crossentropy:
-        # TODO: Move/refactor hacky code below
+        # TODO(#77): Move/refactor hacky code below to bluenot.py
         def categorize(label):
             if any([x in label.lower() for x in ['m1', 'm2', 'm3', 'mca']]):
                 return 0  # mca
@@ -161,7 +142,7 @@ def start_job(x_train: np.ndarray, y_train: np.ndarray, x_valid: np.ndarray,
 
     Uploads a report to Slack at the end
     """
-    # TODO: Clean up conditionals (put them where it makes sense)
+    # TODO(#76): Clean up conditionals (put them where it makes sense)
     if y_train.ndim == 1:
         num_classes = 1
     else:
@@ -227,7 +208,7 @@ def start_job(x_train: np.ndarray, y_train: np.ndarray, x_valid: np.ndarray,
                        model, history,
                        name, params)
 
-    # TODO: Turn into a function
+    # TODO (#76): Refactor shape issues
     x_valid_standardized = x_valid
     y_pred = model.predict(x_valid_standardized)
 
@@ -254,20 +235,11 @@ def hyperoptimize(hyperparams: dict) -> None:
 
     gpu_index = 0
 
+    # TODO (#62): Offset is hacky find a better long-term solution
+    gpu_offset = 0 if NAME == 'sumera' else 1
     processes = []
     for params in param_list:
         x_train, x_valid, y_train, y_valid = prepare_data(params)
-
-        # TODO: Generalize to work with multi-label
-        # logging.debug(f'training positives: {y_train.sum()}')
-        # logging.debug(f'training negatives:'
-        #               f' {len(y_train) - y_train.sum()}')
-        # logging.debug(f'validation positives:'
-        #               f' {y_valid.sum()}')
-        # logging.debug(f'validation negatives:'
-        #               f' {len(y_valid) - y_valid.sum()}')
-        # logging.debug(f'x_train mean: {x_train.mean()}')
-        # logging.debug(f'x_train std: {x_train.std()}')
 
         # Start the model training job
         # Run in a separate process to avoid memory issues

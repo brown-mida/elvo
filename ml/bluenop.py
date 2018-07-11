@@ -76,7 +76,7 @@ def clean_data(arrays: typing.Dict[str, np.ndarray],
 def filter_data(arrays: typing.Dict[str, np.ndarray],
                 labels: pd.DataFrame,
                 variant: str):
-    # TODO: Replace variant with parameters
+    # TODO(#64): Replace variant with parameters
     print(f'Using filter variant {variant}')
     if variant == 'simple':
         filtered_arrays = {id_: arr for id_, arr in arrays.items()
@@ -174,7 +174,7 @@ def distance_intensity_projection():
 
 def process_array(arr: np.ndarray,
                   preconfig: str):
-    # TODO: Replace preconfig with parameters
+    # TODO(#64): Replace preconfig with parameters
     if preconfig == 'standard-crop-mip':
         arr = crop(arr,
                    (75, 200, 200),
@@ -217,7 +217,7 @@ def process_array(arr: np.ndarray,
         assert arr.shape == (200, 200, 3)
         return arr
 
-    # TODO: Optimize height offset, MIP thickness,
+    # TODO(#65): Optimize height offset, MIP thickness,
     # MIP overlap, (M)IP variations, bounding values, input shape
     # Save different configs as different if-statement blocks.
 
