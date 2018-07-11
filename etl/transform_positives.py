@@ -5,11 +5,10 @@ storage folder "positives + augmentation."
 """
 
 import logging
-from matplotlib import pyplot as plt
+# from matplotlib import pyplot as plt
 from lib import transforms, cloud_management as cloud
-import random
 import numpy as np
-import pandas as pd
+# import pandas as pd
 import itertools
 
 def configure_logger():
