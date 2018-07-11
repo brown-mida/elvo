@@ -280,6 +280,20 @@ def slack_report(x_train: np.ndarray,
                                     [0, 1],
                                     batch_size=params['model']['batch_size'],
                                     binary=binary)
+    upload_to_slack('/tmp/cm.png', report)
+
+    # TODO (#76): Refactor shape issues
+    y_pred = model.predict(x_valid_standardized)
+
+    if y_valid.shape[-1] >= 2:
+        y_valid = y_valid.argmax(axis=1)
+        y_pred = y_pred.argmax(axis=1)
+
+    save_misclassification_plot(x_valid,
+                                y_valid,
+                                y_pred)
+    upload_to_slack('/tmp/misclassify.png', 'testaloha',
+                    token=config.SLACK_TOKEN)
 
 
 def plot_images(data: typing.Dict[str, np.ndarray],

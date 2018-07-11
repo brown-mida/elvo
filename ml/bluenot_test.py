@@ -103,8 +103,7 @@ def test_prepare_data_no_err():
     bluenot.prepare_data(params)
 
 
-def test_prepare_upload():
-    name = 'test_job_real_data'
+def test_prepare_and_upload():
     params = {
         'data': {
             # A directory containing a list of numpy files with
