@@ -44,6 +44,16 @@ import utils
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
 import keras  # noqa: E402
 
+# TODO(#62): Refactor this
+if 'LUKE' in os.environ:
+    import config_luke as config
+
+    NAME = 'sumera'
+else:
+    import config
+
+    NAME = 'luke'
+
 
 def load_arrays(data_dir: str) -> typing.Dict[str, np.ndarray]:
     data_dict = {}

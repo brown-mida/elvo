@@ -106,6 +106,8 @@ def test_prepare_data_correct_dims():
     assert y_test.ndim == 2
 
 
+@pytest.mark.skipif(os.uname().nodename != 'gpu1708',
+                    reason='Test uses data only on gpu1708')
 def test_prepare_and_upload():
     params = {
         'data': {

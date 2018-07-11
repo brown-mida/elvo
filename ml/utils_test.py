@@ -9,6 +9,8 @@ import models.luke
 import utils
 
 
+@pytest.mark.skipif(os.uname().nodename != 'gpu1708',
+                    reason='Test uses token only on gpu1708')
 def test_upload_to_slack():
     with open('test_upload_to_slack.png', 'w') as f:
         f.write('hello!')
@@ -33,7 +35,7 @@ def test_full_multiclass_report_binary():
     model = models.luke.inception(num_classes=1)
 
     X = np.random.rand(500, 224, 224, 3)
-    y = np.random.randint(0, 2, size=(500,))
+    y = np.random.randint(0, 2, size=(500, 1))
 
     utils.full_multiclass_report(model,
                                  X,
@@ -58,6 +60,8 @@ def test_full_multiclass_report_multiclass():
                                  binary=False)
 
 
+@pytest.mark.skipif(os.uname().nodename != 'gpu1708',
+                    reason='Test uses token only on gpu1708')
 def test_save_misclassification_plot():
     os.environ['CUDA_VISIBLE_DEVICES'] = ''
     model = keras.Sequential([
