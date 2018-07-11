@@ -1,7 +1,6 @@
 """Custom metrics, callbacks, and plots.
 """
 import itertools
-import logging
 import typing
 
 import keras
@@ -83,9 +82,7 @@ def create_callbacks(x_train: np.ndarray, y_train: np.ndarray,
     else:
         x_valid_standardized = x_valid
 
-    if y_valid.ndim == 1:
-        # TODO(#72): ROC for softmax
-        callbacks.append(AucCallback(x_valid_standardized, y_valid))
+    callbacks.append(AucCallback(x_valid_standardized, y_valid))
 
     return callbacks
 
@@ -181,25 +178,50 @@ def full_multiclass_report(model: keras.models.Model,
                            x,
                            y_true,
                            classes,
-                           batch_size=32,
-                           binary=False):
-    if not binary:
-        y_true = np.argmax(y_true, axis=1)
+                           batch_size=32):
+    """
+    Builds a report containing the following:
+        - accuracy
+        - AUC
+        - classification report
+        - confusion matrix
 
+    The output is the report as a string.
+
+    The report also generates a confusion matrix plot in /tmp/cm.png
+
+    :param model:
+    :param x:
+    :param y_true:
+    :param classes:
+    :param batch_size:
+    :return:
+    """
     y_proba = model.predict(x, batch_size=batch_size)
+    assert y_true.shape == y_proba.shape
 
+    max_class = len(y_true[0]) - 1
     if y_proba.shape[-1] == 1:
-        logging.debug('in multiclass_report, using >0.5 branch')
         y_pred = (y_proba > 0.5).astype('int32')
     else:
-        y_pred = y_proba.argmax(axis=-1)
+        y_pred = y_proba.argmax(axis=1)
+        y_true = y_true.argmax(axis=1)
 
     assert y_pred.shape == y_true.shape, \
         f'y_pred.shape: {y_pred.shape} must equal y_true.shape: {y_true.shape}'
 
-    comment = "Accuracy : " + str(
+    comment = "Accuracy: " + str(
         sklearn.metrics.accuracy_score(y_true, y_pred))
+    comment += '\n'
 
+    # Assuming max_class is the negative label
+    y_true_binary = y_true == max_class
+    y_pred_binary = y_pred == max_class
+    score = sklearn.metrics.roc_auc_score(y_true_binary,
+                                          y_pred_binary)
+    comment += f'AUC: {score}\n'
+
+    comment += f'Assuming {max_class} is the negative label'
     comment += '\n\n'
 
     comment += "Classification Report\n"
@@ -209,6 +231,7 @@ def full_multiclass_report(model: keras.models.Model,
     comment += '\n'
     comment += str(cnf_matrix)
     save_confusion_matrix(cnf_matrix, classes=classes)
+
     return comment
 
 
@@ -269,17 +292,11 @@ def slack_report(x_train: np.ndarray,
                       x_train[:, :, :, 2].std()])
     x_valid_standardized = (x_valid - x_mean) / x_std
 
-    if y_valid.ndim == 1:
-        binary = True
-    else:
-        binary = False
-
     report = full_multiclass_report(model,
                                     x_valid_standardized,
                                     y_valid,
                                     [0, 1],
-                                    batch_size=params['model']['batch_size'],
-                                    binary=binary)
+                                    batch_size=params['model']['batch_size'])
     upload_to_slack('/tmp/cm.png', report, token)
 
     # TODO (#76): Refactor shape issues

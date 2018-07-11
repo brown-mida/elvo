@@ -29,12 +29,12 @@ import contextlib
 import datetime
 import logging
 import multiprocessing
+import os
 import pathlib
 import time
 import typing
 
 import numpy as np
-import os
 import pandas as pd
 import sklearn
 from sklearn import model_selection
@@ -179,11 +179,7 @@ def start_job(x_train: np.ndarray, y_train: np.ndarray, x_valid: np.ndarray,
 
     Uploads a report to Slack at the end
     """
-    # TODO(#76): Clean up conditionals (put them where it makes sense)
-    if y_train.ndim == 1:
-        num_classes = 1
-    else:
-        num_classes = y_train.shape[1]
+    num_classes = y_train.shape[1]
 
     if name is None:
         name = params['data']['data_dir'].split('/')[-3]
@@ -255,6 +251,7 @@ def hyperoptimize(hyperparams: dict) -> None:
     config.py for an example of a hyperparameter dict.
     :return:
     """
+    # TODO (#70)
     param_list = model_selection.ParameterGrid(hyperparams)
 
     gpu_index = 0

@@ -1,11 +1,11 @@
+import os
+
 import keras
 import numpy as np
-import os
 import pytest
 import sklearn.preprocessing
 
 import config
-import models.luke
 import utils
 
 
@@ -32,20 +32,25 @@ def test_specificity():
 
 
 def test_full_multiclass_report_binary():
-    model = models.luke.inception(num_classes=1)
+    model = keras.Sequential([
+        keras.layers.Flatten(input_shape=(224, 224, 3)),
+        keras.layers.Dense(1, activation='softmax'),
+    ])
 
     X = np.random.rand(500, 224, 224, 3)
     y = np.random.randint(0, 2, size=(500, 1))
 
-    utils.full_multiclass_report(model,
-                                 X,
-                                 y,
-                                 classes=[0, 1],
-                                 binary=True)
+    print(utils.full_multiclass_report(model,
+                                       X,
+                                       y,
+                                       classes=[0, 1]))
 
 
 def test_full_multiclass_report_multiclass():
-    model = models.luke.inception(num_classes=3)
+    model = keras.Sequential([
+        keras.layers.Flatten(input_shape=(224, 224, 3)),
+        keras.layers.Dense(3, activation='softmax'),
+    ])
 
     X = np.random.rand(500, 224, 224, 3)
     y = np.random.randint(0, 3, size=(500,))
@@ -53,11 +58,10 @@ def test_full_multiclass_report_multiclass():
 
     assert y.shape == (500, 3)
 
-    utils.full_multiclass_report(model,
-                                 X,
-                                 y,
-                                 classes=[0, 1, 2],
-                                 binary=False)
+    print(utils.full_multiclass_report(model,
+                                       X,
+                                       y,
+                                       classes=[0, 1, 2]))
 
 
 @pytest.mark.skipif(os.uname().nodename != 'gpu1708',
@@ -82,3 +86,16 @@ def test_save_misclassification_plot():
     utils.upload_to_slack('/tmp/misclassify.png',
                           'testaloha',
                           config.SLACK_TOKEN)
+
+
+def test_create_callbacks_one_class():
+    X = np.random.rand(10, 224, 224, 3)
+    y = np.random.randint(0, 1, size=(10, 1))
+    utils.create_callbacks(X, y, X, y, '/tmp/callbacks_test.csv')
+
+
+def test_create_callbacks_three_classes():
+    X = np.random.rand(10, 224, 224, 3)
+    y = np.random.randint(0, 3, size=(10,))
+    y = sklearn.preprocessing.label_binarize(y, [0, 1, 2])
+    utils.create_callbacks(X, y, X, y, '/tmp/callbacks_test.csv')
