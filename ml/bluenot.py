@@ -49,10 +49,19 @@ if 'LUKE' in os.environ:
     import config_luke as config
 
     NAME = 'luke'
+    GPU_OFFSET = -1
+if 'MARY' in os.environ:
+    import config_mary as config
+
+    NAME = 'mary'
+    GPU_OFFSET = 2
 else:
     import config
 
     NAME = 'sumera'
+    GPU_OFFSET = 0
+
+print('User is {}'.format(NAME))
 
 
 def load_arrays(data_dir: str) -> typing.Dict[str, np.ndarray]:
@@ -255,9 +264,6 @@ def hyperoptimize(hyperparams: dict) -> None:
     param_list = model_selection.ParameterGrid(hyperparams)
 
     gpu_index = 0
-
-    # TODO (#62): Offset is hacky find a better long-term solution
-    gpu_offset = 0 if NAME == 'sumera' else 1
     processes = []
     for params in param_list:
         x_train, x_valid, y_train, y_valid = prepare_data(params)
@@ -265,7 +271,7 @@ def hyperoptimize(hyperparams: dict) -> None:
         # Start the model training job
         # Run in a separate process to avoid memory issues
         # Note how this depends on offset
-        os.environ['CUDA_VISIBLE_DEVICES'] = f'{gpu_index + gpu_offset}'
+        os.environ['CUDA_VISIBLE_DEVICES'] = f'{gpu_index + GPU_OFFSET}'
 
         if 'job_fn' in params:
             job_fn = params['job_fn']
