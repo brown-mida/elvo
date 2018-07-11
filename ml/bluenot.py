@@ -48,11 +48,11 @@ import keras  # noqa: E402
 if 'LUKE' in os.environ:
     import config_luke as config
 
-    NAME = 'sumera'
+    NAME = 'luke'
 else:
     import config
 
-    NAME = 'luke'
+    NAME = 'sumera'
 
 
 def load_arrays(data_dir: str) -> typing.Dict[str, np.ndarray]:
@@ -139,9 +139,9 @@ def prepare_data(params: dict) -> typing.Tuple[np.ndarray,
         # TODO(#77): Move/refactor hacky code below to bluenot.py
         def categorize(label):
             if any([x in label.lower() for x in ['m1', 'm2', 'mca']]):
-                return 0  # mca
+                return 2  # mca
             if 'nan' in str(label):
-                return 2
+                return 0
             else:
                 return 1  # other
 
