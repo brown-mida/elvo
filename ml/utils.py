@@ -12,9 +12,6 @@ import requests
 import sklearn.metrics
 from keras import backend as K
 
-# TODO(#66): Reference config only in bluenot
-import config
-
 matplotlib.use('Agg')  # noqa: E402
 from matplotlib import pyplot as plt
 
@@ -215,7 +212,7 @@ def full_multiclass_report(model: keras.models.Model,
     return comment
 
 
-def upload_to_slack(filename, comment, token=config.SLACK_TOKEN):
+def upload_to_slack(filename, comment, token):
     my_file = {
         'file': (filename, open(filename, 'rb'), 'png')
     }
@@ -242,7 +239,8 @@ def slack_report(x_train: np.ndarray,
                  model: keras.models.Model,
                  history: keras.callbacks.History,
                  name: str,
-                 params: dict):
+                 params: dict,
+                 token: str):
     """
     Uploads a loss graph, accuacy, and confusion matrix plots in addition
     to useful data about the model to Slack.
@@ -258,8 +256,10 @@ def slack_report(x_train: np.ndarray,
     :return:
     """
     save_history(history)
-    upload_to_slack('/tmp/loss.png', f'{name}\n\nparams:\n{str(params)}')
-    upload_to_slack('/tmp/acc.png', f'{name}\n\nparams:\n{str(params)}')
+    upload_to_slack('/tmp/loss.png', f'{name}\n\nparams:\n{str(params)}',
+                    token)
+    upload_to_slack('/tmp/acc.png', f'{name}\n\nparams:\n{str(params)}',
+                    token)
 
     x_mean = np.array([x_train[:, :, :, 0].mean(),
                        x_train[:, :, :, 1].mean(),
@@ -280,7 +280,7 @@ def slack_report(x_train: np.ndarray,
                                     [0, 1],
                                     batch_size=params['model']['batch_size'],
                                     binary=binary)
-    upload_to_slack('/tmp/cm.png', report)
+    upload_to_slack('/tmp/cm.png', report, token)
 
     # TODO (#76): Refactor shape issues
     y_pred = model.predict(x_valid_standardized)
@@ -292,8 +292,7 @@ def slack_report(x_train: np.ndarray,
     save_misclassification_plot(x_valid,
                                 y_valid,
                                 y_pred)
-    upload_to_slack('/tmp/misclassify.png', 'testaloha',
-                    token=config.SLACK_TOKEN)
+    upload_to_slack('/tmp/misclassify.png', 'testaloha', token)
 
 
 def plot_images(data: typing.Dict[str, np.ndarray],

@@ -5,6 +5,7 @@ import pandas as pd
 import pytest
 
 import bluenot
+import config
 import generators.luke
 import models.luke
 import utils
@@ -136,4 +137,5 @@ def test_prepare_and_upload():
     x_train, x_valid, y_train, y_valid = bluenot.prepare_data(params)
     y_pred = y_valid
     utils.save_misclassification_plot(x_valid, y_valid, y_pred)
-    utils.upload_to_slack('/tmp/misclassify.png', '')
+    utils.upload_to_slack('/tmp/misclassify.png', '',
+                          config.SLACK_TOKEN)

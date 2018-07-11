@@ -4,6 +4,7 @@ import os
 import pytest
 import sklearn.preprocessing
 
+import config
 import models.luke
 import utils
 
@@ -11,7 +12,9 @@ import utils
 def test_upload_to_slack():
     with open('test_upload_to_slack.png', 'w') as f:
         f.write('hello!')
-    r = utils.upload_to_slack('test_upload_to_slack.png', 'just testing you')
+    r = utils.upload_to_slack('test_upload_to_slack.png',
+                              'just testing you',
+                              config.SLACK_TOKEN)
     assert r.status_code == 200
 
 
@@ -73,4 +76,5 @@ def test_save_misclassification_plot():
                                       y_valid,
                                       y_pred)
     utils.upload_to_slack('/tmp/misclassify.png',
-                          'testaloha')
+                          'testaloha',
+                          config.SLACK_TOKEN)

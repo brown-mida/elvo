@@ -206,7 +206,8 @@ def start_job(x_train: np.ndarray, y_train: np.ndarray, x_valid: np.ndarray,
     utils.slack_report(x_train, y_train,
                        x_valid, y_valid,
                        model, history,
-                       name, params)
+                       name, params,
+                       config.SLACK_TOKEN)
 
 
 def hyperoptimize(hyperparams: dict) -> None:
