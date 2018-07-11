@@ -71,7 +71,7 @@ def test_start_job_no_err():
 
 @pytest.mark.skipif(os.uname().nodename != 'gpu1708',
                     reason='Test uses data only on gpu1708')
-def test_prepare_data_no_err():
+def test_prepare_data_correct_dims():
     params = {
         'data': {
             # A directory containing a list of numpy files with
@@ -82,7 +82,7 @@ def test_prepare_data_no_err():
             'labels_path': '/home/lzhu7/elvo-analysis/data/'
                            'processed-standard/labels.csv',
             'index_col': 'Anon ID',
-            'label_col': 'Location of occlusions on CTA (Matt verified)',
+            'label_col': 'occlusion_exists',
         },
 
         'seed': 0,
@@ -98,10 +98,12 @@ def test_prepare_data_no_err():
             'batch_size': 8,
             'rotation_range': 20,  # , 30],
             'optimizer': keras.optimizers.Adam(lr=1e-4),
-            'loss': keras.losses.categorical_crossentropy,
+            'loss': keras.losses.binary_crossentropy,
         },
     }
-    bluenot.prepare_data(params)
+    _, _, y_train, y_test = bluenot.prepare_data(params)
+    assert y_train.ndim == 2
+    assert y_test.ndim == 2
 
 
 def test_prepare_and_upload():

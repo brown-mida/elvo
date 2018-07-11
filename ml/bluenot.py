@@ -25,7 +25,6 @@ The script assumes that:
 - you are able to get processed data onto that computer
 - you are familiar with Python and the terminal
 """
-import argparse
 import contextlib
 import datetime
 import logging
@@ -89,6 +88,23 @@ def prepare_data(params: dict) -> typing.Tuple[np.ndarray,
                                                np.ndarray,
                                                np.ndarray,
                                                np.ndarray]:
+    """
+    Prepares the data referenced in params for ML. This includes
+    shuffling and expanding dims.
+
+    :param params: a hyperparameter dictionary containing the following
+        attributes:
+            - data
+                - data_dir
+                - index_col
+                - label_col
+                - labels_path
+            - model
+                - loss
+            - seed
+            - val_split
+    :return: x_train, x_valid, y_train, y_valid
+    """
     logging.info(f'using params:\n{params}')
     # Load the arrays and labels
     data_params = params['data']
@@ -99,13 +115,20 @@ def prepare_data(params: dict) -> typing.Tuple[np.ndarray,
                                index_col=index_col)[label_col]
     # Convert to split numpy arrays
     x, y = to_arrays(array_dict, label_series)
+
     # Match dimensions of the labels to the model
     if isinstance(params['model']['loss'], str):
-        raise ValueError('Only loss functions are supported')
-    if params['model']['loss'] != keras.losses.binary_crossentropy:
+        raise ValueError('Only loss functions, not strings are supported')
+
+    if params['model']['loss'] == keras.losses.binary_crossentropy:
+        # We need y to have 2 dimensions for the rest of the model
+        if y.ndim == 1:
+            y = np.expand_dims(y, axis=1)
+
+    elif params['model']['loss'] == keras.losses.categorical_crossentropy:
         # TODO(#77): Move/refactor hacky code below to bluenot.py
         def categorize(label):
-            if any([x in label.lower() for x in ['m1', 'm2', 'm3', 'mca']]):
+            if any([x in label.lower() for x in ['m1', 'm2', 'mca']]):
                 return 0  # mca
             if 'nan' in str(label):
                 return 2
@@ -124,9 +147,13 @@ def prepare_data(params: dict) -> typing.Tuple[np.ndarray,
         y = y.reshape(-1, 1)
         one_hot = sklearn.preprocessing.OneHotEncoder(sparse=False)
         y: np.ndarray = one_hot.fit_transform(y)
+
+    assert y.ndim == 2
+
     logging.debug(f'x shape: {x.shape}')
     logging.debug(f'y shape: {y.shape}')
     logging.info(f'seeding to {params["seed"]} before shuffling')
+
     x_train, x_valid, y_train, y_valid = \
         model_selection.train_test_split(
             x, y,
