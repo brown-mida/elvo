@@ -1,21 +1,18 @@
 import os
 import csv
-import random
 import numpy as np
-from scipy.ndimage.interpolation import zoom
+import random
 from keras.preprocessing.image import ImageDataGenerator
-
 from google.cloud import storage
-from lib import transforms
 
 BLACKLIST = []
 
 
 class ChunkGenerator(object):
-
     def __init__(self, dims=(32, 32, 32), batch_size=16,
                  shuffle=True,
                  validation=False,
+                 test=False, split_test=False,
                  split=0.2, extend_dims=True,
                  augment_data=True):
         self.dims = dims
@@ -28,10 +25,13 @@ class ChunkGenerator(object):
             rotation_range=20,
             width_shift_range=0.1,
             height_shift_range=0.1,
-            zoom_range=0.1,
-            horizontal_flip=True,
-            vertical_flip=True
+            zoom_range=[1.0, 1.1],
         )
+
+        # Delete all content in tmp/npy/
+        filelist = [f for f in os.listdir('tmp/npy')]
+        for f in filelist:
+            os.remove(os.path.join('tmp/npy', f))
 
         # Access Google Cloud Storage
         gcs_client = storage.Client.from_service_account_json(
@@ -39,11 +39,41 @@ class ChunkGenerator(object):
         )
         bucket = gcs_client.get_bucket('elvos')
 
-        # Get file list
-        filelist = sorted([f for f in os.listdir('tmp/npy')])
-        print(filelist)
+        # Get label data from Google Cloud Storage
+        blob = storage.Blob('annotated_labels.csv', bucket)
+        blob.download_to_filename('tmp/annotated_labels.csv')
+        prelim_label_data = {}
+        with open('tmp/annotated_labels.csv', 'r') as pos_file:
+            reader = csv.reader(pos_file, delimiter=',')
+            for row in reader:
+                if row[1] != 'labels':
+                    prelim_label_data[row[0]] = int(row[1])
+
+        # Get 8000 random negatives from the label data to feed into our generator
+        negative_counter = 0
+        negative_label_data = {}
+        while negative_counter < 8000:
+            id_, label = random.choice(list(prelim_label_data.items()))
+            if label == 0:
+                negative_label_data[id_] = label
+                del label[id_]
+                negative_counter += 1
+
+        # Get all of the positives from the label data
+        label_data = {}
+        for id_, label in list(prelim_label_data.items()):
+            if label == 1:
+                label_data[id_] = label
+
+        # Put pos and neg together into one dictionary
+        label_data.update(negative_label_data)
+
+        # Get positives chunks
+        pos_blobs = bucket.list_blobs(prefix='chunk_data/normal/positive')
         files = []
-        for file in filelist:
+        for blob in pos_blobs:
+            file = blob.name
+
             # Check blacklist
             blacklisted = False
             for each in BLACKLIST:
@@ -56,29 +86,30 @@ class ChunkGenerator(object):
                     "name": file,
                 })
 
-                if self.augment_data and not self.validation:
-                    self.__add_augmented(files, file)
+        # Get negative chunks that were chosen to be in the labels
+        neg_blobs = bucket.list_blobs(prefix='chunk_data/normal/negative')
+        for blob in neg_blobs:
+            file = blob.name
 
-        # Split based on validation
-        if validation:
-            files = files[:int(len(files) * split)]
-        else:
-            files = files[int(len(files) * split):]
+            # Check blacklist
+            blacklisted = False
+            for each in BLACKLIST:
+                if each in file:
+                    blacklisted = True
 
-        # Get label data from Google Cloud Storage
-        blob = storage.Blob('labels.csv', bucket)
-        blob.download_to_filename('tmp/labels.csv')
-        label_data = {}
-        with open('tmp/labels.csv', 'r') as pos_file:
-            reader = csv.reader(pos_file, delimiter=',')
-            for row in reader:
-                if row[1] != 'labels':
-                    label_data[row[0]] = int(row[1])
+            file_id = blob.name.split('/')[-1]
+            file_id = file_id.split('.')[0]
 
+            if file_id in negative_label_data and not blacklisted:
+                files.append({
+                    "name": file,
+                })
+
+        # convert labels from dict to np array
         labels = np.zeros(len(files))
         for i, file in enumerate(files):
             filename = file['name']
-            # filename = filename.split('_')[0]
+            filename = filename.split('_')[0]
             labels[i] = label_data[filename]
 
         # Take into account shuffling
@@ -88,15 +119,32 @@ class ChunkGenerator(object):
             files, labels = zip(*tmp)
             labels = np.array(labels)
 
+        # Split based on validation
+        if validation:
+            if split_test:
+                files = files[:int(len(files) * split / 2)]
+                labels = labels[:int(len(labels) * split / 2)]
+            else:
+                files = files[:int(len(files) * split)]
+                labels = labels[:int(len(labels) * split)]
+        elif test:
+            if split_test:
+                files = files[int(len(files) * split / 2):
+                              int(len(files) * split)]
+                labels = labels[int(len(labels) * split / 2):
+                                int(len(labels) * split)]
+            else:
+                raise ValueError('must set split_test to True if test')
+        else:
+            files = files[int(len(files) * split):]
+            labels = labels[int(len(labels) * split):]
+        print(np.shape(files))
+        print(np.shape(labels))
+        print("Negatives: {}".format(np.count_nonzero(labels == 0)))
+        print("Positives: {}".format(np.count_nonzero(labels)))
         self.files = files
         self.labels = labels
         self.bucket = bucket
-
-    def __add_augmented(self, files, file):
-        for i in range(1):
-            files.append({
-                "name": file,
-            })
 
     def generate(self):
         steps = self.get_steps_per_epoch()
@@ -123,7 +171,6 @@ class ChunkGenerator(object):
             file_id = file_id.split('.')[0]
             print(file_id)
             img = np.load('tmp/npy/{}.npy'.format(file_id))
-            img = self.__transform_images(img)
             # print(np.shape(img))
             images.append(img)
         images = np.array(images)
@@ -131,27 +178,3 @@ class ChunkGenerator(object):
         # print(np.shape(images))
         return images, labels
 
-    def __transform_images(self, image):
-        # Set bounds
-        image[image < -40] = -40
-        image[image > 400] = 400
-
-        # Normalize image and expand dims
-        image = transforms.normalize(image)
-        if self.extend_dims:
-            if len(self.dims) == 2:
-                image = np.expand_dims(image, axis=-1)
-            else:
-                image = np.repeat(image[:, :, np.newaxis],
-                                  self.dims[2], axis=2)
-
-        # Data augmentation methods
-        if self.augment_data and not self.validation:
-            image = self.datagen.random_transform(image)
-
-        # Interpolate axis to reduce to specified dimensions
-        dims = np.shape(image)
-        image = zoom(image, (self.dims[0] / dims[0],
-                             self.dims[1] / dims[1],
-                             1))
-        return image
