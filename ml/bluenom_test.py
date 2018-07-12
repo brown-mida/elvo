@@ -2,13 +2,14 @@ import pathlib
 
 import os
 import pytest
+from elasticsearch_dsl import connections
 
 import bluenom
 
 
 def test_parse_filename():
     filename = 'processed-lower_1-classes-2018-07-10T03:22:18.003758.csv'
-    actual = bluenom.parse_filename(filename)
+    actual = bluenom._parse_filename(filename)
     assert actual == ('processed-lower_1-classes',
                       '2018-07-10T03:22:18.003758')
 
@@ -40,7 +41,7 @@ def test_extract_params():
                "processed-lower/labels.csv'," \
                " 'index_col': 'Anon ID', 'label_col': 'occlusion_exists'}}\n"
 
-    assert bluenom.extract_params(filepath) == expected
+    assert bluenom._extract_params(filepath) == expected
 
 
 @pytest.mark.skipif(os.uname().nodename != 'gpu1708',
@@ -56,16 +57,33 @@ def test_extract_metrics():
                                final_val_sensitivity=0.7044334990050405,
                                best_val_sensitivity=0.7192118223664796)
 
-    assert bluenom.extract_metrics(path) == expected
+    assert bluenom._extract_metrics(path) == expected
 
 
+@pytest.mark.skipif(os.uname().nodename != 'gpu1708',
+                    reason='Test uses data only on gpu1708')
 def test_extract_author():
     path = pathlib.Path('/gpfs/main/home/lzhu7/elvo-analysis/logs/'
                         'test_prepare_and_job-2018-07-12T03:09:27.805668.log')
-    assert bluenom.extract_author(path) == 'sumera'
+    assert bluenom._extract_author(path) == 'sumera'
 
 
+@pytest.mark.skipif(os.uname().nodename != 'gpu1708',
+                    reason='Test uses data only on gpu1708')
 def test_ended_at():
     path = pathlib.Path('/gpfs/main/home/lzhu7/elvo-analysis/logs/'
                         'test_job-2018-07-12T03:17:29.021608.log')
-    assert bluenom.extract_ended_at(path) == '2018-07-12T03:19:46.868800'
+    assert bluenom._extract_ended_at(path) == '2018-07-12T03:19:46.868800'
+
+
+@pytest.mark.skipif(os.uname().nodename != 'gpu1708',
+                    reason='Test uses data only on gpu1708')
+def test_bluenom_idempotent():
+    connections.create_connection(hosts=['http://104.196.51.205'])
+    path = pathlib.Path('/gpfs/main/home/lzhu7/elvo-analysis/logs')
+    bluenom.bluenom(path, gpu1708=True)
+    first_run_count = bluenom.JOB_INDEX.search().count()
+    bluenom.bluenom(path, gpu1708=True)
+    second_run_count = bluenom.JOB_INDEX.search().count()
+    connections.remove_connection('default')
+    assert first_run_count == second_run_count
