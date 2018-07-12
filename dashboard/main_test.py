@@ -20,6 +20,7 @@ def test_roi():
     app.testing = True
     client = app.test_client()
     data = {
+        'patient_id': 'abc',
         'created_by': 'pytest',
         'x1': -1,
         'x2': -1,
