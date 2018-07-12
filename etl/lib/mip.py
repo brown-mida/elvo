@@ -29,12 +29,11 @@ if __name__ == '__main__':
 
     # from numpy directory
     for in_blob in bucket.list_blobs(prefix='numpy/'):
-
         # blacklist
         if in_blob.name == 'numpy/LAUIHISOEZIM5ILF.npy':
             continue
 
-        logging.info(f'downloading {in_blob.name}')
+        logging.info(f"downloading {in_blob.name}")
         input_arr = cloud.download_array(in_blob)
         logging.info(f"blob shape: {input_arr.shape}")
 

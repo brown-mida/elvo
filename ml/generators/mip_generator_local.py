@@ -2,7 +2,6 @@ import os
 import csv
 import random
 import numpy as np
-from scipy.ndimage.interpolation import zoom
 from keras.preprocessing.image import ImageDataGenerator
 
 from google.cloud import storage
@@ -147,31 +146,6 @@ class MipGenerator(object):
         return images, labels
 
     def __transform_images(self, image):
-        # image = np.moveaxis(image, 0, -1)
-
-        # Set bounds
-        # image[image < -40] = -40
-        # image[image > 400] = 400
-
-        # Normalize image and expand dims
-        # if self.extend_dims:
-        #     if len(self.dims) == 2:
-        #         image = np.expand_dims(image, axis=-1)
-        #     else:
-        #         image = np.repeat(image[:, :, np.newaxis],
-        #                           self.dims[2], axis=2)
-
-        # Data augmentation methods
-        # if self.augment_data and not self.validation:
-        #     image = self.datagen.random_transform(image)
-
-        # Interpolate axis to reduce to specified dimensions
-        # image = transforms.normalize(image)
-        # dims = np.shape(image)
-        # image = zoom(image, (self.dims[0] / dims[0],
-        #                      self.dims[1] / dims[1],
-        #                      1))
-
         # Data augmentation methods
         if self.augment_data and not self.validation:
             image = self.datagen.random_transform(image)

@@ -1,14 +1,18 @@
 import logging
 import io
 from tensorflow.python.lib.io import file_io
-import imageio
+# import imageio
 import numpy as np
 from google.cloud import storage
 
 
 def authenticate():
     return storage.Client.from_service_account_json(
+        # for running on the airflow GPU
         './credentials/client_secret.json'
+
+        # for running locally
+        # 'credentials/client_secret.json'
     )
 
 
@@ -24,7 +28,7 @@ def upload_png(arr: np.ndarray, id: str, type: str, bucket: storage.Bucket):
     """
     try:
         out_stream = io.BytesIO()
-        imageio.imwrite(out_stream, arr, format='png')
+        # imageio.imwrite(out_stream, arr, format='png')
         out_filename = f'mip_data/{id}/{type}_mip.png'
         print(out_filename)
         out_blob = storage.Blob(out_filename, bucket)
@@ -35,13 +39,27 @@ def upload_png(arr: np.ndarray, id: str, type: str, bucket: storage.Bucket):
         logging.error(f'for patient ID: {id} {e}')
 
 
-def save_npy_to_cloud(arr: np.ndarray, id: str, type: str):
+def save_npy_to_cloud(arr: np.ndarray, id: str, type: str, view: str):
     """Uploads MIP .npy files to gs://elvos/mip_data/from_numpy/<patient
         id>_mip.npy
     """
     try:
-        print(f'gs://elvos/mip_data/from_{type}/{id}_mip.npy')
-        np.save(file_io.FileIO(f'gs://elvos/mip_data/from_{type}/'
-                               f'{id}_mip.npy', 'w'), arr)
+        perspective = type.split('/')[1]
+        print(f'gs://elvos/mip_data/{view}/{perspective}/{id}.npy')
+        np.save(file_io.FileIO(f'gs://elvos/mip_data/{view}/{perspective}/'
+                               f'{id}.npy',
+                               'w'), arr)
     except Exception as e:
         logging.error(f'for patient ID: {id} {e}')
+
+
+def save_stripped_npy(arr: np.ndarray, patient_id: str, view: str):
+    """Uploads mipped and stripped .npy files to
+        gs://elvos/stripped_data/{view}/<patient_id>_strip.npy"""
+    try:
+        print(f'gs://elvos/stripped_data/{view}/{patient_id}_strip.npy')
+        np.save(file_io.FileIO(f'gs://elvos/stripped_data/{view}/'
+                               f'{patient_id}_strip.npy', 'w'), arr)
+        print('success')
+    except Exception as e:
+        logging.error(f'for patient ID: {patient_id} {e}')
