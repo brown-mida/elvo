@@ -1,5 +1,8 @@
 import pathlib
 
+import os
+import pytest
+
 import bluenom
 
 
@@ -10,6 +13,8 @@ def test_parse_filename():
                       '2018-07-10T03:22:18.003758')
 
 
+@pytest.mark.skipif(os.uname().nodename != 'gpu1708',
+                    reason='Test uses data only on gpu1708')
 def test_extract_params():
     filepath = pathlib.Path(
         '/gpfs/main/home/lzhu7/elvo-analysis/logs/'
@@ -38,6 +43,8 @@ def test_extract_params():
     assert bluenom.extract_params(filepath) == expected
 
 
+@pytest.mark.skipif(os.uname().nodename != 'gpu1708',
+                    reason='Test uses data only on gpu1708')
 def test_extract_metrics():
     path = pathlib.Path('/gpfs/main/home/lzhu7/elvo-analysis/logs/'
                         'data_2-classes-2018-07-07T10:22:47.601628.csv')
