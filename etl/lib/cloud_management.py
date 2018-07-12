@@ -9,7 +9,7 @@ from google.cloud import storage
 def authenticate():
     return storage.Client.from_service_account_json(
         # for running on the airflow GPU
-        '/home/lukezhu/elvo-analysis/credentials/client_secret.json'
+        './credentials/client_secret.json'
 
         # for running locally
         # 'credentials/client_secret.json'
@@ -51,3 +51,15 @@ def save_npy_to_cloud(arr: np.ndarray, id: str, type: str, view: str):
                                'w'), arr)
     except Exception as e:
         logging.error(f'for patient ID: {id} {e}')
+
+
+def save_stripped_npy(arr: np.ndarray, patient_id: str, view: str):
+    """Uploads mipped and stripped .npy files to
+        gs://elvos/stripped_data/{view}/<patient_id>_strip.npy"""
+    try:
+        print(f'gs://elvos/stripped_data/{view}/{patient_id}_strip.npy')
+        np.save(file_io.FileIO(f'gs://elvos/stripped_data/{view}/'
+                               f'{patient_id}_strip.npy', 'w'), arr)
+        print('success')
+    except Exception as e:
+        logging.error(f'for patient ID: {patient_id} {e}')
