@@ -132,7 +132,6 @@ def axial_mip(patient_id, slice_i):
     return _send_slice(reoriented)
 
 
-
 @app.route('/image/sagittal/<patient_id>/<int:slice_k>')
 def sagittal(patient_id, slice_k):
     arr = _retrieve_arr(patient_id)
@@ -218,7 +217,6 @@ def _retrieve_arr(patient_id: str) -> np.ndarray:
         cache.popitem()
     cache[patient_id] = arr
     return arr
-
 
 
 def _send_slice(arr: np.ndarray):
