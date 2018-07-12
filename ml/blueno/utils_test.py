@@ -8,7 +8,7 @@ try:
     from config import SLACK_TOKEN
 except ImportError:
     SLACK_TOKEN = ''
-import utils
+from blueno import utils
 
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
 

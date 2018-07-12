@@ -42,7 +42,7 @@ import sklearn
 from sklearn import model_selection
 
 import bluenom
-import utils
+from blueno import utils
 
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
 import keras  # noqa: E402
@@ -367,6 +367,7 @@ def check_config(config):
     gpu_range = range(config.GPU_OFFSET, config.GPU_OFFSET + config.NUM_GPUS)
     logging.info('using GPUs: {}'.format([x for x in gpu_range]))
     logging.debug('BLUENO_HOME: {}'.format(config.BLUENO_HOME))
+    logging.debug('LOG_DIR: {}'.format(config.LOG_DIR))
     logging.debug('SLACK_TOKEN: {}'.format(config.SLACK_TOKEN))
 
 
