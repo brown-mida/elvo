@@ -1,7 +1,0 @@
-dropbox==8.9.0
-google-cloud-storage==1.10.0
-gspread==3.0.0
-numpy==1.14.5
-pandas==0.23.1
-pydicom==1.0.2
-apache-airflow[slack,gcp_api]==1.8.2
