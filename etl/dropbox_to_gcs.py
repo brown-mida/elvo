@@ -10,14 +10,13 @@ https://cloud.google.com/docs/authentication/getting-started
 Similarly set the environment variable DROPBOX_TOKEN to an
 access token.
 """
-import os
-
 import dropbox
+import os
 from dropbox.files import FileMetadata, FolderMetadata
 from google.cloud import storage
 
 
-def upload_entry(entry: dropbox.files.FileMetadata,
+def upload_entry(entry: FileMetadata,
                  dbx: dropbox.Dropbox,
                  bucket: storage.Bucket):
     """Uploads the entry to Google Cloud"""
