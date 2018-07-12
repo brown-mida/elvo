@@ -39,6 +39,7 @@ import pandas as pd
 import sklearn
 from sklearn import model_selection
 
+import bluenom
 import utils
 
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
@@ -259,6 +260,8 @@ def start_job(x_train: np.ndarray, y_train: np.ndarray, x_valid: np.ndarray,
                        config.SLACK_TOKEN)
     end_time = datetime.datetime.utcnow().isoformat()
     logging.info(f'end time: {end_time}')
+    bluenom.insert_job_by_filepaths(pathlib.Path(log_filename),
+                                    pathlib.Path(csv_filename))
 
 
 def hyperoptimize(hyperparams: dict) -> None:
