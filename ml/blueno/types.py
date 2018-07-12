@@ -2,9 +2,9 @@ import typing
 
 
 class ModelConfig(typing.NamedTuple):
-    model_callable: callable
-    optimizer: callable
-    loss: callable
+    model_callable: typing.Callable
+    optimizer: typing.Callable
+    loss: typing.Callable
     dropout_rate1: int
     dropout_rate2: int
     freeze: bool
@@ -14,7 +14,7 @@ class ModelConfig(typing.NamedTuple):
 
 # TODO: Implement the generator
 class GeneratorConfig(typing.NamedTuple):
-    generator_callable: callable
+    generator_callable: typing.Callable
     rotation_range: int
     width_shift_range: float = 0.1
     height_shift_range: float = 0.1

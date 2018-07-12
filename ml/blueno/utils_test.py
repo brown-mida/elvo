@@ -4,8 +4,9 @@ import os
 import pytest
 import sklearn.preprocessing
 
+# Use Luke's config
 try:
-    from config import SLACK_TOKEN
+    from config_luke import SLACK_TOKEN
 except ImportError:
     SLACK_TOKEN = ''
 from blueno import utils
@@ -19,7 +20,7 @@ def test_upload_to_slack():
     with open('test_upload_to_slack.png', 'w') as f:
         f.write('hello!')
     r = utils.upload_to_slack('test_upload_to_slack.png',
-                              'just testing you',
+                              'testing',
                               SLACK_TOKEN)
     assert r.status_code == 200
 
