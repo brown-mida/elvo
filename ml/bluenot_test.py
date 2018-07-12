@@ -1,6 +1,7 @@
+import os
+
 import keras
 import numpy as np
-import os
 import pandas as pd
 import pytest
 
@@ -40,7 +41,6 @@ def test_start_job_no_err():
     y_train = np.random.randint(0, 2, (100, 5))
     x_valid = np.random.uniform(0, 255, (20, 220, 220, 3))
     y_valid = np.random.randint(0, 2, (20, 5))
-    name = 'test_job'
     params = {
         'data': {
             # A directory containing a list of numpy files with
@@ -70,9 +70,9 @@ def test_start_job_no_err():
         },
     }
     bluenot.start_job(x_train, y_train, x_valid, y_valid,
-                      name=name,
+                      job_name='test_job',
+                      username='test',
                       params=params,
-                      redirect=True,
                       epochs=1)
 
 
@@ -150,6 +150,7 @@ def test_prepare_and_job():
                       y_train,
                       x_valid,
                       y_valid,
-                      name='test_prepare_and_job',
+                      job_name='test_prepare_and_job',
+                      username='test',
                       params=params,
                       epochs=1)

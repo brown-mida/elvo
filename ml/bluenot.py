@@ -27,14 +27,16 @@ The script assumes that:
 """
 import contextlib
 import datetime
+import importlib
 import logging
 import multiprocessing
+import os
 import pathlib
 import time
 import typing
+from argparse import ArgumentParser
 
 import numpy as np
-import os
 import pandas as pd
 import sklearn
 from sklearn import model_selection
@@ -45,30 +47,31 @@ import utils
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
 import keras  # noqa: E402
 
-# TODO(#62): Refactor this
-if 'LUKE' in os.environ:
-    try:
-        import config_luke as config
-    except ImportError:
-        pass
 
-    NAME = 'luke'
-    GPU_OFFSET = -1
-if 'MARY' in os.environ:
-    try:
-        import config_mary as config  # noqa: F811
-    except ImportError:
-        pass
+def configure_parent_logger(file_name,
+                            stdout=True):
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.DEBUG)
+    handler = logging.FileHandler(file_name)
+    formatter = logging.Formatter(
+        fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    root_logger.addHandler(handler)
 
-    NAME = 'mary'
-    GPU_OFFSET = 2
-else:
-    import config  # noqa: F811
+    if stdout:
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(formatter)
+        root_logger.addHandler(stream_handler)
 
-    NAME = 'sumera'
-    GPU_OFFSET = 0
 
-print('User is {}'.format(NAME))
+def configure_job_logger(file_path):
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.DEBUG)
+    handler = logging.FileHandler(file_path)
+    formatter = logging.Formatter(
+        fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    root_logger.addHandler(handler)
 
 
 def load_arrays(data_dir: str) -> typing.Dict[str, np.ndarray]:
@@ -188,29 +191,34 @@ def prepare_data(params: dict) -> typing.Tuple[np.ndarray,
     return x_train, x_valid, y_train, y_valid
 
 
-def start_job(x_train: np.ndarray, y_train: np.ndarray, x_valid: np.ndarray,
-              y_valid: np.ndarray, name: str = None, params: dict = None,
-              redirect: bool = True, epochs=100) -> None:
+def start_job(x_train: np.ndarray,
+              y_train: np.ndarray,
+              x_valid: np.ndarray,
+              y_valid: np.ndarray,
+              job_name: str,
+              username: str,
+              slack_token: str = None,
+              params: dict = None,
+              epochs=100,
+              log_dir: str = None) -> None:
     """Builds, fits, and evaluates a model.
 
     Uploads a report to Slack at the end
     """
     num_classes = y_train.shape[1]
 
-    if name is None:
-        name = params['data']['data_dir'].split('/')[-3]
-        name += f'_{num_classes}-classes'
-
     # Configure the job to log all output to a specific file
-
-    isostr = datetime.datetime.utcnow().isoformat()
-    log_filename = f'{config.BLUENO_HOME}logs/{name}-{isostr}.log'
-    if redirect:
-        config.configure_job_logger(log_filename)
+    csv_filename = None
+    log_filename = None
+    if log_dir:
+        isostr = datetime.datetime.utcnow().isoformat()
+        log_filename = str(pathlib.Path(log_dir) / f'{job_name}-{isostr}.log')
+        csv_filename = log_filename[:-3] + 'csv'
+        configure_job_logger(log_filename)
         contextlib.redirect_stdout(log_filename)
         contextlib.redirect_stderr(log_filename)
         logging.info(f'using params:\n{params}')
-        logging.info(f'author: {NAME}')
+        logging.info(f'author: {username}')
 
     logging.debug(f'in start_job,'
                   f' using gpu {os.environ["CUDA_VISIBLE_DEVICES"]}')
@@ -242,9 +250,8 @@ def start_job(x_train: np.ndarray, y_train: np.ndarray, x_valid: np.ndarray,
                   loss=model_params['loss'],
                   metrics=metrics)
 
-    csv_filename = log_filename[:-3] + 'csv'
     callbacks = utils.create_callbacks(x_train, y_train, x_valid, y_valid,
-                                       csv_filename)
+                                       filename=csv_filename)
     logging.info('training model')
     history = model.fit_generator(train_gen,
                                   epochs=epochs,
@@ -252,19 +259,31 @@ def start_job(x_train: np.ndarray, y_train: np.ndarray, x_valid: np.ndarray,
                                   verbose=2,
                                   callbacks=callbacks)
 
-    logging.info('generating slack report')
-    utils.slack_report(x_train, y_train,
-                       x_valid, y_valid,
-                       model, history,
-                       name, params,
-                       config.SLACK_TOKEN)
+    if slack_token:
+        logging.info('generating slack report')
+        utils.slack_report(x_train, y_train,
+                           x_valid, y_valid,
+                           model, history,
+                           job_name, params,
+                           slack_token)
+    else:
+        logging.info('no slack token found, not generating report')
+
     end_time = datetime.datetime.utcnow().isoformat()
     logging.info(f'end time: {end_time}')
-    bluenom.insert_job_by_filepaths(pathlib.Path(log_filename),
-                                    pathlib.Path(csv_filename))
+
+    # Upload to Kibana
+    if log_dir:
+        bluenom.insert_job_by_filepaths(pathlib.Path(log_filename),
+                                        pathlib.Path(csv_filename))
 
 
-def hyperoptimize(hyperparams: dict) -> None:
+def hyperoptimize(hyperparams: dict,
+                  username: str,
+                  slack_token: str,
+                  num_gpus=1,
+                  gpu_offset=0,
+                  log_dir=None) -> None:
     """
     Runs n_iter model training jobs on the hyperparameters.
 
@@ -283,23 +302,30 @@ def hyperoptimize(hyperparams: dict) -> None:
         # Start the model training job
         # Run in a separate process to avoid memory issues
         # Note how this depends on offset
-        os.environ['CUDA_VISIBLE_DEVICES'] = f'{gpu_index + GPU_OFFSET}'
+        os.environ['CUDA_VISIBLE_DEVICES'] = f'{gpu_index + gpu_offset}'
 
         if 'job_fn' in params:
             job_fn = params['job_fn']
         else:
             job_fn = start_job
 
+        job_name = params['data']['data_dir'].split('/')[-3]
+        job_name += f'_{y_train.shape[1]}-classes'
+
         process = multiprocessing.Process(target=job_fn,
                                           args=(x_train, y_train,
                                                 x_valid, y_valid),
                                           kwargs={
                                               'params': params,
+                                              'job_name': job_name,
+                                              'username': username,
+                                              'slack_token': slack_token,
+                                              'log_dir': log_dir,
                                           })
         gpu_index += 1
-        gpu_index %= config.NUM_GPUS
+        gpu_index %= num_gpus
 
-        logging.debug(f'gpu_index is now {gpu_index + GPU_OFFSET}')
+        logging.debug(f'gpu_index is now {gpu_index + gpu_offset}')
         process.start()
         processes.append(process)
         if gpu_index == 0:
@@ -312,6 +338,37 @@ def hyperoptimize(hyperparams: dict) -> None:
             time.sleep(60)
 
 
+def check_config(config):
+    logging.info('checking that config has all required attributes')
+    logging.debug('replace arguments with PARAM_GRID')
+    logging.debug('PARAM_GRID: {}'.format(config.PARAM_GRID))
+    logging.debug('USER: {}'.format(config.USER))
+    logging.debug('NUM_GPUS: {}'.format(config.NUM_GPUS))
+    logging.debug('GPU_OFFSET: {}'.format(config.GPU_OFFSET))
+    gpu_range = range(config.GPU_OFFSET, config.GPU_OFFSET + config.NUM_GPUS)
+    logging.info('using GPUs: {}'.format([x for x in gpu_range]))
+    logging.debug('BLUENO_HOME: {}'.format(config.BLUENO_HOME))
+    logging.debug('SLACK_TOKEN: {}'.format(config.SLACK_TOKEN))
+
+
 if __name__ == '__main__':
-    config.configure_parent_logger()
-    hyperoptimize(config.arguments)
+    parent_log_file = 'results-{}'.format(
+        datetime.datetime.utcnow().isoformat()
+    )
+    configure_parent_logger(parent_log_file)
+
+    parser = ArgumentParser()
+    parser.add_argument('--config',
+                        help='The config module (ex. config_luke)',
+                        default='config')
+    args = parser.parse_args()
+
+    user_config = importlib.import_module(args.config)
+    check_config(user_config)
+
+    hyperoptimize(user_config.PARAM_GRID,
+                  user_config.USER,
+                  user_config.SLACK_TOKEN,
+                  num_gpus=user_config.NUM_GPUS,
+                  gpu_offset=user_config.GPU_OFFSET,
+                  log_dir=user_config.LOG_DIR)

@@ -51,7 +51,8 @@ class AucCallback(keras.callbacks.Callback):
 
 
 def create_callbacks(x_train: np.ndarray, y_train: np.ndarray,
-                     x_valid: np.ndarray, y_valid: np.ndarray, filename: str,
+                     x_valid: np.ndarray, y_valid: np.ndarray,
+                     filename: typing.Optional[str] = None,
                      normalize=True):
     """
     Instantiates a list of callbacks:
@@ -82,7 +83,8 @@ def create_callbacks(x_train: np.ndarray, y_train: np.ndarray,
     else:
         x_valid_standardized = x_valid
 
-    callbacks.append(AucCallback(x_valid_standardized, y_valid))
+    if filename:
+        callbacks.append(AucCallback(x_valid_standardized, y_valid))
 
     return callbacks
 
