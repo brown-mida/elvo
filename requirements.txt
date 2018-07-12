@@ -1,4 +1,6 @@
+dropbox==8.9.0
 google-cloud-storage==1.10.0
+gspread==3.0.0
 jupyter==1.0.0
 Keras==2.2.0
 keras-vis==0.4.1

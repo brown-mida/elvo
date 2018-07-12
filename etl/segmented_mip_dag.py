@@ -5,22 +5,17 @@ from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.slack_operator import SlackAPIPostOperator
 
-from axial_to_coronal_and_sagittal import axial_to_coronal_and_sagittal
-from mip import normal_mip
-from multichannel_mip import multichannel_mip
-from overlap_mip import overlap_mip
+from mip_with_segmentation import normal_mip
+from multichannel_mip_with_segmentation import multichannel_mip
+from overlap_mip_with_segmentation import overlap_mip
 
 default_args = {
-    'owner': 'hal',
+    'owner': 'amy',
     'start_date': datetime(2018, 6, 28, 5),
 }
 
-dag = DAG(dag_id='mip_dag', default_args=default_args)
+dag = DAG(dag_id='segmented_mip_dag', default_args=default_args)
 
-axial_to_coronal_and_sagittal_op = \
-    PythonOperator(task_id='axial_to_coronal_and_sagittal',
-                   python_callable=axial_to_coronal_and_sagittal,
-                   dag=dag)
 
 normal_mip_op = PythonOperator(task_id='normal_mip',
                                python_callable=normal_mip,
@@ -39,9 +34,8 @@ slack_confirmation = SlackAPIPostOperator(
     channel='i-utra',
     username='airflow',
     token=os.environ['SLACK_TOKEN'],
-    text='Coronal and axial scans MIPed',
+    text='Coronal and axial scans stripped and MIPed',
     dag=dag,
 )
 
-axial_to_coronal_and_sagittal_op >> normal_mip_op >> \
-    multichannel_mip_op >> overlap_mip_op >> slack_confirmation
+normal_mip_op >> multichannel_mip_op >> overlap_mip_op >> slack_confirmation
