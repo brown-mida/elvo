@@ -1,6 +1,34 @@
+"""Define new parameters here.
+
+By being explict about parameters, it will be easier to share
+information around the team.
+
+All generator and model functions should take in **kwargs as an argument.
+"""
 import typing
 
 from dataclasses import dataclass
+
+__all__ = ['PreprocessConfig',
+           'DataConfig',
+           'ModelConfig',
+           'GeneratorConfig',
+           'ParamConfig',
+           'ParamGrid']
+
+
+# TODO(#65): Implement this config
+@dataclass
+class PreprocessConfig:
+    pass
+
+
+@dataclass
+class DataConfig:
+    data_dir: str
+    labels_path: str
+    index_col: str
+    label_col: str
 
 
 @dataclass
@@ -8,14 +36,12 @@ class ModelConfig:
     model_callable: typing.Callable
     optimizer: typing.Callable
     loss: typing.Callable
+
     dropout_rate1: int
     dropout_rate2: int
     freeze: bool
-    batch_size: int  # Deprecated
-    rotation_range: int  # Deprecated
 
 
-# TODO: Integrate the generator
 @dataclass
 class GeneratorConfig:
     generator_callable: typing.Callable
@@ -28,18 +54,37 @@ class GeneratorConfig:
     vertical_flip = False
 
 
+# Keep the below two classes in sync
+
+@dataclass
+class ParamConfig:
+    data: DataConfig
+    generator: GeneratorConfig
+    model: ModelConfig
+    batch_size: int
+    seed: int
+    val_split: float
+
+    job_fn: typing.Callable = None
+
+
 @dataclass
 class ParamGrid:
-    data: typing.Tuple[str]
+    data: typing.Tuple[DataConfig]
     generator: typing.Tuple[GeneratorConfig]
     model: typing.Tuple[ModelConfig]
-    seed: typing.Tuple[int] = (0, 1)
-    val_split: typing.Tuple[int] = (0.1, 0.2)
+    batch_size: typing.List[int]
+    seed: typing.Tuple[int]
+    val_split: typing.Tuple[int]
 
-    # TODO: Batch size to paramgrid
-    # batch_size: typing.List[int] = None
+    job_fn: typing.Callable = None
 
     def __init__(self, **kwargs):
+        # TODO(#65): Implement preprocessing config
+        if not isinstance(kwargs['data'], DataConfig):
+            data = tuple(
+                DataConfig(**d) for d in kwargs['data'])
+            self.data = data
         if not isinstance(kwargs['generator'], GeneratorConfig):
             generators = tuple(
                 GeneratorConfig(**gen) for gen in kwargs['generator'])
@@ -48,6 +93,9 @@ class ParamGrid:
             models = tuple(ModelConfig(**mod) for mod in kwargs['model'])
             self.model = models
 
-        self.data = kwargs['data']
         self.seed = kwargs['seed']
         self.val_split = kwargs['val_split']
+        self.batch_size = kwargs['batch_size']
+
+        if 'job_fn' in kwargs:
+            self.job_fn = kwargs['job_fn']

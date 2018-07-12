@@ -11,6 +11,8 @@ import requests
 import sklearn.metrics
 from keras import backend as K
 
+from blueno import ParamConfig
+
 matplotlib.use('Agg')  # noqa: E402
 from matplotlib import pyplot as plt
 
@@ -99,7 +101,7 @@ def slack_report(x_train: np.ndarray,
                  model: keras.models.Model,
                  history: keras.callbacks.History,
                  name: str,
-                 params: dict,
+                 params: ParamConfig,
                  token: str):
     """
     Uploads a loss graph, accuacy, and confusion matrix plots in addition
@@ -133,7 +135,7 @@ def slack_report(x_train: np.ndarray,
                                     x_valid_standardized,
                                     y_valid,
                                     [0, 1],
-                                    batch_size=params['model']['batch_size'])
+                                    batch_size=params.batch_size)
     upload_to_slack('/tmp/cm.png', report, token)
     upload_to_slack('/tmp/false_positives.png', 'false positives', token)
     upload_to_slack('/tmp/false_negatives.png', 'false negatives', token)

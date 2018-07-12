@@ -30,17 +30,18 @@ import datetime
 import importlib
 import logging
 import multiprocessing
+import os
 import pathlib
 import time
 import typing
 from argparse import ArgumentParser
 
 import numpy as np
-import os
 import pandas as pd
 import sklearn
 from sklearn import model_selection
 
+import blueno
 import bluenom
 from blueno import utils
 
@@ -113,48 +114,34 @@ def to_arrays(data: typing.Dict[str, np.ndarray],
     return np.stack(X_list), np.stack(y_list)
 
 
-def prepare_data(params: dict) -> typing.Tuple[np.ndarray,
-                                               np.ndarray,
-                                               np.ndarray,
-                                               np.ndarray]:
+def prepare_data(params: blueno.ParamConfig) -> typing.Tuple[np.ndarray,
+                                                             np.ndarray,
+                                                             np.ndarray,
+                                                             np.ndarray]:
     """
     Prepares the data referenced in params for ML. This includes
     shuffling and expanding dims.
 
-    :param params: a hyperparameter dictionary containing the following
-        attributes:
-            - data
-                - data_dir
-                - index_col
-                - label_col
-                - labels_path
-            - model
-                - loss
-            - seed
-            - val_split
+    :param params: a hyperparameter dictionary generated from a ParamGrid
     :return: x_train, x_valid, y_train, y_valid
     """
     logging.info(f'using params:\n{params}')
     # Load the arrays and labels
-    data_params = params['data']
-    array_dict = load_arrays(data_params['data_dir'])
-    index_col = data_params['index_col']
-    label_col = data_params['label_col']
-    label_series = pd.read_csv(data_params['labels_path'],
+    data_params = params.data
+    array_dict = load_arrays(data_params.data_dir)
+    index_col = data_params.index_col
+    label_col = data_params.label_col
+    label_series = pd.read_csv(data_params.labels_path,
                                index_col=index_col)[label_col]
     # Convert to split numpy arrays
     x, y = to_arrays(array_dict, label_series)
 
-    # Match dimensions of the labels to the model
-    if isinstance(params['model']['loss'], str):
-        raise ValueError('Only loss functions, not strings are supported')
-
-    if params['model']['loss'] == keras.losses.binary_crossentropy:
+    if params.model.loss == keras.losses.binary_crossentropy:
         # We need y to have 2 dimensions for the rest of the model
         if y.ndim == 1:
             y = np.expand_dims(y, axis=1)
 
-    elif params['model']['loss'] == keras.losses.categorical_crossentropy:
+    elif params.model.loss == keras.losses.categorical_crossentropy:
         # TODO(#77): Move/refactor hacky code below to bluenot.py
         def categorize(label):
             if any([x in label.lower() for x in ['m1', 'm2', 'mca']]):
@@ -177,17 +164,20 @@ def prepare_data(params: dict) -> typing.Tuple[np.ndarray,
         one_hot = sklearn.preprocessing.OneHotEncoder(sparse=False)
         y: np.ndarray = one_hot.fit_transform(y)
 
+    else:
+        raise ValueError('Only support for crossentry callables at the moment')
+
     assert y.ndim == 2
 
     logging.debug(f'x shape: {x.shape}')
     logging.debug(f'y shape: {y.shape}')
-    logging.info(f'seeding to {params["seed"]} before shuffling')
+    logging.info(f'seeding to {params.seed} before shuffling')
 
     x_train, x_valid, y_train, y_valid = \
         model_selection.train_test_split(
             x, y,
-            test_size=params['val_split'],
-            random_state=params["seed"])
+            test_size=params.val_split,
+            random_state=params.seed)
     return x_train, x_valid, y_train, y_valid
 
 
@@ -197,8 +187,8 @@ def start_job(x_train: np.ndarray,
               y_valid: np.ndarray,
               job_name: str,
               username: str,
+              params: blueno.ParamConfig,
               slack_token: str = None,
-              params: dict = None,
               epochs=100,  # deprecated
               log_dir: str = None) -> None:
     """
@@ -237,19 +227,20 @@ def start_job(x_train: np.ndarray,
                   f' using gpu {os.environ["CUDA_VISIBLE_DEVICES"]}')
 
     logging.info('preparing data and model for training')
-    model_params = params['model']
-
-    train_gen, valid_gen = params['generator'](x_train, y_train,
-                                               x_valid, y_valid,
-                                               model_params['rotation_range'],
-                                               model_params['batch_size'])
+    model_params = params.model
+    generator_params = params.generator
+    train_gen, valid_gen = generator_params.generator_callable(
+        x_train, y_train,
+        x_valid, y_valid,
+        params.batch_size,
+        **generator_params.__dict__)
 
     logging.debug(f'num_classes is: {num_classes}')
 
     # Construct the uncompiled model
-    model = model_params['model_callable'](input_shape=x_train.shape[1:],
-                                           num_classes=num_classes,
-                                           **model_params)
+    model = model_params.model_callable(input_shape=x_train.shape[1:],
+                                        num_classes=num_classes,
+                                        **model_params.__dict__)
 
     logging.debug(
         'using default metrics: acc, sensitivity, specificity, tp, fn')
@@ -259,8 +250,8 @@ def start_job(x_train: np.ndarray,
                utils.true_positives,
                utils.false_negatives]
 
-    model.compile(optimizer=model_params['optimizer'],
-                  loss=model_params['loss'],
+    model.compile(optimizer=model_params.optimizer,
+                  loss=model_params.loss,
                   metrics=metrics)
 
     callbacks = utils.create_callbacks(x_train, y_train, x_valid, y_valid,
@@ -291,7 +282,7 @@ def start_job(x_train: np.ndarray,
                                         pathlib.Path(csv_filepath))
 
 
-def hyperoptimize(hyperparams: dict,
+def hyperoptimize(hyperparams: blueno.ParamGrid,
                   username: str,
                   slack_token: str = None,
                   num_gpus=1,
@@ -311,11 +302,12 @@ def hyperoptimize(hyperparams: dict,
     :return:
     """
     # TODO (#70)
-    param_list = model_selection.ParameterGrid(hyperparams)
+    param_list = model_selection.ParameterGrid(hyperparams.__dict__)
 
     gpu_index = 0
     processes = []
     for params in param_list:
+        params = blueno.ParamConfig(**params)
         x_train, x_valid, y_train, y_valid = prepare_data(params)
 
         # Start the model training job
@@ -323,12 +315,14 @@ def hyperoptimize(hyperparams: dict,
         # Note how this depends on offset
         os.environ['CUDA_VISIBLE_DEVICES'] = f'{gpu_index + gpu_offset}'
 
-        if 'job_fn' in params:
-            job_fn = params['job_fn']
-        else:
+        if params.job_fn is None:
             job_fn = start_job
+        else:
+            job_fn = params.job_fn
 
-        job_name = params['data']['data_dir'].split('/')[-3]
+        logging.info('using job fn {}'.format(job_fn))
+
+        job_name = params.data.data_dir.split('/')[-3]
         job_name += f'_{y_train.shape[1]}-classes'
 
         process = multiprocessing.Process(target=job_fn,
@@ -372,11 +366,6 @@ def check_config(config):
 
 
 if __name__ == '__main__':
-    parent_log_file = 'results-{}'.format(
-        datetime.datetime.utcnow().isoformat()
-    )
-    configure_parent_logger(parent_log_file)
-
     parser = ArgumentParser()
     parser.add_argument('--config',
                         help='The config module (ex. config_luke)',
@@ -384,9 +373,16 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     user_config = importlib.import_module(args.config)
+
+    parent_log_file = pathlib.Path(user_config.LOG_DIR) / 'results-{}'.format(
+        datetime.datetime.utcnow().isoformat()
+    )
+    configure_parent_logger(parent_log_file)
     check_config(user_config)
 
-    hyperoptimize(user_config.PARAM_GRID,
+    param_grid = blueno.ParamGrid(**user_config.PARAM_GRID)
+
+    hyperoptimize(param_grid,
                   user_config.USER,
                   user_config.SLACK_TOKEN,
                   num_gpus=user_config.NUM_GPUS,

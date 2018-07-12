@@ -6,14 +6,15 @@ def standard_generators(x_train: np.ndarray,
                         y_train: np.ndarray,
                         x_valid: np.ndarray,
                         y_valid: np.ndarray,
-                        rotation_range: float,
                         batch_size: int,
+                        rotation_range: float,
                         width_shift_range=0.1,
                         height_shift_range=0.1,
                         shear_range=0,
                         zoom_range=(1.0, 1.0),
                         horizontal_flip=True,
-                        vertical_flip=False):
+                        vertical_flip=False,
+                        **kwargs):
     """
     Creates a standard training and validation generator
     from the input data.
