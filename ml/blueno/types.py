@@ -80,6 +80,11 @@ class ParamGrid:
     job_fn: typing.Callable = None
 
     def __init__(self, **kwargs):
+        for attr in kwargs:
+            if attr not in ParamGrid.__dataclass_fields__:
+                raise ValueError(
+                    '{} is not an attribute of ParamGrid'.format(attr))
+
         # TODO(#65): Implement preprocessing config
         if not isinstance(kwargs['data'], DataConfig):
             data = tuple(
@@ -99,3 +104,9 @@ class ParamGrid:
 
         if 'job_fn' in kwargs:
             self.job_fn = kwargs['job_fn']
+
+
+if set(ParamConfig.__dataclass_fields__.keys()) \
+        != set(ParamGrid.__dataclass_fields__.keys()):
+    raise ValueError(
+        'ParamConfig and ParamGrid do not have the same properties')
