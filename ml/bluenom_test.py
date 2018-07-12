@@ -3,14 +3,6 @@ import pathlib
 import bluenom
 
 
-def test_bluenom_no_duplicates():
-    doc = bluenom.TrainingJob(job_name='a', created_at='2018-07-10T03:22:18')
-    print(bluenom.job_exists('test', '2018-07-10T03:22:18', doc))
-    # doc.save()
-    # assert bluenom.job_exists('test', '2018-07-10T03:22:18', doc) is True
-    # doc.delete()
-
-
 def test_parse_filename():
     filename = 'processed-lower_1-classes-2018-07-10T03:22:18.003758.csv'
     actual = bluenom.parse_filename(filename)
@@ -26,16 +18,21 @@ def test_extract_params():
 
     expected = "{'val_split': 0.2, 'seed': 42," \
                " 'model': {'rotation_range': 30," \
-               " 'optimizer': <keras.optimizers.SGD object at 0x7ff0945d1da0>," \
+               " 'optimizer':" \
+               " <keras.optimizers.SGD object at 0x7ff0945d1da0>," \
                " 'model_callable': <function resnet at 0x7ff0945a8f28>," \
-               " 'loss': <function categorical_crossentropy at 0x7ff0946a57b8>," \
-               " 'freeze': False, 'dropout_rate2': 0.8, 'dropout_rate1': 0.8," \
+               " 'loss':" \
+               " <function categorical_crossentropy at 0x7ff0946a57b8>," \
+               " 'freeze': False," \
+               " 'dropout_rate2': 0.8, 'dropout_rate1': 0.8," \
                " 'batch_size': 8}," \
-               " 'generator': <function standard_generators at 0x7ff0946137b8>," \
+               " 'generator':" \
+               " <function standard_generators at 0x7ff0946137b8>," \
                " 'data': {'data_dir':" \
                " '/home/lzhu7/elvo-analysis/data/processed-lower/arrays/'," \
                " 'labels_path':" \
-               " '/home/lzhu7/elvo-analysis/data/processed-lower/labels.csv'," \
+               " '/home/lzhu7/elvo-analysis/data/" \
+               "processed-lower/labels.csv'," \
                " 'index_col': 'Anon ID', 'label_col': 'occlusion_exists'}}\n"
 
     assert bluenom.extract_params(filepath) == expected

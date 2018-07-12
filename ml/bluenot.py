@@ -29,12 +29,12 @@ import contextlib
 import datetime
 import logging
 import multiprocessing
-import os
 import pathlib
 import time
 import typing
 
 import numpy as np
+import os
 import pandas as pd
 import sklearn
 from sklearn import model_selection
@@ -51,12 +51,12 @@ if 'LUKE' in os.environ:
     NAME = 'luke'
     GPU_OFFSET = -1
 if 'MARY' in os.environ:
-    import config_mary as config
+    import config_mary as config  # noqa: F811
 
     NAME = 'mary'
     GPU_OFFSET = 2
 else:
-    import config
+    import config  # noqa: F811
 
     NAME = 'sumera'
     GPU_OFFSET = 0
