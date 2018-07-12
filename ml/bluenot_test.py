@@ -1,12 +1,13 @@
-import os
-
 import keras
 import numpy as np
+import os
 import pandas as pd
 import pytest
 
 import bluenot
 import generators.luke
+
+os.environ['CUDA_VISIBLE_DEVICES'] = ''
 
 
 def small_model(input_shape=(224, 224, 3),

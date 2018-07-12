@@ -30,13 +30,13 @@ import datetime
 import importlib
 import logging
 import multiprocessing
-import os
 import pathlib
 import time
 import typing
 from argparse import ArgumentParser
 
 import numpy as np
+import os
 import pandas as pd
 import sklearn
 from sklearn import model_selection
@@ -199,24 +199,37 @@ def start_job(x_train: np.ndarray,
               username: str,
               slack_token: str = None,
               params: dict = None,
-              epochs=100,
+              epochs=100,  # deprecated
               log_dir: str = None) -> None:
-    """Builds, fits, and evaluates a model.
+    """
+    Builds, fits, and evaluates a model.
 
-    Uploads a report to Slack at the end
+    If slack_token is not none, uploads an image
+
+    :param x_train:
+    :param y_train: the training labels, must be a 2D array
+    :param x_valid:
+    :param y_valid: the validation labels, must be  a 2D array
+    :param job_name:
+    :param username:
+    :param slack_token: the slack token
+    :param params: the parameters specified
+    :param epochs:
+    :param log_dir:
+    :return:
     """
     num_classes = y_train.shape[1]
 
     # Configure the job to log all output to a specific file
-    csv_filename = None
-    log_filename = None
+    csv_filepath = None
+    log_filepath = None
     if log_dir:
         isostr = datetime.datetime.utcnow().isoformat()
-        log_filename = str(pathlib.Path(log_dir) / f'{job_name}-{isostr}.log')
-        csv_filename = log_filename[:-3] + 'csv'
-        configure_job_logger(log_filename)
-        contextlib.redirect_stdout(log_filename)
-        contextlib.redirect_stderr(log_filename)
+        log_filepath = str(pathlib.Path(log_dir) / f'{job_name}-{isostr}.log')
+        csv_filepath = log_filepath[:-3] + 'csv'
+        configure_job_logger(log_filepath)
+        contextlib.redirect_stdout(log_filepath)
+        contextlib.redirect_stderr(log_filepath)
         logging.info(f'using params:\n{params}')
         logging.info(f'author: {username}')
 
@@ -251,7 +264,7 @@ def start_job(x_train: np.ndarray,
                   metrics=metrics)
 
     callbacks = utils.create_callbacks(x_train, y_train, x_valid, y_valid,
-                                       filename=csv_filename)
+                                       filepath=csv_filepath)
     logging.info('training model')
     history = model.fit_generator(train_gen,
                                   epochs=epochs,
@@ -274,21 +287,27 @@ def start_job(x_train: np.ndarray,
 
     # Upload to Kibana
     if log_dir:
-        bluenom.insert_job_by_filepaths(pathlib.Path(log_filename),
-                                        pathlib.Path(csv_filename))
+        bluenom.insert_job_by_filepaths(pathlib.Path(log_filepath),
+                                        pathlib.Path(csv_filepath))
 
 
 def hyperoptimize(hyperparams: dict,
                   username: str,
-                  slack_token: str,
+                  slack_token: str = None,
                   num_gpus=1,
                   gpu_offset=0,
-                  log_dir=None) -> None:
+                  log_dir: str = None) -> None:
     """
-    Runs n_iter model training jobs on the hyperparameters.
+    Runs training jobs on input hyperparameter grid.
 
-    :param hyperparams: A dictionary of string key to iterable pairs. See
-    config.py for an example of a hyperparameter dict.
+    :param hyperparams: a dictionary of parameters. See blueno/types for
+    a specification
+    :param username: your name
+    :param slack_token: a slack token for uploading to GitHub
+    :param num_gpus: the number of gpus you will use
+    :param gpu_offset: your gpu offset
+    :param log_dir: the directory you will too. This directory should already
+    exist
     :return:
     """
     # TODO (#70)

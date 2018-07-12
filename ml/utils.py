@@ -52,23 +52,27 @@ class AucCallback(keras.callbacks.Callback):
 
 def create_callbacks(x_train: np.ndarray, y_train: np.ndarray,
                      x_valid: np.ndarray, y_valid: np.ndarray,
-                     filename: typing.Optional[str] = None,
+                     filepath: str = None,
                      normalize=True):
     """
     Instantiates a list of callbacks:
+    - CSV logger
     - AUC
     - Early stopping
     - TODO(#71): model checkpoint
 
-    :param normalize:
     :param x_train:
     :param y_train:
     :param x_valid:
     :param y_valid:
+    :param filepath: the file to save the CSV results to
+    :param normalize: whether or not to normalize the x data
     :return:
     """
     callbacks = []
-    callbacks.append(keras.callbacks.CSVLogger(filename, append=True))
+    if filepath:
+        callbacks.append(keras.callbacks.CSVLogger(filepath, append=True))
+
     callbacks.append(keras.callbacks.EarlyStopping(monitor='val_acc',
                                                    patience=10))
 
@@ -83,8 +87,7 @@ def create_callbacks(x_train: np.ndarray, y_train: np.ndarray,
     else:
         x_valid_standardized = x_valid
 
-    if filename:
-        callbacks.append(AucCallback(x_valid_standardized, y_valid))
+    callbacks.append(AucCallback(x_valid_standardized, y_valid))
 
     return callbacks
 
