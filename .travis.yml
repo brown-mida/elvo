@@ -2,6 +2,8 @@ language: python
 python:
   - 3.6
 env:
+
+ - SQLALCHEMY_DATABASE_URI='' # TODO: Fix once TravisCI secrets are configured
  - GOOGLE_APPLICATION_CREDENTIALS=''
 install: 
   - pip install -r requirements.txt

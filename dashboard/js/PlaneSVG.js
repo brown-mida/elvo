@@ -18,10 +18,12 @@ class PlaneSVG extends Component {
     );
   }
 
+
   render() {
     return (
         <svg viewBox={`0 0 ${this.props.width} ${this.props.height}`}
              style={{maxHeight: 500}}
+
         >
           <image
               href={`/image/${this.props.viewType}/${this.props.patientId}/${this.props.posIndex}`}/>
@@ -36,6 +38,7 @@ class PlaneSVG extends Component {
                 }}
           />
           <line x1={this.props.roiX1}
+
                 y1={this.props.roiY2}
                 x2={this.props.roiX2}
                 y2={this.props.roiY2}
@@ -45,6 +48,7 @@ class PlaneSVG extends Component {
                 }}
           />
           <line x1={this.props.roiX1}
+
                 y1={this.props.roiY1}
                 x2={this.props.roiX1}
                 y2={this.props.roiY2}
@@ -54,6 +58,7 @@ class PlaneSVG extends Component {
                 }}
           />
           <line x1={this.props.roiX2}
+
                 y1={this.props.roiY1}
                 x2={this.props.roiX2}
                 y2={this.props.roiY2}
@@ -62,6 +67,7 @@ class PlaneSVG extends Component {
                   strokeWidth: 2,
                 }}
           />
+
         </svg>
     )
   }
@@ -84,3 +90,4 @@ PlaneSVG.propTypes = {
 
 
 export default PlaneSVG;
+

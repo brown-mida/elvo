@@ -19,6 +19,7 @@ const styles = {
   }
 };
 
+
 // TODO: Caching
 class App extends Component {
   constructor(props) {
@@ -54,6 +55,7 @@ class App extends Component {
         zMip: 100,
       },
       threshold: 120,
+
       dimensions: {
         z: 300,
         x: 250,
@@ -69,6 +71,7 @@ class App extends Component {
       },
       renderingParams: 'x1=100&x2=110&y1=100&y2=110&z1=100&z2=110',
       mipStep: 4,
+
       createdBy: '',
     };
 
@@ -78,6 +81,7 @@ class App extends Component {
     this.updateBoundingBox = this.updateBoundingBox.bind(this);
     this.handleAnnotation = this.handleAnnotation.bind(this);
     this.updateRenderingParams = this.updateRenderingParams.bind(this);
+
   }
 
   handleSearchKeyPress(event) {
@@ -86,6 +90,7 @@ class App extends Component {
       this.setState({patientId: this.state.searchValue}, () => {
         console.log('searching for patient:', this.state.patientId);
         this.getImageDimensions();
+
       });
     }
   }
@@ -122,6 +127,7 @@ class App extends Component {
           <p><em>Only use this app on Wi-Fi</em></p>
         </Paper>
     )
+
   }
 
   updateIndex(attr) {
@@ -169,6 +175,7 @@ class App extends Component {
   }
 
   handleAnnotation() {
+
     if (this.state.createdBy === '') {
       console.error('Username cannot be empty');
       return;
@@ -176,6 +183,7 @@ class App extends Component {
     const data = {
       created_by: this.state.createdBy,
       patient_id: this.state.patientId,
+
       x1: this.state.roiDimensions.x1,
       x2: this.state.roiDimensions.x2,
       y1: this.state.roiDimensions.y1,
@@ -185,6 +193,7 @@ class App extends Component {
     };
     axios.post('/roi', data)
         .catch(() => {
+
           console.error('failed to insert annotation:', data);
         });
   }
@@ -199,11 +208,13 @@ class App extends Component {
         })
       }
     }
+
   }
 
   annotationInputView() {
     return (
         <Paper style={styles.dividerPaper}>
+
           <TextField
               id="search"
               label="Patient Id"
@@ -221,6 +232,7 @@ class App extends Component {
               label="red1"
               margin="normal"
               type="number"
+
               value={this.state.roiDimensions.x1}
               onChange={this.updateBoundingBox('x1')}
           />
@@ -229,6 +241,7 @@ class App extends Component {
               label="red2"
               margin="normal"
               type="number"
+
               value={this.state.roiDimensions.x2}
               onChange={this.updateBoundingBox('x2')}
           />
@@ -238,6 +251,7 @@ class App extends Component {
               label="green1"
               margin="normal"
               type="number"
+
               value={this.state.roiDimensions.y1}
               onChange={this.updateBoundingBox('y1')}
           />
@@ -246,6 +260,7 @@ class App extends Component {
               label="green2"
               margin="normal"
               type="number"
+
               value={this.state.roiDimensions.y2}
               onChange={this.updateBoundingBox('y2')}
           />
@@ -255,6 +270,7 @@ class App extends Component {
               label="blue1"
               margin="normal"
               type="number"
+
               value={this.state.roiDimensions.z1}
               onChange={this.updateBoundingBox('z1')}
           />
@@ -263,6 +279,7 @@ class App extends Component {
               label="blue2"
               margin="normal"
               type="number"
+
               value={this.state.roiDimensions.z2}
               onChange={this.updateBoundingBox('z2')}
           />
@@ -326,6 +343,7 @@ class App extends Component {
               </div>
             </Paper>
             <Paper style={styles.paper}>
+
               <h2>Axial</h2>
               <PlaneSVG viewType={'axial'}
                         patientId={this.state.patientId}
@@ -345,6 +363,7 @@ class App extends Component {
                     id="z"
                     label="blue axis"
                     margin="normal"
+
                     type="number"
                     value={this.state.indices.z}
                     onChange={this.updateIndex('z')}
@@ -352,6 +371,7 @@ class App extends Component {
               </div>
             </Paper>
             <Paper style={styles.paper}>
+
               <h2>Coronal</h2>
               <PlaneSVG viewType={'coronal'}
                         patientId={this.state.patientId}
@@ -373,6 +393,7 @@ class App extends Component {
                     label="green axis"
                     margin="normal"
                     type="number"
+
                     value={this.state.indices.y}
                     onChange={this.updateIndex('y')}
                 />
@@ -418,6 +439,7 @@ class App extends Component {
                 </Button>
                 </span>
             </Paper>
+
           </div>
         </div>
     )

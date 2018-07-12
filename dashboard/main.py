@@ -10,6 +10,7 @@ import numpy as np
 from google.cloud import storage
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from oauth2client.service_account import ServiceAccountCredentials
+
 from skimage import measure
 
 mpl.use('Agg')
@@ -27,6 +28,7 @@ cache = {}
 def configure_logger():
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.DEBUG)
+
     handler = logging.StreamHandler()
     formatter = logging.Formatter(
         fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -50,6 +52,7 @@ def roi():
     logging.info(f'creating annotation: {data}')
     created_by = data['created_by']
     patient_id = data['patient_id']
+
     x1 = data['x1']
     x2 = data['x2']
     y1 = data['y1']
@@ -104,6 +107,7 @@ def dimensions(patient_id):
     arr = _retrieve_arr(patient_id)
     shape = arr.shape
     logging.debug(f'patient has shape {shape}')
+
     return flask.json.dumps({
         'z': shape[0],
         'x': shape[1],
@@ -128,9 +132,11 @@ def axial_mip(patient_id, slice_i):
     return _send_slice(reoriented)
 
 
+
 @app.route('/image/sagittal/<patient_id>/<int:slice_k>')
 def sagittal(patient_id, slice_k):
     arr = _retrieve_arr(patient_id)
+
     return _send_slice(arr[:, :, slice_k])
 
 
@@ -150,6 +156,7 @@ def rendering(patient_id):
     z2 = int(flask.request.args.get('z2'))
 
     arr = _retrieve_arr(patient_id)
+
     roi = arr[
           min(x1, x2):max(x1, x2),
           min(y1, y2):max(y1, y2),
@@ -211,6 +218,7 @@ def _retrieve_arr(patient_id: str) -> np.ndarray:
         cache.popitem()
     cache[patient_id] = arr
     return arr
+
 
 
 def _send_slice(arr: np.ndarray):
