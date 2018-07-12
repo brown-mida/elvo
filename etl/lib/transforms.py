@@ -47,16 +47,95 @@ def standardize_spacing(image, slices):
     return zoom(image, resize_factor, mode='nearest')
 
 
-def mip_array(array: np.ndarray, type: str) -> np.ndarray:
-    print(np.max(array, axis=0).shape)
+def mip_normal(array: np.ndarray) -> np.ndarray:
     return np.max(array, axis=0)
 
 
-def crop(arr: np.ndarray, whence: str):
+def mip_multichannel(array: np.ndarray) -> np.ndarray:
+    num_slices = 3
+    to_return = np.zeros((num_slices, len(array[0][0]), len(array[0][0][0])))
+    print(to_return.shape)
+    for i in range(num_slices):
+        print(array[i].shape)
+        to_return[i] = np.max(array[i], axis=0)
+    return to_return
+
+
+def mip_overlap(array: np.ndarray) -> np.ndarray:
+    num_slices = 20
+    to_return = np.zeros((num_slices, len(array[0][0]), len(array[0][0][0])))
+    print(to_return.shape)
+    for i in range(num_slices):
+        print(array[i].shape)
+        to_return[i] = np.max(array[i], axis=0)
+    return to_return
+
+
+def crop_normal(arr: np.ndarray, whence: str):
+    # from numpy
     if whence == 'numpy':
-        to_return = arr[len(arr)-35-64:len(arr)-35]
+        to_return = arr[len(arr) - 35 - 64:len(arr) - 35]
+    # from luke
     else:
-        to_return = arr[len(arr)-40:]
+        to_return = arr[len(arr) - 40:]
+    return to_return
+
+
+def crop_strip_skull(arr: np.ndarray, whence: str):
+    # from numpy
+    if whence == 'numpy/axial':
+        initial_slice_num = len(arr) - 70
+        to_return = arr[initial_slice_num - 24:initial_slice_num]
+    # from luke
+    else:
+        to_return = arr[len(arr) - 40:]
+    return to_return
+
+
+def crop_multichannel(arr: np.ndarray, whence: str):
+    num_slices = 3
+    # from numpy
+    if whence == 'numpy':
+        to_return = np.zeros((3, 25, len(arr[0]), len(arr[0][0])))
+        print(to_return.shape)
+        chunk_start = 30
+        chunk_end = chunk_start + 25
+        inc = 25
+        # from luke
+    else:
+        to_return = np.zeros((3, 21, len(arr[0]), len(arr[0][0])))
+        print(to_return.shape)
+        chunk_start = 1
+        chunk_end = chunk_start + 21
+        inc = 21
+    for i in range(num_slices):
+        to_return[i] = arr[len(arr) - chunk_end:len(arr) - chunk_start]
+        chunk_start += inc
+        chunk_end += inc
+    return to_return
+
+
+def crop_overlap(arr: np.ndarray, whence: str):
+    num_slices = 20
+    # from numpy
+    if whence == 'numpy':
+        to_return = np.zeros((num_slices, 25, len(arr[0]), len(arr[0][0])))
+        print(to_return.shape)
+        chunk_start = 15
+        chunk_end = chunk_start + 25
+        inc = 5
+    # from luke
+    else:
+        to_return = np.zeros((num_slices, 10, len(arr[0]), len(arr[0][0])))
+        print(to_return.shape)
+        chunk_start = 4
+        chunk_end = chunk_start + 10
+        inc = 3
+
+    for i in range(num_slices):
+        to_return[i] = arr[len(arr) - chunk_end:len(arr) - chunk_start]
+        chunk_start += inc
+        chunk_end += inc
     return to_return
 
 
@@ -78,3 +157,16 @@ def normalize(image, lower_bound=None, upper_bound=None):
     image[image < lower_bound] = lower_bound
 
     return (image - image.mean()) / image.std()
+
+
+def segment_vessels(arr: np.ndarray, whence: str):
+    # from numpy
+    if whence == 'numpy/axial':
+        a = arr > 500
+        b = arr < 120
+        arr[a] = -50
+        arr[b] = -50
+        return arr
+    # from luke
+    # else:
+    #     to_return = arr[len(arr) - 40:]
