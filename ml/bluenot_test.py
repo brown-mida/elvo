@@ -1,7 +1,6 @@
-import os
-
 import keras
 import numpy as np
+import os
 import pandas as pd
 import pytest
 
@@ -64,7 +63,8 @@ def test_start_job_no_err():
     }
     bluenot.start_job(x_train, y_train, x_valid, y_valid,
                       name=name,
-                      params=params, redirect=False,
+                      params=params,
+                      redirect=True,
                       epochs=0)
 
 

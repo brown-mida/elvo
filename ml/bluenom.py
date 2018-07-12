@@ -20,6 +20,7 @@ class TrainingJob(elasticsearch_dsl.Document):
     job_name = elasticsearch_dsl.Keyword()
     author = elasticsearch_dsl.Keyword()
     created_at = elasticsearch_dsl.Date()
+    ended_at = elasticsearch_dsl.Date()
     params = elasticsearch_dsl.Text()
     raw_log = elasticsearch_dsl.Text()
 
@@ -53,6 +54,17 @@ def extract_params(path: pathlib.Path) -> typing.Optional[str]:
         return None
 
 
+def extract_author(path: pathlib.Path) -> typing.Optional[str]:
+    with open(path) as f:
+        f.readline()
+        f.readline()
+        third_line = f.readline()
+        if 'INFO - author:' in third_line:
+            author = third_line.rstrip('\n').split(':')[-1].strip()
+            return author
+    return None
+
+
 Metrics = namedtuple('Metrics', ['epochs',
                                  'train_acc',
                                  'final_val_acc',
@@ -75,19 +87,27 @@ def extract_metrics(path: pathlib.Path):
                    best_val_sensitivity=df['val_sensitivity'].max())
 
 
+def extract_ended_at(path: pathlib.Path):
+    with open(path) as f:
+        lines = [line for line in f]
+        if len(lines) > 0 and 'end time:' in lines[-1]:
+            return lines[-1].split(' ')[-1].strip()
+    return None
+
+
 def construct_job(job_name,
                   created_at,
                   params,
                   raw_log,
                   metrics,
                   metrics_filename,
-                  author=None):
-    if author is None:
-        raise ValueError('Author must be specified.')
+                  author=None,
+                  ended_at=None):
     training_job = TrainingJob(schema_version=1,
                                job_name=job_name,
                                author=author,
                                created_at=created_at,
+                               ended_at=ended_at,
                                params=params,
                                raw_log=raw_log)
 
@@ -106,7 +126,7 @@ def construct_job(job_name,
     return training_job
 
 
-def bluenom(log_dir: pathlib.Path):
+def bluenom(log_dir: pathlib.Path, gpu1708=False):
     """
     Uploads logs in the directory to bluenom.
 
@@ -139,13 +159,25 @@ def bluenom(log_dir: pathlib.Path):
                 unique_ids.add(id_)
 
                 params = extract_params(file_path)
+                author = extract_author(file_path)
+                if author is None and gpu1708:
+                    if created_at > '2018-07-11' \
+                            or 'processed_' in job_name \
+                            or 'processed-no-vert' in job_name:
+                        author = 'sumera'
+                    else:
+                        author = 'luke'
+
+                ended_at = extract_ended_at(file_path)
                 raw_log = open(file_path).read()
                 training_job = construct_job(job_name,
                                              created_at,
                                              params,
                                              raw_log,
                                              metrics,
-                                             metrics_filename)
+                                             metrics_filename,
+                                             author,
+                                             ended_at)
 
                 training_job.save()
         else:
@@ -153,9 +185,10 @@ def bluenom(log_dir: pathlib.Path):
 
 
 if __name__ == '__main__':
+    JOB_INDEX.delete()
     if not JOB_INDEX.exists():
         print('creating index jobs')
         JOB_INDEX.create()
     TrainingJob.init()
     path = pathlib.Path('/gpfs/main/home/lzhu7/elvo-analysis/logs')
-    bluenom(path)
+    bluenom(path, gpu1708=True)

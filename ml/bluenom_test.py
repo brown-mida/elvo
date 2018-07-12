@@ -57,3 +57,15 @@ def test_extract_metrics():
                                best_val_sensitivity=0.7192118223664796)
 
     assert bluenom.extract_metrics(path) == expected
+
+
+def test_extract_author():
+    path = pathlib.Path('/gpfs/main/home/lzhu7/elvo-analysis/logs/'
+                        'test_prepare_and_job-2018-07-12T03:09:27.805668.log')
+    assert bluenom.extract_author(path) == 'sumera'
+
+
+def test_ended_at():
+    path = pathlib.Path('/gpfs/main/home/lzhu7/elvo-analysis/logs/'
+                        'test_job-2018-07-12T03:17:29.021608.log')
+    assert bluenom.extract_ended_at(path) == '2018-07-12T03:19:46.868800'
