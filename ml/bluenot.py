@@ -203,6 +203,7 @@ def start_job(x_train: np.ndarray, y_train: np.ndarray, x_valid: np.ndarray,
         contextlib.redirect_stdout(log_filename)
         contextlib.redirect_stderr(log_filename)
         logging.info(f'using params:\n{params}')
+        logging.info(f'author: {NAME}')
 
     logging.debug(f'in start_job,'
                   f' using gpu {os.environ["CUDA_VISIBLE_DEVICES"]}')
@@ -250,6 +251,8 @@ def start_job(x_train: np.ndarray, y_train: np.ndarray, x_valid: np.ndarray,
                        model, history,
                        name, params,
                        config.SLACK_TOKEN)
+    end_time = datetime.datetime.utcnow().isoformat()
+    logging.info(f'end time: {end_time}')
 
 
 def hyperoptimize(hyperparams: dict) -> None:
@@ -287,7 +290,7 @@ def hyperoptimize(hyperparams: dict) -> None:
         gpu_index += 1
         gpu_index %= config.NUM_GPUS
 
-        logging.debug(f'gpu_index is now {gpu_index}')
+        logging.debug(f'gpu_index is now {gpu_index + GPU_OFFSET}')
         process.start()
         processes.append(process)
         if gpu_index == 0:
