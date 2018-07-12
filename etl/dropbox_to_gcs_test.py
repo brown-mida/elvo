@@ -1,6 +1,5 @@
-import os
-
 import dropbox
+import os
 import pytest
 from google.cloud import storage
 
