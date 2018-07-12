@@ -87,6 +87,55 @@ def create_callbacks(x_train: np.ndarray, y_train: np.ndarray,
     return callbacks
 
 
+def slack_report(x_train: np.ndarray,
+                 y_train: np.ndarray,
+                 x_valid: np.ndarray,
+                 y_valid: np.ndarray,
+                 model: keras.models.Model,
+                 history: keras.callbacks.History,
+                 name: str,
+                 params: dict,
+                 token: str):
+    """
+    Uploads a loss graph, accuacy, and confusion matrix plots in addition
+    to useful data about the model to Slack.
+
+    :param x_train:
+    :param y_train:
+    :param x_valid:
+    :param y_valid:
+    :param model:
+    :param history:
+    :param name:
+    :param params:
+    :return:
+    """
+    save_history(history)
+    upload_to_slack('/tmp/loss.png', f'{name}\n\nparams:\n{str(params)}',
+                    token)
+    upload_to_slack('/tmp/acc.png', f'{name}\n\nparams:\n{str(params)}',
+                    token)
+
+    x_mean = np.array([x_train[:, :, :, 0].mean(),
+                       x_train[:, :, :, 1].mean(),
+                       x_train[:, :, :, 2].mean()])
+    x_std = np.array([x_train[:, :, :, 0].std(),
+                      x_train[:, :, :, 1].std(),
+                      x_train[:, :, :, 2].std()])
+    x_valid_standardized = (x_valid - x_mean) / x_std
+
+    report = full_multiclass_report(model,
+                                    x_valid_standardized,
+                                    y_valid,
+                                    [0, 1],
+                                    batch_size=params['model']['batch_size'])
+    upload_to_slack('/tmp/cm.png', report, token)
+    upload_to_slack('/tmp/false_positives.png', 'false positives', token)
+    upload_to_slack('/tmp/false_negatives.png', 'false negatives', token)
+    upload_to_slack('/tmp/true_positives.png', 'true positives', token)
+    upload_to_slack('/tmp/true_negatives.png', 'true negatives', token)
+
+
 def save_history(history: keras.callbacks.History):
     loss_list = [s for s in history.history.keys() if
                  'loss' in s and 'val' not in s]
@@ -171,6 +220,7 @@ def save_confusion_matrix(cm, classes,
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
 
+    # TODO(#73): Refactor so it's testable and no hard coded path
     plt.savefig('/tmp/cm.png')
 
 
@@ -258,89 +308,6 @@ def upload_to_slack(filename, comment, token):
     return r
 
 
-def slack_report(x_train: np.ndarray,
-                 y_train: np.ndarray,
-                 x_valid: np.ndarray,
-                 y_valid: np.ndarray,
-                 model: keras.models.Model,
-                 history: keras.callbacks.History,
-                 name: str,
-                 params: dict,
-                 token: str):
-    """
-    Uploads a loss graph, accuacy, and confusion matrix plots in addition
-    to useful data about the model to Slack.
-
-    :param x_train:
-    :param y_train:
-    :param x_valid:
-    :param y_valid:
-    :param model:
-    :param history:
-    :param name:
-    :param params:
-    :return:
-    """
-    save_history(history)
-    upload_to_slack('/tmp/loss.png', f'{name}\n\nparams:\n{str(params)}',
-                    token)
-    upload_to_slack('/tmp/acc.png', f'{name}\n\nparams:\n{str(params)}',
-                    token)
-
-    x_mean = np.array([x_train[:, :, :, 0].mean(),
-                       x_train[:, :, :, 1].mean(),
-                       x_train[:, :, :, 2].mean()])
-    x_std = np.array([x_train[:, :, :, 0].std(),
-                      x_train[:, :, :, 1].std(),
-                      x_train[:, :, :, 2].std()])
-    x_valid_standardized = (x_valid - x_mean) / x_std
-
-    report = full_multiclass_report(model,
-                                    x_valid_standardized,
-                                    y_valid,
-                                    [0, 1],
-                                    batch_size=params['model']['batch_size'])
-    upload_to_slack('/tmp/cm.png', report, token)
-    upload_to_slack('/tmp/false_positives.png', 'false positives', token)
-    upload_to_slack('/tmp/false_negatives.png', 'false negatives', token)
-    upload_to_slack('/tmp/true_positives.png', 'true positives', token)
-    upload_to_slack('/tmp/true_negatives.png', 'true negatives', token)
-
-
-def plot_images(data: typing.Dict[str, np.ndarray],
-                labels: pd.DataFrame,
-                num_cols=5,
-                limit=20,
-                offset=0):
-    """
-    Plots limit images in a single plot.
-
-    :param data:
-    :param labels:
-    :param num_cols:
-    :param limit: the number of images to plot
-    :param offset:
-    :return:
-    """
-    # Ceiling function of len(data) / num_cols
-    num_rows = (min(len(data), limit) + num_cols - 1) // num_cols
-    fig = plt.figure(figsize=(10, 10))
-    for i, patient_id in enumerate(data):
-        if i < offset:
-            continue
-        if i >= offset + limit:
-            break
-        plot_num = i - offset + 1
-        ax = fig.add_subplot(num_rows, num_cols, plot_num)
-        ax.set_title(f'patient: {patient_id[:4]}...')
-        label = ('positive' if labels.loc[patient_id]['occlusion_exists']
-                 else 'negative')
-        ax.set_xlabel(f'label: {label}')
-        plt.imshow(data[patient_id])
-    fig.tight_layout()
-    plt.plot()
-
-
 def save_misclassification_plots(x_valid,
                                  y_true,
                                  y_pred):
@@ -414,5 +381,39 @@ def plot_misclassification(x,
         ax.set_title(f'patient: {i}')
         ax.set_xlabel(f'y_true: {y_true[i]} y_pred: {y_pred[i]}')
         plt.imshow(arr)  # Multiply by 255 here for
+    fig.tight_layout()
+    plt.plot()
+
+
+def plot_images(data: typing.Dict[str, np.ndarray],
+                labels: pd.DataFrame,
+                num_cols=5,
+                limit=20,
+                offset=0):
+    """
+    Plots limit images in a single plot.
+
+    :param data:
+    :param labels:
+    :param num_cols:
+    :param limit: the number of images to plot
+    :param offset:
+    :return:
+    """
+    # Ceiling function of len(data) / num_cols
+    num_rows = (min(len(data), limit) + num_cols - 1) // num_cols
+    fig = plt.figure(figsize=(10, 10))
+    for i, patient_id in enumerate(data):
+        if i < offset:
+            continue
+        if i >= offset + limit:
+            break
+        plot_num = i - offset + 1
+        ax = fig.add_subplot(num_rows, num_cols, plot_num)
+        ax.set_title(f'patient: {patient_id[:4]}...')
+        label = ('positive' if labels.loc[patient_id]['occlusion_exists']
+                 else 'negative')
+        ax.set_xlabel(f'label: {label}')
+        plt.imshow(data[patient_id])
     fig.tight_layout()
     plt.plot()
