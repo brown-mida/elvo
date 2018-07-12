@@ -374,13 +374,16 @@ if __name__ == '__main__':
 
     user_config = importlib.import_module(args.config)
 
-    parent_log_file = pathlib.Path(user_config.LOG_DIR) / 'results-{}'.format(
+    parent_log_file = pathlib.Path(
+        user_config.LOG_DIR) / 'results-{}.txt'.format(
         datetime.datetime.utcnow().isoformat()
     )
     configure_parent_logger(parent_log_file)
     check_config(user_config)
 
+    logging.info('checking param grid')
     param_grid = blueno.ParamGrid(**user_config.PARAM_GRID)
+    logging.info('entire param grid: {}'.format(param_grid))
 
     hyperoptimize(param_grid,
                   user_config.USER,

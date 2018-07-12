@@ -50,8 +50,8 @@ class GeneratorConfig:
     height_shift_range: float = 0.1
     shear_range: float = 0
     zoom_range: int = 0.1
-    horizontal_flip = True
-    vertical_flip = False
+    horizontal_flip: bool = True
+    vertical_flip: bool = False
 
 
 # Keep the below two classes in sync
