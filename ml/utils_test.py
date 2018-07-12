@@ -1,11 +1,13 @@
-import os
-
 import keras
 import numpy as np
+import os
 import pytest
 import sklearn.preprocessing
 
-import config
+try:
+    from config import SLACK_TOKEN
+except ImportError:
+    SLACK_TOKEN = ''
 import utils
 
 
@@ -16,7 +18,7 @@ def test_upload_to_slack():
         f.write('hello!')
     r = utils.upload_to_slack('test_upload_to_slack.png',
                               'just testing you',
-                              config.SLACK_TOKEN)
+                              SLACK_TOKEN)
     assert r.status_code == 200
 
 
@@ -88,16 +90,16 @@ def test_save_misclassification_plots():
                                        y_pred_binary)
     utils.upload_to_slack('/tmp/false_positives.png',
                           'false positives',
-                          config.SLACK_TOKEN)
+                          SLACK_TOKEN)
     utils.upload_to_slack('/tmp/false_negatives.png',
                           'false negatives',
-                          config.SLACK_TOKEN)
+                          SLACK_TOKEN)
     utils.upload_to_slack('/tmp/true_positives.png',
                           'true positives',
-                          config.SLACK_TOKEN)
+                          SLACK_TOKEN)
     utils.upload_to_slack('/tmp/true_negatives.png',
                           'true negatives',
-                          config.SLACK_TOKEN)
+                          SLACK_TOKEN)
 
 
 def test_create_callbacks_one_class():

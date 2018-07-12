@@ -46,12 +46,18 @@ import keras  # noqa: E402
 
 # TODO(#62): Refactor this
 if 'LUKE' in os.environ:
-    import config_luke as config
+    try:
+        import config_luke as config
+    except ImportError:
+        pass
 
     NAME = 'luke'
     GPU_OFFSET = -1
 if 'MARY' in os.environ:
-    import config_mary as config  # noqa: F811
+    try:
+        import config_mary as config  # noqa: F811
+    except ImportError:
+        pass
 
     NAME = 'mary'
     GPU_OFFSET = 2
