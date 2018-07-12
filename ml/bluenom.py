@@ -11,6 +11,8 @@ from pandas.errors import EmptyDataError
 TRAINING_JOBS = 'training_jobs'
 JOB_INDEX = elasticsearch_dsl.Index(TRAINING_JOBS)
 
+connections.create_connection(hosts=['http://104.196.51.205'])
+
 
 class TrainingJob(elasticsearch_dsl.Document):
     id = elasticsearch_dsl.Integer()
@@ -208,7 +210,6 @@ def _fill_author_gpu1708(created_at, job_name):
 
 
 if __name__ == '__main__':
-    connections.create_connection(hosts=['http://104.196.51.205'])
     if not JOB_INDEX.exists():
         print('creating index jobs')
         JOB_INDEX.create()
