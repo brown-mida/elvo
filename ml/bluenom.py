@@ -1,15 +1,17 @@
+import os
 import pathlib
 import typing
 from collections import namedtuple
 
 import elasticsearch_dsl
-import os
 import pandas as pd
 from elasticsearch_dsl import connections
 from pandas.errors import EmptyDataError
 
 TRAINING_JOBS = 'training_jobs'
 JOB_INDEX = elasticsearch_dsl.Index(TRAINING_JOBS)
+
+connections.create_connection(hosts=['http://104.196.51.205'])
 
 
 class TrainingJob(elasticsearch_dsl.Document):
@@ -108,6 +110,11 @@ def insert_or_ignore(training_job):
         .query('match', job_name=training_job.job_name) \
         .query('match', created_at=training_job.created_at) \
         .count()
+
+    if 'slack' not in training_job.raw_log:
+        print('job is incomplete, returning')
+        return
+
     if matches == 0:
         training_job.save()
     else:
@@ -208,7 +215,6 @@ def _fill_author_gpu1708(created_at, job_name):
 
 
 if __name__ == '__main__':
-    connections.create_connection(hosts=['http://104.196.51.205'])
     if not JOB_INDEX.exists():
         print('creating index jobs')
         JOB_INDEX.create()

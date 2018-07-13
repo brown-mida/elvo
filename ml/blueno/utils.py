@@ -11,6 +11,8 @@ import requests
 import sklearn.metrics
 from keras import backend as K
 
+from blueno import ParamConfig
+
 matplotlib.use('Agg')  # noqa: E402
 from matplotlib import pyplot as plt
 
@@ -51,23 +53,28 @@ class AucCallback(keras.callbacks.Callback):
 
 
 def create_callbacks(x_train: np.ndarray, y_train: np.ndarray,
-                     x_valid: np.ndarray, y_valid: np.ndarray, filename: str,
+                     x_valid: np.ndarray, y_valid: np.ndarray,
+                     filepath: str = None,
                      normalize=True):
     """
     Instantiates a list of callbacks:
+    - CSV logger
     - AUC
     - Early stopping
     - TODO(#71): model checkpoint
 
-    :param normalize:
     :param x_train:
     :param y_train:
     :param x_valid:
     :param y_valid:
+    :param filepath: the file to save the CSV results to
+    :param normalize: whether or not to normalize the x data
     :return:
     """
     callbacks = []
-    callbacks.append(keras.callbacks.CSVLogger(filename, append=True))
+    if filepath:
+        callbacks.append(keras.callbacks.CSVLogger(filepath, append=True))
+
     callbacks.append(keras.callbacks.EarlyStopping(monitor='val_acc',
                                                    patience=10))
 
@@ -94,7 +101,7 @@ def slack_report(x_train: np.ndarray,
                  model: keras.models.Model,
                  history: keras.callbacks.History,
                  name: str,
-                 params: dict,
+                 params: ParamConfig,
                  token: str):
     """
     Uploads a loss graph, accuacy, and confusion matrix plots in addition
@@ -128,7 +135,7 @@ def slack_report(x_train: np.ndarray,
                                     x_valid_standardized,
                                     y_valid,
                                     [0, 1],
-                                    batch_size=params['model']['batch_size'])
+                                    batch_size=params.batch_size)
     upload_to_slack('/tmp/cm.png', report, token)
     upload_to_slack('/tmp/false_positives.png', 'false positives', token)
     upload_to_slack('/tmp/false_negatives.png', 'false negatives', token)

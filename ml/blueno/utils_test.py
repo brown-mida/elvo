@@ -4,11 +4,14 @@ import os
 import pytest
 import sklearn.preprocessing
 
+# Use Luke's config
 try:
-    from config import SLACK_TOKEN
+    from config_luke import SLACK_TOKEN
 except ImportError:
     SLACK_TOKEN = ''
-import utils
+from blueno import utils
+
+os.environ['CUDA_VISIBLE_DEVICES'] = ''
 
 
 @pytest.mark.skipif(os.uname().nodename != 'gpu1708',
@@ -17,7 +20,7 @@ def test_upload_to_slack():
     with open('test_upload_to_slack.png', 'w') as f:
         f.write('hello!')
     r = utils.upload_to_slack('test_upload_to_slack.png',
-                              'just testing you',
+                              'testing',
                               SLACK_TOKEN)
     assert r.status_code == 200
 
@@ -69,7 +72,6 @@ def test_full_multiclass_report_multiclass():
 @pytest.mark.skipif(os.uname().nodename != 'gpu1708',
                     reason='Test uses token only on gpu1708')
 def test_save_misclassification_plots():
-    os.environ['CUDA_VISIBLE_DEVICES'] = ''
     model = keras.Sequential([
         keras.layers.Flatten(input_shape=(224, 224, 3)),
         keras.layers.Dense(3, activation='softmax'),
@@ -113,3 +115,10 @@ def test_create_callbacks_three_classes():
     y = np.random.randint(0, 3, size=(10,))
     y = sklearn.preprocessing.label_binarize(y, [0, 1, 2])
     utils.create_callbacks(X, y, X, y, '/tmp/callbacks_test.csv')
+
+
+def test_create_callbacks_no_output():
+    X = np.random.rand(10, 224, 224, 3)
+    y = np.random.randint(0, 3, size=(10,))
+    y = sklearn.preprocessing.label_binarize(y, [0, 1, 2])
+    utils.create_callbacks(X, y, X, y)

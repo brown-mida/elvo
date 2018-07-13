@@ -6,7 +6,17 @@ import pytest
 
 import bluenot
 import generators.luke
-import models.luke
+
+os.environ['CUDA_VISIBLE_DEVICES'] = ''
+
+
+def small_model(input_shape=(224, 224, 3),
+                num_classes=1,
+                *args, **kwargs):
+    return keras.Sequential([
+        keras.layers.Flatten(input_shape=input_shape),
+        keras.layers.Dense(num_classes, activation='softmax'),
+    ])
 
 
 def test_to_arrays():
@@ -29,10 +39,9 @@ def test_to_arrays():
                     reason='Test takes a long time without a GPU')
 def test_start_job_no_err():
     x_train = np.random.uniform(0, 255, (100, 220, 220, 3))
-    y_train = np.random.uniform(0, 255, (100, 5))
+    y_train = np.random.randint(0, 2, (100, 5))
     x_valid = np.random.uniform(0, 255, (20, 220, 220, 3))
-    y_valid = np.random.uniform(0, 255, (20, 5))
-    name = 'test_job'
+    y_valid = np.random.randint(0, 2, (20, 5))
     params = {
         'data': {
             # A directory containing a list of numpy files with
@@ -52,7 +61,7 @@ def test_start_job_no_err():
 
         'model': {
             # The callable must take in **kwargs as an argument
-            'model_callable': models.luke.inception_resnet,
+            'model_callable': small_model,
             'dropout_rate1': 0.8,
             'dropout_rate2': 0.7,
             'batch_size': 8,
@@ -62,10 +71,10 @@ def test_start_job_no_err():
         },
     }
     bluenot.start_job(x_train, y_train, x_valid, y_valid,
-                      name=name,
+                      job_name='test_job',
+                      username='test',
                       params=params,
-                      redirect=True,
-                      epochs=0)
+                      epochs=1)
 
 
 @pytest.mark.skipif(os.uname().nodename != 'gpu1708',
@@ -91,7 +100,7 @@ def test_prepare_data_correct_dims():
 
         'model': {
             # The callable must take in **kwargs as an argument
-            'model_callable': models.luke.inception_resnet,
+            'model_callable': small_model,
             'dropout_rate1': 0.8,
             'dropout_rate2': 0.7,
             'batch_size': 8,
@@ -128,7 +137,7 @@ def test_prepare_and_job():
 
         'model': {
             # The callable must take in **kwargs as an argument
-            'model_callable': models.luke.resnet,
+            'model_callable': small_model,
             'dropout_rate1': 0.8,
             'dropout_rate2': 0.7,
             'batch_size': 8,
@@ -142,5 +151,7 @@ def test_prepare_and_job():
                       y_train,
                       x_valid,
                       y_valid,
-                      name='test_prepare_and_job',
-                      params=params)
+                      job_name='test_prepare_and_job',
+                      username='test',
+                      params=params,
+                      epochs=1)

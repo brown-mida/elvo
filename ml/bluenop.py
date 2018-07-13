@@ -6,7 +6,7 @@ import os
 import pandas as pd
 from matplotlib import pyplot as plt
 
-from utils import plot_images
+from blueno.utils import plot_images
 
 
 def load_arrays(data_dir: str) -> typing.Dict[str, np.ndarray]:

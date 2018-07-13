@@ -25,3 +25,4 @@ codecov==2.0.15
 flake8==3.5.0
 elasticsearch-dsl==6.2.1
 elasticsearch==6.3.0
+dataclasses==0.6
