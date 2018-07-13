@@ -259,8 +259,7 @@ def start_job(x_train: np.ndarray,
                   loss=model_params.loss,
                   metrics=metrics)
 
-    model_filepath = '/tmp/{}-{}'.format(job_name,
-                                         os.environ['CUDA_VISIBLE_DEVICES'])
+    model_filepath = '/tmp/{}.hdf5'.format(os.environ['CUDA_VISIBLE_DEVICES'])
     logging.debug('model_filepath: {}'.format(model_filepath))
     callbacks = utils.create_callbacks(x_train, y_train, x_valid, y_valid,
                                        csv_file=csv_filepath,
@@ -284,24 +283,7 @@ def start_job(x_train: np.ndarray,
 
     acc_i = model.metrics_names.index('acc')
     if model.evaluate_generator(valid_gen)[acc_i] >= 0.8:
-        gcs_filepath = 'gs://elvos/models/{}-{}.hdf5'.format(
-            model_filepath.split('/')[-1][:-2],  # Remove the gpu index
-            created_at,
-        )
-        # Do not change, this is log is used to get the gcs link
-        logging.info('model has val_acc > 0.8\n'
-                     'uploading model {} to {}'.format(
-            model_filepath,
-            gcs_filepath,
-        ))
-
-        subprocess.run(
-            ['/bin/bash',
-             '-i',
-             '-c',
-             'gsutil cp ' + model_filepath + ' ' + gcs_filepath],
-            timeout=5,
-            check=True)
+        upload_model_to_gcs(job_name, created_at, model_filepath)
 
     end_time = datetime.datetime.utcnow().isoformat()
     # This must be the last line in the log, do not change
@@ -311,6 +293,34 @@ def start_job(x_train: np.ndarray,
     if log_dir:
         bluenom.insert_job_by_filepaths(pathlib.Path(log_filepath),
                                         pathlib.Path(csv_filepath))
+
+
+def upload_model_to_gcs(job_name, created_at, model_filepath):
+    gcs_filepath = 'gs://elvos/models/{}-{}.hdf5'.format(
+        # Remove the extension
+        job_name,
+        created_at,
+    )
+    # Do not change, this is log is used to get the gcs link
+    logging.info('uploading model {} to {}'.format(
+        model_filepath,
+        gcs_filepath,
+    ))
+
+    try:
+        subprocess.run(
+            ['/bin/bash',
+             '-c',
+             'gsutil cp {} {}'.format(model_filepath, gcs_filepath)],
+            check=True)
+    except subprocess.CalledProcessError:
+        # gpu1708 specific code
+        subprocess.run(
+            ['/bin/bash',
+             '-c',
+             '/gpfs/main/home/lzhu7/google-cloud-sdk/bin/'
+             'gsutil cp {} {}'.format(model_filepath, gcs_filepath)],
+            check=True)
 
 
 def hyperoptimize(hyperparams: Union[blueno.ParamGrid,
