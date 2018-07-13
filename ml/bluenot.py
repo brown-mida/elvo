@@ -290,7 +290,7 @@ def start_job(x_train: np.ndarray,
         upload_model_to_gcs(job_name, created_at, model_filepath)
 
     end_time = datetime.datetime.utcnow().isoformat()
-    # This must be the last line in the log, do not change
+    # Do not change, this generates the ended at ES field
     logging.info(f'end time: {end_time}')
 
     # Upload logs to Kibana

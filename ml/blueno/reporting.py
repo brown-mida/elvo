@@ -166,9 +166,9 @@ def _extract_author(log_path: pathlib.Path) -> typing.Optional[str]:
 
 def _extract_ended_at(log_path: pathlib.Path) -> typing.Optional[str]:
     with open(log_path) as f:
-        lines = [line for line in f]
-        if len(lines) > 0 and 'end time:' in lines[-1]:
-            return lines[-1].split(' ')[-1].strip()
+        for line in f:
+            if 'INFO - end time:' in line:
+                return line.split(' ')[-1].rstrip('\n')
     return None
 
 
