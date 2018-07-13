@@ -1,5 +1,3 @@
-import logging
-
 import keras
 import numpy as np
 import os
@@ -105,7 +103,6 @@ def test_start_job_log():
         }),
     }
     params = blueno.ParamConfig(**params)
-    logging.basicConfig(level=logging.DEBUG)
     bluenot.start_job(x_train, y_train, x_valid, y_valid, job_name='test_job',
                       username='test', params=params, epochs=1,
                       log_dir='/tmp/')
@@ -146,6 +143,8 @@ def test_prepare_data_correct_dims():
     assert y_test.ndim == 2
 
 
+@pytest.mark.skipif(os.uname().nodename != 'gpu1708',
+                    reason='Test uses data only on gpu1708')
 def test_prepare_data_matching_indices():
     params = {
         'data': blueno.DataConfig(**{
