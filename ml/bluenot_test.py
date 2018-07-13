@@ -33,8 +33,7 @@ def test_to_arrays():
         index=['a', 'b', 'c'],
     )
 
-    x_arr, y_arr = bluenot.to_arrays(x_dict, y_series)
-    print(y_arr)
+    x_arr, y_arr, _ = bluenot.to_arrays(x_dict, y_series)
     assert np.all(x_arr == np.expand_dims(y_arr, axis=1))
 
 
@@ -70,11 +69,8 @@ def test_start_job_no_err():
         }),
     }
     params = blueno.ParamConfig(**params)
-    bluenot.start_job(x_train, y_train, x_valid, y_valid,
-                      job_name='test_job',
-                      username='test',
-                      params=params,
-                      epochs=1)
+    bluenot.start_job(x_train, y_train, x_valid, y_valid, job_name='test_job',
+                      username='test', params=params, epochs=1)
 
 
 def test_start_job_log():
@@ -110,11 +106,8 @@ def test_start_job_log():
     }
     params = blueno.ParamConfig(**params)
     logging.basicConfig(level=logging.DEBUG)
-    bluenot.start_job(x_train, y_train, x_valid, y_valid,
-                      job_name='test_job',
-                      username='test',
-                      params=params,
-                      epochs=1,
+    bluenot.start_job(x_train, y_train, x_valid, y_valid, job_name='test_job',
+                      username='test', params=params, epochs=1,
                       log_dir='/tmp/')
 
 
@@ -148,9 +141,45 @@ def test_prepare_data_correct_dims():
         }),
     }
     params = blueno.ParamConfig(**params)
-    _, _, y_train, y_test = bluenot.prepare_data(params)
+    _, _, y_train, y_test, _, _ = bluenot.prepare_data(params)
     assert y_train.ndim == 2
     assert y_test.ndim == 2
+
+
+def test_prepare_data_matching_indices():
+    params = {
+        'data': blueno.DataConfig(**{
+            'data_dir': '/home/lzhu7/elvo-analysis/data/'
+                        'processed-standard/arrays/',
+            'labels_path': '/home/lzhu7/elvo-analysis/data/'
+                           'processed-standard/labels.csv',
+            'index_col': 'Anon ID',
+            'label_col': 'occlusion_exists',
+        }),
+
+        'val_split': 0.2,
+        'seed': 0,
+        'batch_size': 8,
+
+        'generator': blueno.GeneratorConfig(
+            generator_callable=generators.luke.standard_generators),
+
+        'model': blueno.ModelConfig(**{
+            # The callable must take in **kwargs as an argument
+            'model_callable': small_model,
+            'dropout_rate1': 0.8,
+            'dropout_rate2': 0.7,
+            'optimizer': keras.optimizers.Adam(lr=1e-4),
+            'loss': keras.losses.categorical_crossentropy,
+        }),
+    }
+    params = blueno.ParamConfig(**params)
+    _, _, y_train, y_test, id_train, id_test = bluenot.prepare_data(params)
+    for i, id_ in enumerate(id_test):
+        if id_ == '068WBWCQGW5JHBYV':
+            assert y_test[i][0] == 1
+        elif id_ == 'FBGMN3O08GW5GG91':
+            assert y_test[i][1] == 1
 
 
 @pytest.mark.skipif(os.uname().nodename != 'gpu1708',
@@ -184,12 +213,7 @@ def test_prepare_and_job():
     }
 
     params = blueno.ParamConfig(**params)
-    x_train, x_valid, y_train, y_valid = bluenot.prepare_data(params)
-    bluenot.start_job(x_train,
-                      y_train,
-                      x_valid,
-                      y_valid,
-                      job_name='test_prepare_and_job',
-                      username='test',
-                      params=params,
-                      epochs=1)
+    x_train, x_valid, y_train, y_valid, _, _ = bluenot.prepare_data(params)
+    bluenot.start_job(x_train, y_train, x_valid, y_valid,
+                      job_name='test_prepare_and_job', username='test',
+                      params=params, epochs=1)

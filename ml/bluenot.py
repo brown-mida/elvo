@@ -84,7 +84,7 @@ def load_arrays(data_dir: str) -> Dict[str, np.ndarray]:
 
 
 def to_arrays(data: Dict[str, np.ndarray],
-              labels: pd.Series) -> Tuple[np.ndarray, np.ndarray]:
+              labels: pd.Series) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     Converts the data and labels into numpy arrays.
 
@@ -94,15 +94,18 @@ def to_arrays(data: Dict[str, np.ndarray],
 
     :param data:
     :param labels: a dataframe WITH patient ID for the index.
-    :return: two arrays containing the arrays and the labels
+    :return: three arrays: the arrays, then the labels, then the corresponding
+    ids
     """
     patient_ids = data.keys()
     X_list = []
     y_list = []
+    remaining_ids = []
     for id_ in patient_ids:
         try:
             y_list += [labels.loc[id_]]
             X_list += [data[id_]]  # Needs to be in this order
+            remaining_ids += [id_]
         except KeyError:
             logging.warning(f'{id_} in data was not present in labels')
             logging.warning(f'{len(X_list)}, {len(y_list)}')
@@ -111,10 +114,13 @@ def to_arrays(data: Dict[str, np.ndarray],
             logging.warning(f'{id_} in labels was not present in data')
 
     assert len(X_list) == len(y_list)
-    return np.stack(X_list), np.stack(y_list)
+    assert len(X_list) == len(remaining_ids)
+    return np.stack(X_list), np.stack(y_list), np.array(remaining_ids)
 
 
 def prepare_data(params: blueno.ParamConfig) -> Tuple[np.ndarray,
+                                                      np.ndarray,
+                                                      np.ndarray,
                                                       np.ndarray,
                                                       np.ndarray,
                                                       np.ndarray]:
@@ -134,7 +140,7 @@ def prepare_data(params: blueno.ParamConfig) -> Tuple[np.ndarray,
     label_series = pd.read_csv(data_params.labels_path,
                                index_col=index_col)[label_col]
     # Convert to split numpy arrays
-    x, y = to_arrays(array_dict, label_series)
+    x, y, patient_ids = to_arrays(array_dict, label_series)
 
     if params.model.loss == keras.losses.binary_crossentropy:
         # We need y to have 2 dimensions for the rest of the model
@@ -173,12 +179,12 @@ def prepare_data(params: blueno.ParamConfig) -> Tuple[np.ndarray,
     logging.debug(f'y shape: {y.shape}')
     logging.info(f'seeding to {params.seed} before shuffling')
 
-    x_train, x_valid, y_train, y_valid = \
+    x_train, x_valid, y_train, y_valid, ids_train, ids_valid = \
         model_selection.train_test_split(
-            x, y,
+            x, y, patient_ids,
             test_size=params.val_split,
             random_state=params.seed)
-    return x_train, x_valid, y_train, y_valid
+    return x_train, x_valid, y_train, y_valid, ids_train, ids_valid
 
 
 def start_job(x_train: np.ndarray,
@@ -189,8 +195,9 @@ def start_job(x_train: np.ndarray,
               username: str,
               params: blueno.ParamConfig,
               slack_token: str = None,
-              epochs=100,  # deprecated
-              log_dir: str = None) -> None:
+              epochs=100,
+              log_dir: str = None,
+              id_valid: np.ndarray = None) -> None:
     """
     Builds, fits, and evaluates a model.
 
@@ -206,6 +213,7 @@ def start_job(x_train: np.ndarray,
     :param params: the parameters specified
     :param epochs:
     :param log_dir:
+    :param id_valid: the patient ids ordered to correspond with y_valid
     :return:
     """
     num_classes = y_train.shape[1]
@@ -272,11 +280,8 @@ def start_job(x_train: np.ndarray,
 
     if slack_token:
         logging.info('generating slack report')
-        utils.slack_report(x_train, y_train,
-                           x_valid, y_valid,
-                           model, history,
-                           job_name, params,
-                           slack_token)
+        utils.slack_report(x_train, x_valid, y_valid, model, history, job_name,
+                           params, slack_token, id_valid=id_valid)
     else:
         logging.info('no slack token found, not generating report')
 
@@ -355,8 +360,8 @@ def hyperoptimize(hyperparams: Union[blueno.ParamGrid,
     for params in param_list:
         if isinstance(params, dict):
             params = blueno.ParamConfig(**params)
-        print(params)
-        x_train, x_valid, y_train, y_valid = prepare_data(params)
+        x_train, x_valid, y_train, y_valid, id_train, id_valid = prepare_data(
+            params)
 
         # Start the model training job
         # Run in a separate process to avoid memory issues
@@ -382,6 +387,7 @@ def hyperoptimize(hyperparams: Union[blueno.ParamGrid,
                                               'username': username,
                                               'slack_token': slack_token,
                                               'log_dir': log_dir,
+                                              'id_valid': id_valid,
                                           })
         gpu_index += 1
         gpu_index %= num_gpus
