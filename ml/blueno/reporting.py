@@ -38,6 +38,7 @@ class TrainingJob(elasticsearch_dsl.Document):
     best_val_loss = elasticsearch_dsl.Float()
     final_val_sensitivity = elasticsearch_dsl.Float()
     best_val_sensitivity = elasticsearch_dsl.Float()
+    final_val_auc = elasticsearch_dsl.Float()
 
     class Index:
         name = TRAINING_JOBS
@@ -51,7 +52,8 @@ def construct_job(job_name,
                   metrics_filename,
                   author=None,
                   ended_at=None,
-                  model_url=None) -> TrainingJob:
+                  model_url=None,
+                  final_val_auc=None) -> TrainingJob:
     """Note that these parameters are experimental.
     """
     training_job = TrainingJob(schema_version=1,
@@ -61,7 +63,8 @@ def construct_job(job_name,
                                ended_at=ended_at,
                                params=params,
                                raw_log=raw_log,
-                               model_url=model_url)
+                               model_url=model_url,
+                               final_val_auc=final_val_auc)
 
     if (job_name, created_at) == _parse_filename(metrics_filename):
         print('found matching CSV file, setting metrics')
@@ -92,6 +95,7 @@ def insert_job_by_filepaths(log_file: pathlib.Path,
         author = _fill_author_gpu1708(created_at, job_name)
     ended_at = _extract_ended_at(log_file)
     model_url = _extract_model_url(log_file)
+    final_val_auc = _extract_model_url(log_file)
 
     try:
         metrics = _extract_metrics(csv_file)
@@ -103,7 +107,8 @@ def insert_job_by_filepaths(log_file: pathlib.Path,
                                      str(csv_file.name),
                                      author=author,
                                      ended_at=ended_at,
-                                     model_url=model_url)
+                                     model_url=model_url,
+                                     final_val_auc=final_val_auc)
         insert_or_ignore(training_job)
     except (ValueError, EmptyDataError):
         print('metrics file {} is empty'.format(csv_file))
