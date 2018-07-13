@@ -1,6 +1,6 @@
 import json
-import os
 
+import os
 import pytest
 
 
@@ -14,6 +14,7 @@ def test_index():
     assert r.status_code == 200
 
 
+@pytest.mark.skipif('TRAVIS' in os.environ, reason='Database not on travis')
 def test_dimensions():
     from main import app
     app.testing = True

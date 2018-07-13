@@ -25,18 +25,19 @@ The script assumes that:
 - you are able to get processed data onto that computer
 - you are familiar with Python and the terminal
 """
-import contextlib
 import datetime
 import importlib
 import logging
 import multiprocessing
-import os
 import pathlib
+import subprocess
 import time
-import typing
 from argparse import ArgumentParser
+from typing import Dict, List, Tuple, Union
 
+import keras
 import numpy as np
+import os
 import pandas as pd
 import sklearn
 from sklearn import model_selection
@@ -46,7 +47,6 @@ import bluenom
 from blueno import utils
 
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
-import keras  # noqa: E402
 
 
 def configure_parent_logger(file_name,
@@ -75,7 +75,7 @@ def configure_job_logger(file_path):
     root_logger.addHandler(handler)
 
 
-def load_arrays(data_dir: str) -> typing.Dict[str, np.ndarray]:
+def load_arrays(data_dir: str) -> Dict[str, np.ndarray]:
     data_dict = {}
     for filename in os.listdir(data_dir):
         patient_id = filename[:-4]  # remove .npy extension
@@ -83,8 +83,8 @@ def load_arrays(data_dir: str) -> typing.Dict[str, np.ndarray]:
     return data_dict
 
 
-def to_arrays(data: typing.Dict[str, np.ndarray],
-              labels: pd.Series) -> typing.Tuple[np.ndarray, np.ndarray]:
+def to_arrays(data: Dict[str, np.ndarray],
+              labels: pd.Series) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     Converts the data and labels into numpy arrays.
 
@@ -94,15 +94,18 @@ def to_arrays(data: typing.Dict[str, np.ndarray],
 
     :param data:
     :param labels: a dataframe WITH patient ID for the index.
-    :return: two arrays containing the arrays and the labels
+    :return: three arrays: the arrays, then the labels, then the corresponding
+    ids
     """
     patient_ids = data.keys()
     X_list = []
     y_list = []
+    remaining_ids = []
     for id_ in patient_ids:
         try:
             y_list += [labels.loc[id_]]
             X_list += [data[id_]]  # Needs to be in this order
+            remaining_ids += [id_]
         except KeyError:
             logging.warning(f'{id_} in data was not present in labels')
             logging.warning(f'{len(X_list)}, {len(y_list)}')
@@ -111,13 +114,16 @@ def to_arrays(data: typing.Dict[str, np.ndarray],
             logging.warning(f'{id_} in labels was not present in data')
 
     assert len(X_list) == len(y_list)
-    return np.stack(X_list), np.stack(y_list)
+    assert len(X_list) == len(remaining_ids)
+    return np.stack(X_list), np.stack(y_list), np.array(remaining_ids)
 
 
-def prepare_data(params: blueno.ParamConfig) -> typing.Tuple[np.ndarray,
-                                                             np.ndarray,
-                                                             np.ndarray,
-                                                             np.ndarray]:
+def prepare_data(params: blueno.ParamConfig) -> Tuple[np.ndarray,
+                                                      np.ndarray,
+                                                      np.ndarray,
+                                                      np.ndarray,
+                                                      np.ndarray,
+                                                      np.ndarray]:
     """
     Prepares the data referenced in params for ML. This includes
     shuffling and expanding dims.
@@ -134,7 +140,7 @@ def prepare_data(params: blueno.ParamConfig) -> typing.Tuple[np.ndarray,
     label_series = pd.read_csv(data_params.labels_path,
                                index_col=index_col)[label_col]
     # Convert to split numpy arrays
-    x, y = to_arrays(array_dict, label_series)
+    x, y, patient_ids = to_arrays(array_dict, label_series)
 
     if params.model.loss == keras.losses.binary_crossentropy:
         # We need y to have 2 dimensions for the rest of the model
@@ -173,12 +179,12 @@ def prepare_data(params: blueno.ParamConfig) -> typing.Tuple[np.ndarray,
     logging.debug(f'y shape: {y.shape}')
     logging.info(f'seeding to {params.seed} before shuffling')
 
-    x_train, x_valid, y_train, y_valid = \
+    x_train, x_valid, y_train, y_valid, ids_train, ids_valid = \
         model_selection.train_test_split(
-            x, y,
+            x, y, patient_ids,
             test_size=params.val_split,
             random_state=params.seed)
-    return x_train, x_valid, y_train, y_valid
+    return x_train, x_valid, y_train, y_valid, ids_train, ids_valid
 
 
 def start_job(x_train: np.ndarray,
@@ -189,8 +195,9 @@ def start_job(x_train: np.ndarray,
               username: str,
               params: blueno.ParamConfig,
               slack_token: str = None,
-              epochs=100,  # deprecated
-              log_dir: str = None) -> None:
+              epochs=100,
+              log_dir: str = None,
+              id_valid: np.ndarray = None) -> None:
     """
     Builds, fits, and evaluates a model.
 
@@ -206,29 +213,33 @@ def start_job(x_train: np.ndarray,
     :param params: the parameters specified
     :param epochs:
     :param log_dir:
+    :param id_valid: the patient ids ordered to correspond with y_valid
     :return:
     """
     num_classes = y_train.shape[1]
+    created_at = datetime.datetime.utcnow().isoformat()
 
     # Configure the job to log all output to a specific file
     csv_filepath = None
     log_filepath = None
     if log_dir:
-        isostr = datetime.datetime.utcnow().isoformat()
-        log_filepath = str(pathlib.Path(log_dir) / f'{job_name}-{isostr}.log')
+        log_filepath = str(
+            pathlib.Path(log_dir) / f'{job_name}-{created_at}.log')
         csv_filepath = log_filepath[:-3] + 'csv'
         configure_job_logger(log_filepath)
-        contextlib.redirect_stdout(log_filepath)
-        contextlib.redirect_stderr(log_filepath)
-        logging.info(f'using params:\n{params}')
-        logging.info(f'author: {username}')
+
+    # This must be the first lines in the jo log, do not change
+    logging.info(f'using params:\n{params}')
+    logging.info(f'author: {username}')
 
     logging.debug(f'in start_job,'
                   f' using gpu {os.environ["CUDA_VISIBLE_DEVICES"]}')
 
     logging.info('preparing data and model for training')
+
     model_params = params.model
     generator_params = params.generator
+
     train_gen, valid_gen = generator_params.generator_callable(
         x_train, y_train,
         x_valid, y_valid,
@@ -238,6 +249,7 @@ def start_job(x_train: np.ndarray,
     logging.debug(f'num_classes is: {num_classes}')
 
     # Construct the uncompiled model
+    model: keras.Model
     model = model_params.model_callable(input_shape=x_train.shape[1:],
                                         num_classes=num_classes,
                                         **model_params.__dict__)
@@ -254,8 +266,11 @@ def start_job(x_train: np.ndarray,
                   loss=model_params.loss,
                   metrics=metrics)
 
+    model_filepath = '/tmp/{}.hdf5'.format(os.environ['CUDA_VISIBLE_DEVICES'])
+    logging.debug('model_filepath: {}'.format(model_filepath))
     callbacks = utils.create_callbacks(x_train, y_train, x_valid, y_valid,
-                                       filepath=csv_filepath)
+                                       csv_file=csv_filepath,
+                                       model_file=model_filepath)
     logging.info('training model')
     history = model.fit_generator(train_gen,
                                   epochs=epochs,
@@ -265,24 +280,55 @@ def start_job(x_train: np.ndarray,
 
     if slack_token:
         logging.info('generating slack report')
-        utils.slack_report(x_train, y_train,
-                           x_valid, y_valid,
-                           model, history,
-                           job_name, params,
-                           slack_token)
+        utils.slack_report(x_train, x_valid, y_valid, model, history, job_name,
+                           params, slack_token, id_valid=id_valid)
     else:
         logging.info('no slack token found, not generating report')
 
+    acc_i = model.metrics_names.index('acc')
+    if model.evaluate_generator(valid_gen)[acc_i] >= 0.8:
+        upload_model_to_gcs(job_name, created_at, model_filepath)
+
     end_time = datetime.datetime.utcnow().isoformat()
+    # This must be the last line in the log, do not change
     logging.info(f'end time: {end_time}')
 
-    # Upload to Kibana
+    # Upload logs to Kibana
     if log_dir:
         bluenom.insert_job_by_filepaths(pathlib.Path(log_filepath),
                                         pathlib.Path(csv_filepath))
 
 
-def hyperoptimize(hyperparams: blueno.ParamGrid,
+def upload_model_to_gcs(job_name, created_at, model_filepath):
+    gcs_filepath = 'gs://elvos/models/{}-{}.hdf5'.format(
+        # Remove the extension
+        job_name,
+        created_at,
+    )
+    # Do not change, this is log is used to get the gcs link
+    logging.info('uploading model {} to {}'.format(
+        model_filepath,
+        gcs_filepath,
+    ))
+
+    try:
+        subprocess.run(
+            ['/bin/bash',
+             '-c',
+             'gsutil cp {} {}'.format(model_filepath, gcs_filepath)],
+            check=True)
+    except subprocess.CalledProcessError:
+        # gpu1708 specific code
+        subprocess.run(
+            ['/bin/bash',
+             '-c',
+             '/gpfs/main/home/lzhu7/google-cloud-sdk/bin/'
+             'gsutil cp {} {}'.format(model_filepath, gcs_filepath)],
+            check=True)
+
+
+def hyperoptimize(hyperparams: Union[blueno.ParamGrid,
+                                     List[blueno.ParamConfig]],
                   username: str,
                   slack_token: str = None,
                   num_gpus=1,
@@ -301,14 +347,21 @@ def hyperoptimize(hyperparams: blueno.ParamGrid,
     exist
     :return:
     """
-    # TODO (#70)
-    param_list = model_selection.ParameterGrid(hyperparams.__dict__)
+    if isinstance(hyperparams, blueno.ParamGrid):
+        param_list = model_selection.ParameterGrid(hyperparams.__dict__)
+    else:
+        param_list = hyperparams
+
+    logging.info(
+        'optimizing grid with {} configurations'.format(len(param_list)))
 
     gpu_index = 0
     processes = []
     for params in param_list:
-        params = blueno.ParamConfig(**params)
-        x_train, x_valid, y_train, y_valid = prepare_data(params)
+        if isinstance(params, dict):
+            params = blueno.ParamConfig(**params)
+        x_train, x_valid, y_train, y_valid, id_train, id_valid = prepare_data(
+            params)
 
         # Start the model training job
         # Run in a separate process to avoid memory issues
@@ -320,7 +373,7 @@ def hyperoptimize(hyperparams: blueno.ParamGrid,
         else:
             job_fn = params.job_fn
 
-        logging.info('using job fn {}'.format(job_fn))
+        logging.debug('using job fn {}'.format(job_fn))
 
         job_name = params.data.data_dir.split('/')[-3]
         job_name += f'_{y_train.shape[1]}-classes'
@@ -334,6 +387,7 @@ def hyperoptimize(hyperparams: blueno.ParamGrid,
                                               'username': username,
                                               'slack_token': slack_token,
                                               'log_dir': log_dir,
+                                              'id_valid': id_valid,
                                           })
         gpu_index += 1
         gpu_index %= num_gpus
@@ -369,9 +423,10 @@ if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('--config',
                         help='The config module (ex. config_luke)',
-                        default='config')
+                        default='config-1')
     args = parser.parse_args()
 
+    logging.info('using config {}'.format(args.config))
     user_config = importlib.import_module(args.config)
 
     parent_log_file = pathlib.Path(
@@ -382,9 +437,18 @@ if __name__ == '__main__':
     check_config(user_config)
 
     logging.info('checking param grid')
-    param_grid = blueno.ParamGrid(**user_config.PARAM_GRID)
-    logging.info('entire param grid: {}'.format(param_grid))
-
+    if isinstance(user_config.PARAM_GRID, blueno.ParamGrid):
+        param_grid = user_config.PARAM_GRID
+    elif isinstance(user_config.PARAM_GRID, list):
+        param_grid = user_config.PARAM_GRID
+    elif isinstance(user_config.PARAM_GRID, dict):
+        logging.warning('creating param grid from dictionary, it is'
+                        'recommended that you define your config'
+                        'with ParamGrid')
+        param_grid = blueno.ParamGrid(**user_config.PARAM_GRID)
+    else:
+        raise ValueError('user_config.PARAM_GRID must be a ParamGrid,'
+                         ' list, or dict')
     hyperoptimize(param_grid,
                   user_config.USER,
                   user_config.SLACK_TOKEN,
