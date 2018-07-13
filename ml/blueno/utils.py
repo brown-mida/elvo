@@ -332,7 +332,7 @@ def save_misclassification_plots(x_valid,
                                  y_true,
                                  y_pred,
                                  id_valid: np.ndarray = None):
-    """Saves true positive and false negative plots.
+    """Saves the 4 true/fals positive/negative plots.
 
     The y inputs must be binary and 1 dimensional.
     """
@@ -340,41 +340,29 @@ def save_misclassification_plots(x_valid,
     if y_true.max() > 1 or y_pred.max() > 1:
         raise ValueError('y_true/y_pred should be binary 0/1')
 
-    fn = np.logical_and(y_true == 1, y_pred == 0)
+    plot_name_dict = {
+        (0, 0): '/tmp/true_negatives.png',
+        (1, 1): '/tmp/true_positives.png',
+        (0, 1): '/tmp/false_positives.png',
+        (1, 0): '/tmp/false_negatives.png',
+    }
 
-    x_fn = np.array([x_valid[i] for i, truth in enumerate(fn)
-                     if truth])
-    plot_misclassification(x_fn,
-                           y_true[fn],
-                           y_pred[fn],
-                           ids=id_valid[fn])
-    plt.savefig('/tmp/false_negatives.png')
-    fp = np.logical_and(y_true == 0, y_pred == 1)
-    x_fp = np.array([x_valid[i] for i, truth in enumerate(fp)
-                     if truth])
-    plot_misclassification(x_fp,
-                           y_true[fp],
-                           y_pred[fp],
-                           ids=id_valid[fp])
-    plt.savefig('/tmp/false_positives.png')
+    for i in (0, 1):
+        for j in (0, 1):
+            mask = np.logical_and(y_true == i, y_pred == j)
+            x_filtered = np.array([x_valid[i] for i, truth in enumerate(mask)
+                                   if truth])
 
-    tp = np.logical_and(y_true == 1, y_pred == 1)
-    x_tp = np.array([x_valid[i] for i, truth in enumerate(tp)
-                     if truth])
-    plot_misclassification(x_tp,
-                           y_true[tp],
-                           y_pred[tp],
-                           ids=id_valid[tp])
-    plt.savefig('/tmp/true_positives.png')
+            if id_valid is None:
+                ids_filtered = None
+            else:
+                ids_filtered = id_valid[mask]
 
-    tn = np.logical_and(y_true == 0, y_pred == 0)
-    x_tn = np.array([x_valid[i] for i, truth in enumerate(tn)
-                     if truth])
-    plot_misclassification(x_tn,
-                           y_true[tn],
-                           y_pred[tn],
-                           ids=id_valid[tn])
-    plt.savefig('/tmp/true_negatives.png')
+            plot_misclassification(x_filtered,
+                                   y_true[mask],
+                                   y_pred[mask],
+                                   ids=ids_filtered)
+            plt.savefig(plot_name_dict[(i, j)])
 
 
 def plot_misclassification(x,
