@@ -303,9 +303,9 @@ def start_job(x_train: np.ndarray,
             timeout=5,
             check=True)
 
-        end_time = datetime.datetime.utcnow().isoformat()
-        # This must be the last line in the log, do not change
-        logging.info(f'end time: {end_time}')
+    end_time = datetime.datetime.utcnow().isoformat()
+    # This must be the last line in the log, do not change
+    logging.info(f'end time: {end_time}')
 
     # Upload logs to Kibana
     if log_dir:
