@@ -1,8 +1,15 @@
-To setup, see Luke.
+The dashboard is a web app current hosted on https://elvo-198322.appspot.com/
+
+To build the dashboard, install the requirements in this folder with
+`pip install -r dashboard/requirements.txt Then install nodeJS v8.9.1
+and yarn.
+
+To run the development setup, type `yarn watch` in one terminal and
+`yarn start` in the other.
+
+For more info on setup and deployment, talk to Luke.
 
 ## Notes:
-- https://cloud.google.com/appengine/docs/flexible/python/using-cloud-sql-postgres
 - environment variables in `app_luke.yaml`
 - `npm/yarn`
 - To deploy `yarn build` and then `gcloud app deploy`.
-- ./cloud_sql_proxy -instances=elvo-198322:us-east1:elvo-dashboard=tcp:5432

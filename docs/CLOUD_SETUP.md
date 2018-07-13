@@ -1,6 +1,9 @@
 This document contains instructions for using the cloud VMs.
 
 ### Commands for DevOps:
+If possible, find a snapshot of another user's GPU instance and use
+that instead.
+
 Create an instance with:
 - us-east1-b
 - 4 CPUs and 26 GB memory
@@ -51,6 +54,7 @@ python3 -m venv venv # Create a virtual environment
 pip install --upgrade pip # Update pip to version 10
 source venv/bin/activate # Activate the virtual environment
 pip install -r requirements.txt # Install packages
+pip uninstall -y tensorflow
 pip install tensorflow-gpu==1.8.0 # Install tensorflow for the gpu
 ```
 
