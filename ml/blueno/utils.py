@@ -289,8 +289,8 @@ def full_multiclass_report(model: keras.models.Model,
     score = sklearn.metrics.roc_auc_score(y_true_binary,
                                           y_pred_binary)
 
+    # Do not change the line below, it affects reporting._extract_auc
     comment += f'AUC: {score}\n'
-
     comment += f'Assuming {0} is the negative label'
     comment += '\n\n'
 

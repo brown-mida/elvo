@@ -4,13 +4,14 @@ import os
 import pytest
 import sklearn.preprocessing
 
+from blueno import utils
+
 # Use Luke's config
 try:
     from config_luke import SLACK_TOKEN
 except ImportError:
     print('slack token missing')
     SLACK_TOKEN = ''
-from blueno import utils
 
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
 
