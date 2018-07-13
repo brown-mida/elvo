@@ -259,7 +259,8 @@ def start_job(x_train: np.ndarray,
                   loss=model_params.loss,
                   metrics=metrics)
 
-    model_filepath = '/tmp/{}'.format(job_name)
+    model_filepath = '/tmp/{}-{}'.format(job_name,
+                                         os.environ['CUDA_VISIBLE_DEVICES'])
     logging.debug('model_filepath: {}'.format(model_filepath))
     callbacks = utils.create_callbacks(x_train, y_train, x_valid, y_valid,
                                        csv_file=csv_filepath,
@@ -284,7 +285,7 @@ def start_job(x_train: np.ndarray,
     acc_i = model.metrics_names.index('acc')
     if model.evaluate_generator(valid_gen)[acc_i] >= 0.8:
         gcs_filepath = 'gs://elvos/models/{}-{}.hdf5'.format(
-            model_filepath.split('/')[-1],
+            model_filepath.split('/')[-1][:-2],  # Remove the gpu index
             created_at,
         )
         # Do not change, this is log is used to get the gcs link
@@ -306,10 +307,10 @@ def start_job(x_train: np.ndarray,
         # This must be the last line in the log, do not change
         logging.info(f'end time: {end_time}')
 
-        # Upload logs to Kibana
-        if log_dir:
-            bluenom.insert_job_by_filepaths(pathlib.Path(log_filepath),
-                                            pathlib.Path(csv_filepath))
+    # Upload logs to Kibana
+    if log_dir:
+        bluenom.insert_job_by_filepaths(pathlib.Path(log_filepath),
+                                        pathlib.Path(csv_filepath))
 
 
 def hyperoptimize(hyperparams: Union[blueno.ParamGrid,
