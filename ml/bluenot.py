@@ -33,8 +33,8 @@ import multiprocessing
 import os
 import pathlib
 import time
-import typing
 from argparse import ArgumentParser
+from typing import Dict, List, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -75,7 +75,7 @@ def configure_job_logger(file_path):
     root_logger.addHandler(handler)
 
 
-def load_arrays(data_dir: str) -> typing.Dict[str, np.ndarray]:
+def load_arrays(data_dir: str) -> Dict[str, np.ndarray]:
     data_dict = {}
     for filename in os.listdir(data_dir):
         patient_id = filename[:-4]  # remove .npy extension
@@ -83,8 +83,8 @@ def load_arrays(data_dir: str) -> typing.Dict[str, np.ndarray]:
     return data_dict
 
 
-def to_arrays(data: typing.Dict[str, np.ndarray],
-              labels: pd.Series) -> typing.Tuple[np.ndarray, np.ndarray]:
+def to_arrays(data: Dict[str, np.ndarray],
+              labels: pd.Series) -> Tuple[np.ndarray, np.ndarray]:
     """
     Converts the data and labels into numpy arrays.
 
@@ -114,10 +114,10 @@ def to_arrays(data: typing.Dict[str, np.ndarray],
     return np.stack(X_list), np.stack(y_list)
 
 
-def prepare_data(params: blueno.ParamConfig) -> typing.Tuple[np.ndarray,
-                                                             np.ndarray,
-                                                             np.ndarray,
-                                                             np.ndarray]:
+def prepare_data(params: blueno.ParamConfig) -> Tuple[np.ndarray,
+                                                      np.ndarray,
+                                                      np.ndarray,
+                                                      np.ndarray]:
     """
     Prepares the data referenced in params for ML. This includes
     shuffling and expanding dims.
@@ -220,8 +220,9 @@ def start_job(x_train: np.ndarray,
         configure_job_logger(log_filepath)
         contextlib.redirect_stdout(log_filepath)
         contextlib.redirect_stderr(log_filepath)
-        logging.info(f'using params:\n{params}')
-        logging.info(f'author: {username}')
+
+    logging.info(f'using params:\n{params}')
+    logging.info(f'author: {username}')
 
     logging.debug(f'in start_job,'
                   f' using gpu {os.environ["CUDA_VISIBLE_DEVICES"]}')
@@ -282,7 +283,8 @@ def start_job(x_train: np.ndarray,
                                         pathlib.Path(csv_filepath))
 
 
-def hyperoptimize(hyperparams: blueno.ParamGrid,
+def hyperoptimize(hyperparams: Union[blueno.ParamGrid,
+                                     List[blueno.ParamConfig]],
                   username: str,
                   slack_token: str = None,
                   num_gpus=1,
@@ -301,13 +303,20 @@ def hyperoptimize(hyperparams: blueno.ParamGrid,
     exist
     :return:
     """
-    # TODO (#70)
-    param_list = model_selection.ParameterGrid(hyperparams.__dict__)
+    if isinstance(hyperparams, blueno.ParamGrid):
+        param_list = model_selection.ParameterGrid(hyperparams.__dict__)
+    else:
+        param_list = hyperparams
+
+    logging.info(
+        'optimizing grid with {} configurations'.format(len(param_list)))
 
     gpu_index = 0
     processes = []
     for params in param_list:
-        params = blueno.ParamConfig(**params)
+        if isinstance(params, dict):
+            params = blueno.ParamConfig(**params)
+        print(params)
         x_train, x_valid, y_train, y_valid = prepare_data(params)
 
         # Start the model training job
@@ -320,7 +329,7 @@ def hyperoptimize(hyperparams: blueno.ParamGrid,
         else:
             job_fn = params.job_fn
 
-        logging.info('using job fn {}'.format(job_fn))
+        logging.debug('using job fn {}'.format(job_fn))
 
         job_name = params.data.data_dir.split('/')[-3]
         job_name += f'_{y_train.shape[1]}-classes'
@@ -372,6 +381,7 @@ if __name__ == '__main__':
                         default='config')
     args = parser.parse_args()
 
+    logging.info('using config {}'.format(args.config))
     user_config = importlib.import_module(args.config)
 
     parent_log_file = pathlib.Path(
@@ -382,8 +392,15 @@ if __name__ == '__main__':
     check_config(user_config)
 
     logging.info('checking param grid')
-    param_grid = blueno.ParamGrid(**user_config.PARAM_GRID)
-    logging.info('entire param grid: {}'.format(param_grid))
+    if isinstance(user_config.PARAM_GRID, blueno.ParamGrid):
+        param_grid = user_config.PARAM_GRID
+    elif isinstance(user_config.PARAM_GRID, list):
+        param_grid = user_config.PARAM_GRID
+    elif isinstance(user_config.PARAM_GRID, dict):
+        logging.warning('creating param grid from dictionary, it is'
+                        'recommended that you define your config'
+                        'with ParamGrid')
+        param_grid = blueno.ParamGrid(**user_config.PARAM_GRID)
 
     hyperoptimize(param_grid,
                   user_config.USER,
