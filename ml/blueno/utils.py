@@ -54,29 +54,40 @@ class AucCallback(keras.callbacks.Callback):
 
 def create_callbacks(x_train: np.ndarray, y_train: np.ndarray,
                      x_valid: np.ndarray, y_valid: np.ndarray,
-                     filepath: str = None,
+                     csv_file: str = None, model_file=None,
                      normalize=True):
     """
     Instantiates a list of callbacks:
     - CSV logger
     - AUC
     - Early stopping
-    - TODO(#71): model checkpoint
 
+    :param model_file:
     :param x_train:
     :param y_train:
     :param x_valid:
     :param y_valid:
-    :param filepath: the file to save the CSV results to
+    :param csv_file: the file to save the CSV results to
+    :param model_file: the file to save the models to
     :param normalize: whether or not to normalize the x data
     :return:
     """
-    callbacks = []
-    if filepath:
-        callbacks.append(keras.callbacks.CSVLogger(filepath, append=True))
+    callbacks = [keras.callbacks.EarlyStopping(
+        monitor='val_acc',
+        verbose=1,
+        patience=10
+    )]
 
-    callbacks.append(keras.callbacks.EarlyStopping(monitor='val_acc',
-                                                   patience=10))
+    if csv_file:
+        callbacks.append(keras.callbacks.CSVLogger(csv_file, append=True))
+
+    if model_file:
+        callbacks.append(keras.callbacks.ModelCheckpoint(
+            model_file,
+            monitor='val_acc',
+            verbose=1,
+            save_best_only=True
+        ))
 
     if normalize:
         x_mean = np.array([x_train[:, :, :, 0].mean(),
@@ -276,10 +287,6 @@ def full_multiclass_report(model: keras.models.Model,
     score = sklearn.metrics.roc_auc_score(y_true_binary,
                                           y_pred_binary)
 
-    save_misclassification_plots(x,
-                                 y_true_binary,
-                                 y_pred_binary)
-
     comment += f'AUC: {score}\n'
 
     comment += f'Assuming {0} is the negative label'
@@ -292,6 +299,9 @@ def full_multiclass_report(model: keras.models.Model,
     comment += '\n'
     comment += str(cnf_matrix)
     save_confusion_matrix(cnf_matrix, classes=classes)
+    save_misclassification_plots(x,
+                                 y_true_binary,
+                                 y_pred_binary)
     return comment
 
 
