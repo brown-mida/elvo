@@ -202,7 +202,7 @@ def _extract_model_url(path: pathlib.Path):
     with open(path) as f:
         lines = [line for line in f]
         for line in lines:
-            if line.startswith('uploading model'):
+            if 'uploading model' in line:
                 return line.split(' ')[-1]
     return None
 
