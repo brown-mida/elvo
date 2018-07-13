@@ -8,6 +8,7 @@ import sklearn.preprocessing
 try:
     from config_luke import SLACK_TOKEN
 except ImportError:
+    print('slack token missing')
     SLACK_TOKEN = ''
 from blueno import utils
 
@@ -67,6 +68,25 @@ def test_full_multiclass_report_multiclass():
                                        X,
                                        y,
                                        classes=[0, 1, 2]))
+
+
+def test_slack_upload_cm():
+    model = keras.Sequential([
+        keras.layers.Flatten(input_shape=(224, 224, 3)),
+        keras.layers.Dense(3, activation='softmax'),
+    ])
+
+    X = np.random.rand(500, 224, 224, 3)
+    y = np.random.randint(0, 3, size=(500,))
+    y = sklearn.preprocessing.label_binarize(y, classes=[0, 1, 2])
+
+    assert y.shape == (500, 3)
+
+    report = utils.full_multiclass_report(model,
+                                          X,
+                                          y,
+                                          classes=[0, 1, 2])
+    utils.upload_to_slack('/tmp/cm.png', report, SLACK_TOKEN)
 
 
 @pytest.mark.skipif(os.uname().nodename != 'gpu1708',

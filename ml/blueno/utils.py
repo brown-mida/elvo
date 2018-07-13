@@ -287,10 +287,6 @@ def full_multiclass_report(model: keras.models.Model,
     score = sklearn.metrics.roc_auc_score(y_true_binary,
                                           y_pred_binary)
 
-    save_misclassification_plots(x,
-                                 y_true_binary,
-                                 y_pred_binary)
-
     comment += f'AUC: {score}\n'
 
     comment += f'Assuming {0} is the negative label'
@@ -303,6 +299,9 @@ def full_multiclass_report(model: keras.models.Model,
     comment += '\n'
     comment += str(cnf_matrix)
     save_confusion_matrix(cnf_matrix, classes=classes)
+    save_misclassification_plots(x,
+                                 y_true_binary,
+                                 y_pred_binary)
     return comment
 
 
