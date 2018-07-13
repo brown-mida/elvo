@@ -95,7 +95,7 @@ def insert_job_by_filepaths(log_file: pathlib.Path,
         author = _fill_author_gpu1708(created_at, job_name)
     ended_at = _extract_ended_at(log_file)
     model_url = _extract_model_url(log_file)
-    final_val_auc = _extract_model_url(log_file)
+    final_val_auc = _extract_auc(log_file)
 
     try:
         metrics = _extract_metrics(csv_file)
