@@ -393,7 +393,7 @@ def plot_misclassification(x,
         plot_num = i - offset + 1
         ax = fig.add_subplot(num_rows, num_cols, plot_num)
         if ids is not None:
-            ax.set_title(f'patient: {ids[i]}')
+            ax.set_title(f'patient: {ids[i][:4]}...')
         ax.set_xlabel(f'y_true: {y_true[i]} y_pred: {y_pred[i]}')
         plt.imshow(arr)  # Multiply by 255 here for
     fig.tight_layout()
