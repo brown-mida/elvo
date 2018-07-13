@@ -1,9 +1,9 @@
-import os
 import pathlib
 import typing
 from collections import namedtuple
 
 import elasticsearch_dsl
+import os
 import pandas as pd
 from elasticsearch_dsl import connections
 from pandas.errors import EmptyDataError
@@ -23,6 +23,7 @@ class TrainingJob(elasticsearch_dsl.Document):
     ended_at = elasticsearch_dsl.Date()
     params = elasticsearch_dsl.Text()
     raw_log = elasticsearch_dsl.Text()
+    model_url = elasticsearch_dsl.Text()
 
     epochs = elasticsearch_dsl.Integer()
     train_acc = elasticsearch_dsl.Float()
@@ -58,6 +59,7 @@ def bluenom(log_dir: pathlib.Path, gpu1708=False):
 
     metrics_file_path: pathlib.Path = None
 
+    # noinspection PyTypeChecker
     for filename in sorted(os.listdir(log_dir)):
         file_path = log_dir / filename
 
@@ -85,6 +87,7 @@ def insert_job_by_filepaths(log_file: pathlib.Path,
     if author is None and gpu1708:
         author = _fill_author_gpu1708(created_at, job_name)
     ended_at = _extract_ended_at(log_file)
+    model_url = _extract_model_url(log_file)
 
     try:
         metrics = _extract_metrics(csv_file)
@@ -94,8 +97,9 @@ def insert_job_by_filepaths(log_file: pathlib.Path,
                                      raw_log,
                                      metrics,
                                      str(csv_file.name),
-                                     author,
-                                     ended_at)
+                                     author=author,
+                                     ended_at=ended_at,
+                                     model_url=model_url)
         insert_or_ignore(training_job)
     except (ValueError, EmptyDataError):
         print('metrics file {} is empty'.format(csv_file))
@@ -129,7 +133,8 @@ def construct_job(job_name,
                   metrics,
                   metrics_filename,
                   author=None,
-                  ended_at=None) -> TrainingJob:
+                  ended_at=None,
+                  model_url=None) -> TrainingJob:
     """Note that these parameters are experimental.
     """
     training_job = TrainingJob(schema_version=1,
@@ -138,7 +143,8 @@ def construct_job(job_name,
                                created_at=created_at,
                                ended_at=ended_at,
                                params=params,
-                               raw_log=raw_log)
+                               raw_log=raw_log,
+                               model_url=model_url)
 
     if (job_name, created_at) == _parse_filename(metrics_filename):
         print('found matching CSV file, setting metrics')
@@ -192,6 +198,15 @@ def _extract_ended_at(path: pathlib.Path):
     return None
 
 
+def _extract_model_url(path: pathlib.Path):
+    with open(path) as f:
+        lines = [line for line in f]
+        for line in lines:
+            if line.startswith('uploading model'):
+                return line.split(' ')[-1]
+    return None
+
+
 def _extract_metrics(path: pathlib.Path):
     df = pd.read_csv(path)
     return Metrics(epochs=df['epoch'].max(),
@@ -215,9 +230,10 @@ def _fill_author_gpu1708(created_at, job_name):
 
 
 if __name__ == '__main__':
-    if not JOB_INDEX.exists():
-        print('creating index jobs')
-        JOB_INDEX.create()
+    print('resetting job index')
+    if JOB_INDEX.exists():
+        JOB_INDEX.delete()
+    JOB_INDEX.create()
     TrainingJob.init()
     path = pathlib.Path('/gpfs/main/home/lzhu7/elvo-analysis/logs')
     bluenom(path, gpu1708=True)

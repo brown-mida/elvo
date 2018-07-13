@@ -87,3 +87,11 @@ def test_bluenom_idempotent():
     second_run_count = bluenom.JOB_INDEX.search().count()
     connections.remove_connection('default')
     assert first_run_count == second_run_count
+
+
+@pytest.mark.skipif(os.uname().nodename != 'gpu1708',
+                    reason='Test uses data only on gpu1708')
+def test_bluenom_extract_model_url():
+    path = pathlib.Path('/gpfs/main/home/lzhu7/elvo-analysis/logs/'
+                        'test_job-2018-07-12T03:17:29.021608.log')
+    assert bluenom._extract_model_url(path) is None

@@ -30,13 +30,14 @@ import datetime
 import importlib
 import logging
 import multiprocessing
-import os
 import pathlib
+import subprocess
 import time
 from argparse import ArgumentParser
 from typing import Dict, List, Tuple, Union
 
 import numpy as np
+import os
 import pandas as pd
 import sklearn
 from sklearn import model_selection
@@ -209,18 +210,20 @@ def start_job(x_train: np.ndarray,
     :return:
     """
     num_classes = y_train.shape[1]
+    created_at = datetime.datetime.utcnow().isoformat()
 
     # Configure the job to log all output to a specific file
     csv_filepath = None
     log_filepath = None
     if log_dir:
-        isostr = datetime.datetime.utcnow().isoformat()
-        log_filepath = str(pathlib.Path(log_dir) / f'{job_name}-{isostr}.log')
+        log_filepath = str(
+            pathlib.Path(log_dir) / f'{job_name}-{created_at}.log')
         csv_filepath = log_filepath[:-3] + 'csv'
         configure_job_logger(log_filepath)
         contextlib.redirect_stdout(log_filepath)
         contextlib.redirect_stderr(log_filepath)
 
+    # This must be the first lines in the jo log, do not change
     logging.info(f'using params:\n{params}')
     logging.info(f'author: {username}')
 
@@ -239,6 +242,7 @@ def start_job(x_train: np.ndarray,
     logging.debug(f'num_classes is: {num_classes}')
 
     # Construct the uncompiled model
+    model: keras.Model
     model = model_params.model_callable(input_shape=x_train.shape[1:],
                                         num_classes=num_classes,
                                         **model_params.__dict__)
@@ -255,8 +259,11 @@ def start_job(x_train: np.ndarray,
                   loss=model_params.loss,
                   metrics=metrics)
 
+    model_filepath = '/tmp/{}'.format(job_name)
+    logging.debug('model_filepath: {}'.format(model_filepath))
     callbacks = utils.create_callbacks(x_train, y_train, x_valid, y_valid,
-                                       filepath=csv_filepath)
+                                       csv_file=csv_filepath,
+                                       model_file=model_filepath)
     logging.info('training model')
     history = model.fit_generator(train_gen,
                                   epochs=epochs,
@@ -274,13 +281,35 @@ def start_job(x_train: np.ndarray,
     else:
         logging.info('no slack token found, not generating report')
 
-    end_time = datetime.datetime.utcnow().isoformat()
-    logging.info(f'end time: {end_time}')
+    acc_i = model.metrics_names.index('acc')
+    if model.evaluate_generator(valid_gen)[acc_i] >= 0.8:
+        gcs_filepath = 'gs://elvos/models/{}-{}.hdf5'.format(
+            model_filepath.split('/')[-1],
+            created_at,
+        )
+        # Do not change, this is log is used to get the gcs link
+        logging.info('model has val_acc > 0.8\n'
+                     'uploading model {} to {}'.format(
+            model_filepath,
+            gcs_filepath,
+        ))
 
-    # Upload to Kibana
-    if log_dir:
-        bluenom.insert_job_by_filepaths(pathlib.Path(log_filepath),
-                                        pathlib.Path(csv_filepath))
+        subprocess.run(
+            ['/bin/bash',
+             '-i',
+             '-c',
+             'gsutil cp ' + model_filepath + ' ' + gcs_filepath],
+            timeout=5,
+            check=True)
+
+        end_time = datetime.datetime.utcnow().isoformat()
+        # This must be the last line in the log, do not change
+        logging.info(f'end time: {end_time}')
+
+        # Upload logs to Kibana
+        if log_dir:
+            bluenom.insert_job_by_filepaths(pathlib.Path(log_filepath),
+                                            pathlib.Path(csv_filepath))
 
 
 def hyperoptimize(hyperparams: Union[blueno.ParamGrid,
@@ -401,7 +430,9 @@ if __name__ == '__main__':
                         'recommended that you define your config'
                         'with ParamGrid')
         param_grid = blueno.ParamGrid(**user_config.PARAM_GRID)
-
+    else:
+        raise ValueError('user_config.PARAM_GRID must be a ParamGrid,'
+                         ' list, or dict')
     hyperoptimize(param_grid,
                   user_config.USER,
                   user_config.SLACK_TOKEN,

@@ -41,9 +41,9 @@ class ModelConfig:
     optimizer: typing.Callable
     loss: typing.Callable
 
-    dropout_rate1: int
-    dropout_rate2: int
-    freeze: bool
+    dropout_rate1: int = 0.8
+    dropout_rate2: int = 0.8
+    freeze: bool = False
 
 
 @dataclass
