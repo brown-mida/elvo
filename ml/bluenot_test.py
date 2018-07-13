@@ -10,6 +10,8 @@ import blueno
 import bluenot
 import generators.luke
 
+os.environ['CUDA_VISIBLE_DEVICES'] = ''
+
 
 def small_model(input_shape=(224, 224, 3),
                 num_classes=1,
@@ -68,7 +70,6 @@ def test_start_job_no_err():
         }),
     }
     params = blueno.ParamConfig(**params)
-    logging.basicConfig(level=logging.DEBUG)
     bluenot.start_job(x_train, y_train, x_valid, y_valid,
                       job_name='test_job',
                       username='test',

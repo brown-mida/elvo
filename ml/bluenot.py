@@ -25,7 +25,6 @@ The script assumes that:
 - you are able to get processed data onto that computer
 - you are familiar with Python and the terminal
 """
-import contextlib
 import datetime
 import importlib
 import logging
@@ -36,6 +35,7 @@ import time
 from argparse import ArgumentParser
 from typing import Dict, List, Tuple, Union
 
+import keras
 import numpy as np
 import os
 import pandas as pd
@@ -47,7 +47,6 @@ import bluenom
 from blueno import utils
 
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
-import keras  # noqa: E402
 
 
 def configure_parent_logger(file_name,
@@ -220,8 +219,6 @@ def start_job(x_train: np.ndarray,
             pathlib.Path(log_dir) / f'{job_name}-{created_at}.log')
         csv_filepath = log_filepath[:-3] + 'csv'
         configure_job_logger(log_filepath)
-        contextlib.redirect_stdout(log_filepath)
-        contextlib.redirect_stderr(log_filepath)
 
     # This must be the first lines in the jo log, do not change
     logging.info(f'using params:\n{params}')
@@ -231,8 +228,10 @@ def start_job(x_train: np.ndarray,
                   f' using gpu {os.environ["CUDA_VISIBLE_DEVICES"]}')
 
     logging.info('preparing data and model for training')
+
     model_params = params.model
     generator_params = params.generator
+
     train_gen, valid_gen = generator_params.generator_callable(
         x_train, y_train,
         x_valid, y_valid,
@@ -418,7 +417,7 @@ if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('--config',
                         help='The config module (ex. config_luke)',
-                        default='config')
+                        default='config-1')
     args = parser.parse_args()
 
     logging.info('using config {}'.format(args.config))

@@ -26,17 +26,6 @@ def test_upload_to_slack():
     assert r.status_code == 200
 
 
-# TODO
-@pytest.mark.skip
-def test_sensitivity():
-    raise NotImplementedError()
-
-
-@pytest.mark.skip
-def test_specificity():
-    raise NotImplementedError()
-
-
 def test_full_multiclass_report_binary():
     model = keras.Sequential([
         keras.layers.Flatten(input_shape=(224, 224, 3)),
