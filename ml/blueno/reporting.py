@@ -9,6 +9,7 @@ from pandas.errors import EmptyDataError
 
 TRAINING_JOBS = 'training_jobs'
 JOB_INDEX = elasticsearch_dsl.Index(TRAINING_JOBS)
+
 Metrics = namedtuple('Metrics', ['epochs',
                                  'train_acc',
                                  'final_val_acc',
@@ -44,46 +45,21 @@ class TrainingJob(elasticsearch_dsl.Document):
         name = TRAINING_JOBS
 
 
-def construct_job(job_name,
-                  created_at,
-                  params,
-                  raw_log,
-                  metrics,
-                  metrics_filename,
-                  author=None,
-                  ended_at=None,
-                  model_url=None,
-                  final_val_auc=None) -> TrainingJob:
-    """Note that these parameters are experimental.
+def insert_or_ignore_filepaths(log_file: pathlib.Path,
+                               csv_file: typing.Optional[pathlib.Path],
+                               gpu1708=False):
     """
-    training_job = TrainingJob(schema_version=1,
-                               job_name=job_name,
-                               author=author,
-                               created_at=created_at,
-                               ended_at=ended_at,
-                               params=params,
-                               raw_log=raw_log,
-                               model_url=model_url,
-                               final_val_auc=final_val_auc)
+    Parses matching log file and csv and uploads the file up to the
+    Elasticsearch index, if it doesn't exist.
 
-    if (job_name, created_at) == _parse_filename(metrics_filename):
-        print('found matching CSV file, setting metrics')
-        training_job.epochs = metrics.epochs
-        training_job.train_acc = metrics.train_acc
-        training_job.final_val_acc = metrics.final_val_acc
-        training_job.best_val_acc = metrics.best_val_acc
-        training_job.final_val_loss = metrics.final_val_loss
-        training_job.best_val_loss = metrics.best_val_loss
-        training_job.final_val_sensitivity = \
-            metrics.final_val_sensitivity
-        training_job.best_val_sensitivity = \
-            metrics.best_val_sensitivity
-    return training_job
+    Note that the parsing is very brittle, so important logs
+    should be documented in bluenot.py
 
-
-def insert_job_by_filepaths(log_file: pathlib.Path,
-                            csv_file: typing.Optional[pathlib.Path],
-                            gpu1708=False):
+    :param log_file:
+    :param csv_file:
+    :param gpu1708:
+    :return:
+    """
     filename = str(log_file.name)
 
     job_name, created_at = _parse_filename(filename)
@@ -133,6 +109,57 @@ def insert_or_ignore(training_job):
     else:
         print('job {} created at {} exists'.format(
             training_job.job_name, training_job.created_at))
+
+
+def construct_job(job_name,
+                  created_at,
+                  params,
+                  raw_log,
+                  metrics,
+                  metrics_filename,
+                  author=None,
+                  ended_at=None,
+                  model_url=None,
+                  final_val_auc=None) -> TrainingJob:
+    """
+    Constructs a training job object from the given parameters.
+
+    Note that these parameters are experimental.
+    :param job_name:
+    :param created_at:
+    :param params:
+    :param raw_log:
+    :param metrics:
+    :param metrics_filename:
+    :param author:
+    :param ended_at:
+    :param model_url:
+    :param final_val_auc:
+    :return:
+    """
+    training_job = TrainingJob(schema_version=1,
+                               job_name=job_name,
+                               author=author,
+                               created_at=created_at,
+                               ended_at=ended_at,
+                               params=params,
+                               raw_log=raw_log,
+                               model_url=model_url,
+                               final_val_auc=final_val_auc)
+
+    if (job_name, created_at) == _parse_filename(metrics_filename):
+        print('found matching CSV file, setting metrics')
+        training_job.epochs = metrics.epochs
+        training_job.train_acc = metrics.train_acc
+        training_job.final_val_acc = metrics.final_val_acc
+        training_job.best_val_acc = metrics.best_val_acc
+        training_job.final_val_loss = metrics.final_val_loss
+        training_job.best_val_loss = metrics.best_val_loss
+        training_job.final_val_sensitivity = \
+            metrics.final_val_sensitivity
+        training_job.best_val_sensitivity = \
+            metrics.best_val_sensitivity
+    return training_job
 
 
 def _parse_filename(filename: str) -> typing.Tuple[str, str]:

@@ -1,19 +1,23 @@
+"""
+Script to load the data in the logs directory of gpu1708 up to
+Elasticsearch.
+"""
 import pathlib
 
 import os
 from elasticsearch_dsl import connections
 
-from blueno.reporting import insert_job_by_filepaths, JOB_INDEX, TrainingJob
+from blueno.reporting import insert_or_ignore_filepaths, JOB_INDEX, TrainingJob
 
 connections.create_connection(hosts=['http://104.196.51.205'])
 
 
 def bluenom(log_dir: pathlib.Path, gpu1708=False):
     """
-    Uploads logs in the directory to bluenom.
+    Uploads logs in the directory to bluenom. This will
+    only upload logs which have uploaded to Slack.
 
-    This is not idempotent so the index should be deleted before this is
-    run again.
+    This is idempotent so it can be run multiple times.
     :return:
     """
 
@@ -27,9 +31,9 @@ def bluenom(log_dir: pathlib.Path, gpu1708=False):
             metrics_file_path = log_dir / filename
         elif filename.endswith('.log'):
             print('indexing {}'.format(filename))
-            insert_job_by_filepaths(file_path,
-                                    metrics_file_path,
-                                    gpu1708)
+            insert_or_ignore_filepaths(file_path,
+                                       metrics_file_path,
+                                       gpu1708)
         else:
             print('{} is not a log or CSV file'.format(filename))
 

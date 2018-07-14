@@ -295,8 +295,8 @@ def start_job(x_train: np.ndarray,
 
     # Upload logs to Kibana
     if log_dir:
-        blueno.reporting.insert_job_by_filepaths(pathlib.Path(log_filepath),
-                                                 pathlib.Path(csv_filepath))
+        blueno.reporting.insert_or_ignore_filepaths(pathlib.Path(log_filepath),
+                                                    pathlib.Path(csv_filepath))
 
 
 def upload_model_to_gcs(job_name, created_at, model_filepath):
