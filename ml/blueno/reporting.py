@@ -5,7 +5,11 @@ from collections.__init__ import namedtuple
 import elasticsearch_dsl
 import pandas as pd
 import re
+from elasticsearch_dsl import connections
 from pandas.errors import EmptyDataError
+
+# Creates a connection to our Airflow instance
+connections.create_connection(hosts=['http://104.196.51.205'])
 
 TRAINING_JOBS = 'training_jobs'
 JOB_INDEX = elasticsearch_dsl.Index(TRAINING_JOBS)

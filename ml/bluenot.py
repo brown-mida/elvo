@@ -43,7 +43,6 @@ import sklearn
 from sklearn import model_selection
 
 import blueno
-import blueno.reporting
 from blueno import utils
 
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
@@ -280,8 +279,9 @@ def start_job(x_train: np.ndarray,
 
     if slack_token:
         logging.info('generating slack report')
-        utils.slack_report(x_train, x_valid, y_valid, model, history, job_name,
-                           params, slack_token, id_valid=id_valid)
+        blueno.plotting.slack_report(x_train, x_valid, y_valid, model, history,
+                                     job_name,
+                                     params, slack_token, id_valid=id_valid)
     else:
         logging.info('no slack token found, not generating report')
 

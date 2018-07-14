@@ -5,11 +5,8 @@ Elasticsearch.
 import pathlib
 
 import os
-from elasticsearch_dsl import connections
 
 from blueno.reporting import insert_or_ignore_filepaths, JOB_INDEX, TrainingJob
-
-connections.create_connection(hosts=['http://104.196.51.205'])
 
 
 def bluenom(log_dir: pathlib.Path, gpu1708=False):
