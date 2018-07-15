@@ -10,22 +10,29 @@ https://cloud.google.com/docs/authentication/getting-started
 Similarly set the environment variable DROPBOX_TOKEN to an
 access token.
 """
+import datetime
+
 import dropbox
 import os
 from dropbox.files import FileMetadata, FolderMetadata
 from google.cloud import storage
 
 
-def upload_entry(entry: FileMetadata,
-                 dbx: dropbox.Dropbox,
-                 bucket: storage.Bucket):
+def upload_entry_if_outdated(entry: FileMetadata,
+                             dbx: dropbox.Dropbox,
+                             bucket: storage.Bucket):
     """Uploads the entry to Google Cloud"""
     blob = storage.Blob('ELVOs_anon/' + entry.name, bucket)
-    print('downloading from dropbox:', entry.name)
-    dbx.files_download_to_file(entry.name, entry.id)
-    print('uploading to GCS:', 'ELVOs_anon/' + entry.name)
-    blob.upload_from_filename(entry.name)
-    os.remove(entry.name)
+    blob.reload()
+    dropbox_time = entry.server_modified.replace(tzinfo=datetime.timezone.utc)
+    if dropbox_time < blob.updated:
+        print('blob {} is not outdated, not uploading'.format(blob.name))
+    else:
+        print('downloading from dropbox:', entry.name)
+        dbx.files_download_to_file(entry.name, entry.id)
+        print('uploading to GCS:', 'ELVOs_anon/' + entry.name)
+        blob.upload_from_filename(entry.name)
+        os.remove(entry.name)
 
 
 if __name__ == '__main__':
@@ -43,4 +50,4 @@ if __name__ == '__main__':
         if isinstance(entry, FolderMetadata):
             print('ignoring folder:', entry)
         else:
-            upload_entry(entry, dbx, bucket)
+            upload_entry_if_outdated(entry, dbx, bucket)

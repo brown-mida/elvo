@@ -5,16 +5,15 @@ to numpy files.
 """
 import io
 import logging
+import numpy as np
 import os
+import pydicom
 import shutil
 import subprocess
 import time
 import traceback
-from typing import List
-
-import numpy as np
-import pydicom
 from google.cloud import storage
+from typing import List
 
 from lib import parsers
 from lib import transforms
@@ -109,6 +108,27 @@ def preprocess_scan(slices: List[pydicom.FileDataset]) -> np.array:
     return scan
 
 
+def up_to_date(input_blob: storage.Blob, output_blob: storage.Blob):
+    """
+    Checks if the blob is up-to-date.
+
+    :param input_blob:
+    :param output_blob:
+    :return: true if the output blob is up-to-date. If the blob doesn't
+    exist or is outdated, returns false.
+    """
+    if not output_blob.exists():
+        return False
+
+    input_blob.reload()
+    output_blob.reload()
+    assert input_blob.updated is not None, 'input blob should exist'
+    if input_blob.updated > output_blob.updated:
+        return False
+
+    return True
+
+
 def dicom_to_npy(in_dir, out_dir):
     """
     :param in_dir: directory in gs://elvos to load from. must end with /
@@ -129,10 +149,12 @@ def dicom_to_npy(in_dir, out_dir):
             patient_id = blob.name[len(in_dir): -len('.cab')]
             outpath = f'{out_dir}{patient_id}.npy'
 
-            if storage.Blob(outpath, bucket).exists():
-                logging.info(f'outfile {outpath} already exists')
+            if up_to_date(blob, storage.Blob(outpath, bucket)):
+                logging.info(f'outfile {outpath} is up-to-date')
                 continue
-            elif blob.name.endswith('.cab'):
+
+            logging.info(f'outfile {outpath} is outdated, updating')
+            if blob.name.endswith('.cab'):
                 processed_scan = process_cab(blob, patient_id)
                 save_to_gcs(processed_scan, outpath, bucket)
             elif blob.name.endswith('.zip'):
