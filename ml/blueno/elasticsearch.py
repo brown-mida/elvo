@@ -69,7 +69,9 @@ class TrainingJob(elasticsearch_dsl.Document):
                        'width_shift_range',
                        'height_shift_range',
                        'shear_range',
-                       'zoom_range',
+                       # TODO(#91): Cannot parse zoom_range
+                       #  because this takes in a tuple
+                       # 'zoom_range',
                        'horizontal_flip',
                        'vertical_flip',
                        'dropout_rate1',
