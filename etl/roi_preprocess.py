@@ -329,5 +329,4 @@ def run_preprocess():
 
 
 if __name__ == '__main__':
-   run_preprocess()
-
+    run_preprocess()

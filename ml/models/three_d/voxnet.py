@@ -1,24 +1,22 @@
-#!/usr/bin/python3
+# !/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-#internal modules
+# internal modules
 import logging
 import datetime
 import os
 import sys
 
-#third party modules
-import keras
-from keras import backend as K
+# third party modules
 from keras.models import Sequential
 from keras.layers import Convolution3D, MaxPooling3D
 from keras.layers.core import Activation, Dense, Dropout, Flatten
 from keras.layers.advanced_activations import LeakyReLU
 from keras.regularizers import l2
-from keras.callbacks import LearningRateScheduler, ModelCheckpoint
+from keras.callbacks import ModelCheckpoint
 from keras.optimizers import SGD
 
-#set logging level DEBUG and output to stdout
+# set logging level DEBUG and output to stdout
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 # TODO: learning rate scheduler ?
@@ -87,7 +85,7 @@ class VoxNet(object):
         logging.debug("Layer1:Conv3D shape={0}".format(
             self._mdl.output_shape))
 
-        #Activation Leaky ReLu
+        # Activation Leaky ReLu
         self._mdl.add(Activation(LeakyReLU(alpha=0.1)))
 
         # dropout 1
@@ -108,7 +106,7 @@ class VoxNet(object):
         logging.debug(
             "Layer3:Conv3D shape={0}".format(self._mdl.output_shape))
 
-        #Activation Leaky ReLu
+        # Activation Leaky ReLu
         self._mdl.add(Activation(LeakyReLU(alpha=0.1)))
 
         # max pool 1
@@ -147,13 +145,14 @@ class VoxNet(object):
                             ))
         logging.debug("Layer8:Dense shape={0}".format(self._mdl.output_shape))
 
-        #Activation Softmax
+        # Activation Softmax
         self._mdl.add(Activation("softmax"))
 
         # compile model
         self._mdl.compile(loss='categorical_crossentropy',
                           optimizer=self._optimizer, metrics=["accuracy"])
         logging.info("Model compiled!")
+
 
     def fit(self, generator, samples_per_epoch,
             nb_epoch, valid_generator, nb_valid_samples, verbosity):
@@ -175,8 +174,8 @@ class VoxNet(object):
                                 samples_per_epoch=samples_per_epoch,
                                 nb_epoch=nb_epoch,
                                 verbose=verbosity,
-                                callbacks=[ #self._lr_schedule,
-                                        self._mdl_checkpoint,],
+                                callbacks=[  # self._lr_schedule,
+                                        self._mdl_checkpoint, ],
                                 validation_data=valid_generator,
                                 nb_val_samples=nb_valid_samples,
                                 )
@@ -188,6 +187,7 @@ class VoxNet(object):
         logging.info(
             "save model Voxnet weights as weights_{0}.h5".format(time_now))
         self._mdl.save_weights("weights_{0}.h5".format(time_now), False)
+
 
     def continue_fit(self, weights_file, generator, samples_per_epoch,
                      nb_epoch, valid_generator, nb_valid_samples, verbosity):
@@ -207,14 +207,15 @@ class VoxNet(object):
         """
         self.load_weights(weights_file)
         self._mdl.fit_generator(generator=generator,
-                            samples_per_epoch=samples_per_epoch,
-                            nb_epoch=nb_epoch,
-                            verbose=verbosity,
-                            callbacks=[ #self._lr_schedule,
-                                    self._mdl_checkpoint,],
-                            validation_data=valid_generator,
-                            nb_val_samples=nb_valid_samples,
-                            )
+                                samples_per_epoch=samples_per_epoch,
+                                nb_epoch=nb_epoch,
+                                verbose=verbosity,
+                                callbacks=[  # self._lr_schedule,
+                                self._mdl_checkpoint, ],
+                                validation_data=valid_generator,
+                                nb_val_samples=nb_valid_samples,
+                                )
+
 
     def evaluate(self, evaluation_generator, num_eval_samples):
         """
@@ -229,6 +230,7 @@ class VoxNet(object):
             val_samples=num_eval_samples)
         print("Test score:", self._score)
 
+
     def load_weights(self, file):
         """
         Args:
@@ -236,6 +238,7 @@ class VoxNet(object):
         """
         logging.info("Loading model weights from file '{0}'".format(file))
         self._mdl.load_weights(file)
+
 
     def predict(self, X_predict):
         """
@@ -246,5 +249,6 @@ class VoxNet(object):
             Probability for every label
         """
         return self._mdl.predict_proba(X_predict, verbose=0)
+
 
 model = VoxNet(2, "chunk data")

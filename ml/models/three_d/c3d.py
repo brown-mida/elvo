@@ -1,6 +1,4 @@
 from keras.models import Model
-from keras.optimizers import SGD
-from keras.metrics import binary_accuracy, binary_crossentropy
 from keras.layers import (
     Input,
     AveragePooling3D,

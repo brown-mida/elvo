@@ -1,4 +1,3 @@
-import os
 import csv
 import numpy as np
 import random
@@ -44,7 +43,8 @@ class ChunkGenerator(object):
                 if row[1] != 'labels':
                     prelim_label_data[row[0]] = int(row[1])
 
-        # Get 8000 random negatives from the label data to feed into our generator
+        # Get 8000 random negatives from the label data to feed
+        # into our generator
         negative_counter = 0
         negative_label_data = {}
         while negative_counter < 12096:
@@ -172,4 +172,3 @@ class ChunkGenerator(object):
         # print("Loaded entire batch.")
         # print(np.shape(images))
         return images, labels
-
