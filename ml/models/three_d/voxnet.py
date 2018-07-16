@@ -209,9 +209,7 @@ class VoxNet(object):
                                 samples_per_epoch=samples_per_epoch,
                                 nb_epoch=nb_epoch,
                                 verbose=verbosity,
-                                callbacks=[
-                                # self._lr_schedule,
-                                self._mdl_checkpoint, ],
+                                callbacks=[self._mdl_checkpoint, ],
                                 validation_data=valid_generator,
                                 nb_val_samples=nb_valid_samples,
                                 )
