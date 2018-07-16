@@ -22,8 +22,6 @@ def create_chunks(annotations_df: pd.DataFrame):
     # loop through every array on GCS
     for in_blob in bucket.list_blobs(prefix='airflow/npy'):
         # blacklist
-        if in_blob.name != 'airflow/npy/04IOS24JP70LHBGB.npy':
-            continue
         if in_blob.name == 'airflow/npy/LAUIHISOEZIM5ILF.npy':
             continue
 
@@ -238,8 +236,8 @@ def create_labels(annotations_df: pd.DataFrame):
 
 
 def process_labels():
-    # annotations_df = pd.read_csv('/home/harold_triedman/elvo-analysis/annotation.csv')
-    annotations_df = pd.read_csv('/Users/haltriedman/Desktop/annotations.csv')
+    annotations_df = pd.read_csv('/home/harold_triedman/elvo-analysis/annotations.csv')
+    # annotations_df = pd.read_csv('/Users/haltriedman/Desktop/annotations.csv')
     annotations_df = annotations_df.drop(['created_by',
                                           'created_at',
                                           'ROI Link',
@@ -303,6 +301,6 @@ def inspect_rois(annotations_df):
 if __name__ == '__main__':
     configure_logger()
     annotations_df = process_labels()
-    create_labels(annotations_df)
+    # create_labels(annotations_df)
     create_chunks(annotations_df)
     # inspect_rois(annotations_df)
