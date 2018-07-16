@@ -194,7 +194,6 @@ def start_job(x_train: np.ndarray,
               username: str,
               params: blueno.ParamConfig,
               slack_token: str = None,
-              epochs=100,
               log_dir: str = None,
               id_valid: np.ndarray = None) -> None:
     """
@@ -268,11 +267,12 @@ def start_job(x_train: np.ndarray,
     model_filepath = '/tmp/{}.hdf5'.format(os.environ['CUDA_VISIBLE_DEVICES'])
     logging.debug('model_filepath: {}'.format(model_filepath))
     callbacks = utils.create_callbacks(x_train, y_train, x_valid, y_valid,
+                                       early_stopping=params.early_stopping,
                                        csv_file=csv_filepath,
                                        model_file=model_filepath)
     logging.info('training model')
     history = model.fit_generator(train_gen,
-                                  epochs=epochs,
+                                  epochs=params.max_epochs,
                                   validation_data=valid_gen,
                                   verbose=2,
                                   callbacks=callbacks)

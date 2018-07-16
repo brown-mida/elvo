@@ -64,19 +64,24 @@ class ParamConfig:
     seed: int
     val_split: float
 
+    max_epochs: int = 100
+    early_stopping: bool = True
+
     job_fn: typing.Callable = None
 
 
 @dataclass
 class ParamGrid:
-    data: typing.Tuple[DataConfig]
-    generator: typing.Tuple[GeneratorConfig]
-    model: typing.Tuple[ModelConfig]
-    batch_size: typing.List[int]
-    seed: typing.Tuple[int]
-    val_split: typing.Tuple[int]
+    data: typing.Sequence[DataConfig]
+    generator: typing.Sequence[GeneratorConfig]
+    model: typing.Sequence[ModelConfig]
+    batch_size: typing.Sequence[int]
+    seed: typing.Sequence[int]
+    val_split: typing.Sequence[int]
 
-    job_fn: typing.Callable = None
+    max_epochs: typing.Tuple[int] = (100,)
+    early_stopping: typing.Sequence[int] = (True,)
+    job_fn: typing.Sequence[typing.Callable] = None
 
     def __init__(self, **kwargs):
         for attr in kwargs:

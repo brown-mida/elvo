@@ -5,7 +5,7 @@ from sklearn import model_selection
 
 import generators.luke
 import models.luke
-from blueno.types import ParamGrid
+from blueno import types
 
 
 @pytest.mark.skipif(os.uname().nodename != 'gpu1708',
@@ -46,4 +46,7 @@ def test_from_dict():
             'freeze': [False],
         }),
     }
-    assert ParamGrid(**param_dict) is not None
+    param_grid = types.ParamGrid(**param_dict)
+    assert isinstance(param_grid.model[0], types.ModelConfig)
+    assert isinstance(param_grid.data[0], types.DataConfig)
+    assert isinstance(param_grid.generator[0], types.GeneratorConfig)

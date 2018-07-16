@@ -53,6 +53,7 @@ def test_start_job_no_err():
         'val_split': 0.2,
         'seed': 0,
         'batch_size': 8,
+        'max_epochs': 1,
 
         'generator': blueno.GeneratorConfig(
             generator_callable=generators.luke.standard_generators),
@@ -68,7 +69,7 @@ def test_start_job_no_err():
     }
     params = blueno.ParamConfig(**params)
     bluenot.start_job(x_train, y_train, x_valid, y_valid, job_name='test_job',
-                      username='test', params=params, epochs=1)
+                      username='test', params=params)
 
 
 def test_start_job_log():
@@ -89,6 +90,7 @@ def test_start_job_log():
         'val_split': 0.2,
         'seed': 0,
         'batch_size': 8,
+        'max_epochs': 1,
 
         'generator': blueno.GeneratorConfig(
             generator_callable=generators.luke.standard_generators),
@@ -104,7 +106,7 @@ def test_start_job_log():
     }
     params = blueno.ParamConfig(**params)
     bluenot.start_job(x_train, y_train, x_valid, y_valid, job_name='test_job',
-                      username='test', params=params, epochs=1,
+                      username='test', params=params,
                       log_dir='/tmp/')
 
 
@@ -159,6 +161,7 @@ def test_prepare_data_matching_indices():
         'val_split': 0.2,
         'seed': 0,
         'batch_size': 8,
+        'max_epochs': 1,
 
         'generator': blueno.GeneratorConfig(
             generator_callable=generators.luke.standard_generators),
@@ -197,6 +200,7 @@ def test_prepare_and_job():
         'val_split': 0.2,
         'seed': 0,
         'batch_size': 8,
+        'max_epochs': 1,
 
         'generator': blueno.GeneratorConfig(
             generator_callable=generators.luke.standard_generators),
@@ -215,4 +219,4 @@ def test_prepare_and_job():
     x_train, x_valid, y_train, y_valid, _, _ = bluenot.prepare_data(params)
     bluenot.start_job(x_train, y_train, x_valid, y_valid,
                       job_name='test_prepare_and_job', username='test',
-                      params=params, epochs=1)
+                      params=params)
