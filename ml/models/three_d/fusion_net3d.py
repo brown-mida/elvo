@@ -12,13 +12,13 @@ class FusionNet3dBuilder(object):
 
         input_img = Input(input_shape)
         print(input_img)
-        conv1 = Conv3D(64, kernel_size=(3, 3, 32), activation='relu')\
-            (input_img)
+        conv1 = Conv3D(64, kernel_size=(3, 3, 32),
+                       activation='relu')(input_img)
         print(conv1)
         maxpool1 = MaxPooling3D(pool_size=(2, 2, 1))(conv1)
         print(maxpool1)
-        conv2 = Conv3D(64, kernel_size=(3, 3, 32), activation='relu')\
-            (maxpool1)
+        conv2 = Conv3D(64, kernel_size=(3, 3, 32),
+                       activation='relu')(maxpool1)
         print(conv2)
         conv3 = Conv3D(64, 3, 3, 32, activation='relu')(conv2)
         print(conv3)
