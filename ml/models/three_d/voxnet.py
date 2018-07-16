@@ -19,6 +19,7 @@ from keras.optimizers import SGD
 # set logging level DEBUG and output to stdout
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
+
 # TODO: learning rate scheduler ?
 class VoxNet(object):
     """
@@ -153,7 +154,6 @@ class VoxNet(object):
                           optimizer=self._optimizer, metrics=["accuracy"])
         logging.info("Model compiled!")
 
-
     def fit(self, generator, samples_per_epoch,
             nb_epoch, valid_generator, nb_valid_samples, verbosity):
         """
@@ -188,7 +188,6 @@ class VoxNet(object):
             "save model Voxnet weights as weights_{0}.h5".format(time_now))
         self._mdl.save_weights("weights_{0}.h5".format(time_now), False)
 
-
     def continue_fit(self, weights_file, generator, samples_per_epoch,
                      nb_epoch, valid_generator, nb_valid_samples, verbosity):
         """
@@ -216,7 +215,6 @@ class VoxNet(object):
                                 nb_val_samples=nb_valid_samples,
                                 )
 
-
     def evaluate(self, evaluation_generator, num_eval_samples):
         """
         Args:
@@ -230,7 +228,6 @@ class VoxNet(object):
             val_samples=num_eval_samples)
         print("Test score:", self._score)
 
-
     def load_weights(self, file):
         """
         Args:
@@ -238,7 +235,6 @@ class VoxNet(object):
         """
         logging.info("Loading model weights from file '{0}'".format(file))
         self._mdl.load_weights(file)
-
 
     def predict(self, X_predict):
         """
