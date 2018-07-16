@@ -30,7 +30,8 @@ class VoxNet(object):
         """
         Args:
             nb_classes: number of classes the model is going to learn, int
-            dataset_name: name of the dataset {modelnet40, modelnet10} just used to save weights every epoche
+            dataset_name: name of the dataset {modelnet40, modelnet10}
+            just used to save weights every epoche
         initializes voxnet based on keras framework
         layers:
             3D Convolution
@@ -48,15 +49,19 @@ class VoxNet(object):
         # Stochastic Gradient Decent (SGD) with momentum
         # lr=0.01 for LiDar dataset
         # lr=0.001 for other datasets
-        # decay of 0.00016667 approx the same as learning schedule (0:0.001,60000:0.0001,600000:0.00001)
-        self._optimizer = SGD(lr=0.01, momentum=0.9, decay=0.00016667, nesterov=False)
+        # decay of 0.00016667 approx the same as
+        # learning schedule (0:0.001,60000:0.0001,600000:0.00001)
+        self._optimizer = SGD(
+            lr=0.01, momentum=0.9, decay=0.00016667, nesterov=False)
 
-        # use callbacks learingrate_schedule as alternative to learning_rate decay
+        # use callbacks learingrate_schedule as
+        # alternative to learning_rate decay
         #   self._lr_schedule = LearningRateScheduler(learningRateSchedule)
 
         # save weights after every epoche
-        self._mdl_checkpoint = ModelCheckpoint("weights/" + dataset_name + "_{epoch:02d}_{acc:.2f}.hdf5",
-                                               monitor="acc", verbose=0, save_best_only=False, mode="auto")
+        self._mdl_checkpoint = ModelCheckpoint(
+            "weights/" + dataset_name + "_{epoch:02d}_{acc:.2f}.hdf5",
+            monitor="acc", verbose=0, save_best_only=False, mode="auto")
 
         # create directory if necessary
         if not os.path.exists("voxnet_weights/"):
@@ -79,7 +84,9 @@ class VoxNet(object):
                                     b_regularizer=l2(0.001),
                                     ))
 
-        logging.debug("Layer1:Conv3D shape={0}".format(self._mdl.output_shape))
+        logging.debug("Layer1:Conv3D shape={0}".format(
+            self._mdl.output_shape))
+
         #Activation Leaky ReLu
         self._mdl.add(Activation(LeakyReLU(alpha=0.1)))
 
@@ -98,7 +105,8 @@ class VoxNet(object):
                                     W_regularizer=l2(0.001),
                                     b_regularizer=l2(0.001),
                                     ))
-        logging.debug("Layer3:Conv3D shape={0}".format(self._mdl.output_shape))
+        logging.debug(
+            "Layer3:Conv3D shape={0}".format(self._mdl.output_shape))
 
         #Activation Leaky ReLu
         self._mdl.add(Activation(LeakyReLU(alpha=0.1)))
@@ -108,14 +116,16 @@ class VoxNet(object):
                                    strides=None,
                                    border_mode='valid',
                                    dim_ordering='th'))
-        logging.debug("Layer4:MaxPool3D shape={0}".format(self._mdl.output_shape))
+        logging.debug(
+            "Layer4:MaxPool3D shape={0}".format(self._mdl.output_shape))
 
         # dropout 2
         self._mdl.add(Dropout(p=0.4))
 
         # dense 1 (fully connected layer)
         self._mdl.add(Flatten())
-        logging.debug("Layer5:Flatten shape={0}".format(self._mdl.output_shape))
+        logging.debug(
+            "Layer5:Flatten shape={0}".format(self._mdl.output_shape))
 
         self._mdl.add(Dense(output_dim=128,
                             init='normal',
@@ -141,7 +151,8 @@ class VoxNet(object):
         self._mdl.add(Activation("softmax"))
 
         # compile model
-        self._mdl.compile(loss='categorical_crossentropy', optimizer=self._optimizer, metrics=["accuracy"])
+        self._mdl.compile(loss='categorical_crossentropy',
+                          optimizer=self._optimizer, metrics=["accuracy"])
         logging.info("Model compiled!")
 
     def fit(self, generator, samples_per_epoch,
@@ -149,11 +160,15 @@ class VoxNet(object):
         """
         Args:
             generator: training sample generator from loader.train_generator
-            samples_per_epoch: number of train sample per epoche from loader.return_train_samples
+            samples_per_epoch: number of train sample per epoche
+            from loader.return_train_samples
             nb_epoch: number of epochs to repeat traininf on full set
-            valid_generator: validation sample generator from loader.valid_generator or NONE else
-            nb_valid_samples: number of validation samples per epoche from loader.return_valid_samples
-            verbosity: 0 (no output), 1 (full output), 2 (output only after epoche)
+            valid_generator: validation sample generator from
+            loader.valid_generator or NONE else
+            nb_valid_samples: number of validation samples
+            per epoche from loader.return_valid_samples
+            verbosity: 0 (no output), 1 (full output),
+            2 (output only after epoche)
         """
         logging.info("Start training")
         self._mdl.fit_generator(generator=generator,
@@ -167,9 +182,11 @@ class VoxNet(object):
                                 )
 
         time_now = datetime.datetime.now()
-        time_now = "_{0}_{1}_{2}_{3}_{4}_{5}".format(time_now.year, time_now.month, time_now.day,
-                                                     time_now.hour, time_now.minute, time_now.second)
-        logging.info("save model Voxnet weights as weights_{0}.h5".format(time_now))
+        time_now = "_{0}_{1}_{2}_{3}_{4}_{5}".format(
+            time_now.year, time_now.month, time_now.day,
+            time_now.hour, time_now.minute, time_now.second)
+        logging.info(
+            "save model Voxnet weights as weights_{0}.h5".format(time_now))
         self._mdl.save_weights("weights_{0}.h5".format(time_now), False)
 
     def continue_fit(self, weights_file, generator, samples_per_epoch,
@@ -178,11 +195,15 @@ class VoxNet(object):
         Args:
             weights_file: filename and adress of weights file .hdf5
             generator: training sample generator from loader.train_generator
-            samples_per_epoch: number of train sample per epoche from loader.return_train_samples
+            samples_per_epoch: number of train sample per
+            epoche from loader.return_train_samples
             nb_epoch: number of epochs to repeat traininf on full set
-            valid_generator: validation sample generator from loader.valid_generator or NONE else
-            nb_valid_samples: number of validation samples per epoche from loader.return_valid_samples
-            verbosity: 0 (no output), 1 (full output), 2 (output only after epoche)
+            valid_generator: validation sample generator from
+            loader.valid_generator or NONE else
+            nb_valid_samples: number of validation samples per
+            epoche from loader.return_valid_samples
+            verbosity: 0 (no output), 1 (full output),
+            2 (output only after epoche)
         """
         self.load_weights(weights_file)
         self._mdl.fit_generator(generator=generator,
@@ -198,8 +219,10 @@ class VoxNet(object):
     def evaluate(self, evaluation_generator, num_eval_samples):
         """
         Args:
-            evaluation_generator: evaluation sample generator from loader.eval_generator
-            num_eval_samples: number of train sample per epoche from loader.return_eval_samples
+            evaluation_generator: evaluation sample generator
+            from loader.eval_generator
+            num_eval_samples: number of train sample per
+            epoche from loader.return_eval_samples
         """
         self._score = self._mdl.evaluate_generator(
             generator=evaluation_generator,
@@ -217,7 +240,8 @@ class VoxNet(object):
     def predict(self, X_predict):
         """
         Args:
-            X_predict: Features to use to predict labels, numpy ndarray shape [~,1,32,32,32]
+            X_predict: Features to use to predict labels,
+            numpy ndarray shape [~,1,32,32,32]
         returns:
             Probability for every label
         """

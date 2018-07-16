@@ -18,4 +18,3 @@ class VGG16Builder(object):
         base_model = VGG16(weights='imagenet', include_top=False)
         finished_model = __add_new_last_layer(base_model, 2)
         return finished_model
-

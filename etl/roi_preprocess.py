@@ -327,5 +327,7 @@ def run_preprocess():
     create_chunks(annotations_df)
     # inspect_rois(annotations_df)
 
+
 if __name__ == '__main__':
    run_preprocess()
+
