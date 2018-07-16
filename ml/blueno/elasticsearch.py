@@ -5,11 +5,7 @@ from collections.__init__ import namedtuple
 import elasticsearch_dsl
 import pandas as pd
 import re
-from elasticsearch_dsl import connections
 from pandas.errors import EmptyDataError
-
-# Creates a connection to our Airflow instance
-connections.create_connection(hosts=['http://104.196.51.205'])
 
 TRAINING_JOBS = 'training_jobs'
 JOB_INDEX = elasticsearch_dsl.Index(TRAINING_JOBS)
@@ -35,6 +31,7 @@ class TrainingJob(elasticsearch_dsl.Document):
     raw_log = elasticsearch_dsl.Text()
     model_url = elasticsearch_dsl.Text()
 
+    # Metrics
     epochs = elasticsearch_dsl.Integer()
     train_acc = elasticsearch_dsl.Float()
     final_val_acc = elasticsearch_dsl.Float()
@@ -44,6 +41,40 @@ class TrainingJob(elasticsearch_dsl.Document):
     final_val_sensitivity = elasticsearch_dsl.Float()
     best_val_sensitivity = elasticsearch_dsl.Float()
     final_val_auc = elasticsearch_dsl.Float()
+
+    # Params
+    batch_size = elasticsearch_dsl.Integer()
+    val_split = elasticsearch_dsl.Integer()
+
+    rotation_range = elasticsearch_dsl.Float()
+    width_shift_range = elasticsearch_dsl.Float()
+    height_shift_range: float = elasticsearch_dsl.Float()
+    shear_range = elasticsearch_dsl.Float()
+    zoom_range = elasticsearch_dsl.Float()
+    horizontal_flip = elasticsearch_dsl.Boolean()
+    vertical_flip = elasticsearch_dsl.Boolean()
+
+    dropout_rate1 = elasticsearch_dsl.Float()
+    dropout_rate2 = elasticsearch_dsl.Float()
+
+    data_dir = elasticsearch_dsl.Keyword()
+    gcs_url = elasticsearch_dsl.Keyword()
+
+    # We need to keep a list of params for the parser because
+    # we can't use traditional approaches to get the class attrs
+    params_to_parse = ['batch_size',
+                       'val_split',
+                       'rotation_range',
+                       'width_shift_range',
+                       'height_shift_range',
+                       'shear_range',
+                       'zoom_range',
+                       'horizontal_flip',
+                       'vertical_flip',
+                       'dropout_rate1',
+                       'dropout_rate2',
+                       'data_dir',
+                       'gcs_url']
 
     class Index:
         name = TRAINING_JOBS
@@ -151,6 +182,9 @@ def construct_job(job_name,
                                model_url=model_url,
                                final_val_auc=final_val_auc)
 
+    if params:
+        pass
+
     if (job_name, created_at) == _parse_filename(metrics_filename):
         print('found matching CSV file, setting metrics')
         training_job.epochs = metrics.epochs
@@ -220,6 +254,19 @@ def _extract_auc(log_path: pathlib.Path) -> typing.Optional[float]:
             if match:
                 return float(match.group(2))
     return None
+
+
+def _parse_params_str(params_str: str) -> typing.Dict[str, typing.Any]:
+    param_dict = {}
+    for param in TrainingJob.params_to_parse:
+        patterns = [r'{}=(.*?)[,)]'.format(param),
+                    r"'{}'".format(param) + r": (.*?)[,}]"]
+        for pattern in patterns:
+            match = re.search(pattern, params_str)
+            if match:
+                param_dict[param] = match.group(1)
+    print('parsed params:', param_dict)
+    return param_dict
 
 
 def _extract_metrics(csv_path: pathlib.Path):
