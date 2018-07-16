@@ -112,7 +112,7 @@ def test_parse_params_str_config():
                   " dropout_rate1=0.7, dropout_rate2=0.7, freeze=False),"
                   " batch_size=3, seed=0, val_split=0.1, job_fn=None)")
     expected = {
-        'batch_size': 3, 'val_split': 0.1, 'rotation_range': 20,
+        'batch_size': 3, 'val_split': 0.1, 'seed': 0, 'rotation_range': 20,
         'width_shift_range': 0.1, 'height_shift_range': 0.1,
         'shear_range': 0.2, 'horizontal_flip': True,
         'vertical_flip': False, 'dropout_rate1': 0.7,
@@ -140,7 +140,7 @@ def test_parse_params_str_dict():
                  "processed-standard/labels.csv'," \
                  " 'index_col': 'Anon ID', 'label_col': 'occlusion_exists'}}"
     expected = {
-        'batch_size': 8, 'val_split': 0.2, 'rotation_range': 20,
+        'batch_size': 8, 'val_split': 0.2, 'seed': 42, 'rotation_range': 20,
         'dropout_rate1': 0.8, 'dropout_rate2': 0.8,
         'data_dir': "/home/lzhu7/elvo-analysis/data/"
                     "processed-standard/arrays/"

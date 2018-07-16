@@ -45,7 +45,8 @@ class TrainingJob(elasticsearch_dsl.Document):
 
     # Params
     batch_size = elasticsearch_dsl.Integer()
-    val_split = elasticsearch_dsl.Integer()
+    val_split = elasticsearch_dsl.Float()
+    seed = elasticsearch_dsl.Integer()
 
     rotation_range = elasticsearch_dsl.Float()
     width_shift_range = elasticsearch_dsl.Float()
@@ -65,6 +66,7 @@ class TrainingJob(elasticsearch_dsl.Document):
     # we can't use traditional approaches to get the class attrs
     params_to_parse = ['batch_size',
                        'val_split',
+                       'seed',
                        'rotation_range',
                        'width_shift_range',
                        'height_shift_range',
