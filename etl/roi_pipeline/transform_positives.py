@@ -6,10 +6,11 @@ storage folder "positives + augmentation."
 
 import logging
 # from matplotlib import pyplot as plt
-from lib import transforms, cloud_management as cloud
+from lib import cloud_management as cloud
 import numpy as np
 import pandas as pd
 import itertools
+
 
 def configure_logger():
     root_logger = logging.getLogger()
@@ -20,8 +21,9 @@ def configure_logger():
     handler.setFormatter(formatter)
     root_logger.addHandler(handler)
 
+
 def transform_one(arr, file_id):
-    iterlist = list(itertools.product('01', repeat = 3))
+    iterlist = list(itertools.product('01', repeat=3))
     axes = [[0, 1], [1, 2], [0, 2]]
 
     transform_number = 0
@@ -39,7 +41,8 @@ def transform_one(arr, file_id):
                 # save to the numpy generator source directory
             file_id_new =  file_id + "_" + str(transform_number)
             # print(file_id_new)
-            cloud.save_chunks_to_cloud(flipped, 'normal/positive', file_id_new)
+            cloud.save_chunks_to_cloud(
+                flipped, 'normal/positive', file_id_new)
 
 def transform_positives():
     configure_logger()
@@ -136,7 +139,9 @@ def generate_csv():
                 # we use index + 1 because filenames are 1-indexed
                 new_patient_id = str(row[0]) + "_" + str(i + 1)
                 to_add[index + 500000 + i] = [new_patient_id, 1]
-            to_add_df = pd.DataFrame.from_dict(to_add, orient='index', columns =['Unnamed: 0', 'label'])
+            to_add_df = pd.DataFrame.from_dict(to_add, orient='index',
+                                               columns=[
+                                                   'Unnamed: 0', 'label'])
             print(to_add_df)
             labels_df = labels_df.append(to_add_df)
     # print(labels_df.loc['04IOS24JP70LHBGB184', 'Unnamed: 0'])

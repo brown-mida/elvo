@@ -31,7 +31,8 @@ def create_chunks(annotations_df: pd.DataFrame):
 
         print(f'chunking {file_id}')
         # copy ROI if there's a positive match in the ROI annotations
-        roi_df = annotations_df[annotations_df['patient_id'].str.match(file_id)]
+        roi_df = annotations_df[
+            annotations_df['patient_id'].str.match(file_id)]
         # if it's empty, this brain is ELVO negative
         if roi_df.empty:
             elvo_positive = False
@@ -56,7 +57,8 @@ def create_chunks(annotations_df: pd.DataFrame):
 
                         elvo_chunk = False
 
-                        # if the chunk contains the elvo, set a boolean to true
+                        # if the chunk contains the elvo,
+                        # set a boolean to true
                         if i == blue and j == green and k == red:
                             elvo_chunk = True
 
@@ -75,13 +77,15 @@ def create_chunks(annotations_df: pd.DataFrame):
                             #   1 and save
                             if elvo_chunk:
                                 cloud.save_chunks_to_cloud(np.asarray(chunk),
-                                                           'normal', 'positive',
+                                                           'normal',
+                                                           'positive',
                                                            file_id + str(h))
 
                             # else set the label to 0 and save
                             else:
                                 cloud.save_chunks_to_cloud(np.asarray(chunk),
-                                                           'normal', 'negative',
+                                                           'normal',
+                                                           'negative',
                                                            file_id + str(h))
 
                         # # do the same thing with stripped array
@@ -134,7 +138,8 @@ def create_chunks(annotations_df: pd.DataFrame):
                         # stripped_chunk = \
                         #     stripped[i:(i + 32), j:(j + 32), k:(k + 32)]
                         # stripped_airspace = np.where(stripped_chunk <= -50)
-                        # if (stripped_airspace[0].size / stripped_chunk.size) \
+                        # if (stripped_airspace[0].size /
+                        # stripped_chunk.size) \
                         #         < 0.9:
                         #     cloud.save_chunks_to_cloud(np.asarray(chunk),
                         #                                'stripped/negative',
@@ -146,7 +151,8 @@ def create_chunks(annotations_df: pd.DataFrame):
                         # pc_airspace = np.where(pc_chunk == 0)
                         # if (pc_airspace[0].size / pc_chunk.size) < 0.9:
                         #     cloud.save_chunks_to_cloud(np.asarray(chunk),
-                        #                                'point_cloud/negative',
+                        #                                'point_cloud/' +
+                        #                                'negative',
                         #                                file_id + str(h))
                         h += 1
 
@@ -169,7 +175,8 @@ def create_labels(annotations_df: pd.DataFrame):
         print(f'labeling {file_id}')
 
         # copy ROI if there's a positive match in the ROI annotations
-        roi_df = annotations_df[annotations_df['patient_id'].str.match(file_id)]
+        roi_df = annotations_df[
+            annotations_df['patient_id'].str.match(file_id)]
         # if it's empty, this brain is ELVO negative
         if roi_df.empty:
             elvo_positive = False
@@ -194,7 +201,8 @@ def create_labels(annotations_df: pd.DataFrame):
                         # copy the chunk
                         chunk = arr[i:(i + 32), j:(j + 32), k:(k + 32)]
 
-                        # if the chunk contains the elvo, set a boolean to true
+                        # if the chunk contains the elvo, set a boolean
+                        # to true
                         if i == blue and j == green and k == red:
                             elvo_chunk = True
 
@@ -230,21 +238,25 @@ def create_labels(annotations_df: pd.DataFrame):
                         h += 1
 
     # convert the labels to a df
-    labels_df = pd.DataFrame.from_dict(label_dict, orient='index', columns=['label'])
+    labels_df = pd.DataFrame.from_dict(label_dict, orient='index',
+                                       columns=['label'])
     print(labels_df)
     labels_df.to_csv('annotated_labels.csv')
 
 
 def process_labels():
-    annotations_df = pd.read_csv('/home/harold_triedman/elvo-analysis/annotations.csv')
-    # annotations_df = pd.read_csv('/Users/haltriedman/Desktop/annotations.csv')
+    annotations_df = pd.read_csv(
+        '/home/harold_triedman/elvo-analysis/annotations.csv')
+    # annotations_df = pd.read_csv(
+    # '/Users/haltriedman/Desktop/annotations.csv')
     annotations_df = annotations_df.drop(['created_by',
                                           'created_at',
                                           'ROI Link',
                                           'Unnamed: 10',
                                           'Mark here if Matt should review'],
                                          axis=1)
-    annotations_df = annotations_df[annotations_df.red1 == annotations_df.red1]
+    annotations_df = annotations_df[
+        annotations_df.red1 == annotations_df.red1]
     print(annotations_df)
     return annotations_df
 
@@ -267,7 +279,8 @@ def inspect_rois(annotations_df):
 
         print(f'chunking {file_id}')
         # copy ROI if there's a positive match in the ROI annotations
-        roi_df = annotations_df[annotations_df['patient_id'].str.match(file_id)]
+        roi_df = annotations_df[
+            annotations_df['patient_id'].str.match(file_id)]
         # if it's empty, this brain is ELVO negative
         if roi_df.empty:
             elvo_positive = False
@@ -282,8 +295,10 @@ def inspect_rois(annotations_df):
             blue = int(len(arr) - roi_df['blue2'].iloc[0])
             green = int(roi_df['green1'].iloc[0])
             red = int(roi_df['red1'].iloc[0])
-            chunks.append(arr[blue: blue + 32, green: green + 50, red: red + 50])
-            chunks.append(arr[blue: blue + 32, red: red + 50, green: green + 50])
+            chunks.append(arr[blue: blue + 32,
+                          green: green + 50, red: red + 50])
+            chunks.append(arr[
+                          blue: blue + 32, red: red + 50, green: green + 50])
             start = 0
             for chunk in chunks:
                 print(start)
