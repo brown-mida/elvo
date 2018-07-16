@@ -9,7 +9,6 @@ import sys
 
 #third party modules
 import keras
-assert keras.__version__ == "1.0.0", "keras version not supported"
 from keras import backend as K
 from keras.models import Sequential
 from keras.layers import Convolution3D, MaxPooling3D
@@ -225,4 +224,3 @@ class VoxNet(object):
         return self._mdl.predict_proba(X_predict, verbose=0)
 
 model = VoxNet(2, "chunk data")
-print(model.summary())
