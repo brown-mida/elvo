@@ -297,10 +297,12 @@ def inspect_rois(annotations_df):
                 plt.show()
                 start += 10
 
-
-if __name__ == '__main__':
+def run_preprocess():
     configure_logger()
     annotations_df = process_labels()
     # create_labels(annotations_df)
     create_chunks(annotations_df)
     # inspect_rois(annotations_df)
+
+if __name__ == '__main__':
+   run_preprocess()
