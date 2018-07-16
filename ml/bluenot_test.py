@@ -12,6 +12,14 @@ import generators.luke
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
 
 
+def setup_module():
+    connections.create_connection(hosts=['http://104.196.51.205'])
+
+
+def teardown_module():
+    connections.remove_connection('default')
+
+
 def small_model(input_shape=(224, 224, 3),
                 num_classes=1,
                 *args, **kwargs):

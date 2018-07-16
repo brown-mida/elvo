@@ -5,6 +5,7 @@ Elasticsearch.
 import pathlib
 
 import os
+from elasticsearch_dsl import connections
 
 from blueno.elasticsearch import (
     insert_or_ignore_filepaths, JOB_INDEX,
@@ -40,6 +41,8 @@ def bluenom(log_dir: pathlib.Path, gpu1708=False):
 
 if __name__ == '__main__':
     print('resetting job index')
+    # Creates a connection to our Airflow instance
+    connections.create_connection(hosts=['http://104.196.51.205'])
     if JOB_INDEX.exists():
         JOB_INDEX.delete()
     JOB_INDEX.create()

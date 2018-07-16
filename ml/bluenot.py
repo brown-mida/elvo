@@ -40,6 +40,7 @@ import numpy as np
 import os
 import pandas as pd
 import sklearn
+from elasticsearch_dsl import connections
 from sklearn import model_selection
 
 import blueno
@@ -294,9 +295,14 @@ def start_job(x_train: np.ndarray,
 
     # Upload logs to Kibana
     if log_dir:
+        # Creates a connection to our Airflow instance
+        alias = f'bluenot-{os.environ["CUDA_VISIBLE_DEVICES"]}'
+        connections.create_connection(hosts=['http://104.196.51.205'],
+                                      alias=alias)
         blueno.elasticsearch.insert_or_ignore_filepaths(
             pathlib.Path(log_filepath),
             pathlib.Path(csv_filepath))
+        connections.remove_connection(alias)
 
 
 def upload_model_to_gcs(job_name, created_at, model_filepath):
