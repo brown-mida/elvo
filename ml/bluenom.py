@@ -6,7 +6,10 @@ import pathlib
 
 import os
 
-from blueno.reporting import insert_or_ignore_filepaths, JOB_INDEX, TrainingJob
+from blueno.elasticsearch import (
+    insert_or_ignore_filepaths, JOB_INDEX,
+    TrainingJob,
+)
 
 
 def bluenom(log_dir: pathlib.Path, gpu1708=False):

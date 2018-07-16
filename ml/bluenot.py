@@ -209,7 +209,6 @@ def start_job(x_train: np.ndarray,
     :param username:
     :param slack_token: the slack token
     :param params: the parameters specified
-    :param epochs:
     :param log_dir:
     :param id_valid: the patient ids ordered to correspond with y_valid
     :return:
@@ -279,9 +278,9 @@ def start_job(x_train: np.ndarray,
 
     if slack_token:
         logging.info('generating slack report')
-        blueno.plotting.slack_report(x_train, x_valid, y_valid, model, history,
-                                     job_name,
-                                     params, slack_token, id_valid=id_valid)
+        blueno.slack.slack_report(x_train, x_valid, y_valid, model, history,
+                                  job_name,
+                                  params, slack_token, id_valid=id_valid)
     else:
         logging.info('no slack token found, not generating report')
 
@@ -295,8 +294,9 @@ def start_job(x_train: np.ndarray,
 
     # Upload logs to Kibana
     if log_dir:
-        blueno.reporting.insert_or_ignore_filepaths(pathlib.Path(log_filepath),
-                                                    pathlib.Path(csv_filepath))
+        blueno.elasticsearch.insert_or_ignore_filepaths(
+            pathlib.Path(log_filepath),
+            pathlib.Path(csv_filepath))
 
 
 def upload_model_to_gcs(job_name, created_at, model_filepath):

@@ -1,4 +1,4 @@
-from . import plotting, reporting, utils
+from . import slack, elasticsearch, utils
 
 from .types import (
     ParamGrid, ParamConfig, DataConfig, ModelConfig,
@@ -6,8 +6,8 @@ from .types import (
 )
 
 __all__ = [
-    'plotting',
-    'reporting',
+    'slack',
+    'elasticsearch',
     'utils',
     'ParamGrid',
     'ParamConfig',

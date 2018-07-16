@@ -5,7 +5,7 @@ import pytest
 from elasticsearch_dsl import connections
 
 import bluenom
-from blueno.reporting import JOB_INDEX
+from blueno.elasticsearch import JOB_INDEX
 
 
 @pytest.mark.skipif(os.uname().nodename != 'gpu1708',
