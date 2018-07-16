@@ -29,6 +29,7 @@ import datetime
 import importlib
 import logging
 import multiprocessing
+import os
 import pathlib
 import subprocess
 import time
@@ -37,9 +38,7 @@ from typing import Dict, List, Tuple, Union
 
 import keras
 import numpy as np
-import os
 import pandas as pd
-import sklearn
 from elasticsearch_dsl import connections
 from sklearn import model_selection
 
@@ -142,38 +141,8 @@ def prepare_data(params: blueno.ParamConfig) -> Tuple[np.ndarray,
     # Convert to split numpy arrays
     x, y, patient_ids = to_arrays(array_dict, label_series)
 
-    if params.model.loss == keras.losses.binary_crossentropy:
-        # We need y to have 2 dimensions for the rest of the model
-        if y.ndim == 1:
-            y = np.expand_dims(y, axis=1)
-
-    elif params.model.loss == keras.losses.categorical_crossentropy:
-        # TODO(#77): Move/refactor hacky code below to bluenot.py
-        def categorize(label):
-            if any([x in label.lower() for x in ['m1', 'm2', 'mca']]):
-                return 2  # mca
-            if 'nan' in str(label):
-                return 0
-            else:
-                return 1  # other
-
-        try:
-            y = np.array([categorize(label) for label in y])
-            label_encoder = sklearn.preprocessing.LabelEncoder()
-            y = label_encoder.fit_transform(y)
-            logging.debug(
-                f'label encoder classes: {label_encoder.classes_}')
-        except Exception:
-            pass
-
-        y = y.reshape(-1, 1)
-        one_hot = sklearn.preprocessing.OneHotEncoder(sparse=False)
-        y: np.ndarray = one_hot.fit_transform(y)
-
-    else:
-        raise ValueError('Only support for crossentry callables at the moment')
-
-    assert y.ndim == 2
+    if y.ndim == 1:
+        y = np.expand_dims(y, axis=1)
 
     logging.debug(f'x shape: {x.shape}')
     logging.debug(f'y shape: {y.shape}')
