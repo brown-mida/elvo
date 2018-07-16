@@ -106,14 +106,15 @@ def test_parse_params_str_config():
                   " horizontal_flip=True, vertical_flip=False),"
                   " model=ModelConfig(model_callable="
                   "<function resnet at 0x7f986e71fd90>,"
-                  " optimizer=<keras.optimizers.Adam object at 0x7f986e77e668>,"
+                  " optimizer="
+                  "<keras.optimizers.Adam object at 0x7f986e77e668>,"
                   " loss=<function binary_crossentropy at 0x7f9874f1ea60>,"
                   " dropout_rate1=0.7, dropout_rate2=0.7, freeze=False),"
                   " batch_size=3, seed=0, val_split=0.1, job_fn=None)")
     expected = {
         'batch_size': 3, 'val_split': 0.1, 'rotation_range': 20,
         'width_shift_range': 0.1, 'height_shift_range': 0.1,
-        'shear_range': 0.2, 'zoom_range': 0.1, 'horizontal_flip': True,
+        'shear_range': 0.2, 'horizontal_flip': True,
         'vertical_flip': False, 'dropout_rate1': 0.7,
         'dropout_rate2': 0.7,
         'data_dir': "/home/lzhu7/elvo-analysis/data/"
@@ -128,11 +129,13 @@ def test_parse_params_str_dict():
                  " <keras.optimizers.Adam object at 0x7f2fead000b8>," \
                  " 'model_callable': <function resnet at 0x7f2fae954f28>," \
                  " 'loss': <function binary_crossentropy at 0x7f2faea508c8>," \
-                 " 'freeze': True, 'dropout_rate2': 0.8, 'dropout_rate1': 0.8," \
+                 " 'freeze': True, 'dropout_rate2': 0.8," \
+                 " 'dropout_rate1': 0.8," \
                  " 'batch_size': 8}, 'generator':" \
                  " <function standard_generators at 0x7f2fae9c07b8>," \
                  " 'data': {'data_dir':" \
-                 " '/home/lzhu7/elvo-analysis/data/processed-standard/arrays/'," \
+                 " '/home/lzhu7/elvo-analysis/data/" \
+                 "processed-standard/arrays/'," \
                  " 'labels_path': '/home/lzhu7/elvo-analysis/data/" \
                  "processed-standard/labels.csv'," \
                  " 'index_col': 'Anon ID', 'label_col': 'occlusion_exists'}}"
@@ -142,4 +145,4 @@ def test_parse_params_str_dict():
         'data_dir': "/home/lzhu7/elvo-analysis/data/"
                     "processed-standard/arrays/"
     }
-    elasticsearch._parse_params_str(params_str)
+    assert elasticsearch._parse_params_str(params_str) == expected

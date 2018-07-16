@@ -19,7 +19,7 @@ def test_upload_to_slack():
     with open('test_upload_to_slack.png', 'w') as f:
         f.write('hello!')
     r = blueno.slack.upload_to_slack('test_upload_to_slack.png',
-                                        'testing',
+                                     'testing',
                                      SLACK_TOKEN)
     assert r.status_code == 200
 
@@ -98,16 +98,16 @@ def test_save_misclassification_plots():
                                               y_valid_binary,
                                               y_pred_binary)
     blueno.slack.upload_to_slack('/tmp/false_positives.png',
-                                    'false positives',
+                                 'false positives',
                                  SLACK_TOKEN)
     blueno.slack.upload_to_slack('/tmp/false_negatives.png',
-                                    'false negatives',
+                                 'false negatives',
                                  SLACK_TOKEN)
     blueno.slack.upload_to_slack('/tmp/true_positives.png',
-                                    'true positives',
+                                 'true positives',
                                  SLACK_TOKEN)
     blueno.slack.upload_to_slack('/tmp/true_negatives.png',
-                                    'true negatives',
+                                 'true negatives',
                                  SLACK_TOKEN)
 
 
@@ -135,14 +135,14 @@ def test_save_misclassification_plots_with_ids():
                                               y_pred_binary,
                                               ids)
     blueno.slack.upload_to_slack('/tmp/false_positives.png',
-                                    'false positives',
+                                 'false positives',
                                  SLACK_TOKEN)
     blueno.slack.upload_to_slack('/tmp/false_negatives.png',
-                                    'false negatives',
+                                 'false negatives',
                                  SLACK_TOKEN)
     blueno.slack.upload_to_slack('/tmp/true_positives.png',
-                                    'true positives',
+                                 'true positives',
                                  SLACK_TOKEN)
     blueno.slack.upload_to_slack('/tmp/true_negatives.png',
-                                    'true negatives',
+                                 'true negatives',
                                  SLACK_TOKEN)
