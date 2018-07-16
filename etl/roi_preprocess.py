@@ -89,30 +89,37 @@ def create_chunks(annotations_df: pd.DataFrame):
                                                            file_id + str(h))
 
                         # # do the same thing with stripped array
-                        # stripped_chunk = stripped[i:(i + 32), j:(j + 32), k:(k + 32)]
+                        # stripped_chunk =
+                        # stripped[i:(i + 32), j:(j + 32), k:(k + 32)]
                         # stripped_airspace = np.where(stripped_chunk <= -50)
-                        # if (stripped_airspace[0].size / stripped_chunk.size) < 0.9:
+                        # if (stripped_airspace[0].size / stripped_chunk.size)
+                        #  < 0.9:
                         #     if elvo_chunk:
-                        #         cloud.save_chunks_to_cloud(np.asarray(chunk),
-                        #                                    'stripped/positive',
-                        #                                    file_id + str(h))
+                        #         cloud.save_chunks_to_cloud(
+                        #                   np.asarray(chunk),
+                        #                   'stripped/positive',
+                        #                    file_id + str(h))
                         #     else:
-                        #         cloud.save_chunks_to_cloud(np.asarray(chunk),
-                        #                                    'stripped/negative',
-                        #                                    file_id + str(h))
+                        #         cloud.save_chunks_to_cloud(
+                        #                   np.asarray(chunk),
+                        #                   'stripped/negative',
+                        #                   file_id + str(h))
                         #
                         # # do the same thing with point cloud array
-                        # pc_chunk = point_cloud[i:(i + 32), j:(j + 32), k:(k + 32)]
+                        # pc_chunk = point_cloud[i:(i + 32),
+                        # j:(j + 32), k:(k + 32)]
                         # pc_airspace = np.where(pc_chunk == 0)
                         # if (pc_airspace[0].size / pc_chunk.size) < 0.9:
                         #     if elvo_chunk:
-                        #         cloud.save_chunks_to_cloud(np.asarray(chunk),
-                        #                                    'point_cloud/positive',
-                        #                                    file_id + str(h))
+                        #         cloud.save_chunks_to_cloud(
+                        #                       np.asarray(chunk),
+                        #                       'point_cloud/positive',
+                        #                       file_id + str(h))
                         #     else:
-                        #         cloud.save_chunks_to_cloud(np.asarray(chunk),
-                        #                                    'point_cloud/negative',
-                        #                                    file_id + str(h))
+                        #         cloud.save_chunks_to_cloud(
+                        #                       np.asarray(chunk),
+                        #                       'point_cloud/negative',
+                        #                       file_id + str(h))
                         h += 1
 
         # else it's elvo negative
@@ -311,6 +318,7 @@ def inspect_rois(annotations_df):
                 ax[2].imshow(sag, interpolation='none')
                 plt.show()
                 start += 10
+
 
 def run_preprocess():
     configure_logger()

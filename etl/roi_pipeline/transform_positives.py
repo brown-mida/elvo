@@ -44,6 +44,7 @@ def transform_one(arr, file_id):
             cloud.save_chunks_to_cloud(
                 flipped, 'normal/positive', file_id_new)
 
+
 def transform_positives():
     configure_logger()
     client = cloud.authenticate()
@@ -66,11 +67,12 @@ def transform_positives():
         input_arr = cloud.download_array(in_blob)
         logging.info(f"blob shape: {input_arr.shape}")
         # crop individual input array
-        flipped = transform_one(input_arr, file_id)
+        transform_one(input_arr, file_id)
 
         # plt.figure(figsize=(6, 6))
         # plt.imshow(not_extreme_arr, interpolation='none')
         # plt.show()
+
 
 def clean_old_data():
     configure_logger()
@@ -132,7 +134,7 @@ def generate_csv():
     labels_df = pd.read_csv('/home/amy/data/annotated_labels.csv')
     for index, row in labels_df.iterrows():
         print(index, row[1])
-        if(row[1]== 1):
+        if(row[1] == 1):
             # every time you come across a positive, add in 24 more rows
             to_add = {}
             for i in range(24):

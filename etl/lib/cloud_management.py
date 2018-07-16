@@ -3,7 +3,6 @@ import io
 from tensorflow.python.lib.io import file_io
 # import imageio
 import numpy as np
-import pandas as pd
 from google.cloud import storage
 
 
@@ -65,6 +64,7 @@ def save_stripped_npy(arr: np.ndarray, patient_id: str, view: str):
     except Exception as e:
         logging.error(f'for patient ID: {patient_id} {e}')
 
+
 def save_roi_npy(arr: np.ndarray, id: str, type: str, view: str):
     """Uploads ROI-cropped .npy files to gs://elvos/roi_data/{view}
         /{perspective}/<patient
@@ -78,6 +78,7 @@ def save_roi_npy(arr: np.ndarray, id: str, type: str, view: str):
                                'w'), arr)
     except Exception as e:
         logging.error(f'for patient ID: {id} {e}')
+
 
 def save_chunks_to_cloud(arr: np.ndarray, type: str,
                          elvo_status: str, id: str):

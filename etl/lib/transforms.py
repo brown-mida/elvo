@@ -91,6 +91,7 @@ def crop_strip_skull(arr: np.ndarray, whence: str):
         to_return = arr[len(arr) - 40:]
     return to_return
 
+
 def crop_multichannel(arr: np.ndarray, whence: str):
     num_slices = 3
     # from numpy
