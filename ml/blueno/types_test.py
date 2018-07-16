@@ -20,6 +20,7 @@ def test_from_dict():
                                'processed-standard/labels.csv',
                 'index_col': 'Anon ID',
                 'label_col': 'occlusion_exists',
+                'gcs_url': 'gs://elvos/processed/processed-standard',
             },
         ],
 

@@ -3,6 +3,7 @@ import numpy as np
 import os
 import pandas as pd
 import pytest
+from elasticsearch_dsl import connections
 
 import blueno
 import bluenot
@@ -48,6 +49,7 @@ def test_start_job_no_err():
                            'processed-standard/labels.csv',
             'index_col': 'Anon ID',
             'label_col': 'Location of occlusions on CTA (Matt verified)',
+            'gcs_url': 'gs://elvos/processed/processed-standard'
         }),
 
         'val_split': 0.2,
@@ -85,6 +87,7 @@ def test_start_job_log():
                            'processed-standard/labels.csv',
             'index_col': 'Anon ID',
             'label_col': 'Location of occlusions on CTA (Matt verified)',
+            'gcs_url': 'gs://elvos/processed/processed-standard',
         }),
 
         'val_split': 0.2,
@@ -121,6 +124,7 @@ def test_prepare_data_correct_dims():
                            'processed-standard/labels.csv',
             'index_col': 'Anon ID',
             'label_col': 'occlusion_exists',
+            'gcs_url': 'gs://elvos/processed/processed-standard',
         }),
 
         'val_split': 0.2,
@@ -156,6 +160,7 @@ def test_prepare_data_matching_indices():
                            'processed-standard/labels.csv',
             'index_col': 'Anon ID',
             'label_col': 'occlusion_exists',
+            'gcs_url': 'gs://elvos/processed/processed-standard'
         }),
 
         'val_split': 0.2,
@@ -195,6 +200,7 @@ def test_prepare_and_job():
                            'processed-standard/labels.csv',
             'index_col': 'Anon ID',
             'label_col': 'Location of occlusions on CTA (Matt verified)',
+            'gcs_url': 'gs://elvos/processed/processed-standard',
         }),
 
         'val_split': 0.2,

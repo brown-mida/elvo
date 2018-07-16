@@ -25,6 +25,8 @@ class DataConfig:
     labels_path: str
     index_col: str
     label_col: str
+    # The url starting with gs:// that contains the data
+    gcs_url: str
 
 
 @dataclass
@@ -48,7 +50,8 @@ class GeneratorConfig:
     width_shift_range: float = 0.1
     height_shift_range: float = 0.1
     shear_range: float = 0
-    zoom_range: int = 0.1
+    zoom_range: typing.Union[float,
+                             typing.Tuple[float, float]] = 0.1
     horizontal_flip: bool = True
     vertical_flip: bool = False
 
