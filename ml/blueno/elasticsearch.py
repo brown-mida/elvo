@@ -1,3 +1,4 @@
+import ast
 import pathlib
 import typing
 from collections.__init__ import namedtuple
@@ -148,7 +149,7 @@ def insert_or_ignore(training_job):
 
 def construct_job(job_name,
                   created_at,
-                  params,
+                  params: str,
                   raw_log,
                   metrics,
                   metrics_filename,
@@ -162,7 +163,7 @@ def construct_job(job_name,
     Note that these parameters are experimental.
     :param job_name:
     :param created_at:
-    :param params:
+    :param params: a string of bluenot config params
     :param raw_log:
     :param metrics:
     :param metrics_filename:
@@ -183,7 +184,9 @@ def construct_job(job_name,
                                final_val_auc=final_val_auc)
 
     if params:
-        pass
+        params_dict = _parse_params_str(params)
+        for key, val in params_dict.items():
+            training_job.__setattr__(key, val)
 
     if (job_name, created_at) == _parse_filename(metrics_filename):
         print('found matching CSV file, setting metrics')
@@ -257,6 +260,10 @@ def _extract_auc(log_path: pathlib.Path) -> typing.Optional[float]:
 
 
 def _parse_params_str(params_str: str) -> typing.Dict[str, typing.Any]:
+    """Parses the param string outputs that most logs contain.
+
+    This code is very rigid, and will likely break.
+    """
     param_dict = {}
     for param in TrainingJob.params_to_parse:
         patterns = [r'{}=(.*?)[,)]'.format(param),
@@ -264,7 +271,9 @@ def _parse_params_str(params_str: str) -> typing.Dict[str, typing.Any]:
         for pattern in patterns:
             match = re.search(pattern, params_str)
             if match:
-                param_dict[param] = match.group(1)
+                value_str = match.group(1)
+                value = ast.literal_eval(value_str)
+                param_dict[param] = value
     print('parsed params:', param_dict)
     return param_dict
 
