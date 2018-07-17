@@ -21,6 +21,7 @@ def test_upload_to_slack():
     r = blueno.slack.upload_to_slack('test_upload_to_slack.png',
                                      'testing',
                                      SLACK_TOKEN)
+    os.remove('test_upload_to_slack.png')
     assert r.status_code == 200
 
 

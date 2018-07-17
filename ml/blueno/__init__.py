@@ -6,8 +6,9 @@ from .types import (
 )
 
 __all__ = [
-    'slack',
+    'io',
     'elasticsearch',
+    'slack',
     'utils',
     'ParamGrid',
     'ParamConfig',

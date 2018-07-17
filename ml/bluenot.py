@@ -29,7 +29,6 @@ import datetime
 import importlib
 import logging
 import multiprocessing
-import os
 import pathlib
 import subprocess
 import time
@@ -38,12 +37,14 @@ from typing import Dict, List, Tuple, Union
 
 import keras
 import numpy as np
+import os
 import pandas as pd
 from elasticsearch_dsl import connections
 from sklearn import model_selection
 
 import blueno
 from blueno import utils
+from blueno.io import load_arrays
 
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
 
@@ -72,14 +73,6 @@ def configure_job_logger(file_path):
         fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
     root_logger.addHandler(handler)
-
-
-def load_arrays(data_dir: str) -> Dict[str, np.ndarray]:
-    data_dict = {}
-    for filename in os.listdir(data_dir):
-        patient_id = filename[:-4]  # remove .npy extension
-        data_dict[patient_id] = np.load(pathlib.Path(data_dir) / filename)
-    return data_dict
 
 
 def to_arrays(data: Dict[str, np.ndarray],
@@ -138,7 +131,7 @@ def prepare_data(params: blueno.ParamConfig) -> Tuple[np.ndarray,
     label_col = data_params.label_col
     label_series = pd.read_csv(data_params.labels_path,
                                index_col=index_col)[label_col]
-    # Convert to split numpy arrays
+    # Convert to numpy arrays
     x, y, patient_ids = to_arrays(array_dict, label_series)
 
     if y.ndim == 1:
