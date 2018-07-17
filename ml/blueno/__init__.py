@@ -1,17 +1,20 @@
-from . import plotting, reporting, utils
+from . import io, slack, elasticsearch, utils, transforms
 
 from .types import (
     ParamGrid, ParamConfig, DataConfig, ModelConfig,
-    GeneratorConfig,
+    GeneratorConfig, LukePipelineConfig,
 )
 
 __all__ = [
-    'plotting',
-    'reporting',
+    'io',
+    'elasticsearch',
+    'slack',
+    'transforms',
     'utils',
     'ParamGrid',
     'ParamConfig',
     'DataConfig',
+    'LukePipelineConfig',
     'ModelConfig',
     'GeneratorConfig',
 ]

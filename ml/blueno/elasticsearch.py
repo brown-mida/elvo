@@ -1,3 +1,4 @@
+import ast
 import pathlib
 import typing
 from collections.__init__ import namedtuple
@@ -5,11 +6,7 @@ from collections.__init__ import namedtuple
 import elasticsearch_dsl
 import pandas as pd
 import re
-from elasticsearch_dsl import connections
 from pandas.errors import EmptyDataError
-
-# Creates a connection to our Airflow instance
-connections.create_connection(hosts=['http://104.196.51.205'])
 
 TRAINING_JOBS = 'training_jobs'
 JOB_INDEX = elasticsearch_dsl.Index(TRAINING_JOBS)
@@ -35,6 +32,7 @@ class TrainingJob(elasticsearch_dsl.Document):
     raw_log = elasticsearch_dsl.Text()
     model_url = elasticsearch_dsl.Text()
 
+    # Metrics
     epochs = elasticsearch_dsl.Integer()
     train_acc = elasticsearch_dsl.Float()
     final_val_acc = elasticsearch_dsl.Float()
@@ -45,13 +43,52 @@ class TrainingJob(elasticsearch_dsl.Document):
     best_val_sensitivity = elasticsearch_dsl.Float()
     final_val_auc = elasticsearch_dsl.Float()
 
+    # Params
+    batch_size = elasticsearch_dsl.Integer()
+    val_split = elasticsearch_dsl.Float()
+    seed = elasticsearch_dsl.Integer()
+
+    rotation_range = elasticsearch_dsl.Float()
+    width_shift_range = elasticsearch_dsl.Float()
+    height_shift_range: float = elasticsearch_dsl.Float()
+    shear_range = elasticsearch_dsl.Float()
+    zoom_range = elasticsearch_dsl.Float()
+    horizontal_flip = elasticsearch_dsl.Boolean()
+    vertical_flip = elasticsearch_dsl.Boolean()
+
+    dropout_rate1 = elasticsearch_dsl.Float()
+    dropout_rate2 = elasticsearch_dsl.Float()
+
+    data_dir = elasticsearch_dsl.Keyword()
+    gcs_url = elasticsearch_dsl.Keyword()
+
+    # We need to keep a list of params for the parser because
+    # we can't use traditional approaches to get the class attrs
+    params_to_parse = ['batch_size',
+                       'val_split',
+                       'seed',
+                       'rotation_range',
+                       'width_shift_range',
+                       'height_shift_range',
+                       'shear_range',
+                       # TODO(#91): Cannot parse zoom_range
+                       #  because this takes in a tuple
+                       # 'zoom_range',
+                       'horizontal_flip',
+                       'vertical_flip',
+                       'dropout_rate1',
+                       'dropout_rate2',
+                       'data_dir',
+                       'gcs_url']
+
     class Index:
         name = TRAINING_JOBS
 
 
 def insert_or_ignore_filepaths(log_file: pathlib.Path,
                                csv_file: typing.Optional[pathlib.Path],
-                               gpu1708=False):
+                               gpu1708=False,
+                               alias='default'):
     """
     Parses matching log file and csv and uploads the file up to the
     Elasticsearch index, if it doesn't exist.
@@ -89,13 +126,13 @@ def insert_or_ignore_filepaths(log_file: pathlib.Path,
                                      ended_at=ended_at,
                                      model_url=model_url,
                                      final_val_auc=final_val_auc)
-        insert_or_ignore(training_job)
+        insert_or_ignore(training_job, alias=alias)
     except (ValueError, EmptyDataError):
         print('metrics file {} is empty'.format(csv_file))
         return
 
 
-def insert_or_ignore(training_job):
+def insert_or_ignore(training_job: TrainingJob, alias='default'):
     """Inserts the training job into the elasticsearch index
     if no job with the same name and creation timestamp exists.
     """
@@ -109,7 +146,7 @@ def insert_or_ignore(training_job):
         return
 
     if matches == 0:
-        training_job.save()
+        training_job.save(using=alias)
     else:
         print('job {} created at {} exists'.format(
             training_job.job_name, training_job.created_at))
@@ -117,7 +154,7 @@ def insert_or_ignore(training_job):
 
 def construct_job(job_name,
                   created_at,
-                  params,
+                  params: str,
                   raw_log,
                   metrics,
                   metrics_filename,
@@ -131,7 +168,7 @@ def construct_job(job_name,
     Note that these parameters are experimental.
     :param job_name:
     :param created_at:
-    :param params:
+    :param params: a string of bluenot config params
     :param raw_log:
     :param metrics:
     :param metrics_filename:
@@ -150,6 +187,13 @@ def construct_job(job_name,
                                raw_log=raw_log,
                                model_url=model_url,
                                final_val_auc=final_val_auc)
+
+    if params:
+        params_dict = _parse_params_str(params)
+        for key, val in params_dict.items():
+            if key is 'data_dir' and val.endswith('/'):  # standardize dirpaths
+                val = val[:-1]
+            training_job.__setattr__(key, val)
 
     if (job_name, created_at) == _parse_filename(metrics_filename):
         print('found matching CSV file, setting metrics')
@@ -220,6 +264,25 @@ def _extract_auc(log_path: pathlib.Path) -> typing.Optional[float]:
             if match:
                 return float(match.group(2))
     return None
+
+
+def _parse_params_str(params_str: str) -> typing.Dict[str, typing.Any]:
+    """Parses the param string outputs that most logs contain.
+
+    This code is very rigid, and will likely break.
+    """
+    param_dict = {}
+    for param in TrainingJob.params_to_parse:
+        patterns = [r'{}=(.*?)[,)]'.format(param),
+                    r"'{}'".format(param) + r": (.*?)[,}]"]
+        for pattern in patterns:
+            match = re.search(pattern, params_str)
+            if match:
+                value_str = match.group(1)
+                value = ast.literal_eval(value_str)
+                param_dict[param] = value
+    print('parsed params:', param_dict)
+    return param_dict
 
 
 def _extract_metrics(csv_path: pathlib.Path):

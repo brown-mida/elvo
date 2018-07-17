@@ -38,12 +38,14 @@ from typing import List, Union
 import keras
 import numpy as np
 import os
+from elasticsearch_dsl import connections
 from sklearn import model_selection
 
 import blueno
 from blueno import (
     utils,
     preprocessing,
+    elasticsearch,
     logger
 )
 
@@ -58,13 +60,15 @@ def start_job(x_train: np.ndarray,
               username: str,
               params: blueno.ParamConfig,
               slack_token: str = None,
-              epochs=100,
               log_dir: str = None,
               id_valid: np.ndarray = None) -> None:
     """
     Builds, fits, and evaluates a model.
 
-    If slack_token is not none, uploads an image
+    If slack_token is not none, uploads an image.
+
+    For advanced users it is recommended that you input your own job
+    function and attach desired loggers.
 
     :param x_train:
     :param y_train: the training labels, must be a 2D array
@@ -74,7 +78,6 @@ def start_job(x_train: np.ndarray,
     :param username:
     :param slack_token: the slack token
     :param params: the parameters specified
-    :param epochs:
     :param log_dir:
     :param id_valid: the patient ids ordered to correspond with y_valid
     :return:
@@ -132,20 +135,22 @@ def start_job(x_train: np.ndarray,
     model_filepath = '/tmp/{}.hdf5'.format(os.environ['CUDA_VISIBLE_DEVICES'])
     logging.debug('model_filepath: {}'.format(model_filepath))
     callbacks = utils.create_callbacks(x_train, y_train, x_valid, y_valid,
+                                       early_stopping=params.early_stopping,
+                                       reduce_lr=params.reduce_lr,
                                        csv_file=csv_filepath,
                                        model_file=model_filepath)
     logging.info('training model')
     history = model.fit_generator(train_gen,
-                                  epochs=epochs,
+                                  epochs=params.max_epochs,
                                   validation_data=valid_gen,
                                   verbose=2,
                                   callbacks=callbacks)
 
     if slack_token:
         logging.info('generating slack report')
-        blueno.plotting.slack_report(x_train, x_valid, y_valid, model, history,
-                                     job_name,
-                                     params, slack_token, id_valid=id_valid)
+        blueno.slack.slack_report(x_train, x_valid, y_valid, model, history,
+                                  job_name,
+                                  params, slack_token, id_valid=id_valid)
     else:
         logging.info('no slack token found, not generating report')
 
@@ -159,8 +164,13 @@ def start_job(x_train: np.ndarray,
 
     # Upload logs to Kibana
     if log_dir:
-        blueno.reporting.insert_or_ignore_filepaths(pathlib.Path(log_filepath),
-                                                    pathlib.Path(csv_filepath))
+        # Creates a connection to our Airflow instance
+        # We don't need to remove since the process ends
+        connections.create_connection(hosts=['http://104.196.51.205'])
+        elasticsearch.insert_or_ignore_filepaths(
+            pathlib.Path(log_filepath),
+            pathlib.Path(csv_filepath),
+        )
 
 
 def upload_model_to_gcs(job_name, created_at, model_filepath):
@@ -243,7 +253,9 @@ def hyperoptimize(hyperparams: Union[blueno.ParamGrid,
 
         logging.debug('using job fn {}'.format(job_fn))
 
-        job_name = params.data.data_dir.split('/')[-3]
+        # Uses the parent of the data_dir to name the job,
+        # which may not work for all data formats.
+        job_name = str(pathlib.Path(params.data.data_dir).parent)
         job_name += f'_{y_train.shape[1]}-classes'
 
         process = multiprocessing.Process(target=job_fn,
@@ -312,7 +324,7 @@ if __name__ == '__main__':
     elif isinstance(user_config.PARAM_GRID, dict):
         logging.warning('creating param grid from dictionary, it is'
                         'recommended that you define your config'
-                        'with ParamGrid')
+                        'with ParamConfig')
         param_grid = blueno.ParamGrid(**user_config.PARAM_GRID)
     else:
         raise ValueError('user_config.PARAM_GRID must be a ParamGrid,'
