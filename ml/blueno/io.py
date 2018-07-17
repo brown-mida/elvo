@@ -1,4 +1,5 @@
 import pathlib
+import typing
 from typing import Dict
 
 import keras
@@ -25,3 +26,12 @@ def load_model(model_path: str):
 
     model = keras.models.load_model(model_path)
     return model
+
+
+def load_compressed_arrays(data_dir: str) -> typing.Dict[str, np.ndarray]:
+    data = dict()
+    for filename in os.listdir(data_dir):
+        print(f'Loading file {filename}')
+        d = np.load(pathlib.Path(data_dir) / filename)
+        data.update(d)  # merge all_data with d
+    return data

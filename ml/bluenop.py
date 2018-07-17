@@ -7,26 +7,15 @@ import pandas as pd
 from matplotlib import pyplot as plt
 
 import blueno.slack
+from blueno.io import load_compressed_arrays
+from blueno.transforms import bound_pixels
 
 
-def load_arrays(data_dir: str) -> typing.Dict[str, np.ndarray]:
-    data_dict = {}
-    for filename in os.listdir(data_dir):
-        print(f'Loading file {filename}')
-        patient_id = filename[:-4]  # remove .npy extension
-        data_dict[patient_id] = np.load(pathlib.Path(data_dir) / filename)
-    return data_dict
+def load_raw_labels(labels_dir: str) -> pd.DataFrame:
+    return load_labels(labels_dir)
 
 
-def load_compressed_arrays(data_dir: str) -> typing.Dict[str, np.ndarray]:
-    data = dict()
-    for filename in os.listdir(data_dir):
-        print(f'Loading file {filename}')
-        d = np.load(pathlib.Path(data_dir) / filename)
-        data.update(d)  # merge all_data with d
-    return data
-
-
+# Use the above function
 def load_labels(labels_dir: str) -> pd.DataFrame:
     positives_df: pd.DataFrame = pd.read_csv(
         pathlib.Path(labels_dir) / 'positives.csv',
@@ -145,31 +134,6 @@ def crop_new(image3d: np.ndarray,
              output_shape,
              height_offset):
     pass
-
-
-def bound_pixels(arr: np.ndarray,
-                 min_bound: float,
-                 max_bound: float) -> np.ndarray:
-    arr[arr < min_bound] = min_bound
-    arr[arr > max_bound] = max_bound
-    return arr
-
-
-def filter_pixels(arr: np.ndarray,
-                  min_bound: float,
-                  max_bound: float,
-                  filter_value: float) -> np.ndarray:
-    arr[arr < min_bound] = filter_value
-    arr[arr > max_bound] = filter_value
-    return arr
-
-
-def average_intensity_projection():
-    raise NotImplementedError()
-
-
-def distance_intensity_projection():
-    raise NotImplementedError()
 
 
 def process_array(arr: np.ndarray,
