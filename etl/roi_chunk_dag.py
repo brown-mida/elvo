@@ -16,11 +16,11 @@ default_args = {
 dag = DAG(dag_id='roi_chunk_dag', default_args=default_args)
 
 preprocess_op = PythonOperator(task_id='run_preprocess',
-                               python_callable=run_preprocess(),
+                               python_callable=run_preprocess,
                                dag=dag)
 
 transform_op = PythonOperator(task_id='run_transform',
-                              python_callable=run_transform(),
+                              python_callable=run_transform,
                               dag=dag)
 
 slack_confirmation = SlackAPIPostOperator(
