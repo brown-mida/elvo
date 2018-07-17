@@ -83,7 +83,7 @@ def create_chunks(annotations_df: pd.DataFrame):
                             # save the ROI and skip this block
                             chunk = arr[roi[0]: roi[0] + 32,
                                         roi[1]: roi[1] + 32,
-                                        roi[2]: roi[2] + 32,]
+                                        roi[2]: roi[2] + 32]
                             cloud.save_chunks_to_cloud(np.asarray(chunk),
                                                        'normal', 'positive',
                                                        file_id + str(h))
