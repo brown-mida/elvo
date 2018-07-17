@@ -152,9 +152,13 @@ def generate_csv():
     labels_df.to_csv("augmented_annotated_labels.csv")
 
 
-if __name__ == '__main__':
+def run_transform():
     configure_logger()
     clean_old_data()
     generate_csv()
     transform_positives()
     clean_new_data()
+
+
+if __name__ == '__main__':
+    run_transform()
