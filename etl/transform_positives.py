@@ -154,7 +154,7 @@ def generate_csv():
 
 if __name__ == '__main__':
     configure_logger()
-    # clean_old_data()
+    clean_old_data()
     generate_csv()
     transform_positives()
     clean_new_data()
