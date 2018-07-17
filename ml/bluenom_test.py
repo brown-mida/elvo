@@ -8,11 +8,11 @@ import bluenom
 from blueno.elasticsearch import JOB_INDEX
 
 
-def setup_module(module):
+def setup_module():
     connections.create_connection(hosts=['http://104.196.51.205'])
 
 
-def teardown_module(module):
+def teardown_module():
     connections.remove_connection('default')
 
 
@@ -24,5 +24,4 @@ def test_bluenom_idempotent():
     first_run_count = JOB_INDEX.search().count()
     bluenom.bluenom(path, gpu1708=True)
     second_run_count = JOB_INDEX.search().count()
-    connections.remove_connection('default')
     assert first_run_count == second_run_count
