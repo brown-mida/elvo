@@ -97,8 +97,8 @@ def normal_mip():
             file_id = in_blob.name.split('/')[2]
             file_id = file_id.split('.')[0]
 
-            if file_id not in FAILURE_ANALYSIS:
-                continue
+            # if file_id not in FAILURE_ANALYSIS:
+            #     continue
 
             # perform the normal MIPing procedure
             logging.info(f'downloading {in_blob.name}')
@@ -115,7 +115,7 @@ def normal_mip():
                 else:
                     cropped_arr = transforms.crop_normal_coronal(input_arr,
                                                                  location)
-            not_extreme_arr = transforms.remove_extremes(cropped_arr)
+            not_extreme_arr = transforms.segment_vessels(cropped_arr, )
             logging.info(f'removed array extremes')
             mip_arr = transforms.mip_normal(not_extreme_arr)
             # plt.figure(figsize=(6, 6))
@@ -132,7 +132,8 @@ def normal_mip():
             # # otherwise it's from numpy
             # else:
             # save to the numpy generator source directory
-            cloud.save_npy_to_cloud(mip_arr, file_id, location, 'normal')
+            cloud.save_segmented_npy_to_cloud(mip_arr, file_id, location,
+                                              'normal')
 
 
 if __name__ == '__main__':

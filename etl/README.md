@@ -4,3 +4,6 @@ ML model.
 
 For now we'll be using environment variables in place of paths,
 as it works the best with Airflow. We can change this in the future.
+
+To set up a new Airflow instance, install the base requirements
+and also run `pip install apache-airflow[slack,gcp_api]==1.8.2`
