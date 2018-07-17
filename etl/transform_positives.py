@@ -132,7 +132,8 @@ def clean_new_data():
 # TODO: also update annotations csv file (if we're gonna be using the model
 # that includes bounding box coordinates
 def generate_csv():
-    labels_df = pd.read_csv('/home/harold_triedman/elvo-analysis/annotated_labels.csv')
+    labels_df = pd.read_csv('/home/harold_triedman/'
+                            'elvo-analysis/annotated_labels.csv')
     for index, row in labels_df.iterrows():
         print(index, row[1])
         if row[1] == 1:
