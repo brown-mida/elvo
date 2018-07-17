@@ -230,6 +230,7 @@ def start_job(x_train: np.ndarray,
     logging.debug('model_filepath: {}'.format(model_filepath))
     callbacks = utils.create_callbacks(x_train, y_train, x_valid, y_valid,
                                        early_stopping=params.early_stopping,
+                                       reduce_lr=params.reduce_lr,
                                        csv_file=csv_filepath,
                                        model_file=model_filepath)
     logging.info('training model')

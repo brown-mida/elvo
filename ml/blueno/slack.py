@@ -192,7 +192,7 @@ def full_multiclass_report(model: keras.models.Model,
         sklearn.metrics.accuracy_score(y_true, y_pred))
     comment += '\n'
 
-    # Assuming max_class is the negative label
+    # Assuming 0 is the negative label
     y_true_binary = y_true > 0
     y_pred_binary = y_pred > 0
     score = sklearn.metrics.roc_auc_score(y_true_binary,

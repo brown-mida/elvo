@@ -42,9 +42,22 @@ class AucCallback(keras.callbacks.Callback):
         print(f'\nval_auc: {score}')
 
 
+class CustomReduceLR(keras.callbacks.ReduceLROnPlateau):
+    """
+    A LR reduction callback that will not lower the lr before
+    epoch 25.
+
+    """
+
+    def on_epoch_end(self, epoch, logs=None):
+        if epoch > 25:
+            super(CustomReduceLR, self).on_batch_end(epoch, logs)
+
+
 def create_callbacks(x_train: np.ndarray, y_train: np.ndarray,
                      x_valid: np.ndarray, y_valid: np.ndarray,
                      early_stopping: bool = True,
+                     reduce_lr: bool = False,
                      csv_file: str = None,
                      model_file: str = None,
                      normalize=True):
@@ -75,6 +88,13 @@ def create_callbacks(x_train: np.ndarray, y_train: np.ndarray,
             monitor='val_acc',
             verbose=1,
             patience=10
+        ))
+
+    if reduce_lr:
+        callbacks.append(CustomReduceLR(
+            monitor='val_acc',
+            factor=0.1,
+            verbose=1,
         ))
 
     if csv_file:
