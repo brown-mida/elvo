@@ -207,7 +207,7 @@ def test_prepare_and_job():
             'labels_path': '/home/lzhu7/elvo-analysis/data/'
                            'processed-standard/labels.csv',
             'index_col': 'Anon ID',
-            'label_col': 'Location of occlusions on CTA (Matt verified)',
+            'label_col': 'occlusion_exists',
             'gcs_url': 'gs://elvos/processed/processed-standard',
         }),
 
