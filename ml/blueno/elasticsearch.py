@@ -191,6 +191,8 @@ def construct_job(job_name,
     if params:
         params_dict = _parse_params_str(params)
         for key, val in params_dict.items():
+            if key is 'data_dir' and val.endswith('/'):  # standardize dirpaths
+                val = val[:-1]
             training_job.__setattr__(key, val)
 
     if (job_name, created_at) == _parse_filename(metrics_filename):
