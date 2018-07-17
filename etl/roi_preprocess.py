@@ -323,7 +323,7 @@ def inspect_rois(annotations_df):
 def run_preprocess():
     configure_logger()
     annotations_df = process_labels()
-    # create_labels(annotations_df)
+    create_labels(annotations_df)
     create_chunks(annotations_df)
     # inspect_rois(annotations_df)
 
