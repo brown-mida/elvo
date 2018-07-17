@@ -1,3 +1,5 @@
+import typing
+
 import numpy as np
 import scipy.ndimage
 
@@ -50,3 +52,36 @@ def average_intensity_projection():
 
 def distance_intensity_projection():
     raise NotImplementedError()
+
+
+def crop(image3d: np.ndarray,
+         output_shape: typing.Tuple[int, int, int],
+         height_offset=30) -> np.ndarray:
+    """
+    Crops a 3d image in ijk form (height as axis 0).
+
+    :param image3d:
+    :param output_shape:
+    :param height_offset:
+    :return:
+    """
+    assert image3d.ndim == 3
+    assert image3d.shape[1] == image3d.shape[2]
+    assert output_shape[1] == output_shape[2]
+    assert output_shape[1] <= image3d.shape[1]
+
+    lw_center = image3d.shape[1] // 2
+    lw_min = lw_center - output_shape[1] // 2
+    lw_max = lw_center + output_shape[1] // 2
+    for i in range(len(image3d) - 1, 0, -1):
+        if image3d[i, lw_center, lw_center] >= 0:
+            height_max = i - height_offset
+            break
+    else:
+        raise ValueError('Failed to a relevant pixel'
+                         ' with CT value of at least zero')
+    height_min = height_max - output_shape[0]
+
+    cropped = image3d[height_min:height_max, lw_min:lw_max, lw_min:lw_max]
+    assert cropped.shape == output_shape
+    return cropped

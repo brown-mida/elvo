@@ -5,6 +5,7 @@ from typing import Dict
 import keras
 import numpy as np
 import os
+import pandas as pd
 
 from blueno import utils
 
@@ -35,3 +36,15 @@ def load_compressed_arrays(data_dir: str) -> typing.Dict[str, np.ndarray]:
         d = np.load(pathlib.Path(data_dir) / filename)
         data.update(d)  # merge all_data with d
     return data
+
+
+def load_labels(labels_dir: str) -> pd.DataFrame:
+    positives_df: pd.DataFrame = pd.read_csv(
+        pathlib.Path(labels_dir) / 'positives.csv',
+        index_col='Anon ID')
+    positives_df['occlusion_exists'] = 1
+    negatives_df: pd.DataFrame = pd.read_csv(
+        pathlib.Path(labels_dir) / 'negatives.csv',
+        index_col='Anon ID')
+    negatives_df['occlusion_exists'] = 0
+    return pd.concat([positives_df, negatives_df])

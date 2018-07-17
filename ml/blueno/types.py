@@ -10,9 +10,8 @@ import typing
 from dataclasses import dataclass
 
 
-# TODO(#65): Implement this config
 @dataclass
-class PreprocessConfig:
+class DataConfig:
     pass
 
 
@@ -28,6 +27,14 @@ class DataConfig:
     label_col: str
     # The url starting with gs:// that contains the data
     gcs_url: str
+
+
+@dataclass
+class PipelineConfig(DataConfig):
+    """
+    Defines a configuration to preprocess raw numpy data.
+    """
+    pipeline_callable: typing.Callable
 
 
 @dataclass
@@ -96,15 +103,22 @@ class ParamGrid:
                 raise ValueError(
                     '{} is not an attribute of ParamGrid'.format(attr))
 
-        # TODO(#65): Implement preprocessing config
+        # With a grid you can only define one of DataConfig and
+        # PipelineConfig, use a list of ParamConfigs instead if you want
+        # more configurability
         if not isinstance(kwargs['data'], DataConfig):
-            data = tuple(
-                DataConfig(**d) for d in kwargs['data'])
-            self.data = data
+            if 'pipeline_callable' in kwargs:
+                data = tuple(PipelineConfig(**d) for d in kwargs['data'])
+                self.data = data
+            else:
+                raise ValueError('Does not contain attributes gcs_url'
+                                 ' nor pipeline, could not determine type')
+
         if not isinstance(kwargs['generator'], GeneratorConfig):
             generators = tuple(
                 GeneratorConfig(**gen) for gen in kwargs['generator'])
             self.generator = generators
+
         if not isinstance(kwargs['model'], ModelConfig):
             models = tuple(ModelConfig(**mod) for mod in kwargs['model'])
             self.model = models

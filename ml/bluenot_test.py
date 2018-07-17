@@ -234,3 +234,15 @@ def test_prepare_and_job():
     bluenot.start_job(x_train, y_train, x_valid, y_valid,
                       job_name='test_prepare_and_job', username='test',
                       params=params)
+
+
+@pytest.mark.skipif(os.uname().nodename != 'gpu1708',
+                    reason='Test uses data only on gpu1708')
+def test_preprocess():
+    data_dir = '/home/lzhu7/elvo-analysis/data/numpy_compressed/'
+    labels_dir = '/home/lzhu7/elvo-analysis/data/metadata/'
+    bluenot.preprocess_data(data_dir,
+                            labels_dir,
+                            30,
+                            24,
+                            (0, 400))

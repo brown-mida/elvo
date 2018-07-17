@@ -7,59 +7,9 @@ import pandas as pd
 from matplotlib import pyplot as plt
 
 import blueno.slack
-from blueno.io import load_compressed_arrays
-from blueno.transforms import bound_pixels
-
-
-def load_raw_labels(labels_dir: str) -> pd.DataFrame:
-    return load_labels(labels_dir)
-
-
-# Use the above function
-def load_labels(labels_dir: str) -> pd.DataFrame:
-    positives_df: pd.DataFrame = pd.read_csv(
-        pathlib.Path(labels_dir) / 'positives.csv',
-        index_col='Anon ID')
-    positives_df['occlusion_exists'] = 1
-    negatives_df: pd.DataFrame = pd.read_csv(
-        pathlib.Path(labels_dir) / 'negatives.csv',
-        index_col='Anon ID')
-    negatives_df['occlusion_exists'] = 0
-    return pd.concat([positives_df, negatives_df])
-
-
-def clean_data(arrays: typing.Dict[str, np.ndarray],
-               labels: pd.DataFrame) -> \
-        typing.Tuple[typing.Dict[str, np.ndarray], pd.DataFrame]:
-    """
-    Handle duplicates in the dataframe and removes
-    missing labels/arrays.
-
-    The output dictionary and dataframe will have the same
-    length.
-
-    :param arrays:
-    :param labels:
-    :return:
-    """
-    filtered_arrays = arrays.copy()
-    for patient_id in arrays:
-        if patient_id not in labels.index.values:
-            print(f'{patient_id} in arrays, but not in labels. Dropping')
-            del filtered_arrays[patient_id]
-
-    filtered_labels = labels.copy()
-    print('Removing duplicate ids in labels:',
-          filtered_labels[filtered_labels.index.duplicated()].index)
-    filtered_labels = filtered_labels[~filtered_labels.index.duplicated()]
-
-    for patient_id in filtered_labels.index.values:
-        if patient_id not in arrays:
-            print(f'{patient_id} in labels, but not in arrays. Dropping')
-            filtered_labels = filtered_labels.drop(index=patient_id)
-
-    assert len(filtered_arrays) == len(filtered_labels)
-    return filtered_arrays, filtered_labels
+from blueno.io import load_compressed_arrays, load_labels
+from blueno.preprocessing import clean_data
+from blueno.transforms import bound_pixels, crop
 
 
 def filter_data(arrays: typing.Dict[str, np.ndarray],
@@ -97,47 +47,8 @@ def filter_data(arrays: typing.Dict[str, np.ndarray],
     return filtered_arrays, filtered_labels
 
 
-def crop(image3d: np.ndarray,
-         output_shape: typing.Tuple[int, int, int],
-         height_offset=30) -> np.ndarray:
-    """
-    Crops a 3d image in ijk form (height as axis 0).
-
-    :param image3d:
-    :param output_shape:
-    :param height_offset:
-    :return:
-    """
-    assert image3d.ndim == 3
-    assert image3d.shape[1] == image3d.shape[2]
-    assert output_shape[1] == output_shape[2]
-    assert output_shape[1] <= image3d.shape[1]
-
-    lw_center = image3d.shape[1] // 2
-    lw_min = lw_center - output_shape[1] // 2
-    lw_max = lw_center + output_shape[1] // 2
-    for i in range(len(image3d) - 1, 0, -1):
-        if image3d[i, lw_center, lw_center] >= 0:
-            height_max = i - height_offset
-            break
-    else:
-        raise ValueError('Failed to a relevant pixel'
-                         ' with CT value of at least zero')
-    height_min = height_max - output_shape[0]
-
-    cropped = image3d[height_min:height_max, lw_min:lw_max, lw_min:lw_max]
-    assert cropped.shape == output_shape
-    return cropped
-
-
-def crop_new(image3d: np.ndarray,
-             output_shape,
-             height_offset):
-    pass
-
-
-def process_array(arr: np.ndarray,
-                  preconfig: str):
+def _process_array(arr: np.ndarray,
+                   preconfig: str):
     # TODO(#64): Replace preconfig with parameters
     if preconfig == 'standard-crop-mip':
         arr = crop(arr,
@@ -188,12 +99,12 @@ def process_array(arr: np.ndarray,
     raise ValueError(f'{preconfig} is not a valid preconfiguration')
 
 
-def process_arrays(arrays: typing.Dict[str, np.ndarray],
-                   preconfig: str) -> typing.Dict[str, np.ndarray]:
+def _process_arrays(arrays: typing.Dict[str, np.ndarray],
+                    preconfig: str) -> typing.Dict[str, np.ndarray]:
     processed = {}
     for id_, arr in arrays.items():
         try:
-            processed[id_] = process_array(arr, preconfig)
+            processed[id_] = _process_array(arr, preconfig)
         except AssertionError:
             print(f'patient id {id_} could not be processed,'
                   f' has input shape {arr.shape}')
@@ -202,7 +113,7 @@ def process_arrays(arrays: typing.Dict[str, np.ndarray],
 
 def process_data(arrays, labels, preconfig):
     print(f'Using config {preconfig}')
-    processed_arrays = process_arrays(arrays, preconfig)
+    processed_arrays = _process_arrays(arrays, preconfig)
     processed_labels = labels.loc[processed_arrays.keys()]  # Filter, if needed
     assert len(processed_arrays) == len(processed_labels)
     return processed_arrays, processed_labels
