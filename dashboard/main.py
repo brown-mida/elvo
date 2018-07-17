@@ -10,7 +10,6 @@ import numpy as np
 from google.cloud import storage
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from oauth2client.service_account import ServiceAccountCredentials
-
 from skimage import measure
 
 mpl.use('Agg')
@@ -209,6 +208,9 @@ def _retrieve_arr(patient_id: str) -> np.ndarray:
         return cached_arr
     logging.debug(f'downloading {patient_id} from GCS')
     blob = bucket.get_blob(f'airflow/npy/{patient_id}.npy')
+    if blob is None:
+        raise ValueError(
+            'Blob with patient id {} does not exist'.format(patient_id))
     in_stream = io.BytesIO()
     blob.download_to_file(in_stream)
     in_stream.seek(0)

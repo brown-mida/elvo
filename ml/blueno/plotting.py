@@ -1,5 +1,3 @@
-"""Custom metrics, callbacks, and plots.
-"""
 import itertools
 import typing
 
@@ -9,105 +7,34 @@ import numpy as np
 import pandas as pd
 import requests
 import sklearn.metrics
-from keras import backend as K
 
 matplotlib.use('Agg')  # noqa: E402
 from matplotlib import pyplot as plt
 
-
-def true_positives(y_true, y_pred):
-    return K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
-
-
-def false_negatives(y_true, y_pred):
-    return K.sum(K.round(K.clip(y_true * (1 - y_pred), 0, 1)))
-
-
-def sensitivity(y_true, y_pred):
-    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
-    possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
-    return true_positives / (possible_positives + K.epsilon())
-
-
-def specificity(y_true, y_pred):
-    true_negatives = K.sum(K.round(K.clip((1 - y_true) * (1 - y_pred), 0, 1)))
-    possible_negatives = K.sum(K.round(K.clip(1 - y_true, 0, 1)))
-    return true_negatives / (possible_negatives + K.epsilon())
-
-
-class AucCallback(keras.callbacks.Callback):
-
-    def __init__(self,
-                 x_valid_standardized: np.ndarray,
-                 y_valid: np.ndarray):
-        super().__init__()
-        self.x_valid_standardized = x_valid_standardized
-        self.y_valid = y_valid
-
-    def on_epoch_end(self, epoch: int, logs=None):
-        y_pred = self.model.predict(self.x_valid_standardized)
-        score = sklearn.metrics.roc_auc_score(self.y_valid, y_pred)
-        print(f'\nval_auc: {score}')
-
-
-def create_callbacks(x_train: np.ndarray, y_train: np.ndarray,
-                     x_valid: np.ndarray, y_valid: np.ndarray, filename: str,
-                     normalize=True):
-    """
-    Instantiates a list of callbacks:
-    - AUC
-    - Early stopping
-    - TODO(#71): model checkpoint
-
-    :param normalize:
-    :param x_train:
-    :param y_train:
-    :param x_valid:
-    :param y_valid:
-    :return:
-    """
-    callbacks = []
-    callbacks.append(keras.callbacks.CSVLogger(filename, append=True))
-    callbacks.append(keras.callbacks.EarlyStopping(monitor='val_acc',
-                                                   patience=10))
-
-    if normalize:
-        x_mean = np.array([x_train[:, :, :, 0].mean(),
-                           x_train[:, :, :, 1].mean(),
-                           x_train[:, :, :, 2].mean()])
-        x_std = np.array([x_train[:, :, :, 0].std(),
-                          x_train[:, :, :, 1].std(),
-                          x_train[:, :, :, 2].std()])
-        x_valid_standardized = (x_valid - x_mean) / x_std
-    else:
-        x_valid_standardized = x_valid
-
-    callbacks.append(AucCallback(x_valid_standardized, y_valid))
-
-    return callbacks
+from blueno.types import ParamConfig
 
 
 def slack_report(x_train: np.ndarray,
-                 y_train: np.ndarray,
                  x_valid: np.ndarray,
                  y_valid: np.ndarray,
                  model: keras.models.Model,
                  history: keras.callbacks.History,
                  name: str,
-                 params: dict,
-                 token: str):
+                 params: ParamConfig,
+                 token: str,
+                 id_valid: np.ndarray = None):
     """
     Uploads a loss graph, accuacy, and confusion matrix plots in addition
     to useful data about the model to Slack.
 
     :param x_train:
-    :param y_train:
     :param x_valid:
     :param y_valid:
     :param model:
     :param history:
     :param name:
     :param params:
+    :param id_valid: the ids ordered to correspond with y_valid
     :return:
     """
     save_history(history)
@@ -128,7 +55,8 @@ def slack_report(x_train: np.ndarray,
                                     x_valid_standardized,
                                     y_valid,
                                     [0, 1],
-                                    batch_size=params['model']['batch_size'])
+                                    batch_size=params.batch_size,
+                                    id_valid=id_valid)
     upload_to_slack('/tmp/cm.png', report, token)
     upload_to_slack('/tmp/false_positives.png', 'false positives', token)
     upload_to_slack('/tmp/false_negatives.png', 'false negatives', token)
@@ -228,7 +156,8 @@ def full_multiclass_report(model: keras.models.Model,
                            x,
                            y_true,
                            classes,
-                           batch_size=32):
+                           batch_size=32,
+                           id_valid: np.ndarray = None):
     """
     Builds a report containing the following:
         - accuracy
@@ -269,12 +198,8 @@ def full_multiclass_report(model: keras.models.Model,
     score = sklearn.metrics.roc_auc_score(y_true_binary,
                                           y_pred_binary)
 
-    save_misclassification_plots(x,
-                                 y_true_binary,
-                                 y_pred_binary)
-
+    # Do not change the line below, it affects reporting._extract_auc
     comment += f'AUC: {score}\n'
-
     comment += f'Assuming {0} is the negative label'
     comment += '\n\n'
 
@@ -285,6 +210,10 @@ def full_multiclass_report(model: keras.models.Model,
     comment += '\n'
     comment += str(cnf_matrix)
     save_confusion_matrix(cnf_matrix, classes=classes)
+    save_misclassification_plots(x,
+                                 y_true_binary,
+                                 y_pred_binary,
+                                 id_valid=id_valid)
     return comment
 
 
@@ -310,8 +239,9 @@ def upload_to_slack(filename, comment, token):
 
 def save_misclassification_plots(x_valid,
                                  y_true,
-                                 y_pred):
-    """Saves true positive and false negative plots.
+                                 y_pred,
+                                 id_valid: np.ndarray = None):
+    """Saves the 4 true/fals positive/negative plots.
 
     The y inputs must be binary and 1 dimensional.
     """
@@ -319,37 +249,29 @@ def save_misclassification_plots(x_valid,
     if y_true.max() > 1 or y_pred.max() > 1:
         raise ValueError('y_true/y_pred should be binary 0/1')
 
-    fn = np.logical_and(y_true == 1, y_pred == 0)
+    plot_name_dict = {
+        (0, 0): '/tmp/true_negatives.png',
+        (1, 1): '/tmp/true_positives.png',
+        (0, 1): '/tmp/false_positives.png',
+        (1, 0): '/tmp/false_negatives.png',
+    }
 
-    x_fn = np.array([x_valid[i] for i, truth in enumerate(fn)
-                     if truth])
-    plot_misclassification(x_fn,
-                           y_true[fn],
-                           y_pred[fn])
-    plt.savefig('/tmp/false_negatives.png')
-    fp = np.logical_and(y_true == 0, y_pred == 1)
-    x_fp = np.array([x_valid[i] for i, truth in enumerate(fp)
-                     if truth])
-    plot_misclassification(x_fp,
-                           y_true[fp],
-                           y_pred[fp])
-    plt.savefig('/tmp/false_positives.png')
+    for i in (0, 1):
+        for j in (0, 1):
+            mask = np.logical_and(y_true == i, y_pred == j)
+            x_filtered = np.array([x_valid[i] for i, truth in enumerate(mask)
+                                   if truth])
 
-    tp = np.logical_and(y_true == 1, y_pred == 1)
-    x_tp = np.array([x_valid[i] for i, truth in enumerate(tp)
-                     if truth])
-    plot_misclassification(x_tp,
-                           y_true[tp],
-                           y_pred[tp])
-    plt.savefig('/tmp/true_positives.png')
+            if id_valid is None:
+                ids_filtered = None
+            else:
+                ids_filtered = id_valid[mask]
 
-    tn = np.logical_and(y_true == 0, y_pred == 0)
-    x_tn = np.array([x_valid[i] for i, truth in enumerate(tn)
-                     if truth])
-    plot_misclassification(x_tn,
-                           y_true[tn],
-                           y_pred[tn])
-    plt.savefig('/tmp/true_negatives.png')
+            plot_misclassification(x_filtered,
+                                   y_true[mask],
+                                   y_pred[mask],
+                                   ids=ids_filtered)
+            plt.savefig(plot_name_dict[(i, j)])
 
 
 def plot_misclassification(x,
@@ -357,7 +279,8 @@ def plot_misclassification(x,
                            y_pred,
                            num_cols=5,
                            limit=20,
-                           offset=0):
+                           offset=0,
+                           ids: np.ndarray = None):
     """
     Plots the figures with labels and predictions.
 
@@ -378,7 +301,8 @@ def plot_misclassification(x,
             break
         plot_num = i - offset + 1
         ax = fig.add_subplot(num_rows, num_cols, plot_num)
-        ax.set_title(f'patient: {i}')
+        if ids is not None:
+            ax.set_title(f'patient: {ids[i][:4]}...')
         ax.set_xlabel(f'y_true: {y_true[i]} y_pred: {y_pred[i]}')
         plt.imshow(arr)  # Multiply by 255 here for
     fig.tight_layout()
