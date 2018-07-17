@@ -234,5 +234,3 @@ def test_prepare_and_job():
     bluenot.start_job(x_train, y_train, x_valid, y_valid,
                       job_name='test_prepare_and_job', username='test',
                       params=params)
-
-
