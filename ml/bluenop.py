@@ -6,7 +6,7 @@ import os
 import pandas as pd
 from matplotlib import pyplot as plt
 
-from utils import plot_images
+import blueno.plotting
 
 
 def load_arrays(data_dir: str) -> typing.Dict[str, np.ndarray]:
@@ -249,7 +249,7 @@ def save_plots(arrays, labels, dirpath: str):
     num_plots = (len(arrays) + 19) // 20
     for i in range(num_plots):
         print(f'saving plot number {i}')
-        plot_images(arrays, labels, 5, offset=20 * i)
+        blueno.plotting.plot_images(arrays, labels, 5, offset=20 * i)
         plt.savefig(f'{dirpath}/{20 * i}-{20 * i + 19}')
 
 

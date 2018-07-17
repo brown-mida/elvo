@@ -12,7 +12,7 @@ def authenticate():
         '/home/lukezhu/elvo-analysis/credentials/client_secret.json'
 
         # for running locally
-        # 'credentials/client_secret.json'
+        'credentials/client_secret.json'
     )
 
 
@@ -65,5 +65,32 @@ def save_segmented_npy_to_cloud(arr: np.ndarray,
             f'gs://elvos/stripped_mip_data/{view}/{perspective}/'
             f'{id}.npy',
             'w'), arr)
+    except Exception as e:
+        logging.error(f'for patient ID: {id} {e}')
+
+
+def save_roi_npy(arr: np.ndarray, id: str, type: str, view: str):
+    """Uploads ROI-cropped .npy files to gs://elvos/roi_data/{view}
+        /{perspective}/<patient
+        id>_mip.npy
+    """
+    try:
+        perspective = type.split('/')[1]
+        print(f'gs://elvos/roi_data/{view}/{perspective}/{id}.npy')
+        np.save(file_io.FileIO(f'gs://elvos/roi_data/{view}/{perspective}/'
+                               f'{id}.npy',
+                               'w'), arr)
+    except Exception as e:
+        logging.error(f'for patient ID: {id} {e}')
+
+
+def save_chunks_to_cloud(arr: np.ndarray, type: str,
+                         elvo_status: str, id: str):
+    """Uploads MIP .npy files to gs://elvos/chunk_data/<patient_id>.npy
+    """
+    try:
+        print(f'gs://elvos/chunk_data/{type}/{elvo_status}/{id}.npy')
+        np.save(file_io.FileIO(f'gs://elvos/chunk_data/{type}/'
+                               f'{elvo_status}/{id}.npy', 'w'), arr)
     except Exception as e:
         logging.error(f'for patient ID: {id} {e}')

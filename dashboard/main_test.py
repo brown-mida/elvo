@@ -1,6 +1,6 @@
 import json
-import os
 
+import os
 import pytest
 
 
@@ -11,6 +11,15 @@ def test_index():
     client = app.test_client()
 
     r = client.get('/')
+    assert r.status_code == 200
+
+
+@pytest.mark.skipif('TRAVIS' in os.environ, reason='Database not on travis')
+def test_dimensions():
+    from main import app
+    app.testing = True
+    client = app.test_client()
+    r = client.get('/image/dimensions/L66E2921S3O1MURX')
     assert r.status_code == 200
 
 
