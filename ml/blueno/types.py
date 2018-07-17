@@ -12,11 +12,6 @@ from dataclasses import dataclass
 
 @dataclass
 class DataConfig:
-    pass
-
-
-@dataclass
-class DataConfig:
     # A directory containing a list of numpy files with
     # patient ID as their filename.
     # This must end with a '/' for the job name to be configured correctly
@@ -29,12 +24,18 @@ class DataConfig:
     gcs_url: str
 
 
+# This class is experimental and subject to a lot of change.
+# When a clear solution for appending preprocessing to the
+# config grid arises, this will likely be replaced.
 @dataclass
-class PipelineConfig(DataConfig):
+class LukePipelineConfig(DataConfig):
     """
     Defines a configuration to preprocess raw numpy data.
     """
     pipeline_callable: typing.Callable
+    height_offset: int
+    mip_thickness: int
+    pixel_value_range: typing.Sequence
 
 
 @dataclass
@@ -108,7 +109,7 @@ class ParamGrid:
         # more configurability
         if not isinstance(kwargs['data'], DataConfig):
             if 'pipeline_callable' in kwargs:
-                data = tuple(PipelineConfig(**d) for d in kwargs['data'])
+                data = tuple(LukePipelineConfig(**d) for d in kwargs['data'])
                 self.data = data
             else:
                 raise ValueError('Does not contain attributes gcs_url'

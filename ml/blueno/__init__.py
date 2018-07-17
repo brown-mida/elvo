@@ -1,8 +1,8 @@
-from . import slack, elasticsearch, utils
+from . import io, slack, elasticsearch, utils, transforms
 
 from .types import (
     ParamGrid, ParamConfig, DataConfig, ModelConfig,
-    GeneratorConfig,
+    GeneratorConfig, LukePipelineConfig,
 )
 
 __all__ = [
@@ -14,6 +14,7 @@ __all__ = [
     'ParamGrid',
     'ParamConfig',
     'DataConfig',
+    'LukePipelineConfig',
     'ModelConfig',
     'GeneratorConfig',
 ]

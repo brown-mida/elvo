@@ -29,22 +29,32 @@ def load_model(model_path: str):
     return model
 
 
-def load_compressed_arrays(data_dir: str) -> typing.Dict[str, np.ndarray]:
+def load_compressed_arrays(data_dir: str,
+                           limit=None) -> typing.Dict[str, np.ndarray]:
+    """Loads a directory containing npz files.
+
+    The keys will be the keys of the loaded npz dict.
+    """
     data = dict()
-    for filename in os.listdir(data_dir):
+    filenames = os.listdir(data_dir)
+    if limit:
+        filenames = filenames[:limit]
+    for filename in filenames:
         print(f'Loading file {filename}')
         d = np.load(pathlib.Path(data_dir) / filename)
         data.update(d)  # merge all_data with d
     return data
 
 
-def load_labels(labels_dir: str) -> pd.DataFrame:
+def load_raw_labels(labels_dir: str, index_col='Anon ID') -> pd.DataFrame:
+    """Loads a directory containing a postives.csv and negatives.csv
+    file."""
     positives_df: pd.DataFrame = pd.read_csv(
         pathlib.Path(labels_dir) / 'positives.csv',
-        index_col='Anon ID')
+        index_col=index_col)
     positives_df['occlusion_exists'] = 1
     negatives_df: pd.DataFrame = pd.read_csv(
         pathlib.Path(labels_dir) / 'negatives.csv',
-        index_col='Anon ID')
+        index_col=index_col)
     negatives_df['occlusion_exists'] = 0
     return pd.concat([positives_df, negatives_df])

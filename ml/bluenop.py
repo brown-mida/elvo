@@ -7,7 +7,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 
 import blueno.slack
-from blueno.io import load_compressed_arrays, load_labels
+from blueno.io import load_compressed_arrays, load_raw_labels
 from blueno.preprocessing import clean_data
 from blueno.transforms import bound_pixels, crop
 
@@ -161,7 +161,7 @@ def bluenop(args: dict):
     :return:
     """
     raw_arrays = load_compressed_arrays(args['arrays_dir'])
-    raw_labels = load_labels(args['labels_dir'])
+    raw_labels = load_raw_labels(args['labels_dir'])
     cleaned_arrays, cleaned_labels = clean_data(raw_arrays, raw_labels)
     filtered_arrays, filtered_labels = filter_data(cleaned_arrays,
                                                    cleaned_labels,
