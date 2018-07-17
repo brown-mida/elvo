@@ -9,11 +9,11 @@ from roi_preprocess import run_preprocess
 from transform_positives import run_transform
 
 default_args = {
-    'owner': 'luke',
-    'start_date': datetime(2018, 7, 16, 5),
+    'owner': 'hal',
+    'start_date': datetime(2018, 7, 17, 5),
 }
 
-dag = DAG(dag_id='mip_dag', default_args=default_args)
+dag = DAG(dag_id='roi_chunk_dag', default_args=default_args)
 
 preprocess_op = PythonOperator(task_id='run_preprocess',
                                python_callable=run_preprocess(),
