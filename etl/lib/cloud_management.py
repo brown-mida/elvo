@@ -12,7 +12,7 @@ def authenticate():
         '/home/lukezhu/elvo-analysis/credentials/client_secret.json'
 
         # for running locally
-        'credentials/client_secret.json'
+        # 'credentials/client_secret.json'
     )
 
 
