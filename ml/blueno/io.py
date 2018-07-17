@@ -8,12 +8,9 @@ import os
 from blueno import utils
 
 
-def load_arrays(data_dir: str, limit=None) -> Dict[str, np.ndarray]:
-    if limit is None:
-        limit = len(data_dir)
-
+def load_arrays(data_dir: str) -> Dict[str, np.ndarray]:
     data_dict = {}
-    for filename in os.listdir(data_dir)[:limit]:
+    for filename in os.listdir(data_dir):
         patient_id = filename[:-4]  # remove .npy extension
         data_dict[patient_id] = np.load(pathlib.Path(data_dir) / filename)
     return data_dict
