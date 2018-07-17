@@ -134,8 +134,13 @@ def prepare_data(params: blueno.ParamConfig) -> Tuple[np.ndarray,
     # Convert to numpy arrays
     x, y, patient_ids = to_arrays(array_dict, label_series)
 
-    if y.ndim == 1:
-        y = np.expand_dims(y, axis=1)
+    if params.model.loss == keras.losses.categorical_crossentropy:
+        y = keras.utils.to_categorical(y)
+    elif params.model.loss == keras.losses.binary_crossentropy:
+        if y.ndim == 1:
+            y = np.expand_dims(y, axis=-1)
+
+    assert y.ndim == 2
 
     logging.debug(f'x shape: {x.shape}')
     logging.debug(f'y shape: {y.shape}')
