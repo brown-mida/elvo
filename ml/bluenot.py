@@ -38,13 +38,11 @@ from typing import List, Union
 import keras
 import numpy as np
 import os
-from elasticsearch_dsl import connections
 from sklearn import model_selection
 
 import blueno
 from blueno import (
     utils,
-    elasticsearch,
     preprocessing,
     logger
 )

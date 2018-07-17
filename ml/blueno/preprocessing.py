@@ -1,5 +1,5 @@
 import logging
-from . import io
+from blueno import io
 from typing import Dict, Tuple
 
 import keras
