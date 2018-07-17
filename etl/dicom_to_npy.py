@@ -150,7 +150,7 @@ def dicom_to_npy(in_dir, out_dir):
             outpath = f'{out_dir}{patient_id}.npy'
 
             if up_to_date(blob, storage.Blob(outpath, bucket)):
-                logging.info(f'outfile {outpath} is up-to-date')
+                logging.info(f'outfile {outpath} already exists')
                 continue
 
             logging.info(f'outfile {outpath} is outdated, updating')
