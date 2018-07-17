@@ -43,8 +43,7 @@ from elasticsearch_dsl import connections
 from sklearn import model_selection
 
 import blueno
-from blueno import utils
-from blueno.io import load_arrays
+from blueno import utils, elasticsearch, io
 
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
 
@@ -126,7 +125,7 @@ def prepare_data(params: blueno.ParamConfig) -> Tuple[np.ndarray,
     logging.info(f'using params:\n{params}')
     # Load the arrays and labels
     data_params = params.data
-    array_dict = load_arrays(data_params.data_dir)
+    array_dict = io.load_arrays(data_params.data_dir)
     index_col = data_params.index_col
     label_col = data_params.label_col
     label_series = pd.read_csv(data_params.labels_path,
@@ -267,9 +266,11 @@ def start_job(x_train: np.ndarray,
         alias = f'bluenot-{os.environ["CUDA_VISIBLE_DEVICES"]}'
         connections.create_connection(hosts=['http://104.196.51.205'],
                                       alias=alias)
-        blueno.elasticsearch.insert_or_ignore_filepaths(
+        elasticsearch.insert_or_ignore_filepaths(
             pathlib.Path(log_filepath),
-            pathlib.Path(csv_filepath))
+            pathlib.Path(csv_filepath),
+            alias=alias,
+        )
         connections.remove_connection(alias)
 
 

@@ -87,7 +87,8 @@ class TrainingJob(elasticsearch_dsl.Document):
 
 def insert_or_ignore_filepaths(log_file: pathlib.Path,
                                csv_file: typing.Optional[pathlib.Path],
-                               gpu1708=False):
+                               gpu1708=False,
+                               alias='default'):
     """
     Parses matching log file and csv and uploads the file up to the
     Elasticsearch index, if it doesn't exist.
@@ -125,13 +126,13 @@ def insert_or_ignore_filepaths(log_file: pathlib.Path,
                                      ended_at=ended_at,
                                      model_url=model_url,
                                      final_val_auc=final_val_auc)
-        insert_or_ignore(training_job)
+        insert_or_ignore(training_job, alias=alias)
     except (ValueError, EmptyDataError):
         print('metrics file {} is empty'.format(csv_file))
         return
 
 
-def insert_or_ignore(training_job):
+def insert_or_ignore(training_job: TrainingJob, alias='default'):
     """Inserts the training job into the elasticsearch index
     if no job with the same name and creation timestamp exists.
     """
@@ -145,7 +146,7 @@ def insert_or_ignore(training_job):
         return
 
     if matches == 0:
-        training_job.save()
+        training_job.save(using=alias)
     else:
         print('job {} created at {} exists'.format(
             training_job.job_name, training_job.created_at))
