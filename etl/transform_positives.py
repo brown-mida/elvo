@@ -147,9 +147,6 @@ def generate_csv():
                 to_add, orient='index', columns=['Unnamed: 0', 'label'])
             print(to_add_df)
             labels_df = labels_df.append(to_add_df)
-    # print(labels_df.loc['04IOS24JP70LHBGB184', 'Unnamed: 0'])
-    # for i in range(1, 25):
-    #     print(labels_df.loc[f'04IOS24JP70LHBGB184_{i}', 'Unnamed: 0'])
     labels_df.to_csv("augmented_annotated_labels.csv")
 
 
