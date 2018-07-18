@@ -57,11 +57,17 @@ def load_and_evaluate(model_info: ModelInfo, bucket):
     else:
         loss = keras.losses.categorical_crossentropy
 
+    data_dir = model_info.data_dir \
+        .replace('lzhu7', 'lukezhu') \
+        .replace('/gpfs/main', '')
+    labels_path = model_info.labels_path \
+        .replace('lzhu7', 'lukezhu') \
+        .replace('/gpfs/main', '')
     params = blueno.ParamConfig(
         data=blueno.DataConfig(
             # TODO: Generalize to work for all users
-            data_dir=model_info.data_dir.replace('lzhu7', 'lukezhu'),
-            labels_path=model_info.data_dir.replace('lzhu7', 'lukezhu'),
+            data_dir=data_dir,
+            labels_path=labels_path,
             index_col='Anon ID',
             label_col='occlusion_exists',
             gcs_url='',
@@ -260,7 +266,8 @@ def model_infos(bucket) -> List[ModelInfo]:
                                    val_split=hit.val_split,
                                    seed=hit.seed,
                                    data_dir=hit.data_dir,
-                                   labels_path=hit.labels_path,
+                                   labels_path=hit.data_dir.replace(
+                                       'arrays', 'labels.csv'),
                                    best_val_acc=hit.best_val_acc,
                                    best_val_loss=hit.best_val_loss)
             models.append(model_info)
