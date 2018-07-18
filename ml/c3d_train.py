@@ -1,6 +1,6 @@
-import os
 import tensorflow as tf
 from ml.models.three_d import c3d
+from ml.blueno.reporting import slack_
 import os
 import csv
 import numpy as np
