@@ -2,8 +2,17 @@ import pathlib
 
 import os
 import pytest
+from elasticsearch_dsl import connections
 
 from blueno import elasticsearch
+
+
+def setup_module():
+    connections.create_connection(hosts=['http://104.196.51.205'])
+
+
+def teardown_module():
+    connections.remove_connection('default')
 
 
 def test_parse_filename():
@@ -123,6 +132,38 @@ def test_parse_params_str_config():
     assert elasticsearch._parse_params_str(params_str) == expected
 
 
+def test_parse_params_val_split():
+    params_str = ("ParamConfig(data=DataConfig("
+                  "data_dir='/home/lzhu7/elvo-analysis/data/"
+                  "processed-lower-nbv/arrays', labels_path='/home/lzhu7/"
+                  "elvo-analysis/data/processed-lower-nbv/labels.csv',"
+                  " index_col='Anon ID', label_col='occlusion_exists'),"
+                  " generator=GeneratorConfig(generator_callable="
+                  "<function standard_generators at 0x7f986e78a598>,"
+                  " rotation_range=20, width_shift_range=0.1,"
+                  " height_shift_range=0.1, shear_range=0.2,"
+                  " zoom_range=(0.9, 1.1),"
+                  " horizontal_flip=True, vertical_flip=False),"
+                  " model=ModelConfig(model_callable="
+                  "<function resnet at 0x7f986e71fd90>,"
+                  " optimizer="
+                  "<keras.optimizers.Adam object at 0x7f986e77e668>,"
+                  " loss=<function binary_crossentropy at 0x7f9874f1ea60>,"
+                  " dropout_rate1=0.7, dropout_rate2=0.7, freeze=False),"
+                  " batch_size=3, seed=0, val_split=0.1, job_fn=None)")
+    expected = {
+        'batch_size': 3, 'val_split': 0.1, 'seed': 0, 'rotation_range': 20,
+        'width_shift_range': 0.1, 'height_shift_range': 0.1,
+        'shear_range': 0.2, 'horizontal_flip': True,
+        'vertical_flip': False, 'dropout_rate1': 0.7,
+        'dropout_rate2': 0.7,
+        'data_dir': "/home/lzhu7/elvo-analysis/data/"
+                    "processed-lower-nbv/arrays",
+        'zoom_range': '(0.9, 1.1)',
+    }
+    assert elasticsearch._parse_params_str(params_str) == expected
+
+
 def test_parse_params_str_dict():
     params_str = "{'val_split': 0.2, 'seed': 42," \
                  " 'model': {'rotation_range': 20, 'optimizer':" \
@@ -146,3 +187,21 @@ def test_parse_params_str_dict():
                     "processed-standard/arrays/"
     }
     assert elasticsearch._parse_params_str(params_str) == expected
+
+
+@pytest.mark.skip
+def test_extract_best_auc():
+    assert elasticsearch._extract_best_auc() == 0
+
+
+@pytest.mark.skipif(os.uname().nodename != 'gpu1708',
+                    reason='Test uses data only on gpu1708')
+def test_insert_or_ignore():
+    metrics_file = pathlib.Path(
+        '/gpfs/main/home/lzhu7/elvo-analysis/logs/'
+        'processed-only-m1_2-classes-2018-07-18T15:47:54.618535.csv')
+    log_file = pathlib.Path(
+        '/gpfs/main/home/lzhu7/elvo-analysis/logs/'
+        'processed-only-m1_2-classes-2018-07-18T15:47:54.618535.log')
+    elasticsearch.insert_or_ignore_filepaths(log_file,
+                                             metrics_file)

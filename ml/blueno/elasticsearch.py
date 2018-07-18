@@ -42,6 +42,7 @@ class TrainingJob(elasticsearch_dsl.Document):
     final_val_sensitivity = elasticsearch_dsl.Float()
     best_val_sensitivity = elasticsearch_dsl.Float()
     final_val_auc = elasticsearch_dsl.Float()
+    best_val_auc = elasticsearch_dsl.Float()
 
     # Params
     batch_size = elasticsearch_dsl.Integer()
@@ -52,7 +53,7 @@ class TrainingJob(elasticsearch_dsl.Document):
     width_shift_range = elasticsearch_dsl.Float()
     height_shift_range: float = elasticsearch_dsl.Float()
     shear_range = elasticsearch_dsl.Float()
-    zoom_range = elasticsearch_dsl.Float()
+    zoom_range = elasticsearch_dsl.Keyword()
     horizontal_flip = elasticsearch_dsl.Boolean()
     vertical_flip = elasticsearch_dsl.Boolean()
 
@@ -61,6 +62,10 @@ class TrainingJob(elasticsearch_dsl.Document):
 
     data_dir = elasticsearch_dsl.Keyword()
     gcs_url = elasticsearch_dsl.Keyword()
+
+    mip_thickness = elasticsearch_dsl.Integer()
+    height_offset = elasticsearch_dsl.Integer()
+    pixel_value_range = elasticsearch_dsl.Keyword()
 
     # We need to keep a list of params for the parser because
     # we can't use traditional approaches to get the class attrs
@@ -71,15 +76,16 @@ class TrainingJob(elasticsearch_dsl.Document):
                        'width_shift_range',
                        'height_shift_range',
                        'shear_range',
-                       # TODO(#91): Cannot parse zoom_range
-                       #  because this takes in a tuple
-                       # 'zoom_range',
+                       'zoom_range',
                        'horizontal_flip',
                        'vertical_flip',
                        'dropout_rate1',
                        'dropout_rate2',
                        'data_dir',
-                       'gcs_url']
+                       'gcs_url',
+                       'mip_thickness',
+                       'height_offset',
+                       'pixel_value_range']
 
     class Index:
         name = TRAINING_JOBS
@@ -107,29 +113,38 @@ def insert_or_ignore_filepaths(log_file: pathlib.Path,
     params = _extract_params(log_file)
     author = _extract_author(log_file)
     raw_log = open(log_file).read()
-
-    if author is None and gpu1708:
-        author = _fill_author_gpu1708(created_at, job_name)
     ended_at = _extract_ended_at(log_file)
     model_url = _extract_model_url(log_file)
     final_val_auc = _extract_auc(log_file)
+    best_val_auc = _extract_best_auc(log_file)
+
+    if author is None and gpu1708:
+        author = _fill_author_gpu1708(created_at, job_name)
+
+    if params:
+        params_dict = _parse_params_str(params)
+    else:
+        params_dict = None
 
     try:
         metrics = _extract_metrics(csv_file)
-        training_job = construct_job(job_name,
-                                     created_at,
-                                     params,
-                                     raw_log,
-                                     metrics,
-                                     str(csv_file.name),
-                                     author=author,
-                                     ended_at=ended_at,
-                                     model_url=model_url,
-                                     final_val_auc=final_val_auc)
-        insert_or_ignore(training_job, alias=alias)
     except (ValueError, EmptyDataError):
         print('metrics file {} is empty'.format(csv_file))
         return
+
+    training_job = construct_job(job_name,
+                                 created_at,
+                                 params,
+                                 raw_log,
+                                 metrics,
+                                 str(csv_file.name),
+                                 author=author,
+                                 ended_at=ended_at,
+                                 model_url=model_url,
+                                 final_val_auc=final_val_auc,
+                                 best_val_auc=best_val_auc,
+                                 params_dict=params_dict)
+    insert_or_ignore(training_job, alias=alias)
 
 
 def insert_or_ignore(training_job: TrainingJob, alias='default'):
@@ -161,7 +176,9 @@ def construct_job(job_name,
                   author=None,
                   ended_at=None,
                   model_url=None,
-                  final_val_auc=None) -> TrainingJob:
+                  final_val_auc=None,
+                  best_val_auc=None,
+                  params_dict=None) -> TrainingJob:
     """
     Constructs a training job object from the given parameters.
 
@@ -186,10 +203,10 @@ def construct_job(job_name,
                                params=params,
                                raw_log=raw_log,
                                model_url=model_url,
-                               final_val_auc=final_val_auc)
+                               final_val_auc=final_val_auc,
+                               best_val_auc=best_val_auc)
 
-    if params:
-        params_dict = _parse_params_str(params)
+    if params_dict:
         for key, val in params_dict.items():
             if key is 'data_dir' and val.endswith('/'):  # standardize dirpaths
                 val = val[:-1]
@@ -221,21 +238,19 @@ def _parse_filename(filename: str) -> typing.Tuple[str, str]:
 
 def _extract_params(log_path: pathlib.Path) -> typing.Optional[str]:
     with open(log_path) as f:
-        first_line = f.readline()
-        if first_line.endswith('using params:\n'):
-            second_line = f.readline()
-            return second_line
+        for line in f:
+            if line.endswith('using params:\n'):
+                second_line = f.readline()
+                return second_line
         return None
 
 
 def _extract_author(log_path: pathlib.Path) -> typing.Optional[str]:
     with open(log_path) as f:
-        f.readline()
-        f.readline()
-        third_line = f.readline()
-        if 'INFO - author:' in third_line:
-            author = third_line.rstrip('\n').split(':')[-1].strip()
-            return author
+        for line in f:
+            if 'INFO - author:' in line:
+                author = line.rstrip('\n').split(':')[-1].strip()
+                return author
     return None
 
 
@@ -266,6 +281,13 @@ def _extract_auc(log_path: pathlib.Path) -> typing.Optional[float]:
     return None
 
 
+def _extract_best_auc(log_path: pathlib.Path) -> typing.Optional[float]:
+    with open(log_path) as f:
+        for line in f:
+            if 'INFO - val_auc:' in line:
+                return float(line.split(' ')[-1].rstrip('\n'))
+
+
 def _parse_params_str(params_str: str) -> typing.Dict[str, typing.Any]:
     """Parses the param string outputs that most logs contain.
 
@@ -273,14 +295,26 @@ def _parse_params_str(params_str: str) -> typing.Dict[str, typing.Any]:
     """
     param_dict = {}
     for param in TrainingJob.params_to_parse:
-        patterns = [r'{}=(.*?)[,)]'.format(param),
-                    r"'{}'".format(param) + r": (.*?)[,}]"]
-        for pattern in patterns:
+        if param in ('zoom_range', 'pixel_value_range'):
+            float_pattern = '[0-9]*\.?[0-9]+'
+            pattern = r'{}=(\({}, {}\))[,)]'.format(
+                param,
+                float_pattern,
+                float_pattern,
+            )
+            print(params_str)
             match = re.search(pattern, params_str)
             if match:
-                value_str = match.group(1)
-                value = ast.literal_eval(value_str)
-                param_dict[param] = value
+                param_dict[param] = match.group(1)
+        else:
+            patterns = [r'{}=(.*?)[,)]'.format(param),
+                        r"'{}'".format(param) + r": (.*?)[,}]"]
+            for pattern in patterns:
+                match = re.search(pattern, params_str)
+                if match:
+                    value_str = match.group(1)
+                    value = ast.literal_eval(value_str)
+                    param_dict[param] = value
     print('parsed params:', param_dict)
     return param_dict
 

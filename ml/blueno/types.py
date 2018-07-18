@@ -93,6 +93,7 @@ class ParamConfig:
     reduce_lr: bool = False
 
     job_fn: typing.Callable = None
+    job_name: str = None
 
 
 @dataclass
@@ -109,6 +110,7 @@ class ParamGrid:
     reduce_lr: typing.Sequence[bool] = (False,)
 
     job_fn: typing.Sequence[typing.Callable] = None
+    job_name: str = None
 
     def __init__(self, **kwargs):
         for attr in kwargs:
@@ -124,8 +126,8 @@ class ParamGrid:
                 data = tuple(LukePipelineConfig(**d) for d in kwargs['data'])
                 self.data = data
             else:
-                raise ValueError('Does not contain attributes gcs_url'
-                                 ' nor pipeline, could not determine type')
+                data = tuple(DataConfig(**d) for d in kwargs['data'])
+                self.data = data
 
         if not isinstance(kwargs['generator'], GeneratorConfig):
             generators = tuple(

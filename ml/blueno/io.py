@@ -18,14 +18,14 @@ def load_arrays(data_dir: str) -> Dict[str, np.ndarray]:
     return data_dict
 
 
-def load_model(model_path: str):
+def load_model(model_path: str, compile=True):
     # Need to do this otherwise the model won't load
     keras.metrics.sensitivity = utils.sensitivity
     keras.metrics.specificity = utils.specificity
     keras.metrics.true_positives = utils.true_positives
     keras.metrics.false_negatives = utils.false_negatives
 
-    model = keras.models.load_model(model_path)
+    model = keras.models.load_model(model_path, compile=compile)
     return model
 
 
