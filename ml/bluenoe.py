@@ -19,7 +19,7 @@ from keras.preprocessing.image import ImageDataGenerator
 import blueno
 from blueno import utils
 from blueno.io import load_model
-from bluenot import prepare_data
+from blueno.preprocessing import prepare_data
 
 
 @dataclass
