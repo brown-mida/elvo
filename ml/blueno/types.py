@@ -81,6 +81,7 @@ class ParamConfig:
     reduce_lr: bool = False
 
     job_fn: typing.Callable = None
+    job_name: str = None
 
 
 @dataclass
@@ -97,6 +98,7 @@ class ParamGrid:
     reduce_lr: typing.Sequence[bool] = (False,)
 
     job_fn: typing.Sequence[typing.Callable] = None
+    job_name: str = None
 
     def __init__(self, **kwargs):
         for attr in kwargs:

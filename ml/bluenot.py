@@ -376,8 +376,11 @@ def hyperoptimize(hyperparams: Union[blueno.ParamGrid,
 
         # Uses the parent of the data_dir to name the job,
         # which may not work for all data formats.
-        job_name = str(pathlib.Path(params.data.data_dir).parent.name)
-        job_name += f'_{y_train.shape[1]}-classes'
+        if params.job_name:
+            job_name = params.job_name
+        else:
+            job_name = str(pathlib.Path(params.data.data_dir).parent.name)
+            job_name += f'_{y_train.shape[1]}-classes'
 
         process = multiprocessing.Process(target=job_fn,
                                           args=(x_train, y_train,
