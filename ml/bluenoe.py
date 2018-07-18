@@ -9,6 +9,7 @@ import keras
 import numpy as np
 import os
 import random
+from dataclasses import dataclass
 from elasticsearch_dsl import connections
 from elasticsearch_dsl.response import Hit
 from google.cloud import storage
@@ -21,9 +22,79 @@ from blueno.io import load_model
 from bluenot import prepare_data
 
 
-# TODO: Remove
-# os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/home/lzhu7/elvo-analysis/' \
-#                                                'secrets/elvo-7136c1299dea.json'
+@dataclass
+class ModelInfo:
+    blob_name: str
+    job_name: str
+    created_at: str
+    val_split: float
+    seed: int
+    data_dir: str
+    labels_path: str
+    best_val_acc: float
+    best_val_loss: float
+
+
+def check_models(limit=10):
+    client = storage.Client(project='elvo-198322')
+    bucket = storage.Bucket(client, name='elvos')
+
+    connections.create_connection(hosts=['http://104.196.51.205'])
+
+    models = model_infos(bucket)
+    print(models)
+    for m in models[:limit]:
+        p = multiprocessing.Process(target=load_and_evaluate,
+                                    args=(m, bucket))
+        p.start()
+        p.join()
+
+
+def load_and_evaluate(model_info: ModelInfo, bucket):
+    print('loading and evaluating', model_info, flush=True)
+    if '1-classes' in model_info.job_name:
+        loss = keras.losses.binary_crossentropy
+    else:
+        loss = keras.losses.categorical_crossentropy
+
+    params = blueno.ParamConfig(
+        data=blueno.DataConfig(
+            # TODO: Generalize to work for all users
+            data_dir=model_info.data_dir.replace('lzhu7', 'lukezhu'),
+            labels_path=model_info.data_dir.replace('lzhu7', 'lukezhu'),
+            index_col='Anon ID',
+            label_col='occlusion_exists',
+            gcs_url='',
+        ),
+        generator=None,
+        model=blueno.ModelConfig(
+            model_callable=None,
+            optimizer=None,
+            # TODO: Some may use a different loss
+            loss=loss,
+        ),
+        batch_size=None,
+        seed=model_info.seed,
+        val_split=model_info.val_split
+    )
+
+    x_train, x_valid, y_train, y_valid, _, _ = prepare_data(params)
+    datagen = ImageDataGenerator(featurewise_center=True,
+                                 featurewise_std_normalization=True)
+    datagen.fit(x_train)
+
+    model_filepath = f'load_and_eval.hdf5'
+    blob = bucket.get_blob(model_info.blob_name)
+    blob.download_to_filename(model_filepath)
+    model: keras.Model
+    model = load_model(model_filepath, compile=True)
+    os.remove(model_filepath)
+
+    metrics = evaluate_model(datagen, model, x_valid, y_valid)
+    print('actual best loss:', metrics[0])
+    print('logged best loss:', model_info.best_val_loss)
+    print('actual best acc:', metrics[1])
+    print('logged best acc:', model_info.best_val_acc, flush=True)
 
 
 def ensemble(seed=0,
@@ -31,9 +102,11 @@ def ensemble(seed=0,
              min_best_val_acc=0.85,
              min_best_val_loss=None,  # TODO
              data_dir=pathlib.Path(
-                 '/gpfs/main/home/lzhu7/elvo-analysis/data/processed-lower/arrays'),
+                 '/gpfs/main/home/lzhu7/elvo-analysis/data/'
+                 'processed-lower/arrays'),
              labels_path=pathlib.Path(
-                 '/gpfs/main/home/lzhu7/elvo-analysis/data/processed-lower/labels.csv')):
+                 '/gpfs/main/home/lzhu7/elvo-analysis/data/'
+                 'processed-lower/labels.csv')):
     """
     A long-running job which outputs the results of
     ensembling different models.
@@ -53,10 +126,10 @@ def ensemble(seed=0,
 
     models = model_infos(bucket)
     models0 = [m for m in models
-               if m[3] == val_split
-               and m[4] == seed
-               and m[6] >= min_best_val_acc
-               and str(data_dir.parent.name) + '/' in m[5]]
+               if m.val_split == val_split
+               and m.seed == seed
+               and m.best_val_acc >= min_best_val_acc
+               and str(data_dir.parent.name) + '/' in m.data_dir]
 
     print('matching models', models0)
     print('# of models to try', len(models0),
@@ -156,18 +229,21 @@ def evaluate_model(datagen, model: keras.Model, x_valid, y_valid):
     print('metrics:')
     labels = ['loss', 'acc', 'sens', 'spec', 'fp', 'tn']
     print('labels:', labels)
-    print('values:', model.evaluate_generator(
-        datagen.flow(x_valid, y_valid, batch_size=8)))
+    values = model.evaluate_generator(
+        datagen.flow(x_valid, y_valid, batch_size=8))
+    print('values:', values)
     time7 = time.time()
     print(f'seconds to evaluate: {time7 - time6}')
+    return values
 
 
-def model_infos(bucket):
+def model_infos(bucket) -> List[ModelInfo]:
     models = []
     blob: storage.Blob
     for blob in bucket.list_blobs(prefix='models/'):
         filename = blob.name.split('/')[-1]
         job_name, created_at = _parse_filename(filename)
+        print(job_name, created_at)
         # created_at = dateutil.parser.isoparse(created_at)
         results = (elasticsearch_dsl.Search()
                    .query('match', job_name=job_name)
@@ -178,13 +254,16 @@ def model_infos(bucket):
         hit: Hit
         for hit in results.hits:
             # TODO: Turn the tuple into a dataclass
-            models.append((blob.name,
-                           job_name,
-                           created_at,
-                           hit.val_split,
-                           hit.seed,
-                           hit.data_dir,
-                           hit.best_val_acc))
+            model_info = ModelInfo(blob_name=blob.name,
+                                   job_name=job_name,
+                                   created_at=created_at,
+                                   val_split=hit.val_split,
+                                   seed=hit.seed,
+                                   data_dir=hit.data_dir,
+                                   labels_path=hit.labels_path,
+                                   best_val_acc=hit.best_val_acc,
+                                   best_val_loss=hit.best_val_loss)
+            models.append(model_info)
     return models
 
 
@@ -215,9 +294,10 @@ def ensemble_models(models, model_input):
 
 
 if __name__ == '__main__':
-    ensemble(
-        data_dir=pathlib.Path(
-            '/home/lukezhu/elvo-analysis/data/processed-lower/arrays'),
-        labels_path=pathlib.Path(
-            '/home/lukezhu/elvo-analysis/data/processed-lower/labels.csv')
-    )
+    # ensemble(
+    #     data_dir=pathlib.Path(
+    #         '/home/lukezhu/elvo-analysis/data/processed-lower/arrays'),
+    #     labels_path=pathlib.Path(
+    #         '/home/lukezhu/elvo-analysis/data/processed-lower/labels.csv')
+    # )
+    check_models()

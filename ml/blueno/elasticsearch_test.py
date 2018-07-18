@@ -194,10 +194,14 @@ def test_extract_best_auc():
     assert elasticsearch._extract_best_auc() == 0
 
 
+@pytest.mark.skipif(os.uname().nodename != 'gpu1708',
+                    reason='Test uses data only on gpu1708')
 def test_insert_or_ignore():
     metrics_file = pathlib.Path(
-        '/gpfs/main/home/lzhu7/elvo-analysis/logs/processed-only-m1_2-classes-2018-07-18T15:47:54.618535.csv')
+        '/gpfs/main/home/lzhu7/elvo-analysis/logs/'
+        'processed-only-m1_2-classes-2018-07-18T15:47:54.618535.csv')
     log_file = pathlib.Path(
-        '/gpfs/main/home/lzhu7/elvo-analysis/logs/processed-only-m1_2-classes-2018-07-18T15:47:54.618535.log')
+        '/gpfs/main/home/lzhu7/elvo-analysis/logs/'
+        'processed-only-m1_2-classes-2018-07-18T15:47:54.618535.log')
     elasticsearch.insert_or_ignore_filepaths(log_file,
                                              metrics_file)
