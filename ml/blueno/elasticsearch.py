@@ -90,7 +90,6 @@ class TrainingJob(elasticsearch_dsl.Document):
 def insert_or_ignore_filepaths(log_file: pathlib.Path,
                                csv_file: typing.Optional[pathlib.Path],
                                gpu1708=False,
-                               clean_job_names=False,
                                alias='default'):
     """
     Parses matching log file and csv and uploads the file up to the
@@ -122,14 +121,6 @@ def insert_or_ignore_filepaths(log_file: pathlib.Path,
         params_dict = _parse_params_str(params)
     else:
         params_dict = None
-
-    if clean_job_names and params_dict:
-        num_classes = job_name.split('_')[-1]
-        data_dir = params_dict['data_dir']
-        # Ignore this dir at this means preprocessing is being done
-        if 'numpy_compressed' not in data_dir:
-            as_path = pathlib.Path(data_dir)
-            job_name = f'{as_path.parent.name}_{num_classes}'
 
     try:
         metrics = _extract_metrics(csv_file)

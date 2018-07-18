@@ -13,7 +13,7 @@ from blueno.elasticsearch import (
 )
 
 
-def bluenom(log_dir: pathlib.Path, gpu1708=False, clean_job_names=False):
+def bluenom(log_dir: pathlib.Path, gpu1708=False):
     """
     Uploads logs in the directory to bluenom. This will
     only upload logs which have uploaded to Slack.
@@ -34,8 +34,7 @@ def bluenom(log_dir: pathlib.Path, gpu1708=False, clean_job_names=False):
             print('indexing {}'.format(filename))
             insert_or_ignore_filepaths(file_path,
                                        metrics_file_path,
-                                       gpu1708,
-                                       clean_job_names=clean_job_names)
+                                       gpu1708)
         else:
             print('{} is not a log or CSV file'.format(filename))
 
@@ -49,4 +48,4 @@ if __name__ == '__main__':
     JOB_INDEX.create()
     TrainingJob.init()
     path = pathlib.Path('/gpfs/main/home/lzhu7/elvo-analysis/logs')
-    bluenom(path, gpu1708=True, clean_job_names=True)
+    bluenom(path, gpu1708=True)

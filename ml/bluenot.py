@@ -125,7 +125,7 @@ def prepare_data(params: blueno.ParamConfig) -> Tuple[np.ndarray,
     shuffling and expanding dims.
 
     :param params: a hyperparameter dictionary generated from a ParamGrid
-    :return: x_train, x_valid, y_train, y_valid
+    :return: x_train, x_valid, y_train, y_valid, ids_train, ids_valid
     """
     logging.info(f'using params:\n{params}')
     # Load the arrays and labels
