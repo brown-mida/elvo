@@ -1,7 +1,7 @@
 import tensorflow as tf
-from models.three_d import c3d
-from blueno.slack import slack_report
-from blueno import utils
+from ml.models.three_d import c3d
+from ml.blueno.slack import slack_report
+from ml.blueno import utils
 import os
 import csv
 import numpy as np
