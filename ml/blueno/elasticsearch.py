@@ -88,6 +88,7 @@ class TrainingJob(elasticsearch_dsl.Document):
 def insert_or_ignore_filepaths(log_file: pathlib.Path,
                                csv_file: typing.Optional[pathlib.Path],
                                gpu1708=False,
+                               clean_job_names=False,
                                alias='default'):
     """
     Parses matching log file and csv and uploads the file up to the
@@ -107,12 +108,25 @@ def insert_or_ignore_filepaths(log_file: pathlib.Path,
     params = _extract_params(log_file)
     author = _extract_author(log_file)
     raw_log = open(log_file).read()
-
-    if author is None and gpu1708:
-        author = _fill_author_gpu1708(created_at, job_name)
     ended_at = _extract_ended_at(log_file)
     model_url = _extract_model_url(log_file)
     final_val_auc = _extract_auc(log_file)
+
+    if author is None and gpu1708:
+        author = _fill_author_gpu1708(created_at, job_name)
+
+    if params:
+        params_dict = _parse_params_str(params)
+    else:
+        params_dict = None
+
+    if clean_job_names and params_dict:
+        num_classes = job_name.split('_')[-1]
+        data_dir = params_dict['data_dir']
+        # Ignore this dir at this means preprocessing is being done
+        if 'numpy_compressed' not in data_dir:
+            as_path = pathlib.Path(data_dir)
+            job_name = f'{as_path.parent.name}_{num_classes}'
 
     try:
         metrics = _extract_metrics(csv_file)
@@ -125,7 +139,8 @@ def insert_or_ignore_filepaths(log_file: pathlib.Path,
                                      author=author,
                                      ended_at=ended_at,
                                      model_url=model_url,
-                                     final_val_auc=final_val_auc)
+                                     final_val_auc=final_val_auc,
+                                     params_dict=params_dict)
         insert_or_ignore(training_job, alias=alias)
     except (ValueError, EmptyDataError):
         print('metrics file {} is empty'.format(csv_file))
@@ -161,7 +176,8 @@ def construct_job(job_name,
                   author=None,
                   ended_at=None,
                   model_url=None,
-                  final_val_auc=None) -> TrainingJob:
+                  final_val_auc=None,
+                  params_dict=None) -> TrainingJob:
     """
     Constructs a training job object from the given parameters.
 
@@ -188,8 +204,7 @@ def construct_job(job_name,
                                model_url=model_url,
                                final_val_auc=final_val_auc)
 
-    if params:
-        params_dict = _parse_params_str(params)
+    if params_dict:
         for key, val in params_dict.items():
             if key is 'data_dir' and val.endswith('/'):  # standardize dirpaths
                 val = val[:-1]

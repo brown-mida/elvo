@@ -25,6 +25,7 @@ The script assumes that:
 - you are able to get processed data onto that computer
 - you are familiar with Python and the terminal
 """
+import collections
 import datetime
 import importlib
 import logging
@@ -156,6 +157,7 @@ def prepare_data(params: blueno.ParamConfig) -> Tuple[np.ndarray,
     elif params.model.loss == keras.losses.binary_crossentropy:
         if y.ndim == 1:
             y = np.expand_dims(y, axis=-1)
+            y = y.astype(dtype='int')
 
     assert y.ndim == 2
 
@@ -168,6 +170,8 @@ def prepare_data(params: blueno.ParamConfig) -> Tuple[np.ndarray,
             x, y, patient_ids,
             test_size=params.val_split,
             random_state=params.seed)
+    logging.debug(f'y_train counts: {collections.Counter(y_train)}')
+    logging.debug(f'y_valid counts: {collections.Counter(y_valid)}')
     return x_train, x_valid, y_train, y_valid, ids_train, ids_valid
 
 
