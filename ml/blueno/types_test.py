@@ -1,6 +1,4 @@
 import keras
-import os
-import pytest
 from sklearn import model_selection
 
 import generators.luke
@@ -8,8 +6,6 @@ import models.luke
 from blueno import types
 
 
-@pytest.mark.skipif(os.uname().nodename != 'gpu1708',
-                    reason='Test uses data only on gpu1708')
 def test_from_dict():
     param_dict = {
         'data': [

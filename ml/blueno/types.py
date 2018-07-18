@@ -114,8 +114,8 @@ class ParamGrid:
                 data = tuple(LukePipelineConfig(**d) for d in kwargs['data'])
                 self.data = data
             else:
-                raise ValueError('Does not contain attributes gcs_url'
-                                 ' nor pipeline, could not determine type')
+                data = tuple(DataConfig(**d) for d in kwargs['data'])
+                self.data = data
 
         if not isinstance(kwargs['generator'], GeneratorConfig):
             generators = tuple(
