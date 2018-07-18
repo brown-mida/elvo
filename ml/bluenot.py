@@ -208,8 +208,11 @@ def start_job(x_train: np.ndarray,
     csv_filepath = None
     log_filepath = None
     if log_dir:
-        log_filepath = str(
-            pathlib.Path(log_dir) / f'{job_name}-{created_at}.log')
+        if '/' in job_name:
+            raise ValueError("Job name cannot contain '/' character")
+        log_filepath = str(pathlib.Path(log_dir) /
+                           f'{job_name}-{created_at}.log')
+        assert log_filepath.startswith(log_dir)
         csv_filepath = log_filepath[:-3] + 'csv'
         configure_job_logger(log_filepath)
 
@@ -373,7 +376,7 @@ def hyperoptimize(hyperparams: Union[blueno.ParamGrid,
 
         # Uses the parent of the data_dir to name the job,
         # which may not work for all data formats.
-        job_name = str(pathlib.Path(params.data.data_dir).parent)
+        job_name = str(pathlib.Path(params.data.data_dir).parent.name)
         job_name += f'_{y_train.shape[1]}-classes'
 
         process = multiprocessing.Process(target=job_fn,
