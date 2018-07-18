@@ -12,7 +12,9 @@ cd elvo-analysis
 virtualenv --python=python3.6 venv
 source venv/bin/activate
 pip install -r requirements.txt
-pip install tensorflow-gpu=1.4.1
+pip uninstall -y keras tensorflow
+pip install tensorflow-gpu=1.4.0 # Since CUDA 8 is installed
+pip install keras==2.1.3
 ````
 
 To get new data, you should use `gsutil` to copy the data

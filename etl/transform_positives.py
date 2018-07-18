@@ -74,7 +74,7 @@ def transform_positives():
         # plt.show()
 
 
-def clean_data():
+def clean_old_data():
     configure_logger()
     client = cloud.authenticate()
     bucket = client.get_bucket('elvos')
@@ -86,29 +86,57 @@ def clean_data():
     i = 0
     for in_blob in bucket.list_blobs(prefix=prefix):
         i += 1
-        # # blacklist
-        # if in_blob.name == prefix + 'LAUIHISOEZIM5ILF.npy':
-        #     continue
-        #
-        # # perform the normal cropping procedure
-        # logging.info(f'downloading {in_blob.name}')
-        # file_id = in_blob.name.split('/')[-1]
-        # file_id = file_id.split('.')[0]
-        #
-        # if '_' in file_id:
-        #     continue
-        #
-        # in_blob.delete()
+        # blacklist
+        if in_blob.name == prefix + 'LAUIHISOEZIM5ILF.npy':
+            continue
+
+        # perform the normal cropping procedure
+        logging.info(f'downloading {in_blob.name}')
+        file_id = in_blob.name.split('/')[-1]
+        file_id = file_id.split('.')[0]
+
+        if '_' in file_id:
+            in_blob.delete()
+
+    print(i)
+
+
+def clean_new_data():
+    configure_logger()
+    client = cloud.authenticate()
+    bucket = client.get_bucket('elvos')
+
+    # iterate through every source directory...
+    prefix = "chunk_data/normal/positive"
+    logging.info(f"transforming positive chunks from {prefix}")
+
+    i = 0
+    for in_blob in bucket.list_blobs(prefix=prefix):
+        i += 1
+        # blacklist
+        if in_blob.name == prefix + 'LAUIHISOEZIM5ILF.npy':
+            continue
+
+        # perform the normal cropping procedure
+        logging.info(f'downloading {in_blob.name}')
+        file_id = in_blob.name.split('/')[-1]
+        file_id = file_id.split('.')[0]
+
+        if '_' in file_id:
+            continue
+
+        in_blob.delete()
     print(i)
 
 
 # TODO: also update annotations csv file (if we're gonna be using the model
 # that includes bounding box coordinates
 def generate_csv():
-    labels_df = pd.read_csv('/home/amy/data/annotated_labels.csv')
+    labels_df = pd.read_csv('/home/harold_triedman/'
+                            'elvo-analysis/annotated_labels.csv')
     for index, row in labels_df.iterrows():
         print(index, row[1])
-        if(row[1] == 1):
+        if row[1] == 1:
             # every time you come across a positive, add in 24 more rows
             to_add = {}
             for i in range(24):
@@ -119,14 +147,16 @@ def generate_csv():
                 to_add, orient='index', columns=['Unnamed: 0', 'label'])
             print(to_add_df)
             labels_df = labels_df.append(to_add_df)
-    # print(labels_df.loc['04IOS24JP70LHBGB184', 'Unnamed: 0'])
-    # for i in range(1, 25):
-    #     print(labels_df.loc[f'04IOS24JP70LHBGB184_{i}', 'Unnamed: 0'])
     labels_df.to_csv("augmented_annotated_labels.csv")
 
 
-if __name__ == '__main__':
+def run_transform():
     configure_logger()
-    # generate_csv()
-    # transform_positives()
-    clean_data()
+    clean_old_data()
+    generate_csv()
+    transform_positives()
+    clean_new_data()
+
+
+if __name__ == '__main__':
+    run_transform()

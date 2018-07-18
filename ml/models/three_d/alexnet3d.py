@@ -16,9 +16,9 @@ Based on:
 - https://www.nature.com/articles/s41746-017-0015-z.pdf
 """
 
-from keras.models import Model
 from keras.layers import Input, BatchNormalization, Dense, Flatten
 from keras.layers.convolutional import Conv3D, MaxPooling3D
+from keras.models import Model
 
 
 class AlexNet3DBuilder(object):
