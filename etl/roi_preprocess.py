@@ -1,8 +1,10 @@
-from lib import cloud_management as cloud  # , roi_transforms, transforms
 import logging
+
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
+
+from lib import cloud_management as cloud  # , roi_transforms, transforms
 
 
 def configure_logger():
@@ -141,7 +143,6 @@ def create_labels(annotations_df: pd.DataFrame):
         if elvo_positive:
 
             for row in roi_df.itertuples():
-                # logging.info()(row)
                 """
                 row[0] = index
                 row[1] = patient ID

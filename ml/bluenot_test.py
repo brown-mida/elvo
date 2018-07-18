@@ -1,14 +1,25 @@
+import glob
+
 import keras
 import numpy as np
 import os
 import pandas as pd
 import pytest
+from elasticsearch_dsl import connections
 
 import blueno
 import bluenot
 import generators.luke
 
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
+
+
+def setup_module():
+    connections.create_connection(hosts=['http://104.196.51.205'])
+
+
+def teardown_module():
+    connections.remove_connection('default')
 
 
 def small_model(input_shape=(224, 224, 3),
@@ -48,11 +59,13 @@ def test_start_job_no_err():
                            'processed-standard/labels.csv',
             'index_col': 'Anon ID',
             'label_col': 'Location of occlusions on CTA (Matt verified)',
+            'gcs_url': 'gs://elvos/processed/processed-standard'
         }),
 
         'val_split': 0.2,
         'seed': 0,
         'batch_size': 8,
+        'max_epochs': 1,
 
         'generator': blueno.GeneratorConfig(
             generator_callable=generators.luke.standard_generators),
@@ -68,7 +81,7 @@ def test_start_job_no_err():
     }
     params = blueno.ParamConfig(**params)
     bluenot.start_job(x_train, y_train, x_valid, y_valid, job_name='test_job',
-                      username='test', params=params, epochs=1)
+                      username='test', params=params)
 
 
 def test_start_job_log():
@@ -84,11 +97,13 @@ def test_start_job_log():
                            'processed-standard/labels.csv',
             'index_col': 'Anon ID',
             'label_col': 'Location of occlusions on CTA (Matt verified)',
+            'gcs_url': 'gs://elvos/processed/processed-standard',
         }),
 
         'val_split': 0.2,
         'seed': 0,
         'batch_size': 8,
+        'max_epochs': 1,
 
         'generator': blueno.GeneratorConfig(
             generator_callable=generators.luke.standard_generators),
@@ -104,8 +119,10 @@ def test_start_job_log():
     }
     params = blueno.ParamConfig(**params)
     bluenot.start_job(x_train, y_train, x_valid, y_valid, job_name='test_job',
-                      username='test', params=params, epochs=1,
+                      username='test', params=params,
                       log_dir='/tmp/')
+    for filepath in glob.glob('/tmp/test_job*'):
+        os.remove(filepath)
 
 
 @pytest.mark.skipif(os.uname().nodename != 'gpu1708',
@@ -119,6 +136,7 @@ def test_prepare_data_correct_dims():
                            'processed-standard/labels.csv',
             'index_col': 'Anon ID',
             'label_col': 'occlusion_exists',
+            'gcs_url': 'gs://elvos/processed/processed-standard',
         }),
 
         'val_split': 0.2,
@@ -154,11 +172,13 @@ def test_prepare_data_matching_indices():
                            'processed-standard/labels.csv',
             'index_col': 'Anon ID',
             'label_col': 'occlusion_exists',
+            'gcs_url': 'gs://elvos/processed/processed-standard'
         }),
 
         'val_split': 0.2,
         'seed': 0,
         'batch_size': 8,
+        'max_epochs': 1,
 
         'generator': blueno.GeneratorConfig(
             generator_callable=generators.luke.standard_generators),
@@ -191,12 +211,14 @@ def test_prepare_and_job():
             'labels_path': '/home/lzhu7/elvo-analysis/data/'
                            'processed-standard/labels.csv',
             'index_col': 'Anon ID',
-            'label_col': 'Location of occlusions on CTA (Matt verified)',
+            'label_col': 'occlusion_exists',
+            'gcs_url': 'gs://elvos/processed/processed-standard',
         }),
 
         'val_split': 0.2,
         'seed': 0,
         'batch_size': 8,
+        'max_epochs': 1,
 
         'generator': blueno.GeneratorConfig(
             generator_callable=generators.luke.standard_generators),
@@ -215,4 +237,4 @@ def test_prepare_and_job():
     x_train, x_valid, y_train, y_valid, _, _ = bluenot.prepare_data(params)
     bluenot.start_job(x_train, y_train, x_valid, y_valid,
                       job_name='test_prepare_and_job', username='test',
-                      params=params, epochs=1)
+                      params=params)

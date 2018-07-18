@@ -25,6 +25,7 @@ The script assumes that:
 - you are able to get processed data onto that computer
 - you are familiar with Python and the terminal
 """
+import collections
 import datetime
 import importlib
 import logging
@@ -39,11 +40,15 @@ import keras
 import numpy as np
 import os
 import pandas as pd
-import sklearn
+from elasticsearch_dsl import connections
 from sklearn import model_selection
 
 import blueno
-from blueno import utils
+from blueno import (
+    utils,
+    elasticsearch,
+    io,
+)
 
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
 
@@ -72,14 +77,6 @@ def configure_job_logger(file_path):
         fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
     root_logger.addHandler(handler)
-
-
-def load_arrays(data_dir: str) -> Dict[str, np.ndarray]:
-    data_dict = {}
-    for filename in os.listdir(data_dir):
-        patient_id = filename[:-4]  # remove .npy extension
-        data_dict[patient_id] = np.load(pathlib.Path(data_dir) / filename)
-    return data_dict
 
 
 def to_arrays(data: Dict[str, np.ndarray],
@@ -128,49 +125,39 @@ def prepare_data(params: blueno.ParamConfig) -> Tuple[np.ndarray,
     shuffling and expanding dims.
 
     :param params: a hyperparameter dictionary generated from a ParamGrid
-    :return: x_train, x_valid, y_train, y_valid
+    :return: x_train, x_valid, y_train, y_valid, ids_train, ids_valid
     """
     logging.info(f'using params:\n{params}')
     # Load the arrays and labels
     data_params = params.data
-    array_dict = load_arrays(data_params.data_dir)
-    index_col = data_params.index_col
+    if isinstance(data_params, blueno.LukePipelineConfig):
+        array_dict, labels_df = data_params.pipeline_callable(
+            data_params.data_dir,
+            data_params.labels_path,
+            data_params.height_offset,
+            data_params.mip_thickness,
+            data_params.pixel_value_range,
+        )
+    elif isinstance(data_params, blueno.DataConfig):
+        array_dict = io.load_arrays(data_params.data_dir)
+        index_col = data_params.index_col
+        labels_df = pd.read_csv(data_params.labels_path,
+                                index_col=index_col)
+    else:
+        raise ValueError('params.data must be a subclass of DataConfig')
+
     label_col = data_params.label_col
-    label_series = pd.read_csv(data_params.labels_path,
-                               index_col=index_col)[label_col]
-    # Convert to split numpy arrays
+    label_series = labels_df[label_col]
+
+    # Convert to numpy arrays
     x, y, patient_ids = to_arrays(array_dict, label_series)
 
-    if params.model.loss == keras.losses.binary_crossentropy:
-        # We need y to have 2 dimensions for the rest of the model
+    if params.model.loss == keras.losses.categorical_crossentropy:
+        y = keras.utils.to_categorical(y)
+    elif params.model.loss == keras.losses.binary_crossentropy:
         if y.ndim == 1:
-            y = np.expand_dims(y, axis=1)
-
-    elif params.model.loss == keras.losses.categorical_crossentropy:
-        # TODO(#77): Move/refactor hacky code below to bluenot.py
-        def categorize(label):
-            if any([x in label.lower() for x in ['m1', 'm2', 'mca']]):
-                return 2  # mca
-            if 'nan' in str(label):
-                return 0
-            else:
-                return 1  # other
-
-        try:
-            y = np.array([categorize(label) for label in y])
-            label_encoder = sklearn.preprocessing.LabelEncoder()
-            y = label_encoder.fit_transform(y)
-            logging.debug(
-                f'label encoder classes: {label_encoder.classes_}')
-        except Exception:
-            pass
-
-        y = y.reshape(-1, 1)
-        one_hot = sklearn.preprocessing.OneHotEncoder(sparse=False)
-        y: np.ndarray = one_hot.fit_transform(y)
-
-    else:
-        raise ValueError('Only support for crossentry callables at the moment')
+            y = np.expand_dims(y, axis=-1)
+            y = y.astype(dtype='int')
 
     assert y.ndim == 2
 
@@ -183,6 +170,17 @@ def prepare_data(params: blueno.ParamConfig) -> Tuple[np.ndarray,
             x, y, patient_ids,
             test_size=params.val_split,
             random_state=params.seed)
+    train_counter = collections.Counter([tuple(label) for label in y_train])
+    valid_counter = collections.Counter([tuple(label) for label in y_valid])
+
+    if len(train_counter.keys()) != len(valid_counter.keys()):
+        raise ValueError(f'Training and validation labels differ. This'
+                         f'may mean that a class is missing.\n'
+                         f'train counts: {train_counter}\n'
+                         f'valid counts: {valid_counter}')
+
+    logging.debug(f'y_train counts: {train_counter}')
+    logging.debug(f'y_valid counts: {valid_counter}')
     return x_train, x_valid, y_train, y_valid, ids_train, ids_valid
 
 
@@ -194,13 +192,15 @@ def start_job(x_train: np.ndarray,
               username: str,
               params: blueno.ParamConfig,
               slack_token: str = None,
-              epochs=100,
               log_dir: str = None,
               id_valid: np.ndarray = None) -> None:
     """
     Builds, fits, and evaluates a model.
 
-    If slack_token is not none, uploads an image
+    If slack_token is not none, uploads an image.
+
+    For advanced users it is recommended that you input your own job
+    function and attach desired loggers.
 
     :param x_train:
     :param y_train: the training labels, must be a 2D array
@@ -210,7 +210,6 @@ def start_job(x_train: np.ndarray,
     :param username:
     :param slack_token: the slack token
     :param params: the parameters specified
-    :param epochs:
     :param log_dir:
     :param id_valid: the patient ids ordered to correspond with y_valid
     :return:
@@ -222,8 +221,11 @@ def start_job(x_train: np.ndarray,
     csv_filepath = None
     log_filepath = None
     if log_dir:
-        log_filepath = str(
-            pathlib.Path(log_dir) / f'{job_name}-{created_at}.log')
+        if '/' in job_name:
+            raise ValueError("Job name cannot contain '/' character")
+        log_filepath = str(pathlib.Path(log_dir) /
+                           f'{job_name}-{created_at}.log')
+        assert log_filepath.startswith(log_dir)
         csv_filepath = log_filepath[:-3] + 'csv'
         configure_job_logger(log_filepath)
 
@@ -268,20 +270,22 @@ def start_job(x_train: np.ndarray,
     model_filepath = '/tmp/{}.hdf5'.format(os.environ['CUDA_VISIBLE_DEVICES'])
     logging.debug('model_filepath: {}'.format(model_filepath))
     callbacks = utils.create_callbacks(x_train, y_train, x_valid, y_valid,
+                                       early_stopping=params.early_stopping,
+                                       reduce_lr=params.reduce_lr,
                                        csv_file=csv_filepath,
                                        model_file=model_filepath)
     logging.info('training model')
     history = model.fit_generator(train_gen,
-                                  epochs=epochs,
+                                  epochs=params.max_epochs,
                                   validation_data=valid_gen,
                                   verbose=2,
                                   callbacks=callbacks)
 
     if slack_token:
         logging.info('generating slack report')
-        blueno.plotting.slack_report(x_train, x_valid, y_valid, model, history,
-                                     job_name,
-                                     params, slack_token, id_valid=id_valid)
+        blueno.slack.slack_report(x_train, x_valid, y_valid, model, history,
+                                  job_name,
+                                  params, slack_token, id_valid=id_valid)
     else:
         logging.info('no slack token found, not generating report')
 
@@ -295,8 +299,13 @@ def start_job(x_train: np.ndarray,
 
     # Upload logs to Kibana
     if log_dir:
-        blueno.reporting.insert_or_ignore_filepaths(pathlib.Path(log_filepath),
-                                                    pathlib.Path(csv_filepath))
+        # Creates a connection to our Airflow instance
+        # We don't need to remove since the process ends
+        connections.create_connection(hosts=['http://104.196.51.205'])
+        elasticsearch.insert_or_ignore_filepaths(
+            pathlib.Path(log_filepath),
+            pathlib.Path(csv_filepath),
+        )
 
 
 def upload_model_to_gcs(job_name, created_at, model_filepath):
@@ -360,6 +369,9 @@ def hyperoptimize(hyperparams: Union[blueno.ParamGrid,
     for params in param_list:
         if isinstance(params, dict):
             params = blueno.ParamConfig(**params)
+        # This is where we'd run preprocessing. To run in a reasonable amount
+        # of time, the raw data must be cached in-memory.
+
         x_train, x_valid, y_train, y_valid, id_train, id_valid = prepare_data(
             params)
 
@@ -375,8 +387,13 @@ def hyperoptimize(hyperparams: Union[blueno.ParamGrid,
 
         logging.debug('using job fn {}'.format(job_fn))
 
-        job_name = params.data.data_dir.split('/')[-3]
-        job_name += f'_{y_train.shape[1]}-classes'
+        # Uses the parent of the data_dir to name the job,
+        # which may not work for all data formats.
+        if params.job_name:
+            job_name = params.job_name
+        else:
+            job_name = str(pathlib.Path(params.data.data_dir).parent.name)
+            job_name += f'_{y_train.shape[1]}-classes'
 
         process = multiprocessing.Process(target=job_fn,
                                           args=(x_train, y_train,
@@ -444,7 +461,7 @@ if __name__ == '__main__':
     elif isinstance(user_config.PARAM_GRID, dict):
         logging.warning('creating param grid from dictionary, it is'
                         'recommended that you define your config'
-                        'with ParamGrid')
+                        'with ParamConfig')
         param_grid = blueno.ParamGrid(**user_config.PARAM_GRID)
     else:
         raise ValueError('user_config.PARAM_GRID must be a ParamGrid,'

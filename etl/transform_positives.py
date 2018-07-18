@@ -4,12 +4,14 @@ transforms them via vertical flips and rotations, and adds them to the GCS
 storage folder "positives + augmentation."
 """
 
+import itertools
 import logging
-# from matplotlib import pyplot as plt
-from lib import cloud_management as cloud
+
 import numpy as np
 import pandas as pd
-import itertools
+
+# from matplotlib import pyplot as plt
+from lib import cloud_management as cloud
 
 
 def configure_logger():
@@ -40,7 +42,6 @@ def transform_one(arr, file_id):
                 flipped = rotated[:, :, ::-1]
                 # save to the numpy generator source directory
             file_id_new = file_id + "_" + str(transform_number)
-            # logging.info(file_id_new)
             cloud.save_chunks_to_cloud(flipped, 'normal',
                                        'positive', file_id_new)
 

@@ -1,6 +1,6 @@
-import os
 from datetime import datetime
 
+import os
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.slack_operator import SlackAPIPostOperator
