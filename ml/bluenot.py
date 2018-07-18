@@ -170,8 +170,10 @@ def prepare_data(params: blueno.ParamConfig) -> Tuple[np.ndarray,
             x, y, patient_ids,
             test_size=params.val_split,
             random_state=params.seed)
-    logging.debug(f'y_train counts: {collections.Counter(y_train)}')
-    logging.debug(f'y_valid counts: {collections.Counter(y_valid)}')
+    train_counter = collections.Counter([tuple(label) for label in y_train])
+    valid_counter = collections.Counter([tuple(label) for label in y_valid])
+    logging.debug(f'y_train counts: {train_counter}')
+    logging.debug(f'y_valid counts: {valid_counter}')
     return x_train, x_valid, y_train, y_valid, ids_train, ids_valid
 
 

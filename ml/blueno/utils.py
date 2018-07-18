@@ -1,5 +1,6 @@
 """Custom metrics, callbacks, and plots.
 """
+import logging
 
 import keras
 import numpy as np
@@ -39,7 +40,7 @@ class AucCallback(keras.callbacks.Callback):
     def on_epoch_end(self, epoch: int, logs=None):
         y_pred = self.model.predict(self.x_valid_standardized)
         score = sklearn.metrics.roc_auc_score(self.y_valid, y_pred)
-        print(f'\nval_auc: {score}')
+        logging.info(f'val_auc: {score}')
 
 
 class CustomReduceLR(keras.callbacks.ReduceLROnPlateau):

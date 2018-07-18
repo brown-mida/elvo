@@ -71,15 +71,16 @@ class TrainingJob(elasticsearch_dsl.Document):
                        'width_shift_range',
                        'height_shift_range',
                        'shear_range',
-                       # TODO(#91): Cannot parse zoom_range
-                       #  because this takes in a tuple
-                       # 'zoom_range',
+                       'zoom_range',
                        'horizontal_flip',
                        'vertical_flip',
                        'dropout_rate1',
                        'dropout_rate2',
                        'data_dir',
-                       'gcs_url']
+                       'gcs_url',
+                       'mip_thickness',
+                       'height_offset',
+                       'pixel_value_range']
 
     class Index:
         name = TRAINING_JOBS
@@ -236,21 +237,19 @@ def _parse_filename(filename: str) -> typing.Tuple[str, str]:
 
 def _extract_params(log_path: pathlib.Path) -> typing.Optional[str]:
     with open(log_path) as f:
-        first_line = f.readline()
-        if first_line.endswith('using params:\n'):
-            second_line = f.readline()
-            return second_line
+        for line in f:
+            if line.endswith('using params:\n'):
+                second_line = f.readline()
+                return second_line
         return None
 
 
 def _extract_author(log_path: pathlib.Path) -> typing.Optional[str]:
     with open(log_path) as f:
-        f.readline()
-        f.readline()
-        third_line = f.readline()
-        if 'INFO - author:' in third_line:
-            author = third_line.rstrip('\n').split(':')[-1].strip()
-            return author
+        for line in f:
+            if 'INFO - author:' in line:
+                author = line.rstrip('\n').split(':')[-1].strip()
+                return author
     return None
 
 
@@ -281,6 +280,13 @@ def _extract_auc(log_path: pathlib.Path) -> typing.Optional[float]:
     return None
 
 
+def _extract_best_auc(log_path: pathlib.Path) -> typing.Optional[float]:
+    with open(log_path) as f:
+        for line in f:
+            if 'INFO - val_auc:' in line:
+                return float(line.split(' ')[-1].rstrip('\n'))
+
+
 def _parse_params_str(params_str: str) -> typing.Dict[str, typing.Any]:
     """Parses the param string outputs that most logs contain.
 
@@ -288,14 +294,20 @@ def _parse_params_str(params_str: str) -> typing.Dict[str, typing.Any]:
     """
     param_dict = {}
     for param in TrainingJob.params_to_parse:
-        patterns = [r'{}=(.*?)[,)]'.format(param),
-                    r"'{}'".format(param) + r": (.*?)[,}]"]
-        for pattern in patterns:
+        if param in ('zoom_range', 'pixel_value_range'):
+            pattern = r'{}=([^,]+, [^,]+)[,)]'.format(param)
             match = re.search(pattern, params_str)
             if match:
-                value_str = match.group(1)
-                value = ast.literal_eval(value_str)
-                param_dict[param] = value
+                param_dict[param] = match.group(1)
+        else:
+            patterns = [r'{}=(.*?)[,)]'.format(param),
+                        r"'{}'".format(param) + r": (.*?)[,}]"]
+            for pattern in patterns:
+                match = re.search(pattern, params_str)
+                if match:
+                    value_str = match.group(1)
+                    value = ast.literal_eval(value_str)
+                    param_dict[param] = value
     print('parsed params:', param_dict)
     return param_dict
 

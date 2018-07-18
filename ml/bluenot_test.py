@@ -1,3 +1,5 @@
+import glob
+
 import keras
 import numpy as np
 import os
@@ -119,6 +121,8 @@ def test_start_job_log():
     bluenot.start_job(x_train, y_train, x_valid, y_valid, job_name='test_job',
                       username='test', params=params,
                       log_dir='/tmp/')
+    for filepath in glob.glob('/tmp/test_job*'):
+        os.remove(filepath)
 
 
 @pytest.mark.skipif(os.uname().nodename != 'gpu1708',
