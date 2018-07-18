@@ -5,10 +5,10 @@ from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.slack_operator import SlackAPIPostOperator
 
-from mip.axial_to_coronal_and_sagittal import axial_to_coronal_and_sagittal
-from mip.mip import normal_mip
-from mip.multichannel_mip import multichannel_mip
-from mip.overlap_mip import overlap_mip
+from axial_to_coronal_and_sagittal import axial_to_coronal_and_sagittal
+from mip import normal_mip
+from multichannel_mip import multichannel_mip
+from overlap_mip import overlap_mip
 
 default_args = {
     'owner': 'hal',
