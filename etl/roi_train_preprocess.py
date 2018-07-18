@@ -6,6 +6,19 @@ from lib import cloud_management
 import pickle
 import logging
 
+
+def configure_logger():
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.INFO)
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter(
+        fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    root_logger.addHandler(handler)
+
+
+configure_logger()
+
 # Access Google Cloud Storage
 gcs_client = storage.Client.from_service_account_json(
     '/home/harold_triedman/elvo-analysis/credentials/client_secret.json'
