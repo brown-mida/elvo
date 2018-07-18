@@ -2,8 +2,17 @@ import pathlib
 
 import os
 import pytest
+from elasticsearch_dsl import connections
 
 from blueno import elasticsearch
+
+
+def setup_module():
+    connections.create_connection(hosts=['http://104.196.51.205'])
+
+
+def teardown_module():
+    connections.remove_connection('default')
 
 
 def test_parse_filename():
@@ -183,3 +192,12 @@ def test_parse_params_str_dict():
 @pytest.mark.skip
 def test_extract_best_auc():
     assert elasticsearch._extract_best_auc() == 0
+
+
+def test_insert_or_ignore():
+    metrics_file = pathlib.Path(
+        '/gpfs/main/home/lzhu7/elvo-analysis/logs/processed-only-m1_2-classes-2018-07-18T15:47:54.618535.csv')
+    log_file = pathlib.Path(
+        '/gpfs/main/home/lzhu7/elvo-analysis/logs/processed-only-m1_2-classes-2018-07-18T15:47:54.618535.log')
+    elasticsearch.insert_or_ignore_filepaths(log_file,
+                                             metrics_file)

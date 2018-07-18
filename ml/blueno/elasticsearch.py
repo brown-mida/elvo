@@ -53,7 +53,7 @@ class TrainingJob(elasticsearch_dsl.Document):
     width_shift_range = elasticsearch_dsl.Float()
     height_shift_range: float = elasticsearch_dsl.Float()
     shear_range = elasticsearch_dsl.Float()
-    zoom_range = elasticsearch_dsl.Float()
+    zoom_range = elasticsearch_dsl.Keyword()
     horizontal_flip = elasticsearch_dsl.Boolean()
     vertical_flip = elasticsearch_dsl.Boolean()
 
@@ -62,6 +62,10 @@ class TrainingJob(elasticsearch_dsl.Document):
 
     data_dir = elasticsearch_dsl.Keyword()
     gcs_url = elasticsearch_dsl.Keyword()
+
+    mip_thickness = elasticsearch_dsl.Integer()
+    height_offset = elasticsearch_dsl.Integer()
+    pixel_value_range = elasticsearch_dsl.Keyword()
 
     # We need to keep a list of params for the parser because
     # we can't use traditional approaches to get the class attrs
@@ -124,22 +128,23 @@ def insert_or_ignore_filepaths(log_file: pathlib.Path,
 
     try:
         metrics = _extract_metrics(csv_file)
-        training_job = construct_job(job_name,
-                                     created_at,
-                                     params,
-                                     raw_log,
-                                     metrics,
-                                     str(csv_file.name),
-                                     author=author,
-                                     ended_at=ended_at,
-                                     model_url=model_url,
-                                     final_val_auc=final_val_auc,
-                                     best_val_auc=best_val_auc,
-                                     params_dict=params_dict)
-        insert_or_ignore(training_job, alias=alias)
     except (ValueError, EmptyDataError):
         print('metrics file {} is empty'.format(csv_file))
         return
+
+    training_job = construct_job(job_name,
+                                 created_at,
+                                 params,
+                                 raw_log,
+                                 metrics,
+                                 str(csv_file.name),
+                                 author=author,
+                                 ended_at=ended_at,
+                                 model_url=model_url,
+                                 final_val_auc=final_val_auc,
+                                 best_val_auc=best_val_auc,
+                                 params_dict=params_dict)
+    insert_or_ignore(training_job, alias=alias)
 
 
 def insert_or_ignore(training_job: TrainingJob, alias='default'):
@@ -291,7 +296,13 @@ def _parse_params_str(params_str: str) -> typing.Dict[str, typing.Any]:
     param_dict = {}
     for param in TrainingJob.params_to_parse:
         if param in ('zoom_range', 'pixel_value_range'):
-            pattern = r'{}=([^,]+, [^,]+)[,)]'.format(param)
+            float_pattern = '[0-9]*\.?[0-9]+'
+            pattern = r'{}=(\({}, {}\))[,)]'.format(
+                param,
+                float_pattern,
+                float_pattern,
+            )
+            print(params_str)
             match = re.search(pattern, params_str)
             if match:
                 param_dict[param] = match.group(1)
