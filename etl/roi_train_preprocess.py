@@ -3,7 +3,7 @@ import csv
 import numpy as np
 import random
 from google.cloud import storage
-from etl.lib import cloud_management
+from lib import cloud_management
 import pickle
 
 # Delete all content in tmp/npy/
