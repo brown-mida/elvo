@@ -36,6 +36,8 @@ print("getting 14500 random negative labels")
 while negative_counter < 14500:
     id_, label = random.choice(list(prelim_label_data.items()))
     if label == 0:
+        if negative_counter % 500 == 0:
+            print(f'gotten {negative_counter} labels so far')
         negative_label_data[id_] = label
         del prelim_label_data[id_]
         negative_counter += 1
