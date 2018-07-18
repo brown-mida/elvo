@@ -6,11 +6,6 @@ from google.cloud import storage
 from lib import cloud_management
 import pickle
 
-# Delete all content in tmp/npy/
-filelist = [f for f in os.listdir('tmp/npy')]
-for f in filelist:
-    os.remove(os.path.join('tmp/npy', f))
-
 # Access Google Cloud Storage
 gcs_client = storage.Client.from_service_account_json(
     '/home/harold_triedman/elvo-analysis/credentials/client_secret.json'
