@@ -42,6 +42,7 @@ class TrainingJob(elasticsearch_dsl.Document):
     final_val_sensitivity = elasticsearch_dsl.Float()
     best_val_sensitivity = elasticsearch_dsl.Float()
     final_val_auc = elasticsearch_dsl.Float()
+    best_val_auc = elasticsearch_dsl.Float()
 
     # Params
     batch_size = elasticsearch_dsl.Integer()
@@ -112,6 +113,7 @@ def insert_or_ignore_filepaths(log_file: pathlib.Path,
     ended_at = _extract_ended_at(log_file)
     model_url = _extract_model_url(log_file)
     final_val_auc = _extract_auc(log_file)
+    best_val_auc = _extract_best_auc(log_file)
 
     if author is None and gpu1708:
         author = _fill_author_gpu1708(created_at, job_name)
@@ -141,6 +143,7 @@ def insert_or_ignore_filepaths(log_file: pathlib.Path,
                                      ended_at=ended_at,
                                      model_url=model_url,
                                      final_val_auc=final_val_auc,
+                                     best_val_auc=best_val_auc,
                                      params_dict=params_dict)
         insert_or_ignore(training_job, alias=alias)
     except (ValueError, EmptyDataError):
@@ -178,6 +181,7 @@ def construct_job(job_name,
                   ended_at=None,
                   model_url=None,
                   final_val_auc=None,
+                  best_val_auc=None,
                   params_dict=None) -> TrainingJob:
     """
     Constructs a training job object from the given parameters.
@@ -203,7 +207,8 @@ def construct_job(job_name,
                                params=params,
                                raw_log=raw_log,
                                model_url=model_url,
-                               final_val_auc=final_val_auc)
+                               final_val_auc=final_val_auc,
+                               best_val_auc=best_val_auc)
 
     if params_dict:
         for key, val in params_dict.items():
