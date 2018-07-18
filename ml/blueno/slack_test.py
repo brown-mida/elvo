@@ -4,7 +4,7 @@ import os
 import pytest
 import sklearn.preprocessing
 
-import blueno.plotting
+import blueno.slack
 
 try:
     from config_luke import SLACK_TOKEN
@@ -18,9 +18,10 @@ except ImportError:
 def test_upload_to_slack():
     with open('test_upload_to_slack.png', 'w') as f:
         f.write('hello!')
-    r = blueno.plotting.upload_to_slack('test_upload_to_slack.png',
-                                        'testing',
-                                        SLACK_TOKEN)
+    r = blueno.slack.upload_to_slack('test_upload_to_slack.png',
+                                     'testing',
+                                     SLACK_TOKEN)
+    os.remove('test_upload_to_slack.png')
     assert r.status_code == 200
 
 
@@ -33,10 +34,10 @@ def test_full_multiclass_report_binary():
     X = np.random.rand(500, 224, 224, 3)
     y = np.random.randint(0, 2, size=(500, 1))
 
-    print(blueno.plotting.full_multiclass_report(model,
-                                                 X,
-                                                 y,
-                                                 classes=[0, 1]))
+    print(blueno.slack.full_multiclass_report(model,
+                                              X,
+                                              y,
+                                              classes=[0, 1]))
 
 
 def test_full_multiclass_report_multiclass():
@@ -51,10 +52,10 @@ def test_full_multiclass_report_multiclass():
 
     assert y.shape == (500, 3)
 
-    print(blueno.plotting.full_multiclass_report(model,
-                                                 X,
-                                                 y,
-                                                 classes=[0, 1, 2]))
+    print(blueno.slack.full_multiclass_report(model,
+                                              X,
+                                              y,
+                                              classes=[0, 1, 2]))
 
 
 def test_slack_upload_cm():
@@ -69,11 +70,11 @@ def test_slack_upload_cm():
 
     assert y.shape == (500, 3)
 
-    report = blueno.plotting.full_multiclass_report(model,
-                                                    X,
-                                                    y,
-                                                    classes=[0, 1, 2])
-    blueno.plotting.upload_to_slack('/tmp/cm.png', report, SLACK_TOKEN)
+    report = blueno.slack.full_multiclass_report(model,
+                                                 X,
+                                                 y,
+                                                 classes=[0, 1, 2])
+    blueno.slack.upload_to_slack('/tmp/cm.png', report, SLACK_TOKEN)
 
 
 @pytest.mark.skipif(os.uname().nodename != 'gpu1708',
@@ -94,21 +95,21 @@ def test_save_misclassification_plots():
     y_pred_binary = y_pred > 0
 
     print('starting save')
-    blueno.plotting.save_misclassification_plots(X,
-                                                 y_valid_binary,
-                                                 y_pred_binary)
-    blueno.plotting.upload_to_slack('/tmp/false_positives.png',
-                                    'false positives',
-                                    SLACK_TOKEN)
-    blueno.plotting.upload_to_slack('/tmp/false_negatives.png',
-                                    'false negatives',
-                                    SLACK_TOKEN)
-    blueno.plotting.upload_to_slack('/tmp/true_positives.png',
-                                    'true positives',
-                                    SLACK_TOKEN)
-    blueno.plotting.upload_to_slack('/tmp/true_negatives.png',
-                                    'true negatives',
-                                    SLACK_TOKEN)
+    blueno.slack.save_misclassification_plots(X,
+                                              y_valid_binary,
+                                              y_pred_binary)
+    blueno.slack.upload_to_slack('/tmp/false_positives.png',
+                                 'false positives',
+                                 SLACK_TOKEN)
+    blueno.slack.upload_to_slack('/tmp/false_negatives.png',
+                                 'false negatives',
+                                 SLACK_TOKEN)
+    blueno.slack.upload_to_slack('/tmp/true_positives.png',
+                                 'true positives',
+                                 SLACK_TOKEN)
+    blueno.slack.upload_to_slack('/tmp/true_negatives.png',
+                                 'true negatives',
+                                 SLACK_TOKEN)
 
 
 @pytest.mark.skipif(os.uname().nodename != 'gpu1708',
@@ -130,19 +131,19 @@ def test_save_misclassification_plots_with_ids():
     y_pred_binary = y_pred > 0
 
     print('starting save')
-    blueno.plotting.save_misclassification_plots(X,
-                                                 y_valid_binary,
-                                                 y_pred_binary,
-                                                 ids)
-    blueno.plotting.upload_to_slack('/tmp/false_positives.png',
-                                    'false positives',
-                                    SLACK_TOKEN)
-    blueno.plotting.upload_to_slack('/tmp/false_negatives.png',
-                                    'false negatives',
-                                    SLACK_TOKEN)
-    blueno.plotting.upload_to_slack('/tmp/true_positives.png',
-                                    'true positives',
-                                    SLACK_TOKEN)
-    blueno.plotting.upload_to_slack('/tmp/true_negatives.png',
-                                    'true negatives',
-                                    SLACK_TOKEN)
+    blueno.slack.save_misclassification_plots(X,
+                                              y_valid_binary,
+                                              y_pred_binary,
+                                              ids)
+    blueno.slack.upload_to_slack('/tmp/false_positives.png',
+                                 'false positives',
+                                 SLACK_TOKEN)
+    blueno.slack.upload_to_slack('/tmp/false_negatives.png',
+                                 'false negatives',
+                                 SLACK_TOKEN)
+    blueno.slack.upload_to_slack('/tmp/true_positives.png',
+                                 'true positives',
+                                 SLACK_TOKEN)
+    blueno.slack.upload_to_slack('/tmp/true_negatives.png',
+                                 'true negatives',
+                                 SLACK_TOKEN)
