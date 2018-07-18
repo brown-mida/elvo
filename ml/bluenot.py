@@ -172,6 +172,13 @@ def prepare_data(params: blueno.ParamConfig) -> Tuple[np.ndarray,
             random_state=params.seed)
     train_counter = collections.Counter([tuple(label) for label in y_train])
     valid_counter = collections.Counter([tuple(label) for label in y_valid])
+
+    if len(train_counter.keys()) != len(valid_counter.keys()):
+        raise ValueError(f'Training and validation labels differ. This'
+                         f'may mean that a class is missing.\n'
+                         f'train counts: {train_counter}\n'
+                         f'valid counts: {valid_counter}')
+
     logging.debug(f'y_train counts: {train_counter}')
     logging.debug(f'y_valid counts: {valid_counter}')
     return x_train, x_valid, y_train, y_valid, ids_train, ids_valid
