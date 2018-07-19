@@ -225,7 +225,7 @@ def __train_model(params, x_train, y_train, x_valid, y_valid,
     return model_original, history
 
 
-def evaluate_model(x_test, y_test, model,
+def evaluate_model(x_test, y_test, model, params,
                    normalize=True, x_train=None,
                    num_gpus=0):
     """
@@ -234,6 +234,7 @@ def evaluate_model(x_test, y_test, model,
     :params x_test: The test data
     :params y_test: The test labels
     :params model: The model to evaluate
+    :params params: The ParamConfig to use
     :params normalize: Whether to normalize the test data based on
         training data
     :params x_train: The training data (used to normalize test data)
@@ -255,6 +256,16 @@ def evaluate_model(x_test, y_test, model,
 
     if num_gpus > 0:
         model = multi_gpu_model(model)
+
+    metrics = ['acc',
+               utils.sensitivity,
+               utils.specificity,
+               utils.true_positives,
+               utils.false_negatives]
+    model.compile(optimizer=params.model.optimizer,
+                  loss=params.model.loss,
+                  metrics=metrics)
+
     results = model.evaluate(x=x_test, y=y_test, batch_size=1,
                              verbose=1)
     return results
@@ -350,7 +361,7 @@ def iterate_eval(num_iterations, params, num_gpu,
         model, history = __train_model(params, x_train, y_train,
                                        x_valid, y_valid,
                                        num_gpu=num_gpu)
-        result = evaluate_model(x_test, y_test, model,
+        result = evaluate_model(x_test, y_test, model, params,
                                 normalize=True, x_train=x_train)
         result_list.append(result)
         logging.info("-----Results-----")
