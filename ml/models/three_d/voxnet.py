@@ -1,20 +1,20 @@
 # !/usr/bin/python3
 # -*- coding: utf-8 -*-
 
+import datetime
 # internal modules
 import logging
-import datetime
-import os
 import sys
 
+import os
+from keras.callbacks import ModelCheckpoint
+from keras.layers import Convolution3D, MaxPooling3D
+from keras.layers.advanced_activations import LeakyReLU
+from keras.layers.core import Activation, Dense, Dropout, Flatten
 # third party modules
 from keras.models import Sequential
-from keras.layers import Convolution3D, MaxPooling3D
-from keras.layers.core import Activation, Dense, Dropout, Flatten
-from keras.layers.advanced_activations import LeakyReLU
-from keras.regularizers import l2
-from keras.callbacks import ModelCheckpoint
 from keras.optimizers import SGD
+from keras.regularizers import l2
 
 # set logging level DEBUG and output to stdout
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
@@ -25,6 +25,7 @@ class VoxNet(object):
     """
     Reimplementation of the voxnet by dimatura
     """
+
     def __init__(self, nb_classes, dataset_name):
         """
         Args:
@@ -175,7 +176,7 @@ class VoxNet(object):
                                 nb_epoch=nb_epoch,
                                 verbose=verbosity,
                                 callbacks=[  # self._lr_schedule,
-                                        self._mdl_checkpoint, ],
+                                    self._mdl_checkpoint, ],
                                 validation_data=valid_generator,
                                 nb_val_samples=nb_valid_samples,
                                 )
