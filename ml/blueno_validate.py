@@ -280,7 +280,13 @@ def main(args=None):
                                            num_gpu=num_gpu)
             result = evaluate_model(x_test, y_test, model,
                                     normalize=True, x_train=x_train)
-            print(result)
+            logging.info("----------------Results-------------------")
+            logging.info('Loss: {}'.format(result[0]))
+            logging.info('Acc: {}'.format(result[1]))
+            logging.info('Sensitivity: {}'.format(result[2]))
+            logging.info('Specificity: {}'.format(result[3]))
+            logging.info('True Positives: {}'.format(result[4]))
+            logging.info('False Negatives: {}'.format(result[5]))
     else:
         # Manual evaluation of a list of ParamConfig
         logging.info('Using config {}'.format(args.param_list_config))
@@ -298,7 +304,14 @@ def main(args=None):
                                            num_gpu=num_gpu)
             result = evaluate_model(x_test, y_test, model,
                                     normalize=True, x_train=x_train)
-            print(result)
+            logging.info("----------------Results-------------------")
+            logging.info('Loss: {}'.format(result[0]))
+            logging.info('Acc: {}'.format(result[1]))
+            logging.info('Sensitivity: {}'.format(result[2]))
+            logging.info('Specificity: {}'.format(result[3]))
+            logging.info('True Positives: {}'.format(result[4]))
+            logging.info('False Negatives: {}'.format(result[5]))
+
 
 if __name__ == '__main__':
     main()
