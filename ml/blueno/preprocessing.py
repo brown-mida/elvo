@@ -1,12 +1,12 @@
 import logging
-from blueno import io
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Union
 
 import keras
 import numpy as np
 import pandas as pd
 from sklearn import model_selection
 
+from blueno import io
 from blueno.types import ParamConfig, LukePipelineConfig, DataConfig
 
 
@@ -79,14 +79,26 @@ def to_arrays(data: Dict[str, np.ndarray],
     return np.stack(X_list), np.stack(y_list), np.array(remaining_ids)
 
 
-def prepare_data(params: ParamConfig) -> Tuple[np.ndarray,
-                                               np.ndarray,
-                                               np.ndarray,
-                                               np.ndarray,
-                                               np.ndarray,
-                                               np.ndarray,
-                                               np.ndarray,
-                                               np.ndarray]:
+Tuple6 = Tuple[np.ndarray,
+               np.ndarray,
+               np.ndarray,
+               np.ndarray,
+               np.ndarray,
+               np.ndarray]
+
+Tuple9 = Tuple[np.ndarray, np.ndarray,
+               np.ndarray,
+               np.ndarray,
+               np.ndarray,
+               np.ndarray,
+               np.ndarray,
+               np.ndarray,
+               np.ndarray]
+
+
+# TODO(luke): Refactor this function
+def prepare_data(params: ParamConfig,
+                 train_test_val=True) -> Union[Tuple6, Tuple9]:
     """
     Prepares the data referenced in params for ML. This includes
     shuffling and expanding dims.
@@ -137,10 +149,15 @@ def prepare_data(params: ParamConfig) -> Tuple[np.ndarray,
             test_size=params.val_split,
             random_state=params.seed)
 
-    x_train, x_valid, y_train, y_valid, ids_train, ids_valid = \
-        model_selection.train_test_split(
-            x_train, y_train, ids_train,
-            test_size=params.val_split,
-            random_state=params.seed)
-    return (x_train, x_valid, x_test, y_train, y_valid, y_test,
-            ids_train, ids_valid, ids_test)
+    if not train_test_val:
+        return (x_train, x_test, y_train, y_test,
+                ids_train, ids_test)
+
+    if train_test_val:
+        x_train, x_valid, y_train, y_valid, ids_train, ids_valid = \
+            model_selection.train_test_split(
+                x_train, y_train, ids_train,
+                test_size=params.val_split,
+                random_state=params.seed)
+        return (x_train, x_valid, x_test, y_train, y_valid, y_test,
+                ids_train, ids_valid, ids_test)

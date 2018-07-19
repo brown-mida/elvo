@@ -4,7 +4,7 @@ Connection logic with Google Cloud Storage.
 
 from google.cloud import storage
 
-from blueno.reporting import JOB_INDEX
+from blueno.elasticsearch import JOB_INDEX
 
 
 def fetch_model(service_account_path=None, save_path=None, **kwargs):

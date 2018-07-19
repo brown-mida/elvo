@@ -10,6 +10,7 @@ __all__ = [
     'elasticsearch',
     'slack',
     'transforms',
+    'preprocessing',
     'utils',
     'ParamGrid',
     'ParamConfig',
