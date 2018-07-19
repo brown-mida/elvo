@@ -20,7 +20,8 @@ def slack_report(x_train: np.ndarray,
                  name: str,
                  params: typing.Any,
                  token: str,
-                 id_valid: np.ndarray = None):
+                 id_valid: np.ndarray = None,
+                 chunk: bool = False):
     """
     Uploads a loss graph, accuacy, and confusion matrix plots in addition
     to useful data about the model to Slack.
@@ -42,13 +43,22 @@ def slack_report(x_train: np.ndarray,
     upload_to_slack('/tmp/acc.png', f'{name}\n\nparams:\n{str(params)}',
                     token)
 
-    x_mean = np.array([x_train[:, :, :, 0].mean(),
-                       x_train[:, :, :, 1].mean(),
-                       x_train[:, :, :, 2].mean()])
-    x_std = np.array([x_train[:, :, :, 0].std(),
-                      x_train[:, :, :, 1].std(),
-                      x_train[:, :, :, 2].std()])
-    x_valid_standardized = (x_valid - x_mean) / x_std
+    if chunk:
+        x_mean = np.array([x_train[:, :, :, :, 0].mean(),
+                           x_train[:, :, :, :, 1].mean(),
+                           x_train[:, :, :, :, 2].mean()])
+        x_std = np.array([x_train[:, :, :, :, 0].std(),
+                          x_train[:, :, :, :, 1].std(),
+                          x_train[:, :, :, :, 2].std()])
+        x_valid_standardized = (x_valid - x_mean) / x_std
+    else:
+        x_mean = np.array([x_train[:, :, :, 0].mean(),
+                           x_train[:, :, :, 1].mean(),
+                           x_train[:, :, :, 2].mean()])
+        x_std = np.array([x_train[:, :, :, 0].std(),
+                         x_train[:, :, :, 1].std(),
+                         x_train[:, :, :, 2].std()])
+        x_valid_standardized = (x_valid - x_mean) / x_std
     print(x_valid_standardized.shape)
 
     report = full_multiclass_report(model,
