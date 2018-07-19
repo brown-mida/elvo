@@ -63,7 +63,8 @@ def slack_report(x_train: np.ndarray,
                                     x_valid_standardized,
                                     y_valid,
                                     [0, 1],
-                                    id_valid=id_valid)
+                                    id_valid=id_valid,
+                                    chunk=chunk)
     upload_to_slack('/tmp/cm.png', report, token)
     upload_to_slack('/tmp/false_positives.png', 'false positives', token)
     upload_to_slack('/tmp/false_negatives.png', 'false negatives', token)
@@ -163,7 +164,8 @@ def full_multiclass_report(model: keras.models.Model,
                            x,
                            y_true,
                            classes,
-                           id_valid: np.ndarray = None):
+                           id_valid: np.ndarray = None,
+                           chunk=False):
     """
     Builds a report containing the following:
         - accuracy
@@ -180,6 +182,7 @@ def full_multiclass_report(model: keras.models.Model,
     :param y_true:
     :param classes:
     :param id_valid
+    :param chunk
     :return:
     """
     y_proba = model.predict(x, batch_size=8)
@@ -221,7 +224,8 @@ def full_multiclass_report(model: keras.models.Model,
     save_misclassification_plots(x,
                                  y_true_binary,
                                  y_pred_binary,
-                                 id_valid=id_valid)
+                                 id_valid=id_valid,
+                                 chunk=False)
     return comment
 
 
@@ -248,7 +252,8 @@ def upload_to_slack(filename, comment, token):
 def save_misclassification_plots(x_valid,
                                  y_true,
                                  y_pred,
-                                 id_valid: np.ndarray = None):
+                                 id_valid: np.ndarray = None,
+                                 chunk=False):
     """Saves the 4 true/fals positive/negative plots.
 
     The y inputs must be binary and 1 dimensional.
@@ -278,7 +283,8 @@ def save_misclassification_plots(x_valid,
             plot_misclassification(x_filtered,
                                    y_true[mask],
                                    y_pred[mask],
-                                   ids=ids_filtered)
+                                   ids=ids_filtered,
+                                   chunk=chunk)
             plt.savefig(plot_name_dict[(i, j)])
 
 
