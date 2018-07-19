@@ -288,7 +288,8 @@ def plot_misclassification(x,
                            num_cols=5,
                            limit=20,
                            offset=0,
-                           ids: np.ndarray = None):
+                           ids: np.ndarray = None,
+                           chunk=False):
     """
     Plots the figures with labels and predictions.
 
@@ -298,6 +299,7 @@ def plot_misclassification(x,
     :param num_cols:
     :param limit:
     :param offset:
+    :param ids:
     :return:
     """
     num_rows = (min(len(x), limit) + num_cols - 1) // num_cols
@@ -312,7 +314,11 @@ def plot_misclassification(x,
         if ids is not None:
             ax.set_title(f'patient: {ids[i][:4]}...')
         ax.set_xlabel(f'y_true: {y_true[i]} y_pred: {y_pred[i]}')
-        plt.imshow(arr)  # Multiply by 255 here for
+        if chunk:
+            mip = np.max(arr, axis=0)
+            plt.imshow(mip)
+        else:
+            plt.imshow(arr)  # Multiply by 255 here for
     fig.tight_layout()
     plt.plot()
 
