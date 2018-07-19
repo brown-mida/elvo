@@ -10,7 +10,7 @@ LEARN_RATE = 1e-5
 
 sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
 
-with open('chunk_data.pkl', 'wb') as infile:
+with open('chunk_data.pkl', 'rb') as infile:
     full_data = pickle.load(infile)
 
 full_x_train = full_data[0]
