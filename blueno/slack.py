@@ -230,7 +230,10 @@ def full_multiclass_report(model: keras.models.Model,
     return comment
 
 
-def upload_to_slack(filename, comment, token):
+def upload_to_slack(filename,
+                    comment,
+                    token,
+                    channels=('#model-results')):
     my_file = {
         'file': (filename, open(filename, 'rb'), 'png')
     }
@@ -241,7 +244,7 @@ def upload_to_slack(filename, comment, token):
         "filename": "history.png",
         "token": token,
         'initial_comment': comment,
-        "channels": ['#model-results'],
+        "channels": channels,
     }
 
     r = requests.post("https://slack.com/api/files.upload",
