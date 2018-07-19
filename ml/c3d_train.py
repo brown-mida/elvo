@@ -56,16 +56,20 @@ for i in range(1, 11):
                         validation_data=(x_val, y_val),
                         verbose=1)
 
-    slack_report(x_train=x_train,
-                 x_valid=x_val,
-                 y_valid=y_val,
-                 model=model,
-                 history=history,
-                 name=f'Basic C3D (training on {frac * 100}% of data)',
-                 params=f'The most basic, non-optimized version of C3D, '
-                        f'training on {frac * 100}% of data',
-                 token='xoxp-314216549302'
-                       '-332571517623'
-                       '-402064251175'
-                       '-cde67240d96f69a3534e5c919ff097e7',
-                 chunk=True)
+    predictions = model.predict(x_val, batch_size=8)
+    print(predictions)
+    print(predictions.shape)
+
+    # slack_report(x_train=x_train,
+    #              x_valid=x_val,
+    #              y_valid=y_val,
+    #              model=model,
+    #              history=history,
+    #              name=f'Basic C3D (training on {frac * 100}% of data)',
+    #              params=f'The most basic, non-optimized version of C3D, '
+    #                     f'training on {frac * 100}% of data',
+    #              token='xoxp-314216549302'
+    #                    '-332571517623'
+    #                    '-402064251175'
+    #                    '-cde67240d96f69a3534e5c919ff097e7',
+    #              chunk=True)
