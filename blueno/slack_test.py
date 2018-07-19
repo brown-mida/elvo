@@ -6,6 +6,8 @@ import sklearn.preprocessing
 
 import blueno.slack
 
+os.environ['CUDA_VISIBLE_DEVICES'] = ''
+
 try:
     from config_luke import SLACK_TOKEN
 except ImportError:
