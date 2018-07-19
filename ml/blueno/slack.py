@@ -212,6 +212,18 @@ def full_multiclass_report(model: keras.models.Model,
     return comment
 
 
+def write_to_slack(comment, token):
+    payload = {
+        "token": token,
+        'text': comment,
+        "channels": ['#model-results'],
+    }
+
+    r = requests.post("https://slack.com/api/chat.postMessage",
+                      params=payload)
+    return r
+
+
 def upload_to_slack(filename, comment, token):
     my_file = {
         'file': (filename, open(filename, 'rb'), 'png')
