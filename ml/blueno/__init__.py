@@ -8,8 +8,10 @@ from .types import (
 __all__ = [
     'io',
     'elasticsearch',
+    'gcs',
     'slack',
     'transforms',
+    'preprocessing',
     'utils',
     'ParamGrid',
     'ParamConfig',
