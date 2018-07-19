@@ -1,10 +1,11 @@
 import json
-
 import os
+
 import pytest
 
 
-@pytest.mark.skipif('TRAVIS' in os.environ, reason='Database not on travis')
+@pytest.mark.skipif('SPREADSHEET_CREDENTIALS' not in os.environ,
+                    reason='Spreasheet credentials required')
 def test_index():
     from main import app  # TODO: Deal with TravisCI failure
     app.testing = True
@@ -14,7 +15,8 @@ def test_index():
     assert r.status_code == 200
 
 
-@pytest.mark.skipif('TRAVIS' in os.environ, reason='Database not on travis')
+@pytest.mark.skipif('SPREADSHEET_CREDENTIALS' not in os.environ,
+                    reason='Spreasheet credentials required')
 def test_dimensions():
     from main import app
     app.testing = True
@@ -23,7 +25,8 @@ def test_dimensions():
     assert r.status_code == 200
 
 
-@pytest.mark.skipif('TRAVIS' in os.environ, reason='Database not on travis')
+@pytest.mark.skipif('SPREADSHEET_CREDENTIALS' not in os.environ,
+                    reason='Spreasheet credentials required')
 def test_roi():
     from main import app
     app.testing = True
