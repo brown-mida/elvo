@@ -48,7 +48,7 @@ def slack_report(x_train: np.ndarray,
         x_mean = x_train[:, :, :, :, 0].mean()
         x_std = x_train[:, :, :, :, 0].std()
         x_valid_standardized = (x_valid - x_mean) / x_std
-        y_valid = np.reshape(y_valid, (len(y_valid),))
+        y_valid = np.reshape(y_valid, (len(y_valid), 1))
     else:
         x_mean = np.array([x_train[:, :, :, 0].mean(),
                            x_train[:, :, :, 1].mean(),
