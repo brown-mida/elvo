@@ -306,6 +306,7 @@ def plot_misclassification(x,
     :param limit:
     :param offset:
     :param ids:
+    :param chunk:
     :return:
     """
     num_rows = (min(len(x), limit) + num_cols - 1) // num_cols
@@ -321,7 +322,9 @@ def plot_misclassification(x,
             ax.set_title(f'patient: {ids[i][:4]}...')
         ax.set_xlabel(f'y_true: {y_true[i]} y_pred: {y_pred[i]}')
         if chunk:
+
             mip = np.max(arr, axis=0)
+            print(f'\n\nHELLO\n\nmip shape = {mip.shape}')
             plt.imshow(mip)
         else:
             plt.imshow(arr)  # Multiply by 255 here for
