@@ -169,8 +169,10 @@ def full_multiclass_report(model: keras.models.Model,
     :param x:
     :param y_true:
     :param classes:
+    :param id_valid
     :return:
     """
+    print(x.shape)
     y_proba = model.predict(x, batch_size=8)
     assert y_true.shape == y_proba.shape
 
