@@ -213,14 +213,11 @@ def full_multiclass_report(model: keras.models.Model,
 
 
 def write_to_slack(comment, token):
-    payload = {
-        "token": token,
-        'text': comment,
-        "channels": ['#model-results'],
-    }
+    channels = '#model-results',
 
-    r = requests.post("https://slack.com/api/chat.postMessage",
-                      params=payload)
+    r = requests.get(
+        'https://slack.com/api/chat.postMessage?' +
+        'token={}&channel={}&text={}'.format(token, channels, comment))
     return r
 
 
