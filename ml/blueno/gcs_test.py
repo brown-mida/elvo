@@ -1,8 +1,13 @@
 import pathlib
 
+import os
+import pytest
+
 from .gcs import equal_array_counts
 
 
+@pytest.mark.skipif(os.uname().nodename != 'gpu1708',
+                    reason='Test uses data only on gpu1708')
 def test_compare_dir_len():
     # ls processed-lower/arrays | wc -l
     # gsutil ls gs://elvos/processed/processed-lower/arrays | wc -l

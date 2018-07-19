@@ -2,8 +2,9 @@
 Connection logic with Google Cloud Storage.
 """
 import pathlib
-import subprocess
 
+import warnings
+from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import storage
 
 from blueno.elasticsearch import JOB_INDEX
@@ -11,16 +12,24 @@ from blueno.elasticsearch import JOB_INDEX
 
 def equal_array_counts(arrays_dir: pathlib.Path,
                        arrays_gsurl: str):
-    local_count = len([0 for _ in arrays_dir.iterdir()])
+    if 'elvos' not in arrays_gsurl:
+        raise ValueError('Expected elvos in URL')
 
-    gsutil_cmd = '/gpfs/main/home/lzhu7/google-cloud-sdk/bin/gsutil'
-    p1 = subprocess.Popen([gsutil_cmd, 'ls', arrays_gsurl],
-                          stdout=subprocess.PIPE)
-    p2 = subprocess.Popen(['wc', '-l'], stdin=p1.stdout,
-                          stdout=subprocess.PIPE)
-    p1.stdout.close()
-    output = p2.communicate()[0]
-    gcs_count = int(output)
+    # +1 to avoid leading /
+    prefix_i = arrays_gsurl.find('elvos') + len('elvos') + 1
+    try:
+        client = storage.Client()
+    except DefaultCredentialsError:
+        warnings.warn('Set GOOGLE_APPLICATION_CREDENTIALS in your config '
+                      'file')
+        client = storage.Client.from_service_account_json(
+            '/gpfs/main/home/lzhu7/elvo-analysis/secrets/'
+            'elvo-7136c1299dea.json',
+        )
+
+    bucket = client.get_bucket('elvos')
+    gcs_count = len(list(bucket.list_blobs(prefix=arrays_gsurl[prefix_i:])))
+    local_count = len([0 for _ in arrays_dir.iterdir()])
 
     return local_count == gcs_count
 
