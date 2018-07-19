@@ -144,3 +144,54 @@ def prepare_data(params: ParamConfig) -> Tuple[np.ndarray,
             random_state=params.seed)
     return (x_train, x_valid, x_test, y_train, y_valid, y_test,
             ids_train, ids_valid, ids_test)
+
+
+def prepare_data_no_params(data_dir, label_dir, index_col,
+                           label_col, categorical=False, val_split=0.1,
+                           seed=999) -> Tuple[np.ndarray,
+                                              np.ndarray,
+                                              np.ndarray,
+                                              np.ndarray,
+                                              np.ndarray,
+                                              np.ndarray,
+                                              np.ndarray,
+                                              np.ndarray]:
+    """
+    Prepares the data referenced in params for ML. This includes
+    shuffling and expanding dims.
+
+    :param params: a hyperparameter dictionary generated from a ParamGrid
+    :return: x_train, x_valid, y_train, y_valid
+    """
+    array_dict = io.load_arrays(data_dir)
+    labels_df = pd.read_csv(label_dir, index_col=index_col)
+    label_series = labels_df[label_col]
+
+    # Convert to numpy arrays
+    x, y, patient_ids = to_arrays(array_dict, label_series)
+
+    if categorical:
+        y = keras.utils.to_categorical(y)
+    else:
+        if y.ndim == 1:
+            y = np.expand_dims(y, axis=-1)
+
+    assert y.ndim == 2
+
+    logging.debug(f'x shape: {x.shape}')
+    logging.debug(f'y shape: {y.shape}')
+    logging.info(f'seeding to {seed} before shuffling')
+
+    x_train, x_test, y_train, y_test, ids_train, ids_test = \
+        model_selection.train_test_split(
+            x, y, patient_ids,
+            test_size=val_split,
+            random_state=seed)
+
+    x_train, x_valid, y_train, y_valid, ids_train, ids_valid = \
+        model_selection.train_test_split(
+            x_train, y_train, ids_train,
+            test_size=val_split,
+            random_state=seed)
+    return (x_train, x_valid, x_test, y_train, y_valid, y_test,
+            ids_train, ids_valid, ids_test)

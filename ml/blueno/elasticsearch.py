@@ -339,3 +339,21 @@ def _fill_author_gpu1708(created_at, job_name):
     else:
         author = 'luke'
     return author
+
+
+def create_new_connection(address):
+    elasticsearch_dsl.connections.create_connection(
+        hosts=[address]
+    )
+    return JOB_INDEX
+
+
+def search_top_models(address, lower=0.8, upper=0.923):
+    index = create_new_connection(address)
+
+    matches = index.search()
+    matches = matches.filter('range',
+                             best_val_acc={'gte': lower, 'lte': upper})
+    count = matches.count()
+    response = matches[0:count].execute()
+    return response
