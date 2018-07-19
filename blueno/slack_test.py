@@ -6,6 +6,8 @@ import sklearn.preprocessing
 
 import blueno.slack
 
+os.environ['CUDA_VISIBLE_DEVICES'] = ''
+
 try:
     from config_luke import SLACK_TOKEN
 except ImportError:
@@ -20,7 +22,8 @@ def test_upload_to_slack():
         f.write('hello!')
     r = blueno.slack.upload_to_slack('test_upload_to_slack.png',
                                      'testing',
-                                     SLACK_TOKEN)
+                                     SLACK_TOKEN,
+                                     channels=['#tests'])
     os.remove('test_upload_to_slack.png')
     assert r.status_code == 200
 
@@ -74,7 +77,8 @@ def test_slack_upload_cm():
                                                  X,
                                                  y,
                                                  classes=[0, 1, 2])
-    blueno.slack.upload_to_slack('/tmp/cm.png', report, SLACK_TOKEN)
+    blueno.slack.upload_to_slack('/tmp/cm.png', report, SLACK_TOKEN,
+                                 channels=['#tests'])
 
 
 @pytest.mark.skipif(os.uname().nodename != 'gpu1708',
@@ -100,16 +104,20 @@ def test_save_misclassification_plots():
                                               y_pred_binary)
     blueno.slack.upload_to_slack('/tmp/false_positives.png',
                                  'false positives',
-                                 SLACK_TOKEN)
+                                 SLACK_TOKEN,
+                                 channels=['#tests'])
     blueno.slack.upload_to_slack('/tmp/false_negatives.png',
                                  'false negatives',
-                                 SLACK_TOKEN)
+                                 SLACK_TOKEN,
+                                 channels=['#tests'])
     blueno.slack.upload_to_slack('/tmp/true_positives.png',
                                  'true positives',
-                                 SLACK_TOKEN)
+                                 SLACK_TOKEN,
+                                 channels=['#tests'])
     blueno.slack.upload_to_slack('/tmp/true_negatives.png',
                                  'true negatives',
-                                 SLACK_TOKEN)
+                                 SLACK_TOKEN,
+                                 channels=['#tests'])
 
 
 @pytest.mark.skipif(os.uname().nodename != 'gpu1708',
@@ -137,13 +145,17 @@ def test_save_misclassification_plots_with_ids():
                                               ids)
     blueno.slack.upload_to_slack('/tmp/false_positives.png',
                                  'false positives',
-                                 SLACK_TOKEN)
+                                 SLACK_TOKEN,
+                                 channels=['#tests'])
     blueno.slack.upload_to_slack('/tmp/false_negatives.png',
                                  'false negatives',
-                                 SLACK_TOKEN)
+                                 SLACK_TOKEN,
+                                 channels=['#tests'])
     blueno.slack.upload_to_slack('/tmp/true_positives.png',
                                  'true positives',
-                                 SLACK_TOKEN)
+                                 SLACK_TOKEN,
+                                 channels=['#tests'])
     blueno.slack.upload_to_slack('/tmp/true_negatives.png',
                                  'true negatives',
-                                 SLACK_TOKEN)
+                                 SLACK_TOKEN,
+                                 channels=['#tests'])

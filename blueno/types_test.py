@@ -1,8 +1,6 @@
 import keras
 from sklearn import model_selection
 
-import generators.luke
-import models.luke
 from blueno import types
 
 
@@ -24,14 +22,14 @@ def test_from_dict():
         'val_split': [0.2, 0.1],
 
         'generator': [{
-            'generator_callable': generators.luke.standard_generators,
+            'generator_callable': lambda: None,
             'rotation_range': 30,
         }],
 
         'batch_size': [8],
 
         'model': model_selection.ParameterGrid({
-            'model_callable': [models.luke.resnet],
+            'model_callable': [lambda: None],
             'dropout_rate1': [0.8],
             'dropout_rate2': [0.8],
             'optimizer': [

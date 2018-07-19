@@ -1,12 +1,10 @@
-import os
-
 import keras
 import numpy as np
+import os
 import pandas as pd
 import pytest
 
 import blueno
-import generators.luke
 from blueno import preprocessing
 
 
@@ -53,7 +51,7 @@ def test_prepare_data_correct_dims():
         'batch_size': 8,
 
         'generator': blueno.GeneratorConfig(
-            generator_callable=generators.luke.standard_generators),
+            generator_callable=lambda: None),
 
         'model': blueno.ModelConfig(**{
             # The callable must take in **kwargs as an argument
@@ -91,7 +89,7 @@ def test_prepare_data_matching_indices():
         'max_epochs': 1,
 
         'generator': blueno.GeneratorConfig(
-            generator_callable=generators.luke.standard_generators),
+            generator_callable=lambda: None),
 
         'model': blueno.ModelConfig(**{
             # The callable must take in **kwargs as an argument
