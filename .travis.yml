@@ -2,7 +2,7 @@ language: python
 python:
   - 3.6
 install: 
-  - pip install -r requirements.txt
+  - pip install . # Install blueno
   - pip install -r dashboard/requirements.txt
 script: 
   - flake8 etl ml dashboard blueno
