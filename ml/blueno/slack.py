@@ -35,6 +35,7 @@ def slack_report(x_train: np.ndarray,
     :param id_valid: the ids ordered to correspond with y_valid
     :return:
     """
+    print(x_valid.shape)
     save_history(history)
     upload_to_slack('/tmp/loss.png', f'{name}\n\nparams:\n{str(params)}',
                     token)
@@ -48,6 +49,7 @@ def slack_report(x_train: np.ndarray,
                       x_train[:, :, :, 1].std(),
                       x_train[:, :, :, 2].std()])
     x_valid_standardized = (x_valid - x_mean) / x_std
+    print(x_valid_standardized.shape)
 
     report = full_multiclass_report(model,
                                     x_valid_standardized,
