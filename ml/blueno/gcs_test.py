@@ -15,4 +15,4 @@ def test_compare_dir_len():
                             'data/processed-lower')
     arrays_dir = data_dir / 'arrays'
     array_url = 'gs://elvos/processed/processed-lower/arrays'
-    assert equal_array_counts(arrays_dir, array_url) == True
+    assert equal_array_counts(arrays_dir, array_url)
