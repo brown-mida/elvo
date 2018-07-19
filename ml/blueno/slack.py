@@ -33,6 +33,7 @@ def slack_report(x_train: np.ndarray,
     :param history: the history object returned by training the model
     :param name: the name you want to give the model
     :param params: the parameters of the model to attach to the report
+    :param token: your slack API token
     :param id_valid: the ids ordered to correspond with y_valid
     :param chunk: whether or not we're analyzing 3D data
     :return:
@@ -188,8 +189,6 @@ def full_multiclass_report(model: keras.models.Model,
     :return:
     """
     y_proba = model.predict(x, batch_size=8)
-    print(y_proba.shape)
-    print(y_true.shape)
     assert y_true.shape == y_proba.shape
 
     if y_proba.shape[-1] == 1:
@@ -326,7 +325,6 @@ def plot_misclassification(x,
         if chunk:
             mip = np.max(arr, axis=0)
             mip = np.reshape(mip, (32, 32))
-            print(f'\n\nHELLO\n\nmip shape = {mip.shape}')
             plt.imshow(mip)
         else:
             plt.imshow(arr)  # Multiply by 255 here for
