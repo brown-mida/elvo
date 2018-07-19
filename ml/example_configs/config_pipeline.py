@@ -8,16 +8,16 @@ import generators.luke
 import models.luke
 import preprocessors.luke
 
-USER =  # Example: luke
-BLUENO_HOME =  # Example: pathlib.Path('/gpfs/main/home/lzhu7/elvo-analysis')
+USER = ''  # Example: luke
+BLUENO_HOME = ''  # Example: pathlib.Path('/gpfs/main/home/lzhu7/elvo-analysis')
 
-DATA_DIR =
-LOG_DIR =
+DATA_DIR = ''
+LOG_DIR = ''
 
 NUM_GPUS = 1
 GPU_OFFSET = 3
 
-SLACK_TOKEN =
+SLACK_TOKEN = ''
 
 model_list = list(model_selection.ParameterGrid({
     'model_callable': [models.luke.resnet],

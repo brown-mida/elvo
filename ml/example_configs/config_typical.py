@@ -8,16 +8,16 @@ import generators.luke
 import models.luke
 
 # Your name
-USER =
+USER = ''
 BLUENO_HOME = pathlib.Path('< YOUR HOME DIRECTORY >')
 
-DATA_DIR =
-LOG_DIR =
+DATA_DIR = ''
+LOG_DIR = ''
 
 NUM_GPUS = 1
 GPU_OFFSET = 3
 
-SLACK_TOKEN =
+SLACK_TOKEN = ''
 
 model_list = list(model_selection.ParameterGrid({
     'model_callable': [models.luke.resnet],
