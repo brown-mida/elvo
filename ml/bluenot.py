@@ -29,7 +29,6 @@ import datetime
 import importlib
 import logging
 import multiprocessing
-import os
 import pathlib
 import subprocess
 import time
@@ -38,6 +37,7 @@ from typing import List, Union
 
 import keras
 import numpy as np
+import os
 from elasticsearch_dsl import connections
 from sklearn import model_selection
 
@@ -47,6 +47,7 @@ from blueno import (
     preprocessing,
     elasticsearch,
     logger,
+    gcs,
 )
 
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
@@ -238,6 +239,8 @@ def hyperoptimize(hyperparams: Union[blueno.ParamGrid,
         if isinstance(params, dict):
             params = blueno.ParamConfig(**params)
 
+        check_data_in_sync(params)
+
         # This is where we'd run preprocessing. To run in a reasonable amount
         # of time, the raw data must be cached in-memory.
         arrays = preprocessing.prepare_data(params, train_test_val=False)
@@ -288,6 +291,29 @@ def hyperoptimize(hyperparams: Union[blueno.ParamGrid,
             p.join()
         processes = []
         time.sleep(60)
+
+
+def check_data_in_sync(params: blueno.ParamConfig):
+    """
+    Checks that the data is in-sync with google cloud.
+
+    This is so we can reproduce and ensemble the arrays.
+
+    This also assumes that gcs_url/arrays contains the arrays.
+
+    :param params:
+    :return:
+    """
+    data_dir = pathlib.Path(params.data.data_dir)
+    gcs_url = params.data.gcs_url
+    if gcs_url.endswith('/'):
+        array_url = gcs_url + 'arrays'
+    else:
+        array_url = gcs_url + '/arrays'
+    if not gcs.equal_array_counts(data_dir,
+                                  array_url):
+        raise ValueError(f'{data_dir} and {array_url} have a different'
+                         f' number of files')
 
 
 def check_config(config):

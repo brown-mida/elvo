@@ -21,6 +21,8 @@ tmp/
 
 # Models (weights)
 results/
+models/
+!ml/models
 notebooks/tmp/*.hdf5
 
 # Config
@@ -40,3 +42,7 @@ nohup.out
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# JavaScript
+node_modules/
+

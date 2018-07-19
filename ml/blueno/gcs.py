@@ -1,10 +1,28 @@
 """
 Connection logic with Google Cloud Storage.
 """
+import pathlib
+import subprocess
 
 from google.cloud import storage
 
 from blueno.elasticsearch import JOB_INDEX
+
+
+def equal_array_counts(arrays_dir: pathlib.Path,
+                       arrays_gsurl: str):
+    local_count = len([0 for _ in arrays_dir.iterdir()])
+
+    gsutil_cmd = '/gpfs/main/home/lzhu7/google-cloud-sdk/bin/gsutil'
+    p1 = subprocess.Popen([gsutil_cmd, 'ls', arrays_gsurl],
+                          stdout=subprocess.PIPE)
+    p2 = subprocess.Popen(['wc', '-l'], stdin=p1.stdout,
+                          stdout=subprocess.PIPE)
+    p1.stdout.close()
+    output = p2.communicate()[0]
+    gcs_count = int(output)
+
+    return local_count == gcs_count
 
 
 def fetch_model(service_account_path=None, save_path=None, **kwargs):
