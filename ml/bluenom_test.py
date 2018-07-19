@@ -17,7 +17,7 @@ def teardown_module():
 
 
 @pytest.mark.skipif('LONG' not in os.environ
-                    and os.uname().nodename != 'gpu1708',
+                    or os.uname().nodename != 'gpu1708',
                     reason='Test uses data only on gpu1708')
 def test_bluenom_idempotent():
     path = pathlib.Path('/gpfs/main/home/lzhu7/elvo-analysis/logs')
