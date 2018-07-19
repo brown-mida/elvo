@@ -9,6 +9,7 @@ from roi_drive_to_gcs import roi_to_gcs
 
 default_args = {
     'owner': 'luke',
+    'email': 'luke_zhu@brown.edu',
     'start_date': datetime.datetime(2018, 7, 5, 12),
 }
 

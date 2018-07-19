@@ -4,12 +4,14 @@ transforms them via vertical flips and rotations, and adds them to the GCS
 storage folder "positives + augmentation."
 """
 
+import itertools
 import logging
-# from matplotlib import pyplot as plt
-from lib import cloud_management as cloud
+
 import numpy as np
 import pandas as pd
-import itertools
+
+# from matplotlib import pyplot as plt
+from lib import cloud_management as cloud
 
 
 def configure_logger():
@@ -40,7 +42,6 @@ def transform_one(arr, file_id):
                 flipped = rotated[:, :, ::-1]
                 # save to the numpy generator source directory
             file_id_new = file_id + "_" + str(transform_number)
-            # print(file_id_new)
             cloud.save_chunks_to_cloud(flipped, 'normal',
                                        'positive', file_id_new)
 
@@ -98,7 +99,7 @@ def clean_old_data():
         if '_' in file_id:
             in_blob.delete()
 
-    print(i)
+    logging.info(i)
 
 
 def clean_new_data():
@@ -126,16 +127,14 @@ def clean_new_data():
             continue
 
         in_blob.delete()
-    print(i)
+    logging.info(i)
 
 
-# TODO: also update annotations csv file (if we're gonna be using the model
-# that includes bounding box coordinates
 def generate_csv():
     labels_df = pd.read_csv('/home/harold_triedman/'
                             'elvo-analysis/annotated_labels.csv')
     for index, row in labels_df.iterrows():
-        print(index, row[1])
+        logging.info(index, row[1])
         if row[1] == 1:
             # every time you come across a positive, add in 24 more rows
             to_add = {}
@@ -145,7 +144,7 @@ def generate_csv():
                 to_add[index + 500000 + i] = [new_patient_id, 1]
             to_add_df = pd.DataFrame.from_dict(
                 to_add, orient='index', columns=['Unnamed: 0', 'label'])
-            print(to_add_df)
+            logging.info(to_add_df)
             labels_df = labels_df.append(to_add_df)
     labels_df.to_csv("augmented_annotated_labels.csv")
 

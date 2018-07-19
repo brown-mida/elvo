@@ -13,6 +13,7 @@ from spreadsheet_to_gcs import spreadsheet_to_gcs
 
 default_args = {
     'owner': 'luke',
+    'email': 'luke_zhu@brown.edu',
     'start_date': datetime(2018, 6, 28, 5),
 }
 
