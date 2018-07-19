@@ -19,8 +19,8 @@ with open('chunk_data.pkl', 'rb') as infile:
 
 full_x_train = full_data[0]
 full_y_train = full_data[1]
-full_x_val = full_data[2]
-full_y_val = full_data[3]
+x_val = full_data[2]
+y_val = full_data[3]
 
 metrics = ['acc',
            utils.true_positives,
@@ -37,26 +37,24 @@ for i in range(1, 11):
                   metrics=metrics)
 
     frac = i / 10
-    X_train = full_x_train[:int(len(full_x_train) * frac)]
+    x_train = full_x_train[:int(len(full_x_train) * frac)]
     y_train = full_y_train[:int(len(full_y_train) * frac)]
-    X_val = full_x_val[:int(len(full_x_val) * frac)]
-    y_val = full_y_val[:int(len(full_y_val) * frac)]
-    callbacks = utils.create_callbacks(x_train=X_train,
+    callbacks = utils.create_callbacks(x_train=x_train,
                                        y_train=y_train,
-                                       x_valid=X_val,
+                                       x_valid=x_val,
                                        y_valid=y_val,
                                        normalize=False)
 
-    history = model.fit(x=X_train,
+    history = model.fit(x=x_train,
                         y=y_train,
                         epochs=100,
                         batch_size=16,
                         callbacks=callbacks,
-                        validation_data=(X_val, y_val),
+                        validation_data=(x_val, y_val),
                         verbose=1)
 
-    slack_report(x_train=X_train,
-                 x_valid=X_val,
+    slack_report(x_train=x_train,
+                 x_valid=x_val,
                  y_valid=y_val,
                  model=model,
                  history=history,
