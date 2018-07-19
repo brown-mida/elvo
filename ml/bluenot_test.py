@@ -42,7 +42,7 @@ def test_to_arrays():
         index=['a', 'b', 'c'],
     )
 
-    x_arr, y_arr, _ = bluenot.to_arrays(x_dict, y_series)
+    x_arr, y_arr, _ = blueno.preprocessing.to_arrays(x_dict, y_series)
     assert np.all(x_arr == np.expand_dims(y_arr, axis=1))
 
 

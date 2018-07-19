@@ -34,154 +34,23 @@ import pathlib
 import subprocess
 import time
 from argparse import ArgumentParser
-from typing import Dict, List, Tuple, Union
+from typing import List, Union
 
 import keras
 import numpy as np
 import os
-import pandas as pd
 from elasticsearch_dsl import connections
 from sklearn import model_selection
 
 import blueno
 from blueno import (
     utils,
+    preprocessing,
     elasticsearch,
-    io,
+    logger
 )
 
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
-
-
-def configure_parent_logger(file_name,
-                            stdout=True):
-    root_logger = logging.getLogger()
-    root_logger.setLevel(logging.DEBUG)
-    handler = logging.FileHandler(file_name)
-    formatter = logging.Formatter(
-        fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    handler.setFormatter(formatter)
-    root_logger.addHandler(handler)
-
-    if stdout:
-        stream_handler = logging.StreamHandler()
-        stream_handler.setFormatter(formatter)
-        root_logger.addHandler(stream_handler)
-
-
-def configure_job_logger(file_path):
-    root_logger = logging.getLogger()
-    root_logger.setLevel(logging.DEBUG)
-    handler = logging.FileHandler(file_path)
-    formatter = logging.Formatter(
-        fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    handler.setFormatter(formatter)
-    root_logger.addHandler(handler)
-
-
-def to_arrays(data: Dict[str, np.ndarray],
-              labels: pd.Series) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """
-    Converts the data and labels into numpy arrays.
-
-    Note: This function filters mismatched labels.
-
-    Note: The index of labels must be patient IDs.
-
-    :param data:
-    :param labels: a dataframe WITH patient ID for the index.
-    :return: three arrays: the arrays, then the labels, then the corresponding
-    ids
-    """
-    patient_ids = data.keys()
-    X_list = []
-    y_list = []
-    remaining_ids = []
-    for id_ in patient_ids:
-        try:
-            y_list += [labels.loc[id_]]
-            X_list += [data[id_]]  # Needs to be in this order
-            remaining_ids += [id_]
-        except KeyError:
-            logging.warning(f'{id_} in data was not present in labels')
-            logging.warning(f'{len(X_list)}, {len(y_list)}')
-    for id_ in labels.index.values:
-        if id_ not in patient_ids:
-            logging.warning(f'{id_} in labels was not present in data')
-
-    assert len(X_list) == len(y_list)
-    assert len(X_list) == len(remaining_ids)
-    return np.stack(X_list), np.stack(y_list), np.array(remaining_ids)
-
-
-def prepare_data(params: blueno.ParamConfig) -> Tuple[np.ndarray,
-                                                      np.ndarray,
-                                                      np.ndarray,
-                                                      np.ndarray,
-                                                      np.ndarray,
-                                                      np.ndarray]:
-    """
-    Prepares the data referenced in params for ML. This includes
-    shuffling and expanding dims.
-
-    :param params: a hyperparameter dictionary generated from a ParamGrid
-    :return: x_train, x_valid, y_train, y_valid, ids_train, ids_valid
-    """
-    logging.info(f'using params:\n{params}')
-    # Load the arrays and labels
-    data_params = params.data
-    if isinstance(data_params, blueno.LukePipelineConfig):
-        array_dict, labels_df = data_params.pipeline_callable(
-            data_params.data_dir,
-            data_params.labels_path,
-            data_params.height_offset,
-            data_params.mip_thickness,
-            data_params.pixel_value_range,
-        )
-    elif isinstance(data_params, blueno.DataConfig):
-        array_dict = io.load_arrays(data_params.data_dir)
-        index_col = data_params.index_col
-        labels_df = pd.read_csv(data_params.labels_path,
-                                index_col=index_col)
-    else:
-        raise ValueError('params.data must be a subclass of DataConfig')
-
-    label_col = data_params.label_col
-    label_series = labels_df[label_col]
-
-    # Convert to numpy arrays
-    x, y, patient_ids = to_arrays(array_dict, label_series)
-
-    if params.model.loss == keras.losses.categorical_crossentropy:
-        y = keras.utils.to_categorical(y)
-    elif params.model.loss == keras.losses.binary_crossentropy:
-        if y.ndim == 1:
-            y = np.expand_dims(y, axis=-1)
-            y = y.astype(dtype='int')
-
-    assert y.ndim == 2
-
-    logging.debug(f'x shape: {x.shape}')
-    logging.debug(f'y shape: {y.shape}')
-    logging.info(f'seeding to {params.seed} before shuffling')
-
-    x_train, x_valid, y_train, y_valid, ids_train, ids_valid = \
-        model_selection.train_test_split(
-            x, y, patient_ids,
-            test_size=params.val_split,
-            random_state=params.seed)
-    train_counter = collections.Counter([tuple(label) for label in y_train])
-    valid_counter = collections.Counter([tuple(label) for label in y_valid])
-
-    if len(train_counter.keys()) != len(valid_counter.keys()):
-        raise ValueError(f'Training and validation labels differ. This'
-                         f'may mean that a class is missing.\n'
-                         f'train counts: {train_counter}\n'
-                         f'valid counts: {valid_counter}')
-
-    logging.debug(f'y_train counts: {train_counter}')
-    logging.debug(f'y_valid counts: {valid_counter}')
-    return x_train, x_valid, y_train, y_valid, ids_train, ids_valid
 
 
 def start_job(x_train: np.ndarray,
@@ -227,7 +96,7 @@ def start_job(x_train: np.ndarray,
                            f'{job_name}-{created_at}.log')
         assert log_filepath.startswith(log_dir)
         csv_filepath = log_filepath[:-3] + 'csv'
-        configure_job_logger(log_filepath)
+        logger.configure_job_logger(log_filepath)
 
     # This must be the first lines in the jo log, do not change
     logging.info(f'using params:\n{params}')
@@ -369,11 +238,12 @@ def hyperoptimize(hyperparams: Union[blueno.ParamGrid,
     for params in param_list:
         if isinstance(params, dict):
             params = blueno.ParamConfig(**params)
+
         # This is where we'd run preprocessing. To run in a reasonable amount
         # of time, the raw data must be cached in-memory.
 
-        x_train, x_valid, y_train, y_valid, id_train, id_valid = prepare_data(
-            params)
+        (x_train, x_valid, _, y_train, y_valid, _,
+         id_train, id_valid, _) = preprocessing.prepare_data(params)
 
         # Start the model training job
         # Run in a separate process to avoid memory issues
@@ -450,7 +320,7 @@ if __name__ == '__main__':
         user_config.LOG_DIR) / 'results-{}.txt'.format(
         datetime.datetime.utcnow().isoformat()
     )
-    configure_parent_logger(parent_log_file)
+    logger.configure_parent_logger(parent_log_file)
     check_config(user_config)
 
     logging.info('checking param grid')
