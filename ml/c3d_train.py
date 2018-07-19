@@ -2,6 +2,7 @@ import tensorflow as tf
 from models.three_d import c3d
 from blueno.slack import slack_report
 from blueno import utils
+import numpy as np
 from keras.optimizers import SGD
 import pickle
 import os
@@ -27,6 +28,8 @@ metrics = ['acc',
            utils.false_negatives,
            utils.sensitivity,
            utils.specificity]
+
+print(np.asarray(x_val).shape)
 
 for i in range(1, 11):
 
