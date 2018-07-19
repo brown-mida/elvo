@@ -18,8 +18,6 @@ setup(
         'google-cloud-storage>=1.10.0',
         'gspread>=3.0.0',
         'jupyter>=1.0.0',
-        'Keras>=2.1.3',
-        'keras-vis>=0.4.1',
         'matplotlib>=2.2.2',
         'notebook>=5.5.0',
         'numpy>=1.14.5',
@@ -29,12 +27,23 @@ setup(
         'scikit-image>=0.14.0',
         'scikit-learn>=0.19.1',
         'scipy>=1.1.0',
-        'tensorflow>=1.4.0',
-        'pytest>=3.6.1',
-        'pytest-cov>=2.5.1',
-        'codecov>=2.0.15',
-        'flake8>=3.5.0',
     ],
+    extras_require={
+        'cpu': [
+            'Keras>=2.1.3',
+            'tensorflow>=1.4',
+        ],
+        'gpu1708': [
+            'tensorflow-gpu==1.4.1',
+            'keras==2.1.3',
+        ],
+        'test': [
+            'pytest>=3.6.1',
+            'pytest-cov>=2.5.1',
+            'codecov>=2.0.15',
+            'flake8>=3.5.0',
+        ]
+    },
     include_package_data=True,
     license='MIT',
     classifiers=[
