@@ -21,8 +21,8 @@ configure_logger()
 
 # Access Google Cloud Storage
 gcs_client = storage.Client.from_service_account_json(
-    # '/home/harold_triedman/elvo-analysis/credentials/client_secret.json'
-    'credentials/client_secret.json'
+    '/home/harold_triedman/elvo-analysis/credentials/client_secret.json'
+    # 'credentials/client_secret.json'
 )
 bucket = gcs_client.get_bucket('elvos')
 
@@ -34,8 +34,8 @@ with open('tmp/augmented_annotated_labels.csv', 'r') as pos_file:
     reader = csv.reader(pos_file, delimiter=',')
     for row in reader:
         if row[1] != 'Unnamed: 0':
-            # prelim_label_data[row[1]] = int(row[2])
-            prelim_label_data[row[2]] = int(row[3])
+            prelim_label_data[row[1]] = int(row[2])
+            # prelim_label_data[row[2]] = int(row[3])
 
 # Get all of the positives from the label data
 positive_label_data = {}
