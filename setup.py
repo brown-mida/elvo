@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='blueno',
     version='0.1.0',
-    description='A ML results tracking framework',
+    description='A tracking and preprocessing toolkit for practical ML',
     long_description_content_type='text/markdown',
     author='luke-zhu',
     author_email='luke_zhu@brown.edu',
