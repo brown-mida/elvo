@@ -11,5 +11,5 @@ def test_bluenoe():
 def test_parse_filename():
     filename = 'processed-lower_2-classes-2018-07-13T09:59:19.643349.hdf5'
     assert blueno_ensemble._parse_filename(filename) == (
-    'processed-lower_2-classes',
-                                                 '2018-07-13T09:59:19.643349')
+        'processed-lower_2-classes',
+        '2018-07-13T09:59:19.643349')
