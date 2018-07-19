@@ -2,6 +2,7 @@
 Script to load the data in the logs directory of gpu1708 up to
 Elasticsearch.
 """
+import argparse
 import pathlib
 
 import os
@@ -40,12 +41,20 @@ def bluenom(log_dir: pathlib.Path, gpu1708=False):
 
 
 if __name__ == '__main__':
-    print('resetting job index')
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--reset', default=False, type=bool)
+    parser.add_argument('--gpu1708', default=False, type=bool)
+    args = parser.parse_args()
+
     # Creates a connection to our Airflow instance
     connections.create_connection(hosts=['http://104.196.51.205'])
-    if JOB_INDEX.exists():
-        JOB_INDEX.delete()
-    JOB_INDEX.create()
+
+    if args.reset:
+        print('resetting index')
+        if JOB_INDEX.exists():
+            JOB_INDEX.delete()
+        JOB_INDEX.create()
+
     TrainingJob.init()
     path = pathlib.Path('/gpfs/main/home/lzhu7/elvo-analysis/logs')
-    bluenom(path, gpu1708=True)
+    bluenom(path, gpu1708=args.gpu1708)

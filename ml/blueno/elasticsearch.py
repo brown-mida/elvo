@@ -282,10 +282,18 @@ def _extract_auc(log_path: pathlib.Path) -> typing.Optional[float]:
 
 
 def _extract_best_auc(log_path: pathlib.Path) -> typing.Optional[float]:
+    aucs = []
+
     with open(log_path) as f:
         for line in f:
             if 'INFO - val_auc:' in line:
-                return float(line.split(' ')[-1].rstrip('\n'))
+                auc = float(line.split(' ')[-1].rstrip('\n'))
+                aucs.append(auc)
+
+    if len(aucs) == 0:
+        return None
+
+    return max(aucs)
 
 
 def _parse_params_str(params_str: str) -> typing.Dict[str, typing.Any]:
