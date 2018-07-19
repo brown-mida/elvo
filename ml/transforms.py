@@ -36,6 +36,7 @@ def crop_center(img, cropx, cropy):
     return img[:, startx:startx + cropx, starty:starty + cropy]
 
 
+# TODO: Deprecate/delete the following 5 functions
 def rotate_img(img):
     angle = np.random.uniform(-15, 15)
     return scipy.ndimage.rotate(img, angle)

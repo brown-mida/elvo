@@ -11,8 +11,6 @@ import sklearn.metrics
 matplotlib.use('Agg')  # noqa: E402
 from matplotlib import pyplot as plt
 
-from blueno.types import ParamConfig
-
 
 def slack_report(x_train: np.ndarray,
                  x_valid: np.ndarray,
@@ -20,20 +18,20 @@ def slack_report(x_train: np.ndarray,
                  model: keras.models.Model,
                  history: keras.callbacks.History,
                  name: str,
-                 params: ParamConfig,
+                 params: typing.Any,
                  token: str,
                  id_valid: np.ndarray = None):
     """
     Uploads a loss graph, accuacy, and confusion matrix plots in addition
     to useful data about the model to Slack.
 
-    :param x_train:
-    :param x_valid:
-    :param y_valid:
-    :param model:
-    :param history:
-    :param name:
-    :param params:
+    :param x_train: the training data
+    :param x_valid: the validation array
+    :param y_valid: the validation labels, in the same order as x_valid
+    :param model: the trained model
+    :param history: the history object returned by training the model
+    :param name: the name you want to give the model
+    :param params: the parameters of the model to attach to the report
     :param id_valid: the ids ordered to correspond with y_valid
     :return:
     """
@@ -55,7 +53,6 @@ def slack_report(x_train: np.ndarray,
                                     x_valid_standardized,
                                     y_valid,
                                     [0, 1],
-                                    batch_size=params.batch_size,
                                     id_valid=id_valid)
     upload_to_slack('/tmp/cm.png', report, token)
     upload_to_slack('/tmp/false_positives.png', 'false positives', token)
@@ -156,7 +153,6 @@ def full_multiclass_report(model: keras.models.Model,
                            x,
                            y_true,
                            classes,
-                           batch_size=32,
                            id_valid: np.ndarray = None):
     """
     Builds a report containing the following:
@@ -173,10 +169,11 @@ def full_multiclass_report(model: keras.models.Model,
     :param x:
     :param y_true:
     :param classes:
-    :param batch_size:
+    :param id_valid
     :return:
     """
-    y_proba = model.predict(x, batch_size=batch_size)
+    print(x.shape)
+    y_proba = model.predict(x, batch_size=8)
     assert y_true.shape == y_proba.shape
 
     if y_proba.shape[-1] == 1:
@@ -192,7 +189,7 @@ def full_multiclass_report(model: keras.models.Model,
         sklearn.metrics.accuracy_score(y_true, y_pred))
     comment += '\n'
 
-    # Assuming max_class is the negative label
+    # Assuming 0 is the negative label
     y_true_binary = y_true > 0
     y_pred_binary = y_pred > 0
     score = sklearn.metrics.roc_auc_score(y_true_binary,
