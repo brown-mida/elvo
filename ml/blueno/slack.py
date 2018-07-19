@@ -322,8 +322,8 @@ def plot_misclassification(x,
             ax.set_title(f'patient: {ids[i][:4]}...')
         ax.set_xlabel(f'y_true: {y_true[i]} y_pred: {y_pred[i]}')
         if chunk:
-
             mip = np.max(arr, axis=0)
+            mip = np.reshape(mip, (32, 32))
             print(f'\n\nHELLO\n\nmip shape = {mip.shape}')
             plt.imshow(mip)
         else:
