@@ -1,3 +1,29 @@
+"""
+Script to automate validating an ML pipeline specified by ParamConfig.
+
+Evaluation is done by retraining the given model, and evaluating the
+trained model on the test set. One can evaluate the model multiple
+times; the resulting metrics will then be the average of the
+several iterations. Shuffling seeds are randomized every time.
+
+There are two methods to use this script:
+- kibana: A list of ParamConfig will automatically be generated based
+    on the address to access the database, and the lower and upper
+    thresholds of best_val_acc. This list of ParamConfig will then
+    be automatically evaluated.
+- param-list-config: You will specify a list of ParamConfig manually,
+    through a config file. The script will look for EVAL_PARAM_LIST,
+    and evaluate all ParamConfig there.
+
+Currently the script will upload text results to Slack only.
+Graphs are not uploaded since they will probably not provide
+valuable information in evaluation, although this is subject to change.
+
+TODO:
+- Support multithreading (similar to bluenot.py)
+- Possibly upload results to Kibana
+"""
+
 import os
 import sys
 import logging
@@ -18,6 +44,19 @@ from generators.luke import standard_generators
 
 
 def get_models_to_train(address, lower, upper, data_dir):
+    """
+    Fetches relevant configurations to train from Kibana,
+    based on the upper and lower bounds of best_val_acc
+    specified.
+
+    :param address: Address to connect to Kibana
+    :lower: Lower bound of best_val_acc
+    :upper: Upper bound of best_val_acc
+    :data_dir: Local directory to specify where the datasets are.
+        This is required for specifying 'data_dir' in DataConfig.
+
+    :return: A list of configs to train.
+    """
     docs = search_top_models(address, lower=lower, upper=upper)
     docs_to_train = []
     for doc in docs:
@@ -101,6 +140,19 @@ def get_models_to_train(address, lower, upper, data_dir):
 
 
 def __get_data_if_not_exists(gcs_dir, local_dir):
+    """
+    Downloads the data from GCS if the folder from local_dir
+    does not exist.
+
+    :params gcs_dir: The GCS directory to download from, e.g.
+        gs://elvos/numpy
+    :params local_dir: The local directory where the dataset should exist.
+
+    :return: True if the dataset exists or the downloa was successful.
+        False if the dataset failed to download (in which case you
+        should skip configs that use this dataset, because the
+        dataset probably does not exist.)
+    """
     if not os.path.isdir(local_dir):
         logging.info(('Dataset {} does not exist. '
                       'Downloading from GCS...'.format(local_dir)))
@@ -112,11 +164,31 @@ def __get_data_if_not_exists(gcs_dir, local_dir):
 
 
 def __load_data(params):
+    """
+    Loads the data.
+
+    :params params: The ParamConfig file in question
+    :return: train_data, validation_data, test_data,
+        train_labels, vaidation_labels, test_labels,
+        train_ids, validation_ids, test_ids
+    """
     return preprocessing.prepare_data(params)
 
 
 def __train_model(params, x_train, y_train, x_valid, y_valid,
                   num_gpu=0):
+    """
+    Trains the model.
+
+    :params params: The ParamConfig in question
+    :params x_train: The training data
+    :params y_train: The training labels
+    :params x_valid: The validation data
+    :params y_valid: The validation labels
+    :params num_gpu: The number of GPUs to use
+
+    :return: The trained model, and the training history.
+    """
     train_gen, valid_gen = params.generator.generator_callable(
         x_train, y_train,
         x_valid, y_valid,
@@ -152,6 +224,18 @@ def __train_model(params, x_train, y_train, x_valid, y_valid,
 def evaluate_model(x_test, y_test, model,
                    normalize=True, x_train=None,
                    num_gpus=0):
+    """
+    Evaluates the model.
+
+    :params x_test: The test data
+    :params y_test: The test labels
+    :params model: The model to evaluate
+    :params normalize: Whether to normalize the test data based on
+        training data
+    :params x_train: The training data (used to normalize test data)
+    :params num_gpus: The number of GPUs to use
+    :return: Evaluation results (list of metrics)
+    """
     if normalize:
         if x_train is None:
             raise ValueError(('Must specify training data if normalize '
@@ -173,6 +257,9 @@ def evaluate_model(x_test, y_test, model,
 
 
 def parse_args(args):
+    """
+    Parse arguments for this script.
+    """
     parser = argparse.ArgumentParser(description='Evaluation script.')
     subparsers = parser.add_subparsers(
         help='Arguments for specific evaluation types.',
@@ -231,6 +318,9 @@ def parse_args(args):
 
 
 def check_config(config):
+    """
+    Check param-list-config to see if it is valid.
+    """
     logging.info('Checking that config has all required attributes')
     logging.debug('EVAL_PARAM_LIST: {}'.format(config.EVAL_PARAM_LIST))
     if (not (isinstance(config.EVAL_PARAM_LIST, list)) or
@@ -247,7 +337,7 @@ def iterate_eval(num_iterations, params, num_gpu,
     Beautiful piece of text that has more logging than code.
     """
     result_list = []
-    for i in range(num_iterations):
+    for i in range(int(num_iterations)):
         logging.info("-----Iteration {}-----".format(i + 1))
         params.seed = random.randint(0, 1000000)
         logging.info("Using seed {}".format(params.seed))
