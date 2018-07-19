@@ -35,8 +35,7 @@ class C3DBuilder(object):
                           subsample=(1, 1, 1))(x)
         x = MaxPooling3D(pool_size=(2, 2, 2), strides=(2, 2, 2),
                          border_mode='valid', name='pool2')(x)
-        if USE_DROPOUT:
-            x = Dropout(p=0.3)(x)
+        x = Dropout(p=0.3)(x)
 
         # 3rd layer group
         x = Convolution3D(256, 3, 3, 3, activation='relu',
@@ -47,8 +46,7 @@ class C3DBuilder(object):
                           subsample=(1, 1, 1))(x)
         x = MaxPooling3D(pool_size=(2, 2, 2), strides=(2, 2, 2),
                          border_mode='valid', name='pool3')(x)
-        if USE_DROPOUT:
-            x = Dropout(p=0.4)(x)
+        x = Dropout(p=0.4)(x)
 
         # 4th layer group
         x = Convolution3D(512, 3, 3, 3, activation='relu',
@@ -59,8 +57,7 @@ class C3DBuilder(object):
                           subsample=(1, 1, 1),)(x)
         x = MaxPooling3D(pool_size=(2, 2, 2), strides=(2, 2, 2),
                          border_mode='valid', name='pool4')(x)
-        if USE_DROPOUT:
-            x = Dropout(p=0.5)(x)
+        x = Dropout(p=0.5)(x)
 
         last64 = Convolution3D(64, 2, 2, 2, activation="relu",
                                name="last_64")(x)

@@ -131,8 +131,8 @@ def clean_new_data():
 
 
 def generate_csv():
-    labels_df = pd.read_csv('/home/harold_triedman/'
-                            'elvo-analysis/annotated_labels.csv')
+    configure_logger()
+    labels_df = pd.read_csv('/home/amy/data/annotated_labels.csv')
     for index, row in labels_df.iterrows():
         logging.info(index, row[1])
         if row[1] == 1:
@@ -146,15 +146,33 @@ def generate_csv():
                 to_add, orient='index', columns=['Unnamed: 0', 'label'])
             logging.info(to_add_df)
             labels_df = labels_df.append(to_add_df)
-    labels_df.to_csv("augmented_annotated_labels.csv")
+            labels_df = labels_df.drop(row[0])
+            print("Dropping patient " + index + ": " + str(row[0]))
+
+
+# take out repeat positives (ones that have already been transformed but
+# have not been removed from initial dataset)
+def clean_csv():
+    configure_logger()
+    labels_df = pd.read_csv('/home/amy/data/augmented_annotated_labels.csv')
+    print(len(labels_df))
+    for index, row in labels_df.iterrows():
+        print(index)
+        # print(str(row[1]))
+        if row[2] == 1 and not '_' in row[1]:
+            labels_df = labels_df.drop(row[0])
+            # print("Dropping patient " + str(index) + ": " + str(row[1]))
+    print(len(labels_df))
+    labels_df.to_csv('/home/amy/data/augmented_annotated_labels1.csv')
 
 
 def run_transform():
     configure_logger()
-    clean_old_data()
-    generate_csv()
-    transform_positives()
-    clean_new_data()
+    clean_csv()
+    #clean_old_data()
+    #generate_csv()
+    #transform_positives()
+    #clean_new_data()
 
 
 if __name__ == '__main__':

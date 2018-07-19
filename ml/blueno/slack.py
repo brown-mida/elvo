@@ -20,7 +20,8 @@ def slack_report(x_train: np.ndarray,
                  name: str,
                  params: typing.Any,
                  token: str,
-                 id_valid: np.ndarray = None):
+                 id_valid: np.ndarray = None,
+                 chunk: bool = False):
     """
     Uploads a loss graph, accuacy, and confusion matrix plots in addition
     to useful data about the model to Slack.
@@ -32,28 +33,41 @@ def slack_report(x_train: np.ndarray,
     :param history: the history object returned by training the model
     :param name: the name you want to give the model
     :param params: the parameters of the model to attach to the report
+    :param token: your slack API token
     :param id_valid: the ids ordered to correspond with y_valid
+    :param chunk: whether or not we're analyzing 3D data
     :return:
     """
+    print(x_valid.shape)
     save_history(history)
     upload_to_slack('/tmp/loss.png', f'{name}\n\nparams:\n{str(params)}',
                     token)
     upload_to_slack('/tmp/acc.png', f'{name}\n\nparams:\n{str(params)}',
                     token)
 
-    x_mean = np.array([x_train[:, :, :, 0].mean(),
-                       x_train[:, :, :, 1].mean(),
-                       x_train[:, :, :, 2].mean()])
-    x_std = np.array([x_train[:, :, :, 0].std(),
-                      x_train[:, :, :, 1].std(),
-                      x_train[:, :, :, 2].std()])
-    x_valid_standardized = (x_valid - x_mean) / x_std
+    if chunk:
+        y_valid = np.reshape(y_valid, (len(y_valid), 1))
+        report = full_multiclass_report(model,
+                                        x_valid,
+                                        y_valid,
+                                        [0, 1],
+                                        id_valid=id_valid,
+                                        chunk=chunk)
+    else:
+        x_mean = np.array([x_train[:, :, :, 0].mean(),
+                           x_train[:, :, :, 1].mean(),
+                           x_train[:, :, :, 2].mean()])
+        x_std = np.array([x_train[:, :, :, 0].std(),
+                         x_train[:, :, :, 1].std(),
+                         x_train[:, :, :, 2].std()])
+        x_valid_standardized = (x_valid - x_mean) / x_std
+        report = full_multiclass_report(model,
+                                        x_valid_standardized,
+                                        y_valid,
+                                        [0, 1],
+                                        id_valid=id_valid,
+                                        chunk=chunk)
 
-    report = full_multiclass_report(model,
-                                    x_valid_standardized,
-                                    y_valid,
-                                    [0, 1],
-                                    id_valid=id_valid)
     upload_to_slack('/tmp/cm.png', report, token)
     upload_to_slack('/tmp/false_positives.png', 'false positives', token)
     upload_to_slack('/tmp/false_negatives.png', 'false negatives', token)
@@ -153,7 +167,8 @@ def full_multiclass_report(model: keras.models.Model,
                            x,
                            y_true,
                            classes,
-                           id_valid: np.ndarray = None):
+                           id_valid: np.ndarray = None,
+                           chunk=False):
     """
     Builds a report containing the following:
         - accuracy
@@ -169,6 +184,8 @@ def full_multiclass_report(model: keras.models.Model,
     :param x:
     :param y_true:
     :param classes:
+    :param id_valid
+    :param chunk
     :return:
     """
     y_proba = model.predict(x, batch_size=8)
@@ -208,7 +225,8 @@ def full_multiclass_report(model: keras.models.Model,
     save_misclassification_plots(x,
                                  y_true_binary,
                                  y_pred_binary,
-                                 id_valid=id_valid)
+                                 id_valid=id_valid,
+                                 chunk=chunk)
     return comment
 
 
@@ -235,7 +253,8 @@ def upload_to_slack(filename, comment, token):
 def save_misclassification_plots(x_valid,
                                  y_true,
                                  y_pred,
-                                 id_valid: np.ndarray = None):
+                                 id_valid: np.ndarray = None,
+                                 chunk=False):
     """Saves the 4 true/fals positive/negative plots.
 
     The y inputs must be binary and 1 dimensional.
@@ -265,7 +284,8 @@ def save_misclassification_plots(x_valid,
             plot_misclassification(x_filtered,
                                    y_true[mask],
                                    y_pred[mask],
-                                   ids=ids_filtered)
+                                   ids=ids_filtered,
+                                   chunk=chunk)
             plt.savefig(plot_name_dict[(i, j)])
 
 
@@ -275,7 +295,8 @@ def plot_misclassification(x,
                            num_cols=5,
                            limit=20,
                            offset=0,
-                           ids: np.ndarray = None):
+                           ids: np.ndarray = None,
+                           chunk=False):
     """
     Plots the figures with labels and predictions.
 
@@ -285,6 +306,8 @@ def plot_misclassification(x,
     :param num_cols:
     :param limit:
     :param offset:
+    :param ids:
+    :param chunk:
     :return:
     """
     num_rows = (min(len(x), limit) + num_cols - 1) // num_cols
@@ -299,7 +322,12 @@ def plot_misclassification(x,
         if ids is not None:
             ax.set_title(f'patient: {ids[i][:4]}...')
         ax.set_xlabel(f'y_true: {y_true[i]} y_pred: {y_pred[i]}')
-        plt.imshow(arr)  # Multiply by 255 here for
+        if chunk:
+            mip = np.max(arr, axis=0)
+            mip = np.reshape(mip, (32, 32))
+            plt.imshow(mip)
+        else:
+            plt.imshow(arr)  # Multiply by 255 here for
     fig.tight_layout()
     plt.plot()
 
