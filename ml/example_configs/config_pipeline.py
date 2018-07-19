@@ -8,8 +8,8 @@ import generators.luke
 import models.luke
 import preprocessors.luke
 
-USER = ''  # Example: luke
-BLUENO_HOME = ''  # Example: pathlib.Path('/gpfs/main/home/lzhu7/elvo-analysis')
+USER = ''  # ex: luke
+BLUENO_HOME = ''  # ex: pathlib.Path('/gpfs/main/home/lzhu7/elvo-analysis')
 
 DATA_DIR = ''
 LOG_DIR = ''
