@@ -225,7 +225,7 @@ def full_multiclass_report(model: keras.models.Model,
                                  y_true_binary,
                                  y_pred_binary,
                                  id_valid=id_valid,
-                                 chunk=False)
+                                 chunk=chunk)
     return comment
 
 
