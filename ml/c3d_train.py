@@ -4,6 +4,10 @@ from blueno.slack import slack_report
 from blueno import utils
 from keras.optimizers import SGD
 import pickle
+import os
+
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"   # see issue #152
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 BLACKLIST = []
 LEARN_RATE = 1e-5
