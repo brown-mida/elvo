@@ -306,10 +306,16 @@ def check_data_in_sync(params: blueno.ParamConfig):
     """
     data_dir = pathlib.Path(params.data.data_dir)
     gcs_url = params.data.gcs_url
+
+    if gcs_url is None:
+        logging.warning('No GCS url found, will not check for syncing')
+        return
+
     if gcs_url.endswith('/'):
         array_url = gcs_url + 'arrays'
     else:
         array_url = gcs_url + '/arrays'
+
     if not gcs.equal_array_counts(data_dir,
                                   array_url):
         raise ValueError(f'{data_dir} and {array_url} have a different'
