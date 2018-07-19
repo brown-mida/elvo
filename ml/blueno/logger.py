@@ -6,9 +6,10 @@ import logging
 
 
 def configure_parent_logger(file_name,
-                            stdout=True):
+                            stdout=True,
+                            level=logging.DEBUG):
     root_logger = logging.getLogger()
-    root_logger.setLevel(logging.DEBUG)
+    root_logger.setLevel(level)
     handler = logging.FileHandler(file_name)
     formatter = logging.Formatter(
         fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s')

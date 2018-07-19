@@ -1,17 +1,23 @@
 import os
+import sys
 import logging
+import argparse
+import importlib
+import pathlib
+import datetime
+
+import numpy as np
 import keras
+from keras.utils import multi_gpu_model
 
 from blueno.elasticsearch import search_top_models
-from blueno import types, preprocessing, utils
+from blueno import types, preprocessing, utils, logger
 from models.luke import resnet
 from generators.luke import standard_generators
-from blueno_eval import evaluate_model
 
 
-def get_models_to_train(data_dir):
-    docs = search_top_models('http://104.196.51.205',
-                             lower='0.85', upper='0.93')
+def get_models_to_train(address, lower, upper, data_dir):
+    docs = search_top_models(address, lower=lower, upper=upper)
     docs_to_train = []
     for doc in docs:
         data = {}
@@ -94,9 +100,11 @@ def get_models_to_train(data_dir):
 
 def __get_data_if_not_exists(gcs_dir, local_dir):
     if not os.path.isdir(local_dir):
-        logging.info('Dataset does not exist. Downloading from GCS...')
+        logging.info(('Dataset {} does not exist. '
+                      'Downloading from GCS...'.format(local_dir)))
         os.mkdir(local_dir)
-        exit = os.system('gsutil rsync -r -d {} {}'.format(gcs_dir, local_dir))
+        exit = os.system(
+            'gsutil -m rsync -r -d {} {}'.format(gcs_dir, local_dir))
         return exit == 0
     return True
 
@@ -105,7 +113,8 @@ def __load_data(params):
     return preprocessing.prepare_data(params)
 
 
-def __train_model(params, x_train, y_train, x_valid, y_valid):
+def __train_model(params, x_train, y_train, x_valid, y_valid,
+                  num_gpu=0):
     train_gen, valid_gen = params.generator.generator_callable(
         x_train, y_train,
         x_valid, y_valid,
@@ -116,6 +125,9 @@ def __train_model(params, x_train, y_train, x_valid, y_valid):
     model = params.model.model_callable(input_shape=x_train.shape[1:],
                                         num_classes=y_train.shape[1],
                                         **params.model.__dict__)
+    model_original = model
+    if num_gpu > 0:
+        model = multi_gpu_model(model, gpus=num_gpu)
     metrics = ['acc',
                utils.sensitivity,
                utils.specificity,
@@ -132,20 +144,161 @@ def __train_model(params, x_train, y_train, x_valid, y_valid):
                                   validation_data=valid_gen,
                                   verbose=2,
                                   callbacks=callbacks)
-    return model, history
+    return model_original, history
 
+
+def evaluate_model(x_test, y_test, model,
+                   normalize=True, x_train=None,
+                   num_gpus=0):
+    if normalize:
+        if x_train is None:
+            raise ValueError(('Must specify training data if normalize '
+                              'is set to True.'))
+        else:
+            x_mean = np.array([x_train[:, :, :, 0].mean(),
+                               x_train[:, :, :, 1].mean(),
+                               x_train[:, :, :, 2].mean()])
+            x_std = np.array([x_train[:, :, :, 0].std(),
+                              x_train[:, :, :, 1].std(),
+                              x_train[:, :, :, 2].std()])
+            x_test = (x_test - x_mean) / x_std
+
+    if num_gpus > 0:
+        model = multi_gpu_model(model)
+    results = model.evaluate(x=x_test, y=y_test, batch_size=1,
+                             verbose=1)
+    return results
+
+
+def parse_args(args):
+    parser = argparse.ArgumentParser(description='Evaluation script.')
+    subparsers = parser.add_subparsers(
+        help='Arguments for specific evaluation types.',
+        dest='eval_type'
+    )
+    subparsers.required = True
+
+    param_parser = subparsers.add_parser('param-list')
+    param_parser.add_argument(
+        'param-list-config',
+        help=('Path to config file. This file must have a list of '
+              'ParamConfig objects stored in EVAL_PARAM_LIST.')
+    )
+
+    kibana_parser = subparsers.add_parser('kibana')
+    kibana_parser.add_argument('--address',
+                               help='Address to access Kibana.',
+                               default='http://104.196.51.205')
+    kibana_parser.add_argument('--lower',
+                               help='Lower bound of best_val_acc to search.',
+                               default='0.85')
+    kibana_parser.add_argument('--upper',
+                               help='Upper bound of best_val_acc to search.',
+                               default='0.93')
+
+    parser.add_argument(
+        '--gpu',
+        help=('Ids of the GPU to use (as reported by nvidia-smi). '
+              'Separated by comma, no spaces. e.g. 0,1'),
+        default=None
+    )
+    parser.add_argument(
+        '--log-dir',
+        help=('Location to store logs.'),
+        default='../logs/'
+    )
+    parser.add_argument(
+        '--config',
+        help=('Configuration file, if you want to specify GPU and '
+              'log directories there.'),
+        default=None
+    )
+
+    return parser.parse_args(args)
+
+
+def check_config(config):
+    logging.info('Checking that config has all required attributes')
+    logging.debug('EVAL_PARAM_LIST: {}'.format(config.EVAL_PARAM_LIST))
+    if (not (isinstance(config.EVAL_PARAM_LIST, list)) or
+       not (isinstance(config.EVAL_PARAM_LIST[0], types.ParamConfig))):
+        raise ValueError('EVAL_PARAM_LIST must be a list of ParamConfig')
+
+
+def main(args=None):
+    # Parse arguments
+    if args is None:
+        args = sys.argv[1:]
+    args = parse_args(args)
+
+    # Set config if exists
+    if args.config:
+        user_config = importlib.import_module(args.config)
+
+    # Set logger
+    if args.config is not None and user_config.LOG_DIR is not None:
+        parent_log_file = pathlib.Path(
+            user_config.LOG_DIR) / 'eval-results-{}.txt'.format(
+            datetime.datetime.utcnow().isoformat()
+        )
+    else:
+        parent_log_file = pathlib.Path(
+            args.log_dir) / 'eval-results-{}.txt'.format(
+            datetime.datetime.utcnow().isoformat()
+        )
+    logger.configure_parent_logger(parent_log_file, level=logging.INFO)
+
+    # Choose GPU to use
+    if args.gpu:
+        os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
+        num_gpu = len(args.gpu.split(','))
+    elif args.config is not None and user_config.gpus is not None:
+        os.environ['CUDA_VISIBLE_DEVICES'] = user_config.gpus
+        num_gpu = len(user_config.gpus.split(','))
+    else:
+        num_gpu = 0
+
+    if args.eval_type == 'kibana':
+        # Fetch params list from Kibana to evaluate
+        models = get_models_to_train(args.address, args.lower,
+                                     args.upper, '../tmp')
+        for model in models:
+            logging.info("----------------Evaluation-------------------")
+            logging.info('Job name: {}'.format(model['job_name']))
+            logging.info('Job date: {}'.format(model['date']))
+            logging.info('Purported accuracy: {}'.format(
+                model['purported_accuracy']))
+            logging.info('Purported loss: {}'.format(
+                model['purported_loss']))
+            params = model['params']
+            __get_data_if_not_exists(params.data.gcs_url,
+                                     model['local_dir'])
+            (x_train, x_valid, x_test, y_train, y_valid, y_test,
+             _, _, _) = __load_data(params)
+            model, history = __train_model(params, x_train, y_train,
+                                           x_valid, y_valid,
+                                           num_gpu=num_gpu)
+            result = evaluate_model(x_test, y_test, model,
+                                    normalize=True, x_train=x_train)
+            print(result)
+    else:
+        # Manual evaluation of a list of ParamConfig
+        logging.info('Using config {}'.format(args.param_list_config))
+        param_list_config = importlib.import_module(args.param_list_config)
+        check_config(param_list_config)
+
+        params = param_list_config.EVAL_PARAM_LIST
+        for param in params:
+            __get_data_if_not_exists(params.data.gcs_url,
+                                     params.data.data_dir)
+            (x_train, x_valid, x_test, y_train, y_valid, y_test,
+             _, _, _) = __load_data(params)
+            model, history = __train_model(params, x_train, y_train,
+                                           x_valid, y_valid,
+                                           num_gpu=num_gpu)
+            result = evaluate_model(x_test, y_test, model,
+                                    normalize=True, x_train=x_train)
+            print(result)
 
 if __name__ == '__main__':
-    models = get_models_to_train('../tmp/')
-    for model in models:
-        params = model['params']
-        __get_data_if_not_exists(params.data.gcs_url,
-                                 model['local_dir'])
-        (x_train, x_valid, x_test, y_train, y_valid, y_test,
-         _, _, _) = __load_data(params)
-        model, history = __train_model(params, x_train, y_train,
-                                       x_valid, y_valid)
-        result = evaluate_model(x_test, y_test, model,
-                                normalize=True, x_train=x_train)
-        print(result)
-        throw
+    main()
