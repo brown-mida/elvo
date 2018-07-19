@@ -189,9 +189,15 @@ def test_parse_params_str_dict():
     assert elasticsearch._parse_params_str(params_str) == expected
 
 
-@pytest.mark.skip
+@pytest.mark.skipif(os.uname().nodename != 'gpu1708',
+                    reason='Test uses logs only on gpu1708')
 def test_extract_best_auc():
-    assert elasticsearch._extract_best_auc() == 0
+    log_filepath = pathlib.Path(
+        '/gpfs/main/home/lzhu7/elvo-analysis/logs/'
+        'processed-only-m1_2-classes-2018-07-18T15:47:55.783659.log'
+    )
+
+    assert elasticsearch._extract_best_auc(log_filepath) == 0.9267489711934156
 
 
 @pytest.mark.skipif(os.uname().nodename != 'gpu1708',

@@ -2,6 +2,7 @@
 Script to load the data in the logs directory of gpu1708 up to
 Elasticsearch.
 """
+import argparse
 import pathlib
 
 import os
@@ -10,10 +11,11 @@ from elasticsearch_dsl import connections
 from blueno.elasticsearch import (
     insert_or_ignore_filepaths, JOB_INDEX,
     TrainingJob,
+    insert_or_replace_filepaths,
 )
 
 
-def bluenom(log_dir: pathlib.Path, gpu1708=False):
+def bluenom(log_dir: pathlib.Path, replace=True, gpu1708=False):
     """
     Uploads logs in the directory to bluenom. This will
     only upload logs which have uploaded to Slack.
@@ -32,20 +34,42 @@ def bluenom(log_dir: pathlib.Path, gpu1708=False):
             metrics_file_path = log_dir / filename
         elif filename.endswith('.log'):
             print('indexing {}'.format(filename))
-            insert_or_ignore_filepaths(file_path,
-                                       metrics_file_path,
-                                       gpu1708)
+            if replace:
+                insert_or_replace_filepaths(file_path,
+                                            metrics_file_path,
+                                            gpu1708)
+            else:
+                insert_or_ignore_filepaths(file_path,
+                                           metrics_file_path,
+                                           gpu1708)
         else:
             print('{} is not a log or CSV file'.format(filename))
 
 
 if __name__ == '__main__':
-    print('resetting job index')
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--reset', default=False, type=bool)
+    parser.add_argument('--replace', default=True, type=bool)
+    parser.add_argument('--gpu1708', default=False, type=bool)
+    args = parser.parse_args()
+
     # Creates a connection to our Airflow instance
     connections.create_connection(hosts=['http://104.196.51.205'])
-    if JOB_INDEX.exists():
-        JOB_INDEX.delete()
-    JOB_INDEX.create()
+
+    if args.reset:
+        print('resetting index')
+        if JOB_INDEX.exists():
+            JOB_INDEX.delete()
+        JOB_INDEX.create()
+
     TrainingJob.init()
     path = pathlib.Path('/gpfs/main/home/lzhu7/elvo-analysis/logs')
-    bluenom(path, gpu1708=True)
+
+    if args.replace:
+        print('using insert_or_replace for existing matches')
+    else:
+        print('using insert_or_ignore for existing matches')
+
+    bluenom(path,
+            replace=args.replace,
+            gpu1708=args.gpu1708)
