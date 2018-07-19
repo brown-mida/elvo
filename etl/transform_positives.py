@@ -163,6 +163,7 @@ def clean_csv():
             labels_df = labels_df.drop(row[0])
             # print("Dropping patient " + str(index) + ": " + str(row[1]))
     print(len(labels_df))
+    labels_df = labels_df.drop(columns=['Unnamed: 0'])
     labels_df.to_csv('/home/amy/data/augmented_annotated_labels1.csv')
 
 
