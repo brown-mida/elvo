@@ -118,7 +118,8 @@ def get_models_to_train(address, lower, upper, data_dir):
             else:
                 generator[param] = default_value
         # Edge case for zooms
-        if generator['zoom_range'][0] == '(':
+        if (isinstance(generator['zoom_range'], str) and
+           generator['zoom_range'][0] == '('):
             generator['zoom_range'] = generator['zoom_range'][1:-1].split(',')
 
         generator['generator_callable'] = standard_generators
