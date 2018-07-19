@@ -45,10 +45,13 @@ def slack_report(x_train: np.ndarray,
                     token)
 
     if chunk:
-        x_mean = x_train[:, :, :, :, 0].mean()
-        x_std = x_train[:, :, :, :, 0].std()
-        x_valid_standardized = (x_valid - x_mean) / x_std
         y_valid = np.reshape(y_valid, (len(y_valid), 1))
+        report = full_multiclass_report(model,
+                                        x_valid,
+                                        y_valid,
+                                        [0, 1],
+                                        id_valid=id_valid,
+                                        chunk=chunk)
     else:
         x_mean = np.array([x_train[:, :, :, 0].mean(),
                            x_train[:, :, :, 1].mean(),
@@ -57,14 +60,13 @@ def slack_report(x_train: np.ndarray,
                          x_train[:, :, :, 1].std(),
                          x_train[:, :, :, 2].std()])
         x_valid_standardized = (x_valid - x_mean) / x_std
-    print(x_valid_standardized.shape)
+        report = full_multiclass_report(model,
+                                        x_valid_standardized,
+                                        y_valid,
+                                        [0, 1],
+                                        id_valid=id_valid,
+                                        chunk=chunk)
 
-    report = full_multiclass_report(model,
-                                    x_valid_standardized,
-                                    y_valid,
-                                    [0, 1],
-                                    id_valid=id_valid,
-                                    chunk=chunk)
     upload_to_slack('/tmp/cm.png', report, token)
     upload_to_slack('/tmp/false_positives.png', 'false positives', token)
     upload_to_slack('/tmp/false_negatives.png', 'false negatives', token)
