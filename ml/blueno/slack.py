@@ -34,6 +34,7 @@ def slack_report(x_train: np.ndarray,
     :param name: the name you want to give the model
     :param params: the parameters of the model to attach to the report
     :param id_valid: the ids ordered to correspond with y_valid
+    :param chunk: whether or not we're analyzing 3D data
     :return:
     """
     print(x_valid.shape)
