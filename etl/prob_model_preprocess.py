@@ -1,5 +1,6 @@
 import logging
 from ml.models.three_d import c3d
+from keras.models import load_model
 import numpy as np
 import pandas as pd
 from lib import cloud_management as cloud
@@ -18,8 +19,8 @@ def configure_logger():
 def get_prob_scores():
     client = cloud.authenticate()
     bucket = client.get_bucket('elvos')
-    model = c3d.C3DBuilder.build()
-    model.load_weights('tmp/c3d_100.hdf5')
+    # model = c3d.C3DBuilder.build()
+    model = load_model('tmp/c3d_100.hdf5')
     labels = pd.read_csv('/Users/haltriedman/Desktop/annotated_labels.csv')
     print(labels)
 
