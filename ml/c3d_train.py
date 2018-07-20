@@ -32,8 +32,8 @@ metrics = ['acc',
 
 print(np.asarray(x_val).shape)
 
-# for i in range(1, 11):
-for i in range(10, 11):
+for i in range(1, 11):
+# for i in range(10, 11):
 
     model = c3d.C3DBuilder.build()
     opt = SGD(lr=LEARN_RATE, momentum=0.9, nesterov=True)
