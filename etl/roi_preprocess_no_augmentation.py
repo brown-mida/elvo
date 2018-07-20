@@ -66,12 +66,13 @@ def create_labels(annotations_df: pd.DataFrame):
     for index, row in labels_df.iterrows():
         print(str(row[0]) + ": " + row[1])
         if row[2] == 1 and not row[1].endswith('_1'):
-            labels_df = labels_df.drop(row[0])
+            dropped = labels_df.drop(row[0], errors='ignore')
             print("Dropping patient " + str(row[0]) + ": " + str(row[1]))
 
-    print(len(labels_df))
-    # labels_df = labels_df.drop(columns=['Unnamed: 0'])
-    labels_df.to_csv('/home/amy/data/no_aug_annotated_labels.csv')
+    print("labels_df: " + str(len(labels_df)))
+    print("dropped: " + str(len(dropped)))
+    dropped = dropped.drop(columns=['Unnamed: 0'])
+    dropped.to_csv('/home/amy/data/no_aug_annotated_labels.csv')
 
 
 def process_labels():
