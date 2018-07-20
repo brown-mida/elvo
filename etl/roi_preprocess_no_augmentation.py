@@ -55,28 +55,22 @@ def create_chunks(annotations_df: pd.DataFrame):
 
 
 def create_labels(annotations_df: pd.DataFrame):
-    print("HELLO AGAIN")
     labels_df = pd.read_csv('/home/amy/data/augmented'
                             '_annotated_labels1.csv')
     print(len(labels_df))
 
-    for index, row in labels_df.iterrows():
-        print(str(row[0]) + ": " + row[1])
-        if row[2] == 1 and not row[1].endswith('_1'):
-            dropped = labels_df.drop(row[0], errors='ignore')
-            print("Dropping patient " + str(row[0]) + ": " + str(row[1]))
+    labels_df = labels_df[
+        labels_df['label'] == 0
+        | labels_df['Unnamed: 0.1'].str.endswith('_1')]
 
     print("labels_df: " + str(len(labels_df)))
-    print("dropped: " + str(len(dropped)))
-    dropped = dropped.drop(columns=['Unnamed: 0'])
-    dropped.to_csv('/home/amy/data/no_aug_annotated_labels.csv')
+    labels_df = labels_df.drop(columns=['Unnamed: 0'])
+    labels_df.to_csv('/home/amy/data/no_aug_annotated_labels.csv')
 
 
 def process_labels():
     annotations_df = pd.read_csv(
         '/home/amy/elvo-analysis/annotations.csv')
-    # annotations_df = pd.read_csv(
-    #         '/Users/haltriedman/Desktop/annotations.csv')
     annotations_df = annotations_df.drop(['created_by',
                                           'created_at',
                                           'ROI Link',
