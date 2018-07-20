@@ -1,5 +1,5 @@
 import logging
-from ml.models.three_d import c3d
+# from ml.models.three_d import c3d
 from keras.models import load_model
 import numpy as np
 import pandas as pd
