@@ -15,7 +15,7 @@ LEARN_RATE = 1e-5
 
 sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
 
-with open('chunk_data.pkl', 'rb') as infile:
+with open('chunk_data_separated.pkl', 'rb') as infile:
     full_data = pickle.load(infile)
 
 full_x_train = full_data[0]
@@ -31,8 +31,8 @@ metrics = ['acc',
 
 print(np.asarray(x_val).shape)
 
-# for i in range(1, 11):
-for i in range(6, 11):
+for i in range(1, 11):
+# for i in range(6, 11):
 
     model = c3d.C3DBuilder.build()
     opt = SGD(lr=LEARN_RATE, momentum=0.9, nesterov=True)
