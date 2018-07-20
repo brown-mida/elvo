@@ -4,6 +4,7 @@ from blueno.slack import slack_report
 from blueno import utils
 import numpy as np
 from keras.optimizers import SGD
+from keras.callbacks import ModelCheckpoint
 import pickle
 import os
 
@@ -31,8 +32,8 @@ metrics = ['acc',
 
 print(np.asarray(x_val).shape)
 
-for i in range(1, 11):
-# for i in range(6, 11):
+# for i in range(1, 11):
+for i in range(10, 11):
 
     model = c3d.C3DBuilder.build()
     opt = SGD(lr=LEARN_RATE, momentum=0.9, nesterov=True)
@@ -48,6 +49,12 @@ for i in range(1, 11):
                                        x_valid=x_val,
                                        y_valid=y_val,
                                        normalize=False)
+
+    checkpoint = ModelCheckpoint(f'tmp/c3d_{i*10}.hdf5',
+                                 monitor='val_acc',
+                                 verbose=1, save_best_only=True,
+                                 mode='auto')
+    callbacks.append(checkpoint)
 
     history = model.fit(x=x_train,
                         y=y_train,

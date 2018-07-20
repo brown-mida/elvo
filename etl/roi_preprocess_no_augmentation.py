@@ -55,9 +55,7 @@ def create_chunks(annotations_df: pd.DataFrame):
 
 
 def create_labels(annotations_df: pd.DataFrame):
-
-    print("HELLO AGAIN")
-    labels_df = pd.read_csv('/home/amy/data/augmented' \
+    labels_df = pd.read_csv('/home/amy/data/augmented'
                             '_annotated_labels1.csv')
     print(len(labels_df))
 
