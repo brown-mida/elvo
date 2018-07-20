@@ -1,8 +1,10 @@
-from lib import cloud_management as cloud  # , roi_transforms, transforms
 import logging
+
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
+
+from lib import cloud_management as cloud  # , roi_transforms, transforms
 
 
 def configure_logger():
@@ -46,7 +48,7 @@ def create_chunks(annotations_df: pd.DataFrame):
         # if it's elvo positive
         if elvo_positive:
             for row in roi_df.itertuples():
-                print(row)
+                logging.info(row)
                 """
                 row[0] = index
                 row[1] = patient ID
@@ -64,7 +66,7 @@ def create_chunks(annotations_df: pd.DataFrame):
                                      + (len(arr) - row[7])) / 2),
                                 int((row[4] + row[5]) / 2),
                                 int((row[2] + row[3]) / 2)))
-            print(rois, centers)
+            logging.info(rois, centers)
 
         h = 0
         # loop through every chunk
@@ -122,7 +124,7 @@ def create_labels(annotations_df: pd.DataFrame):
         file_id = in_blob.name.split('/')[2]
         file_id = file_id.split('.')[0]
 
-        print(f'labeling {file_id}')
+        logging.info(f'labeling {file_id}')
 
         # copy ROI if there's a positive match in the ROI annotations
         roi_df = annotations_df[
@@ -141,7 +143,6 @@ def create_labels(annotations_df: pd.DataFrame):
         if elvo_positive:
 
             for row in roi_df.itertuples():
-                # print(row)
                 """
                 row[0] = index
                 row[1] = patient ID
@@ -212,7 +213,7 @@ def process_labels():
                                          axis=1)
     annotations_df = annotations_df[
         annotations_df.red1 == annotations_df.red1]
-    print(annotations_df)
+    logging.info(annotations_df)
     return annotations_df
 
 
@@ -232,7 +233,7 @@ def inspect_rois(annotations_df):
         file_id = in_blob.name.split('/')[2]
         file_id = file_id.split('.')[0]
 
-        print(f'chunking {file_id}')
+        logging.info(f'chunking {file_id}')
         # copy ROI if there's a positive match in the ROI annotations
         roi_df = annotations_df[
             annotations_df['patient_id'].str.match(file_id)]
@@ -256,7 +257,7 @@ def inspect_rois(annotations_df):
                           blue: blue + 32, red: red + 50, green: green + 50])
             start = 0
             for chunk in chunks:
-                print(start)
+                logging.info(start)
                 axial = np.max(chunk, axis=0)
                 coronal = np.max(chunk, axis=1)
                 sag = np.max(chunk, axis=2)

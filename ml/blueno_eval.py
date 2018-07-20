@@ -12,12 +12,13 @@ TODO:
 - Configure the script to run multiple models at once
 """
 
-import sys
 import argparse
+import datetime
 import importlib
 import logging
-import datetime
 import pathlib
+import sys
+
 import numpy as np
 
 from blueno import preprocessing, utils, types, logger
@@ -47,7 +48,8 @@ def evaluate_from_config(params):
     # Load the data
     logging.info('Preparing data and models')
     (x_train, _, x_test, y_train, _, y_test,
-     id_train, _, id_test) = preprocessing.prepare_data(params)
+     id_train, _, id_test) = preprocessing.prepare_data(params,
+                                                        train_test_val=True)
 
     metrics = ['acc',
                utils.sensitivity,

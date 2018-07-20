@@ -25,7 +25,6 @@ The script assumes that:
 - you are able to get processed data onto that computer
 - you are familiar with Python and the terminal
 """
-import collections
 import datetime
 import importlib
 import logging
@@ -47,7 +46,8 @@ from blueno import (
     utils,
     preprocessing,
     elasticsearch,
-    logger
+    logger,
+    gcs,
 )
 
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
@@ -239,11 +239,12 @@ def hyperoptimize(hyperparams: Union[blueno.ParamGrid,
         if isinstance(params, dict):
             params = blueno.ParamConfig(**params)
 
+        check_data_in_sync(params)
+
         # This is where we'd run preprocessing. To run in a reasonable amount
         # of time, the raw data must be cached in-memory.
-
-        (x_train, x_valid, _, y_train, y_valid, _,
-         id_train, id_valid, _) = preprocessing.prepare_data(params)
+        arrays = preprocessing.prepare_data(params, train_test_val=False)
+        x_train, x_valid, y_train, y_valid, id_train, id_valid = arrays
 
         # Start the model training job
         # Run in a separate process to avoid memory issues
@@ -263,7 +264,7 @@ def hyperoptimize(hyperparams: Union[blueno.ParamGrid,
             job_name = params.job_name
         else:
             job_name = str(pathlib.Path(params.data.data_dir).parent.name)
-            job_name += f'_{y_train.shape[1]}-classes'
+        job_name += f'_{y_train.shape[1]}-classes'
 
         process = multiprocessing.Process(target=job_fn,
                                           args=(x_train, y_train,
@@ -285,11 +286,40 @@ def hyperoptimize(hyperparams: Union[blueno.ParamGrid,
         if gpu_index == 0:
             logging.info(f'all gpus used, calling join on processes:'
                          f' {processes}')
-            p: multiprocessing.Process
-            for p in processes:
-                p.join()
-            processes = []
-            time.sleep(60)
+        p: multiprocessing.Process
+        for p in processes:
+            p.join()
+        processes = []
+        time.sleep(60)
+
+
+def check_data_in_sync(params: blueno.ParamConfig):
+    """
+    Checks that the data is in-sync with google cloud.
+
+    This is so we can reproduce and ensemble the arrays.
+
+    This also assumes that gcs_url/arrays contains the arrays.
+
+    :param params:
+    :return:
+    """
+    data_dir = pathlib.Path(params.data.data_dir)
+    gcs_url = params.data.gcs_url
+
+    if gcs_url is None:
+        logging.warning('No GCS url found, will not check for syncing')
+        return
+
+    if gcs_url.endswith('/'):
+        array_url = gcs_url + 'arrays'
+    else:
+        array_url = gcs_url + '/arrays'
+
+    if not gcs.equal_array_counts(data_dir,
+                                  array_url):
+        raise ValueError(f'{data_dir} and {array_url} have a different'
+                         f' number of files')
 
 
 def check_config(config):
