@@ -36,6 +36,8 @@ import random
 import numpy as np
 import keras
 from keras.utils import multi_gpu_model
+from keras.callbacks import ModelCheckpoint
+from keras.models import load_model
 
 from blueno.elasticsearch import search_top_models
 from blueno import types, preprocessing, utils, logger, slack
@@ -180,7 +182,7 @@ def __load_data(params):
 
 
 def __train_model(params, x_train, y_train, x_valid, y_valid,
-                  num_gpu=0):
+                  num_gpu=0, no_early_stopping=False):
     """
     Trains the model.
 
@@ -214,14 +216,23 @@ def __train_model(params, x_train, y_train, x_valid, y_valid,
     model.compile(optimizer=params.model.optimizer,
                   loss=params.model.loss,
                   metrics=metrics)
-    callbacks = utils.create_callbacks(x_train, y_train, x_valid, y_valid,
-                                       early_stopping=params.early_stopping,
-                                       reduce_lr=params.reduce_lr)
+    callbacks = [utils.create_callbacks(x_train, y_train, x_valid, y_valid,
+                                        early_stopping=params.early_stopping,
+                                        reduce_lr=params.reduce_lr)]
+    if no_early_stopping:
+        callbacks.append(ModelCheckpoint(filepath='../tmp/model.hdf5',
+                                         save_best_only=True,
+                                         monitor='val_acc',
+                                         mode='max',
+                                         verbose=1))
     history = model.fit_generator(train_gen,
                                   epochs=params.max_epochs,
                                   validation_data=valid_gen,
                                   verbose=2,
                                   callbacks=callbacks)
+
+    if no_early_stopping:
+        model_original = load_model('../tmp/model.hdf5')
     return model_original, history
 
 
@@ -329,6 +340,13 @@ def parse_args(args):
         default=None
     )
 
+    parser.add_argument(
+        '--no-early-stopping',
+        help=('Saves best model after running max epochs, '
+              'instead of early stopping'),
+        default=False
+    )
+
     return parser.parse_args(args)
 
 
@@ -347,7 +365,8 @@ def iterate_eval(num_iterations, params, num_gpu,
                  job_name=None, job_date=None,
                  purported_loss=None, purported_accuracy=None,
                  purported_sensitivity=None,
-                 slack_token=None):
+                 slack_token=None,
+                 no_early_stopping=False):
     """
     Beautiful piece of text that has more logging than code.
     """
@@ -360,7 +379,8 @@ def iterate_eval(num_iterations, params, num_gpu,
          _, _, _) = __load_data(params)
         model, history = __train_model(params, x_train, y_train,
                                        x_valid, y_valid,
-                                       num_gpu=num_gpu)
+                                       num_gpu=num_gpu,
+                                       no_early_stopping=no_early_stopping)
         result = evaluate_model(x_test, y_test, model, params,
                                 normalize=True, x_train=x_train)
         result_list.append(result)
@@ -494,7 +514,8 @@ def main(args=None):
                          purported_accuracy=model['purported_accuracy'],
                          purported_loss=model['purported_loss'],
                          purported_sensitivity=model['purported_sensitivity'],
-                         slack_token=slack_token)
+                         slack_token=slack_token,
+                         no_early_stopping=args.no_early_stopping)
 
     else:
         # Manual evaluation of a list of ParamConfig
@@ -507,7 +528,8 @@ def main(args=None):
             __get_data_if_not_exists(param.data.gcs_url,
                                      param.data.data_dir)
             iterate_eval(num_iterations, param, num_gpu,
-                         slack_token=slack_token)
+                         slack_token=slack_token,
+                         no_early_stopping=args.no_early_stopping)
 
 
 if __name__ == '__main__':
