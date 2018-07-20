@@ -9,15 +9,12 @@ from keras.layers import (
 )
 
 CUBE_SIZE = 32
-USE_DROPOUT = False
-LEARN_RATE = 0.001
 
 
 class C3DBuilder(object):
 
     @staticmethod
-    def build(input_shape=(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE, 1),
-              features=False) -> Model:
+    def build(input_shape=(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE, 1)) -> Model:
         inputs = Input(shape=input_shape, name="input_1")
         x = inputs
         x = AveragePooling3D(pool_size=(2, 1, 1),
@@ -66,14 +63,6 @@ class C3DBuilder(object):
         out_class = Flatten(name="out_class")(out_class)
 
         model = Model(input=inputs, output=out_class)
-        if features:
-            model = Model(input=inputs, output=[last64])
         model.summary(line_length=140)
 
         return model
-
-
-# model = C3DBuilder.build((32, 32, 32, 1))
-# model.compile(optimizer=SGD(lr=LEARN_RATE, momentum=0.9, nesterov=True),
-#               loss={"out_class": "binary_crossentropy"},
-#               metrics={"out_class": [binary_accuracy, binary_crossentropy]})
