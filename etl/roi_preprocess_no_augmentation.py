@@ -62,11 +62,6 @@ def create_labels(annotations_df: pd.DataFrame):
     labels_df = labels_df[
         labels_df['label'] == 0
         | labels_df['Unnamed: 0.1'].str.endswith('_1')]
-    # for index, row in labels_df.iterrows():
-    #     print(str(row[0]) + ": " + row[1])
-    #     if row[2] == 1 and not row[1].endswith('_1'):
-    #         labels_df = labels_df.drop(row[0], errors='ignore')
-    #         print("Dropping patient " + str(row[0]) + ": " + str(row[1]))
 
     print("labels_df: " + str(len(labels_df)))
     labels_df = labels_df.drop(columns=['Unnamed: 0'])
@@ -76,8 +71,6 @@ def create_labels(annotations_df: pd.DataFrame):
 def process_labels():
     annotations_df = pd.read_csv(
         '/home/amy/elvo-analysis/annotations.csv')
-    # annotations_df = pd.read_csv(
-    #         '/Users/haltriedman/Desktop/annotations.csv')
     annotations_df = annotations_df.drop(['created_by',
                                           'created_at',
                                           'ROI Link',
