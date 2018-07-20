@@ -22,6 +22,7 @@ setup(
         'notebook>=5.5.0',
         'numpy>=1.14.5',
         'pandas>=0.23.1',
+        'paramiko>=2.4.1',
         'Pillow>=5.1.0',
         'pydicom>=1.0.2',
         'scikit-image>=0.14.0',
