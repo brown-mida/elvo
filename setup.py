@@ -42,6 +42,10 @@ setup(
             'pytest-cov>=2.5.1',
             'codecov>=2.0.15',
             'flake8>=3.5.0',
+        ],
+        'docs': [
+            'recommonmark>=0.4.0',
+            'sphinx>=1.7.6',
         ]
     },
     include_package_data=True,

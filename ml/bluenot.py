@@ -29,6 +29,7 @@ import datetime
 import importlib
 import logging
 import multiprocessing
+import os
 import pathlib
 import subprocess
 import time
@@ -37,7 +38,6 @@ from typing import List, Union
 
 import keras
 import numpy as np
-import os
 from elasticsearch_dsl import connections
 from sklearn import model_selection
 
@@ -178,7 +178,7 @@ def start_job(x_train: np.ndarray,
 
 
 def upload_model_to_gcs(job_name, created_at, model_filepath):
-    gcs_filepath = 'gs://elvos/models/{}-{}.hdf5'.format(
+    gcs_filepath = 'gs://elvos/sorted_models/{}-{}.hdf5'.format(
         # Remove the extension
         job_name,
         created_at,

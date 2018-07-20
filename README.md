@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.com/elvoai/elvo-analysis.svg?branch=master)](https://travis-ci.com/elvoai/elvo-analysis)
 [![codecov](https://codecov.io/gh/elvoai/elvo-analysis/branch/master/graph/badge.svg)](https://codecov.io/gh/elvoai/elvo-analysis)
+[![Documentation Status](https://readthedocs.org/projects/elvo-analysis/badge/?version=latest)](https://elvo-analysis.readthedocs.io/en/latest/?badge=latest)
 
 ### Getting started
 Create a virtual environment, run `pip install -e .`
