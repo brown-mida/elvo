@@ -1,4 +1,5 @@
 import logging
+import warnings
 from typing import Dict, Tuple, Union
 
 import keras
@@ -45,9 +46,10 @@ def clean_data(arrays: Dict[str, np.ndarray],
 
 
 def to_arrays(data: Dict[str, np.ndarray],
-              labels: pd.Series) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+              labels: pd.Series,
+              sort=True) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
-    Converts the data and labels into numpy arrays.
+    Converts the data and labels into numpy arrays, sorted by patient id.
 
     Note: This function filters mismatched labels.
 
@@ -58,7 +60,12 @@ def to_arrays(data: Dict[str, np.ndarray],
     :return: three arrays: the arrays, then the labels, then the corresponding
     ids
     """
-    patient_ids = data.keys()
+    # Keep the keys sorted so we can reproduce the split on other machines.
+    if sort:
+        patient_ids = sorted(data.keys())
+    else:
+        patient_ids = data.keys()
+
     X_list = []
     y_list = []
     remaining_ids = []
@@ -98,7 +105,8 @@ Tuple9 = Tuple[np.ndarray, np.ndarray,
 
 # TODO(luke): Refactor this function
 def prepare_data(params: ParamConfig,
-                 train_test_val=True) -> Union[Tuple6, Tuple9]:
+                 train_test_val=True,
+                 sort=True) -> Union[Tuple6, Tuple9]:
     """
     Prepares the data referenced in params for ML. This includes
     shuffling and expanding dims.
@@ -106,6 +114,10 @@ def prepare_data(params: ParamConfig,
     :param params: a hyperparameter dictionary generated from a ParamGrid
     :return: x_train, x_valid, y_train, y_valid
     """
+    if not sort:
+        warnings.warn('Sort has been set to false. The split will only be'
+                      ' the same only in certain conditions.')
+
     logging.info(f'using params:\n{params}')
     # Load the arrays and labels
     data_params = params.data
@@ -129,7 +141,7 @@ def prepare_data(params: ParamConfig,
     label_series = labels_df[label_col]
 
     # Convert to numpy arrays
-    x, y, patient_ids = to_arrays(array_dict, label_series)
+    x, y, patient_ids = to_arrays(array_dict, label_series, sort=sort)
 
     if params.model.loss == keras.losses.categorical_crossentropy:
         y = keras.utils.to_categorical(y)

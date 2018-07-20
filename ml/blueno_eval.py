@@ -49,7 +49,8 @@ def evaluate_from_config(params):
     logging.info('Preparing data and models')
     (x_train, _, x_test, y_train, _, y_test,
      id_train, _, id_test) = preprocessing.prepare_data(params,
-                                                        train_test_val=True)
+                                                        train_test_val=True,
+                                                        sort=False)
 
     metrics = ['acc',
                utils.sensitivity,
