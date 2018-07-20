@@ -8,8 +8,14 @@ from google.cloud import storage
 
 def authenticate():
     return storage.Client.from_service_account_json(
-        # for running on the airflow GPU
-        '/home/amy/credentials/client_secret.json'
+        # for running on airflow GPU
+        # '/home/lukezhu/elvo-analysis/credentials/client_secret.json'
+        
+        # for running on hal's GPU
+        '/home/harold_triedman/elvo-analysis/credentials/client_secret.json'
+
+        # for running on amy's GPU
+        # '/home/amy/credentials/client_secret.json'
 
         # for running locally
         # 'credentials/client_secret.json'
