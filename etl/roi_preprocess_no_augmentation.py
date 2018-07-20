@@ -57,93 +57,20 @@ def create_chunks(annotations_df: pd.DataFrame):
 def create_labels(annotations_df: pd.DataFrame):
     client = cloud.authenticate()
     bucket = client.get_bucket('elvos')
-    label_dict = {}
 
-    print("HELLO")
-    # loop through every array on GCS
-    for in_blob in bucket.list_blobs(prefix='/npy'):
-        print("HELLO 2")
-        # blacklist
-        if in_blob.name == 'airflow/npy/LAUIHISOEZIM5ILF.npy':
-            continue
+    print("HELLO AGAIN")
+    labels_df = pd.read_csv('/home/amy/data/augmented' \
+                            '_annotated_labels1.csv')
+    print(len(labels_df))
 
-        # get the file id
-        file_id = in_blob.name.split('/')[2]
-        file_id = file_id.split('.')[0]
+    for index, row in labels_df.iterrows():
+        print(str(row[0]) + ": " + row[1])
+        if row[2] == 1 and not row[1].endswith('_1'):
+            labels_df = labels_df.drop(row[0])
+            print("Dropping patient " + str(row[0]) + ": " + str(row[1]))
 
-        logging.info(f'labeling {file_id}')
-
-        # copy ROI if there's a positive match in the ROI annotations
-        roi_df = annotations_df[
-            annotations_df['patient_id'].str.match(file_id)]
-        # if it's empty, this brain is ELVO negative
-        if roi_df.empty:
-            elvo_positive = False
-        else:
-            elvo_positive = True
-
-        arr = cloud.download_array(in_blob)
-        rois = []
-        centers = []
-
-        # if it's elvo positive
-        if elvo_positive:
-
-            for row in roi_df.itertuples():
-                """
-                row[0] = index
-                row[1] = patient ID
-                row[2] = red1
-                row[3] = red2
-                row[4] = green1
-                row[5] = green2
-                row[6] = blue1
-                row[7] = blue2
-                """
-                rois.append((int(len(arr) - row[7]),
-                             int(row[4]),
-                             int(row[2])))
-                centers.append((int(((len(arr) - row[6])
-                                     + (len(arr) - row[7])) / 2),
-                                int((row[4] + row[5]) / 2),
-                                int((row[2] + row[3]) / 2)))
-
-        # else it's elvo negative
-        h = 0
-        # loop through every chunk
-        for i in range(0, len(arr), 32):
-            for j in range(0, len(arr[0]), 32):
-                for k in range(0, len(arr[0][0]), 32):
-                    found_positive = False
-
-                    # loop through the available ROIs and centers
-                    for roi, center in zip(rois, centers):
-
-                        # if the center lies within this chunk
-                        if i <= center[0] <= i + 32 \
-                                and j <= center[1] <= j + 32 \
-                                and k <= center[2] <= k + 32:
-                            # save the ROI and skip this block
-                            label_dict[file_id + str(h) + '_1'] = 1
-                            h += 1
-                            found_positive = True
-
-                    if found_positive:
-                        continue
-
-                    # copy the chunk
-                    chunk = arr[i:(i + 32), j:(j + 32), k:(k + 32)]
-                    # calculate the airspace
-                    airspace = np.where(chunk < -300)
-                    # if it's less than 90% airspace
-                    if (airspace[0].size / chunk.size) < 0.9:
-                        # save the label as 0 and save it to the cloud
-                        label_dict[file_id + str(h)] = 0
-                    h += 1
-
-    # convert the labels to a df
-    labels_df = pd.DataFrame.from_dict(label_dict, orient='index',
-                                       columns=['label'])
+    print(len(labels_df))
+    # labels_df = labels_df.drop(columns=['Unnamed: 0'])
     labels_df.to_csv('/home/amy/data/no_aug_annotated_labels.csv')
 
 
