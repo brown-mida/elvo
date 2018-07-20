@@ -55,9 +55,6 @@ def create_chunks(annotations_df: pd.DataFrame):
 
 
 def create_labels(annotations_df: pd.DataFrame):
-    client = cloud.authenticate()
-    bucket = client.get_bucket('elvos')
-
     print("HELLO AGAIN")
     labels_df = pd.read_csv('/home/amy/data/augmented'
                             '_annotated_labels1.csv')
