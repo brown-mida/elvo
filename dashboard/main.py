@@ -45,6 +45,11 @@ def annotator():
     return flask.render_template('annotator.html')
 
 
+@app.route('/trainer')
+def trainer():
+    return flask.render_template('trainer.html')
+
+
 @app.route('/roi', methods=['POST'])
 def roi():
     data = flask.request.json
