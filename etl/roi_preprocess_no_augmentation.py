@@ -16,6 +16,19 @@ def configure_logger():
     root_logger.addHandler(handler)
 
 
+def clean_data():
+    configure_logger()
+    client = cloud.authenticate()
+    bucket = client.get_bucket('elvos')
+
+    # iterate through every source directory...
+    prefix = "chunk_data/normal/positive_no_aug"
+    logging.info(f"cleaning: deleting positive chunks from {prefix}")
+
+    for in_blob in bucket.list_blobs(prefix=prefix):
+        in_blob.delete()
+
+
 def create_chunks(annotations_df: pd.DataFrame):
     client = cloud.authenticate()
     bucket = client.get_bucket('elvos')
@@ -33,8 +46,7 @@ def create_chunks(annotations_df: pd.DataFrame):
         # copy region if it's the original image, not a rotation/
         # reflection
 
-        if '_1' in file_id:
-            print("HIII")
+        if file_id.endswith('_1'):
             arr = cloud.download_array(in_blob)
             logging.info(f'downloading {file_id}')
             cloud.save_chunks_to_cloud(arr, 'normal',
@@ -156,8 +168,7 @@ def run_preprocess():
     configure_logger()
     annotations_df = process_labels()
     create_labels(annotations_df)
-    create_chunks(annotations_df)
-    # inspect_rois(annotations_df)
+    #create_chunks(annotations_df)
 
 
 if __name__ == '__main__':
