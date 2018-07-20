@@ -59,7 +59,7 @@ def create_labels(annotations_df: pd.DataFrame):
     bucket = client.get_bucket('elvos')
 
     print("HELLO AGAIN")
-    labels_df = pd.read_csv('/home/amy/data/augmented' \
+    labels_df = pd.read_csv('/home/amy/data/augmented'
                             '_annotated_labels1.csv')
     print(len(labels_df))
 
