@@ -64,8 +64,6 @@ for i in range(10, 11):
                         validation_data=(x_val, y_val),
                         verbose=1)
 
-
-
     # predictions = model.predict(x_val, batch_size=8)
     # print(predictions)
     # print(predictions.shape)
