@@ -1,6 +1,7 @@
+import os
+
 import keras
 import numpy as np
-import os
 import pandas as pd
 import pytest
 
@@ -30,6 +31,21 @@ def test_to_arrays():
 
     x_arr, y_arr, _ = blueno.preprocessing.to_arrays(x_dict, y_series)
     assert np.all(x_arr == np.expand_dims(y_arr, axis=1))
+
+
+def test_to_arrays_sorted():
+    x_dict = {
+        'a': np.array([1]),
+        'b': np.array([2]),
+        'c': np.array([3]),
+    }
+    y_series = pd.Series(
+        data=np.array([2, 1, 3]),
+        index=['b', 'a', 'c'],
+    )
+
+    ids = blueno.preprocessing.to_arrays(x_dict, y_series)[2]
+    assert np.all(ids == np.array(['a', 'b', 'c']))
 
 
 @pytest.mark.skipif(os.uname().nodename != 'gpu1708',
