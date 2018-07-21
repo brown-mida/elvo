@@ -48,7 +48,7 @@ for i in range(1, 11):
                                        y_valid=y_val,
                                        normalize=False)
 
-    checkpoint = ModelCheckpoint(f'tmp/c3d_{i*10}.hdf5',
+    checkpoint = ModelCheckpoint(f'tmp/c3d_{i*10}_1.hdf5',
                                  monitor='val_acc',
                                  verbose=1, save_best_only=True,
                                  mode='auto')
