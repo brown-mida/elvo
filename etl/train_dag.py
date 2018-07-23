@@ -105,7 +105,7 @@ run_bluenot_op = RunBluenotOperator(task_id='run_bluenot',
                                     dag=train_dag)
 
 sense_complete_op = WebTrainerSensor(task_id='sense_complete',
-                                     fragment='config_luke',
+                                     fragment='data_name',
                                      dag=train_dag)
 
 run_bluenot_op >> sense_complete_op
