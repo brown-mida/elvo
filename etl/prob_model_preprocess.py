@@ -1,9 +1,10 @@
-import logging
-# from ml.models.three_d import c3d
-from keras.models import load_model
+import csv
 import numpy as np
-import pandas as pd
-from lib import cloud_management as cloud
+import random
+from google.cloud import storage
+from lib import cloud_management
+import pickle
+import logging
 
 
 def configure_logger():
@@ -16,45 +17,164 @@ def configure_logger():
     root_logger.addHandler(handler)
 
 
-def get_prob_scores():
-    client = cloud.authenticate()
-    bucket = client.get_bucket('elvos')
-    # model = c3d.C3DBuilder.build()
-    model = load_model('tmp/c3d_100.hdf5')
-    labels = pd.read_csv('/Users/haltriedman/Desktop/annotated_labels.csv')
-    print(labels)
+configure_logger()
 
-    # loop through every array on GCS
-    for in_blob in bucket.list_blobs(prefix='airflow/npy'):
-        # blacklist
-        if in_blob.name == 'airflow/npy/LAUIHISOEZIM5ILF.npy':
-            continue
+# Access Google Cloud Storage
+gcs_client = storage.Client.from_service_account_json(
+    '/home/harold_triedman/elvo-analysis/credentials/client_secret.json'
+    # 'credentials/client_secret.json'
+)
+bucket = gcs_client.get_bucket('elvos')
 
-        # get the file id
-        file_id = in_blob.name.split('/')[2]
-        file_id = file_id.split('.')[0]
-        arr = cloud.download_array(in_blob)
-        chunks = []
+# Get label data from Google Cloud Storage
+blob = storage.Blob('augmented_annotated_labels.csv', bucket)
+blob.download_to_filename('tmp/augmented_annotated_labels.csv')
+prelim_label_data = {}
+with open('tmp/augmented_annotated_labels.csv', 'r') as pos_file:
+    reader = csv.reader(pos_file, delimiter=',')
+    for row in reader:
+        if row[1] != 'Unnamed: 0.1': # might get mad at us here
+            prelim_label_data[row[1]] = int(row[2])
+            # prelim_label_data[row[2]] = int(row[3])
 
-        for i in range(0, len(arr), 32):
-            for j in range(0, len(arr[0]), 32):
-                for k in range(0, len(arr[0][0]), 32):
-                    # copy the chunk
-                    chunk = arr[i:(i + 32), j:(j + 32), k:(k + 32)]
-                    # calculate the airspace
-                    airspace = np.where(chunk < -300)
-                    # if it's less than 90% airspace
-                    if (airspace[0].size / chunk.size) < 0.9:
-                        chunks.append(chunk)
+# Get all of the positives from the label data
+positive_label_data = {}
+logging.info('getting 12168 positive labels')
+for id_, label in list(prelim_label_data.items()):
+    if label == 1 and '_' in id_:
+        positive_label_data[id_] = label
 
-        preds = model.predict(chunks, batch_size=16)
-        cloud.save_preds_to_cloud(preds, file_id)
+positive_train_label_data = {}
+positive_val_label_data = {}
+train = {}
+val = {}
 
+for i, id_ in enumerate(list(positive_label_data.keys())):
+    if i % 24 == 0:
+        seed = random.randint(1, 100)
+        stripped_id = id_[:-1]
+        meta_id = id_[:16]
+        if seed > 10:
+            positive_train_label_data[id_] = 1
+            train[meta_id] = ''
+            for j in range(2, 25):
+                positive_train_label_data[stripped_id + str(j)] = 1
+        else:
+            positive_val_label_data[id_] = 1
+            val[meta_id] = ''
+            for j in range(2, 25):
+                positive_val_label_data[stripped_id + str(j)] = 1
 
-def main():
-    configure_logger()
-    get_prob_scores()
+# Get 14500 random negatives from the label data to feed into our generator
+negative_counter = 0
+negative_train_label_data = {}
+negative_val_label_data = {}
+logging.info("getting 14500 random negative labels")
+while negative_counter < 14500:
+    id_, label = random.choice(list(prelim_label_data.items()))
+    if label == 0:
+        if negative_counter % 500 == 0:
+            logging.info(f'gotten {negative_counter} labels so far')
 
+        meta_id = id_[:16]
+        if meta_id in train:
+            negative_train_label_data[id_] = label
 
-if __name__ == '__main__':
-    main()
+        elif meta_id in val:
+            negative_val_label_data[id_] = label
+
+        else:
+            seed = random.randint(1, 100)
+            if seed > 10:
+                negative_train_label_data[id_] = label
+                train[meta_id] = ''
+            else:
+                negative_val_label_data[id_] = label
+                val[meta_id] = ''
+
+        del prelim_label_data[id_]
+        negative_counter += 1
+
+train_chunks = []
+train_labels = []
+val_chunks = []
+val_labels = []
+
+i = 1
+for id_, label in list(positive_train_label_data.items()):
+    if i % 500 == 0:
+        logging.info(f'got chunk {i}')
+    i += 1
+    blob = bucket.get_blob('chunk_data/normal/positive/' + id_ + '.npy')
+    arr = cloud_management.download_array(blob)
+    if arr.shape == (32, 32, 32):
+        arr = np.expand_dims(arr, axis=-1)
+        train_chunks.append(arr)
+        train_labels.append(label)
+logging.info(f'{i} total positive training chunks')
+
+i = 1
+for id_, label in list(positive_val_label_data.items()):
+    if i % 500 == 0:
+        logging.info(f'got chunk {i}')
+    i += 1
+    blob = bucket.get_blob('chunk_data/normal/positive/' + id_ + '.npy')
+    arr = cloud_management.download_array(blob)
+    if arr.shape == (32, 32, 32):
+        arr = np.expand_dims(arr, axis=-1)
+        val_chunks.append(arr)
+        val_labels.append(label)
+logging.info(f'{i} total positive validation chunks')
+
+i = 1
+for id_, label in list(negative_train_label_data.items()):
+    if i % 500 == 0:
+        logging.info(f'got chunk {i}')
+    i += 1
+    blob = bucket.get_blob('chunk_data/normal/negative/' + id_ + '.npy')
+    arr = cloud_management.download_array(blob)
+    if arr.shape == (32, 32, 32):
+        arr = np.expand_dims(arr, axis=-1)
+        train_chunks.append(arr)
+        train_labels.append(label)
+logging.info(f'{i} total negative chunks')
+
+i = 1
+for id_, label in list(negative_val_label_data.items()):
+    if i % 500 == 0:
+        logging.info(f'got chunk {i}')
+    i += 1
+    blob = bucket.get_blob('chunk_data/normal/negative/' + id_ + '.npy')
+    arr = cloud_management.download_array(blob)
+    if arr.shape == (32, 32, 32):
+        arr = np.expand_dims(arr, axis=-1)
+        val_chunks.append(arr)
+        val_labels.append(label)
+logging.info(f'{i} total negative chunks')
+
+tmp = list(zip(train_chunks, train_labels))
+random.shuffle(tmp)
+train_chunks, train_labels = zip(*tmp)
+
+tmp = list(zip(val_chunks, val_labels))
+random.shuffle(tmp)
+val_chunks, val_labels = zip(*tmp)
+
+# Turn into numpy arrays
+logging.info('splitting based on validation split')
+full_x_train = np.asarray(train_chunks)
+full_y_train = np.asarray(train_labels)
+x_val = np.asarray(val_chunks)
+y_val = np.asarray(val_labels)
+
+logging.info(f'{len(train_chunks)} total chunks to train with')
+logging.info(f'full training data: {full_x_train.shape}, {full_y_train.shape}')
+logging.info(f'full validation data: {x_val.shape}, {y_val.shape}')
+
+full_arr = np.array([full_x_train,
+                     full_y_train,
+                     x_val,
+                     y_val])
+
+with open('chunk_data_separated.pkl', 'wb') as outfile:
+    pickle.dump(full_arr, outfile, pickle.HIGHEST_PROTOCOL)
