@@ -41,7 +41,7 @@ with open('tmp/augmented_annotated_labels.csv', 'r') as pos_file:
 positive_label_data = {}
 logging.info('getting unaugmented positive labels')
 for id_, label in list(prelim_label_data.items()):
-    if label == 1 and '_1' in id_:
+    if label == 1 and id_.endswith('_1'):
         positive_label_data[id_] = label
 
 print(len(positive_label_data))
