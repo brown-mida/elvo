@@ -79,7 +79,7 @@ class Trainer extends Component {
 
           <FormControl style={styles.inputField}>
             <InputLabel>Data</InputLabel>
-            <Selectk
+            <Select
                 native
                 value={this.state.dataName}
                 onChange={this.handleChange('dataName')}
@@ -88,7 +88,7 @@ class Trainer extends Component {
               <option value={'processed-lower-nbv'}>processed-lower-nbv</option>
               <option value={'processed-lower-no-vert'}>processed-lower-no-vert</option>
               <option value={'processed-no-basvert'}>processed-no-basvert</option>
-            </Selectk>
+            </Select>
           </FormControl>
 
           <FormControl style={styles.inputField}>
