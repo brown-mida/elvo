@@ -1,12 +1,13 @@
 const webpack = require('webpack');
 module.exports = {
   mode: 'development',
-  entry: [
-    "./js/index.js"
-  ],
+  entry: {
+    annotator: './js/annotator.js',
+    trainer: './js/trainer.js',
+  },
   output: {
     path: __dirname + '/static',
-    filename: "bundle.js"
+    filename: '[name].bundle.js',
   },
   module: {
     rules: [
@@ -14,12 +15,12 @@ module.exports = {
         test: /\.js?$/,
         loader: 'babel-loader',
         query: {
-          presets: ['es2015', 'react']
+          presets: ['es2015', 'react'],
         },
-        exclude: /node_modules/
-      }
-    ]
+        exclude: /node_modules/,
+      },
+    ],
   },
-  plugins: []
+  plugins: [],
 };
 

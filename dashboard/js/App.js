@@ -1,9 +1,8 @@
-import React, {Component} from 'react';
-import ReactDOM from 'react-dom';
-import TextField from "@material-ui/core/TextField";
-import Paper from "@material-ui/core/Paper/";
-import axios from 'axios'
-import Button from "@material-ui/core/Button";
+import React, { Component } from 'react';
+import axios from 'axios/index';
+import TextField from '@material-ui/core/TextField';
+import Paper from '@material-ui/core/Paper/';
+import Button from '@material-ui/core/Button';
 import Drawer from '@material-ui/core/Drawer';
 
 import PlaneSVG from './PlaneSVG';
@@ -16,12 +15,10 @@ const styles = {
   dividerPaper: {
     padding: '10px',
     width: '400px',
-  }
+  },
 };
 
-
-// TODO: Caching
-class App extends Component {
+class Annotator extends Component {
   constructor(props) {
     super(props);
 
@@ -33,16 +30,16 @@ class App extends Component {
     let z1 = 100;
     let z2 = 200;
 
-    if (App.getQueryVariable('patientId')) {
+    if (Annotator.getQueryVariable('patientId')) {
       console.log('loading state from query string');
-      initialPatientId = App.getQueryVariable('patientId');
-      x1 = App.getQueryVariable('x1');
-      x2 = App.getQueryVariable('x2');
-      y1 = App.getQueryVariable('y1');
-      y2 = App.getQueryVariable('y2');
-      z1 = App.getQueryVariable('z1');
-      z2 = App.getQueryVariable('z2');
-      console.log('initial state:', initialPatientId, x1, x2, y1, y2, z1, z2)
+      initialPatientId = Annotator.getQueryVariable('patientId');
+      x1 = Annotator.getQueryVariable('x1');
+      x2 = Annotator.getQueryVariable('x2');
+      y1 = Annotator.getQueryVariable('y1');
+      y2 = Annotator.getQueryVariable('y2');
+      z1 = Annotator.getQueryVariable('z1');
+      z2 = Annotator.getQueryVariable('z2');
+      console.log('initial state:', initialPatientId, x1, x2, y1, y2, z1, z2);
     }
 
     this.state = {
@@ -84,22 +81,11 @@ class App extends Component {
 
   }
 
-  handleSearchKeyPress(event) {
-    if (event.key === 'Enter') {
-      console.log('enter');
-      this.setState({patientId: this.state.searchValue}, () => {
-        console.log('searching for patient:', this.state.patientId);
-        this.getImageDimensions();
-
-      });
-    }
-  }
-
   static getQueryVariable(variable) {
     const query = window.location.search.substring(1);
-    const vars = query.split("&");
+    const vars = query.split('&');
     for (let i = 0; i < vars.length; i++) {
-      const pair = vars[i].split("=");
+      const pair = vars[i].split('=');
       if (pair[0] === variable) {
         return pair[1];
       }
@@ -117,7 +103,8 @@ class App extends Component {
           </a> into the text box below
           </p>
           <p>Use the x1/y1/... fields to set the bounding box.</p>
-          <p>To scroll, click on an input field to the right and use the up/down
+          <p>To scroll, click on an input field to the right and use the
+            up/down
             arrow
             keys.</p>
           <p>Uploaded annotations are listed in the <a
@@ -126,8 +113,19 @@ class App extends Component {
           </a></p>
           <p><em>Only use this app on Wi-Fi</em></p>
         </Paper>
-    )
+    );
 
+  }
+
+  handleSearchKeyPress(event) {
+    if (event.key === 'Enter') {
+      console.log('enter');
+      this.setState({ patientId: this.state.searchValue }, () => {
+        console.log('searching for patient:', this.state.patientId);
+        this.getImageDimensions();
+
+      });
+    }
   }
 
   updateIndex(attr) {
@@ -137,9 +135,9 @@ class App extends Component {
         this.setState((state) => {
           state.indices[attr] = value;
           return state;
-        })
+        });
       }
-    }
+    };
   }
 
   getImageDimensions() {
@@ -152,12 +150,12 @@ class App extends Component {
               z: response.data.z,
               x: response.data.x,
               y: response.data.y,
-            }
-          })
+            };
+          });
         })
         .catch((error) => {
           console.error(error);
-        })
+        });
   }
 
   updateRenderingParams() {
@@ -205,9 +203,9 @@ class App extends Component {
         this.setState((state) => {
           state.roiDimensions[attr] = value;
           return state;
-        })
+        });
       }
-    }
+    };
 
   }
 
@@ -300,7 +298,7 @@ class App extends Component {
             Create Annotation
           </Button>
         </Paper>
-    )
+    );
   }
 
   render() {
@@ -311,10 +309,10 @@ class App extends Component {
               variant="permanent"
               anchor="left"
           >
-            {App.userGuide()}
+            {Annotator.userGuide()}
             {this.annotationInputView()}
           </Drawer>
-          <div style={{paddingLeft: 240}}>
+          <div style={{ paddingLeft: 240 }}>
             <Paper style={styles.paper}>
               <h2>Axial MIP</h2>
               <PlaneSVG viewType={'axial_mip'}
@@ -336,7 +334,7 @@ class App extends Component {
                     label="blue axis (mip)"
                     margin="normal"
                     type="number"
-                    inputProps={{step: this.state.mipStep}}
+                    inputProps={{ step: this.state.mipStep }}
                     value={this.state.indices.zMip}
                     onChange={this.updateIndex('zMip')}
                 />
@@ -401,7 +399,8 @@ class App extends Component {
             </Paper>
             <Paper style={styles.paper}>
               <h2>Sagittal</h2>
-              <PlaneSVG viewType={'sagittal'} patientId={this.state.patientId}
+              <PlaneSVG viewType={'sagittal'}
+                        patientId={this.state.patientId}
                         width={this.state.dimensions.y}
                         height={this.state.dimensions.z}
                         colorX={'rgb(0, 255, 0)'}
@@ -429,7 +428,7 @@ class App extends Component {
               <span>
                 <img
                     src={`/image/rendering/${this.state.patientId}?${this.state.renderingParams}`}
-                    style={{maxWidth: 300, maxHeight: 300}}
+                    style={{ maxWidth: 300, maxHeight: 300 }}
                 />
                 <Button
                     variant="contained"
@@ -442,8 +441,8 @@ class App extends Component {
 
           </div>
         </div>
-    )
+    );
   }
 }
 
-ReactDOM.render(<App/>, document.getElementById('reactEntry'));
+export default Annotator;

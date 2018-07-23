@@ -23,6 +23,10 @@ bucket = client.bucket('elvos')
 
 cache = {}
 
+SPREADSHEET_CREDENTIALS = os.environ['SPREADSHEET_CREDENTIALS']
+
+models = [{}]
+
 
 def configure_logger():
     root_logger = logging.getLogger()
@@ -43,6 +47,40 @@ def index():
 @app.route('/annotator')
 def annotator():
     return flask.render_template('annotator.html')
+
+
+@app.route('/trainer')
+def trainer():
+    return flask.render_template('trainer.html')
+
+
+@app.route('/model/add', methods=['POST'])
+def queue_model():
+    logging.debug(f'models before: {models}')
+
+    data = flask.request.get_json()
+    if data:
+        models.append(data)
+
+    logging.debug(f'models after: {models}')
+    return ''
+
+
+# This isn't good since GET assumes idempotency
+# but this is what we have for now for the Airflow sensor.
+@app.route('/model/pop', methods=['GET'])
+def dequeue_model():
+    logging.debug(f'models before: {models}')
+
+    if models:
+        data = models.pop(0)
+        data['is_job'] = True
+
+        logging.debug(f'models after: {models}')
+        return flask.json.jsonify(data)
+
+    logging.debug(f'models after: {models}')
+    return flask.json.jsonify({'is_job': False})
 
 
 @app.route('/roi', methods=['POST'])
@@ -89,7 +127,7 @@ def roi():
     scope = ['https://spreadsheets.google.com/feeds']
     logging.debug('getting service account credentials')
     credentials = ServiceAccountCredentials.from_json_keyfile_name(
-        os.environ['SPREADSHEET_CREDENTIALS'],
+        SPREADSHEET_CREDENTIALS,
         scope
     )
     spread_client = gspread.authorize(credentials)

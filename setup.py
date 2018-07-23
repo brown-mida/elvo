@@ -22,6 +22,7 @@ setup(
         'notebook>=5.5.0',
         'numpy>=1.14.5',
         'pandas>=0.23.1',
+        'paramiko>=2.4.1',
         'Pillow>=5.1.0',
         'pydicom>=1.0.2',
         'scikit-image>=0.14.0',
@@ -37,6 +38,9 @@ setup(
             'tensorflow-gpu==1.4.1',
             'keras==2.1.3',
         ],
+        'etl': [
+            'apache-airflow==1.8.2',
+        ],
         'test': [
             'pytest>=3.6.1',
             'pytest-cov>=2.5.1',
@@ -46,7 +50,7 @@ setup(
         'docs': [
             'recommonmark>=0.4.0',
             'sphinx>=1.7.6',
-        ]
+        ],
     },
     include_package_data=True,
     license='MIT',
