@@ -2,8 +2,9 @@ import datetime
 
 import paramiko
 from airflow import DAG
+from airflow.operators.dagrun_operator import TriggerDagRunOperator
 from airflow.operators.python_operator import PythonOperator
-from airflow.operators.sensors import BaseSensorOperator
+from airflow.operators.sensors import BaseSensorOperator, HttpSensor
 
 
 def run_bluenot():
@@ -94,3 +95,26 @@ sense_complete_op = WebTrainerSensor(task_id='sense_complete',
                                      dag=train_dag)
 
 run_bluenot_op >> sense_complete_op
+
+trigger_dag_id = 'trigger_model'
+trigger_dag = DAG(dag_id=trigger_dag_id,
+                  default_args=args,
+                  schedule_interval=None)
+
+# This isn't the best solution since GET assumes idempotentency
+start_sensor = HttpSensor(endpoint='/model/pending',
+                          task_id='sense_trigger',
+                          http_conn_id='flask',
+                          dag=trigger_dag)
+
+
+def trigger_fn(context, dag_run_object):
+    return dag_run_object
+
+
+trigger_bluenot = TriggerDagRunOperator(task_id='trigger_bluenot',
+                                        trigger_dag_id=train_dag_id,
+                                        python_callable=trigger_fn,
+                                        dag=trigger_dag)
+
+start_sensor >> trigger_dag

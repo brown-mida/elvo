@@ -45,3 +45,25 @@ def test_roi():
                     data=json.dumps(data),
                     content_type='application/json')
     assert r.status_code == 200
+
+
+@pytest.mark.skipif('SPREADSHEET_CREDENTIALS' not in os.environ,
+                    reason='Spreadsheet credentials required')
+def test_model_pop():
+    from main import app
+    app.testing = True
+    client = app.test_client()
+    data = {
+        'patient_id': 'abc',
+        'created_by': 'pytest',
+        'x1': -1,
+        'x2': -1,
+        'y1': -1,
+        'y2': -1,
+        'z1': -1,
+        'z2': -1,
+    }
+    r = client.get('/model/pop',
+                   data=json.dumps(data),
+                   content_type='application/json')
+    assert r.status_code == 200
