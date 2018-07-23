@@ -30,10 +30,8 @@ metrics = ['acc',
            utils.sensitivity,
            utils.specificity]
 
-print(np.asarray(x_val).shape)
-
-# for i in range(1, 11):
-for i in range(10, 11):
+for i in range(1, 11):
+# for i in range(10, 11):
 
     model = c3d.C3DBuilder.build()
     opt = SGD(lr=LEARN_RATE, momentum=0.9, nesterov=True)
@@ -50,7 +48,7 @@ for i in range(10, 11):
                                        y_valid=y_val,
                                        normalize=False)
 
-    checkpoint = ModelCheckpoint(f'tmp/c3d_{i*10}.hdf5',
+    checkpoint = ModelCheckpoint(f'tmp/c3d_{i*10}_1.hdf5',
                                  monitor='val_acc',
                                  verbose=1, save_best_only=True,
                                  mode='auto')
