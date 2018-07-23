@@ -10,7 +10,7 @@ class Trainer extends Component {
       model: 'resnet',
     };
 
-    axios.post('/model/add', data)
+    axios.post('/model', data)
         .then(response => {
           console.log(response);
         })

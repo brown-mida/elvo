@@ -1,11 +1,9 @@
 import datetime
 
 import paramiko
-import requests
 from airflow import DAG
-from airflow.operators.dagrun_operator import TriggerDagRunOperator
 from airflow.operators.python_operator import PythonOperator
-from airflow.operators.sensors import BaseSensorOperator, HttpSensor
+from airflow.operators.sensors import BaseSensorOperator
 
 
 def run_bluenot():
@@ -42,7 +40,7 @@ def count_processes_matching(fragment: str):
 
     This is equivalent to 'pgrep -f {fragment} | wc -l'.
 
-    :param config_luke:
+    :param fragment: the string to match with 'pgrep'
     :return:
     """
     client = paramiko.SSHClient()
@@ -97,34 +95,3 @@ sense_complete_op = WebTrainerSensor(task_id='sense_complete',
                                      dag=train_dag)
 
 run_bluenot_op >> sense_complete_op
-
-trigger_dag_id = 'trigger_model'
-trigger_dag = DAG(dag_id=trigger_dag_id,
-                  default_args=args,
-                  schedule_interval=datetime.timedelta(minutes=2),
-                  catchup=False,
-                  max_active_runs=1)
-
-
-def check_fn(response: requests.Response):
-    return response.json()['is_job']
-
-
-# This isn't the best solution since GET assumes idempotentency
-start_sensor = HttpSensor(endpoint='model/pop',
-                          task_id='sense_trigger',
-                          http_conn_id='flask',
-                          response_check=check_fn,
-                          dag=trigger_dag)
-
-
-def trigger_fn(context, dag_run_object):
-    return dag_run_object
-
-
-trigger_bluenot = TriggerDagRunOperator(task_id='trigger_bluenot',
-                                        trigger_dag_id=train_dag_id,
-                                        python_callable=trigger_fn,
-                                        dag=trigger_dag)
-
-start_sensor >> trigger_dag
