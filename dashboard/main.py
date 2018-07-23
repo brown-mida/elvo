@@ -4,6 +4,8 @@ import logging
 import os
 
 import flask
+from flask_cors import CORS
+import pymongo
 import gspread
 import matplotlib as mpl
 import numpy as np
@@ -13,11 +15,19 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from oauth2client.service_account import ServiceAccountCredentials
 from skimage import measure
 
+from utils import gcs
+
 mpl.use('Agg')
 from matplotlib import image  # noqa: E402
 from matplotlib import pyplot as plt  # noqa: E402
 
+
 app = flask.Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
+client = pymongo.MongoClient(
+    "mongodb://bluenoml:elvoanalysis@104.196.51.205/elvo"
+)
+db = client.elvo
 
 client = storage.Client(project='elvo-198322')
 bucket = client.bucket('elvos')
@@ -183,7 +193,40 @@ def rendering(patient_id):
 
 @app.route('/upload-dataset', methods=['POST'])
 def upload_dataset():
-    flask.json.jsonify({'status': 'success'})
+    data = flask.request.form
+    files = flask.request.files
+
+    if 'user' not in data:
+        return flask.json.jsonify({'error': 'User not specified'})
+
+    if 'file' not in files:
+        logging.debug("File not found")
+        return flask.json.jsonify({'error': 'No file'})
+
+    files = files.getlist('file')
+    logging.debug(files)
+    logging.debug(str(datetime.datetime.now()))
+
+    datasets = db.datasets
+    client = gcs.authenticate()
+    bucket = client.get_bucket('blueno-ml-files')
+    for file in files:
+        file_id = (data['user'] + '/' + str(datetime.datetime.now()) +
+                   '.' + file.filename)
+
+        # Upload file
+        gcs.upload_to_gcs(file, file_id, bucket)
+
+        # Save user-file relationship in MongoDB
+        dataset = {
+            "user": data['user'],
+            "id": file_id,
+            "status": "running"
+        }
+        tmp = datasets.insert_one(dataset).inserted_id
+        logging.debug(tmp)
+
+    return flask.json.jsonify({'status': 'success'})
 
 
 def _send_3d(roi: np.ndarray):
