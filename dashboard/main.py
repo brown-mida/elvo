@@ -7,6 +7,7 @@ import flask
 import gspread
 import matplotlib as mpl
 import numpy as np
+import requests
 from google.cloud import storage
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from oauth2client.service_account import ServiceAccountCredentials
@@ -54,33 +55,13 @@ def trainer():
     return flask.render_template('trainer.html')
 
 
-@app.route('/model/add', methods=['POST'])
-def queue_model():
-    logging.debug(f'models before: {models}')
+@app.route('/model', methods=['POST'])
+def create_model():
+    response = requests.post('http://104.196.51.205:8080/api/experimental/dags/'
+                             'train_model/dag_runs',
+                             json={})
 
-    data = flask.request.get_json()
-    if data:
-        models.append(data)
-
-    logging.debug(f'models after: {models}')
-    return ''
-
-
-# This isn't good since GET assumes idempotency
-# but this is what we have for now for the Airflow sensor.
-@app.route('/model/pop', methods=['GET'])
-def dequeue_model():
-    logging.debug(f'models before: {models}')
-
-    if models:
-        data = models.pop(0)
-        data['is_job'] = True
-
-        logging.debug(f'models after: {models}')
-        return flask.json.jsonify(data)
-
-    logging.debug(f'models after: {models}')
-    return flask.json.jsonify({'is_job': False})
+    return response.content, response.status_code, response.headers.items()
 
 
 @app.route('/roi', methods=['POST'])
