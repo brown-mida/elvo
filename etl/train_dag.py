@@ -1,5 +1,5 @@
 import datetime
-import json
+import logging
 
 import paramiko
 from airflow import DAG
@@ -15,10 +15,7 @@ def run_bluenot(config: dict):
     # TODO: How about downloading new data.
     # TODO: How about queueing jobs?
     :return:
-
-
     """
-    config_json = json.dumps(config)
 
     client = paramiko.SSHClient()
     client.load_system_host_keys()
@@ -27,8 +24,14 @@ def run_bluenot(config: dict):
         stdin, stdout, stderr = client.exec_command(
             "ssh gpu1708 'cd elvo-analysis;"
             " source venv/bin/activate;"
-            f" nohup python3 ml/bluenot.py --json={config_json}"
-            " > /dev/null 2>&1 & echo $!'"
+            " nohup python3 ml/bluenot.py"
+            f" --data_name={config['dataName']}"
+            f" --max_epochs={config['maxEpochs']}"
+            f" --job_name={config['jobName']}"
+            f" --author_name={config['authorName']}"
+            f" --batch_size={config['batchSize']}"
+            f" --val_split={config['valSplit']}"
+            " > web-trainer.log 2>&1 & echo $!'"
         )
         err = stderr.read()
         if err != b'':
@@ -42,6 +45,7 @@ def run_bluenot(config: dict):
 class RunBluenotOperator(BaseOperator):
     def execute(self, context):
         conf = context['dag_run'].conf
+        logging.info('configuration is: {}'.format(conf))
         run_bluenot(conf)
 
 

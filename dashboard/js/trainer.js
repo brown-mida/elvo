@@ -22,13 +22,13 @@ class Trainer extends Component {
     super(props);
 
     this.state = {
-      dataName: 'processed',
+      dataName: 'processed-lower',
       authorName: 'webbie',
       jobName: 'my-job',
       modelName: 'resnet',
       valSplit: '0.1',
       batchSize: '8',
-      max_epochs: '70',
+      maxEpochs: '70',
     };
 
     this.handleChange = this.handleChange.bind(this);
