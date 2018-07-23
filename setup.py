@@ -38,6 +38,9 @@ setup(
             'tensorflow-gpu==1.4.1',
             'keras==2.1.3',
         ],
+        'etl': [
+            'apache-airflow==1.8.2',
+        ],
         'test': [
             'pytest>=3.6.1',
             'pytest-cov>=2.5.1',
@@ -47,7 +50,7 @@ setup(
         'docs': [
             'recommonmark>=0.4.0',
             'sphinx>=1.7.6',
-        ]
+        ],
     },
     include_package_data=True,
     license='MIT',
