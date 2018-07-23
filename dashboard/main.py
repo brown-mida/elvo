@@ -56,19 +56,30 @@ def trainer():
 
 @app.route('/model/add', methods=['POST'])
 def queue_model():
+    logging.debug(f'models before: {models}')
+
     data = flask.request.get_json()
     if data:
         models.append(data)
+
+    logging.debug(f'models after: {models}')
+    return ''
 
 
 # This isn't good since GET assumes idempotency
 # but this is what we have for now for the Airflow sensor.
 @app.route('/model/pop', methods=['GET'])
 def dequeue_model():
+    logging.debug(f'models before: {models}')
+
     if models:
         data = models.pop(0)
         data['is_job'] = True
+
+        logging.debug(f'models after: {models}')
         return flask.json.jsonify(data)
+
+    logging.debug(f'models after: {models}')
     return flask.json.jsonify({'is_job': False})
 
 
