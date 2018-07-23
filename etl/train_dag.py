@@ -99,7 +99,8 @@ run_bluenot_op >> sense_complete_op
 trigger_dag_id = 'trigger_model'
 trigger_dag = DAG(dag_id=trigger_dag_id,
                   default_args=args,
-                  schedule_interval=None)
+                  schedule_interval=datetime.timedelta(minutes=2),
+                  catchup=False)
 
 # This isn't the best solution since GET assumes idempotentency
 start_sensor = HttpSensor(endpoint='model/pop',
