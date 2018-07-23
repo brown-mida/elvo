@@ -200,6 +200,11 @@ def rendering(patient_id):
     return _send_3d(roi)
 
 
+@app.route('/upload-dataset', methods=['POST'])
+def upload_dataset():
+    flask.json.jsonify({'status': 'success'})
+
+
 def _send_3d(roi: np.ndarray):
     out_stream = io.BytesIO()
     logging.debug('creating 3d rendering')
