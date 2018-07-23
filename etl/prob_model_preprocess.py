@@ -176,5 +176,5 @@ full_arr = np.array([full_x_train,
                      x_val,
                      y_val])
 
-with open('chunk_data_separated.pkl', 'wb') as outfile:
+with open('chunk_data_separated_ids.pkl', 'wb') as outfile:
     pickle.dump(full_arr, outfile, pickle.HIGHEST_PROTOCOL)
