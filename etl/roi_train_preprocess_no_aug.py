@@ -44,6 +44,7 @@ for id_, label in list(prelim_label_data.items()):
     if label == 1 and '_1' in id_:
         positive_label_data[id_] = label
 
+print(len(positive_label_data))
 positive_train_label_data = {}
 positive_val_label_data = {}
 
