@@ -18,6 +18,7 @@ data-*/*
 *.zip
 *.swp
 tmp/
+*.pkl
 
 # Models (weights)
 results/
