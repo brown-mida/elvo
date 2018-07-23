@@ -25,7 +25,7 @@ cache = {}
 
 SPREADSHEET_CREDENTIALS = os.environ['SPREADSHEET_CREDENTIALS']
 
-models = ['']
+models = [{}]
 
 
 def configure_logger():
@@ -56,15 +56,20 @@ def trainer():
 
 @app.route('/model/add', methods=['POST'])
 def queue_model():
-    data = flask.request.json
-    models.append(data)
+    data = flask.request.get_json()
+    if data:
+        models.append(data)
 
 
 # This isn't good since GET assumes idempotency
-# but this is what we have for now
+# but this is what we have for now for the Airflow sensor.
 @app.route('/model/pop', methods=['GET'])
 def dequeue_model():
-    return ''
+    if models:
+        data = models.pop(0)
+        data['is_job'] = True
+        return flask.json.jsonify(data)
+    return flask.json.jsonify({'is_job': False})
 
 
 @app.route('/roi', methods=['POST'])

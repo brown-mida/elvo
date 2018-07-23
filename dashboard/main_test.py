@@ -54,14 +54,7 @@ def test_model_pop():
     app.testing = True
     client = app.test_client()
     data = {
-        'patient_id': 'abc',
-        'created_by': 'pytest',
-        'x1': -1,
-        'x2': -1,
-        'y1': -1,
-        'y2': -1,
-        'z1': -1,
-        'z2': -1,
+        # TODO: Define the schema
     }
     r = client.get('/model/pop',
                    data=json.dumps(data),
