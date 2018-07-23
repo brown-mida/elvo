@@ -1,12 +1,13 @@
 import datetime
+import json
 
 import paramiko
 from airflow import DAG
-from airflow.operators.python_operator import PythonOperator
+from airflow.models import BaseOperator
 from airflow.operators.sensors import BaseSensorOperator
 
 
-def run_bluenot():
+def run_bluenot(config: dict):
     """
     Runs blunot.py on gpu1708 and returns it's PID.
 
@@ -14,7 +15,11 @@ def run_bluenot():
     # TODO: How about downloading new data.
     # TODO: How about queueing jobs?
     :return:
+
+
     """
+    config_json = json.dumps(config)
+
     client = paramiko.SSHClient()
     client.load_system_host_keys()
     try:
@@ -22,7 +27,7 @@ def run_bluenot():
         stdin, stdout, stderr = client.exec_command(
             "ssh gpu1708 'cd elvo-analysis;"
             " source venv/bin/activate;"
-            " nohup python3 ml/bluenot.py --config=config_luke"
+            f" nohup python3 ml/bluenot.py --json={config_json}"
             " > /dev/null 2>&1 & echo $!'"
         )
         err = stderr.read()
@@ -32,6 +37,12 @@ def run_bluenot():
     finally:
         client.close()
     return pid
+
+
+class RunBluenotOperator(BaseOperator):
+    def execute(self, context):
+        conf = context['dag_run'].conf
+        run_bluenot(conf)
 
 
 def count_processes_matching(fragment: str):
@@ -86,9 +97,8 @@ train_dag = DAG(dag_id='train_model',
                 schedule_interval=None,
                 max_active_runs=1)
 
-run_bluenot_op = PythonOperator(task_id='run_bluenot',
-                                python_callable=run_bluenot,
-                                dag=train_dag)
+run_bluenot_op = RunBluenotOperator(task_id='run_bluenot',
+                                    dag=train_dag)
 
 sense_complete_op = WebTrainerSensor(task_id='sense_complete',
                                      fragment='config_luke',
