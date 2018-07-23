@@ -102,7 +102,7 @@ trigger_dag = DAG(dag_id=trigger_dag_id,
                   schedule_interval=None)
 
 # This isn't the best solution since GET assumes idempotentency
-start_sensor = HttpSensor(endpoint='/model/pending',
+start_sensor = HttpSensor(endpoint='model/pop',
                           task_id='sense_trigger',
                           http_conn_id='flask',
                           dag=trigger_dag)
