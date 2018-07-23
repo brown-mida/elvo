@@ -231,7 +231,7 @@ def full_multiclass_report(model: keras.models.Model,
 
 
 def write_to_slack(comment, token):
-    channels = 'CBKNJHPU3',
+    channels = 'CBUA09G68
 
     r = requests.get(
         'https://slack.com/api/chat.postMessage?' +

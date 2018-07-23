@@ -35,6 +35,7 @@ import random
 
 import numpy as np
 import keras
+import keras.metrics as metrics
 from keras.utils import multi_gpu_model
 from keras.callbacks import ModelCheckpoint
 from keras.models import load_model
@@ -101,8 +102,8 @@ def get_models_to_train(address, lower, upper, data_dir):
         model = {
             'dropout_rate1': doc.dropout_rate1,
             'dropout_rate2': doc.dropout_rate2,
-            'optimizer': keras.optimizers.Adam(lr=1e-5),
-            'loss': keras.losses.categorical_crossentropy,
+            'optimizer': 'Adam',
+            'loss': keras.losses.binary_crossentropy,
             'freeze': False,
             'model_callable': resnet,
         }
@@ -165,6 +166,8 @@ def __get_data_if_not_exists(gcs_dir, local_dir):
         os.mkdir(local_dir)
         exit = os.system(
             'gsutil -m rsync -r -d {} {}'.format(gcs_dir, local_dir))
+        if exit != 0:
+            os.rmdir(local_dir)
         return exit == 0
     return True
 
@@ -208,30 +211,41 @@ def __train_model(params, x_train, y_train, x_valid, y_valid,
     model_original = model
     if num_gpu > 0:
         model = multi_gpu_model(model, gpus=num_gpu)
-    metrics = ['acc',
-               utils.sensitivity,
-               utils.specificity,
-               utils.true_positives,
-               utils.false_negatives]
-    model.compile(optimizer=params.model.optimizer,
-                  loss=params.model.loss,
-                  metrics=metrics)
-    callbacks = [utils.create_callbacks(x_train, y_train, x_valid, y_valid,
-                                        early_stopping=params.early_stopping,
-                                        reduce_lr=params.reduce_lr)]
+    model_metrics = ['acc',
+                     utils.sensitivity,
+                     utils.specificity,
+                     utils.true_positives,
+                     utils.false_negatives]
+    model.compile(
+        optimizer=getattr(keras.optimizers, params.model.optimizer)(lr=1e-5),
+        loss=params.model.loss,
+        metrics=model_metrics)
+
     if no_early_stopping:
-        callbacks.append(ModelCheckpoint(filepath='../tmp/model.hdf5',
-                                         save_best_only=True,
-                                         monitor='val_acc',
-                                         mode='max',
-                                         verbose=1))
+        cbs = [utils.create_callbacks(x_train, y_train, x_valid, y_valid,
+                                      early_stopping=False,
+                                      reduce_lr=params.reduce_lr)]
+        cbs.append(ModelCheckpoint(filepath='../tmp/model.hdf5',
+                                   save_best_only=True,
+                                   monitor='val_acc',
+                                   mode='max',
+                                   verbose=1))
+    else:
+        cbs = [utils.create_callbacks(x_train, y_train, x_valid, y_valid,
+                                      early_stopping=params.early_stopping,
+                                      reduce_lr=params.reduce_lr)]
+
     history = model.fit_generator(train_gen,
                                   epochs=params.max_epochs,
                                   validation_data=valid_gen,
                                   verbose=2,
-                                  callbacks=callbacks)
+                                  callbacks=cbs)
 
     if no_early_stopping:
+        metrics.sensitivity = utils.sensitivity
+        metrics.specificity = utils.specificity
+        metrics.true_positives = utils.true_positives
+        metrics.false_negatives = utils.false_negatives
         model_original = load_model('../tmp/model.hdf5')
     return model_original, history
 
@@ -506,16 +520,20 @@ def main(args=None):
             logging.info('Purported sensitivity: {}'.format(
                 model['purported_sensitivity']))
             params = model['params']
-            __get_data_if_not_exists(params.data.gcs_url,
-                                     model['local_dir'])
-            iterate_eval(num_iterations, params, num_gpu,
-                         job_name=model['job_name'],
-                         job_date=model['date'],
-                         purported_accuracy=model['purported_accuracy'],
-                         purported_loss=model['purported_loss'],
-                         purported_sensitivity=model['purported_sensitivity'],
-                         slack_token=slack_token,
-                         no_early_stopping=args.no_early_stopping)
+            data_loaded = __get_data_if_not_exists(params.data.gcs_url,
+                                                   model['local_dir'])
+            if not data_loaded:
+                logging.info('This directory does not exist. Moving on...')
+            else:
+                iterate_eval(
+                    num_iterations, params, num_gpu,
+                    job_name=model['job_name'],
+                    job_date=model['date'],
+                    purported_accuracy=model['purported_accuracy'],
+                    purported_loss=model['purported_loss'],
+                    purported_sensitivity=model['purported_sensitivity'],
+                    slack_token=slack_token,
+                    no_early_stopping=args.no_early_stopping)
 
     else:
         # Manual evaluation of a list of ParamConfig
