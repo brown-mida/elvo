@@ -10,6 +10,8 @@ import FormControl from '@material-ui/core/FormControl';
 import Drawer from '@material-ui/core/Drawer';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
+import BottomNavigation from '@material-ui/core/BottomNavigation';
+import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 
 
 const styles = {
@@ -50,6 +52,8 @@ class Trainer extends Component {
 
       allPlots: [],
       selectedPlot: '',
+
+      viewType: 'data',
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -302,6 +306,8 @@ class Trainer extends Component {
               Create Training Job
             </Button>
 
+            {/*TODO: Divider*/}
+
             <FormControl style={styles.inputField}>
               <InputLabel>Plots</InputLabel>
               <Select
@@ -312,10 +318,21 @@ class Trainer extends Component {
                 {plotOptions}
               </Select>
             </FormControl>
+
+            <BottomNavigation
+                value={this.state.viewType}
+                onChange={(event, viewType) => {
+                  this.setState({ viewType });
+                }}
+                showLabels
+            >
+              <BottomNavigationAction label="Data View" value="data"/>
+              <BottomNavigationAction label="Results View" value="results"/>
+            </BottomNavigation>
           </Drawer>
 
           {/* Start of the main body */}
-          {this.trainView()}
+          {this.state.viewType === 'data' ? this.trainView() : this.evalView()}
         </div>
     );
   }
