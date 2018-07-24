@@ -77,9 +77,9 @@ def main():
                     chunk = arr[i: i + 32,
                                 j: j + 32,
                                 k: k + 32]
-                    chunk = np.asarray(chunk)
-                    chunk = np.expand_dims(chunk, axis=-1)
+                    # chunk = np.asarray(chunk)
                     if chunk.shape == (32, 32, 32):
+                        chunk = np.expand_dims(chunk, axis=-1)
                         chunks.append(chunk)
 
         chunks = np.asarray(chunks)
