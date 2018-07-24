@@ -1,3 +1,8 @@
+"""
+The script called by the web trainer.
+
+Do not change this filename without updating train_dag as well
+"""
 import argparse
 import logging
 import pathlib

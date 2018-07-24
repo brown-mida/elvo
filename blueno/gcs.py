@@ -1,9 +1,11 @@
 """
 Connection logic with Google Cloud Storage.
 """
+import logging
 import pathlib
-
+import subprocess
 import warnings
+
 from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import storage
 
@@ -79,3 +81,34 @@ def fetch_model(service_account_path=None, save_path=None, **kwargs):
     blob.download_to_filename(
         '{}/{}.hdf5'.format(save_path, result_str)
     )
+
+
+def upload_model_to_gcs(job_name, created_at, model_filepath):
+    """Uploads the model at the given filepath to
+    gs://elvos/sorted_models/{job_name}-{created_at}.hdf5
+    """
+    gcs_filepath = 'gs://elvos/sorted_models/{}-{}.hdf5'.format(
+        # Remove the extension
+        job_name,
+        created_at,
+    )
+    # Do not change, this is log is used to get the gcs link
+    logging.info('uploading model {} to {}'.format(
+        model_filepath,
+        gcs_filepath,
+    ))
+
+    try:
+        subprocess.run(
+            ['/bin/bash',
+             '-c',
+             'gsutil cp {} {}'.format(model_filepath, gcs_filepath)],
+            check=True)
+    except subprocess.CalledProcessError:
+        # gpu1708 specific code
+        subprocess.run(
+            ['/bin/bash',
+             '-c',
+             '/gpfs/main/home/lzhu7/google-cloud-sdk/bin/'
+             'gsutil cp {} {}'.format(model_filepath, gcs_filepath)],
+            check=True)

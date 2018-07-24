@@ -31,7 +31,6 @@ import logging
 import multiprocessing
 import os
 import pathlib
-import subprocess
 import time
 from argparse import ArgumentParser
 from typing import List, Union
@@ -49,6 +48,7 @@ from blueno import (
     logger,
     gcs,
 )
+from blueno.gcs import upload_model_to_gcs
 
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
 
@@ -175,34 +175,6 @@ def start_job(x_train: np.ndarray,
             pathlib.Path(log_filepath),
             pathlib.Path(csv_filepath),
         )
-
-
-def upload_model_to_gcs(job_name, created_at, model_filepath):
-    gcs_filepath = 'gs://elvos/sorted_models/{}-{}.hdf5'.format(
-        # Remove the extension
-        job_name,
-        created_at,
-    )
-    # Do not change, this is log is used to get the gcs link
-    logging.info('uploading model {} to {}'.format(
-        model_filepath,
-        gcs_filepath,
-    ))
-
-    try:
-        subprocess.run(
-            ['/bin/bash',
-             '-c',
-             'gsutil cp {} {}'.format(model_filepath, gcs_filepath)],
-            check=True)
-    except subprocess.CalledProcessError:
-        # gpu1708 specific code
-        subprocess.run(
-            ['/bin/bash',
-             '-c',
-             '/gpfs/main/home/lzhu7/google-cloud-sdk/bin/'
-             'gsutil cp {} {}'.format(model_filepath, gcs_filepath)],
-            check=True)
 
 
 def hyperoptimize(hyperparams: Union[blueno.ParamGrid,
