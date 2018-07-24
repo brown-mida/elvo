@@ -9,7 +9,7 @@ import io
 import os
 
 BLACKLIST = []
-LEARN_RATE = 1e-3
+LEARN_RATE = 1e-4
 
 
 def download_array(blob: storage.Blob) -> np.ndarray:
