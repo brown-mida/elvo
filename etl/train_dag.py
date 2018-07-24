@@ -24,7 +24,7 @@ def run_bluenot(config: dict):
         stdin, stdout, stderr = client.exec_command(
             "ssh gpu1708 'cd elvo-analysis;"
             " source venv/bin/activate;"
-            " nohup python3 ml/bluenot.py"
+            " nohup python3 ml/bluenow.py"
             # TODO(luke): Escape/validate user input (if necessary)
             f" --data_name={config['dataName']}"
             f" --max_epochs={config['maxEpochs']}"

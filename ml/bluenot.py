@@ -42,8 +42,6 @@ from elasticsearch_dsl import connections
 from sklearn import model_selection
 
 import blueno
-import generators.luke
-import models.luke
 from blueno import (
     utils,
     preprocessing,
@@ -338,104 +336,39 @@ def check_config(config):
     logging.debug('SLACK_TOKEN: {}'.format(config.SLACK_TOKEN))
 
 
-def run_web_gpu1708_job(data_name: str,
-                        batch_size: int,
-                        val_split: float,
-                        max_epochs: int,
-                        job_name: str,
-                        author_name: str):
-    blueno_home = pathlib.Path('/home/lzhu7/elvo-analysis')
-
-    data_dir = blueno_home / 'data'
-    log_dir = blueno_home / 'logs'
-
-    param_config = blueno.ParamConfig(
-        data=blueno.DataConfig(
-            data_dir=str(data_dir / data_name / 'arrays'),
-            labels_path=str(data_dir / data_name / 'labels.csv'),
-            index_col='Anon ID',
-            label_col='occlusion_exists',
-            gcs_url=f'gs://elvos/processed/{data_name}',
-        ),
-        generator=blueno.GeneratorConfig(
-            generator_callable=generators.luke.standard_generators,
-        ),
-        model=blueno.ModelConfig(
-            model_callable=models.luke.resnet,
-            optimizer=keras.optimizers.Adam(lr=1e-5),
-            loss=keras.losses.categorical_crossentropy,
-        ),
-        batch_size=int(batch_size),
-        seed=0,
-        val_split=float(val_split),
-        max_epochs=int(max_epochs),
-        job_name=job_name,
-    )
-
-    logging.info('training web job {}'.format(param_config))
-
-    hyperoptimize(
-        [param_config],
-        author_name,
-        num_gpus=1,
-        gpu_offset=3,
-        log_dir=str(log_dir),
-    )
-
-
 if __name__ == '__main__':
     parser = ArgumentParser()
-    parser.add_argument('--data_name',
-                        help='The json config, used by the web trainer')
-    parser.add_argument('--batch_size',
-                        help='The json config, used by the web trainer')
-    parser.add_argument('--val_split',
-                        help='The json config, used by the web trainer')
-    parser.add_argument('--max_epochs',
-                        help='The json config, used by the web trainer')
-    parser.add_argument('--job_name',
-                        help='The json config, used by the web trainer')
-    parser.add_argument('--author_name',
-                        help='The json config, used by the web trainer')
     parser.add_argument('--config',
                         help='The config module (ex. config_luke)',
                         default='config-1')
     args = parser.parse_args()
 
-    if args.data_name:
-        run_web_gpu1708_job(args.data_name,
-                            args.batch_size,
-                            args.val_split,
-                            args.max_epochs,
-                            args.job_name,
-                            args.author_name)
+    logging.info('using config {}'.format(args.config))
+    user_config = importlib.import_module(args.config)
+
+    parent_log_file = pathlib.Path(
+        user_config.LOG_DIR) / 'results-{}.txt'.format(
+        datetime.datetime.utcnow().isoformat()
+    )
+    logger.configure_parent_logger(parent_log_file)
+    check_config(user_config)
+
+    logging.info('checking param grid')
+    if isinstance(user_config.PARAM_GRID, blueno.ParamGrid):
+        param_grid = user_config.PARAM_GRID
+    elif isinstance(user_config.PARAM_GRID, list):
+        param_grid = user_config.PARAM_GRID
+    elif isinstance(user_config.PARAM_GRID, dict):
+        logging.warning('creating param grid from dictionary, it is'
+                        'recommended that you define your config'
+                        'with ParamConfig')
+        param_grid = blueno.ParamGrid(**user_config.PARAM_GRID)
     else:
-        logging.info('using config {}'.format(args.config))
-        user_config = importlib.import_module(args.config)
-
-        parent_log_file = pathlib.Path(
-            user_config.LOG_DIR) / 'results-{}.txt'.format(
-            datetime.datetime.utcnow().isoformat()
-        )
-        logger.configure_parent_logger(parent_log_file)
-        check_config(user_config)
-
-        logging.info('checking param grid')
-        if isinstance(user_config.PARAM_GRID, blueno.ParamGrid):
-            param_grid = user_config.PARAM_GRID
-        elif isinstance(user_config.PARAM_GRID, list):
-            param_grid = user_config.PARAM_GRID
-        elif isinstance(user_config.PARAM_GRID, dict):
-            logging.warning('creating param grid from dictionary, it is'
-                            'recommended that you define your config'
-                            'with ParamConfig')
-            param_grid = blueno.ParamGrid(**user_config.PARAM_GRID)
-        else:
-            raise ValueError('user_config.PARAM_GRID must be a ParamGrid,'
-                             ' list, or dict')
-        hyperoptimize(param_grid,
-                      user_config.USER,
-                      user_config.SLACK_TOKEN,
-                      num_gpus=user_config.NUM_GPUS,
-                      gpu_offset=user_config.GPU_OFFSET,
-                      log_dir=user_config.LOG_DIR)
+        raise ValueError('user_config.PARAM_GRID must be a ParamGrid,'
+                         ' list, or dict')
+    hyperoptimize(param_grid,
+                  user_config.USER,
+                  user_config.SLACK_TOKEN,
+                  num_gpus=user_config.NUM_GPUS,
+                  gpu_offset=user_config.GPU_OFFSET,
+                  log_dir=user_config.LOG_DIR)
