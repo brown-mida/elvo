@@ -44,16 +44,16 @@ def load_probs(labels: pd.DataFrame):
     labels.set_index('Unnamed: 0', inplace=True)
     bucket = gcs_client.get_bucket('elvos')
 
-
     x_train = []
     y_train = []
     idx = 0
     for blob in bucket.list_blobs(prefix='chunk_data/preds/train'):
         if idx % 100 == 0:
             print(f'successfully loaded {idx} training scans and labels')
+        file_id = blob.name.split('/')[-1].split('.')[0]
         arr = download_array(blob)
         diff = 784 - arr.shape[0]
-        if diff > 0:
+        if diff > 0 and file_id in labels.index.values:
             arr = arr.tolist()
             for i in range(diff):
                 arr.append([0])
@@ -61,21 +61,18 @@ def load_probs(labels: pd.DataFrame):
             arr = np.reshape(arr, (28, 28, 1))
             x_train.append(arr)
 
-            file_id = blob.name.split('/')[-1].split('.')[0]
-
-            if file_id in labels.index.values:
-                label = np.array([
-                    labels.loc[file_id]['L MCA'],
-                    labels.loc[file_id]['R MCA'],
-                    labels.loc[file_id]['L ICA'],
-                    labels.loc[file_id]['R ICA'],
-                    labels.loc[file_id]['L Vert'],
-                    labels.loc[file_id]['R Vert'],
-                    labels.loc[file_id]['Basilar'],
-                ])
-                label = label.astype(int)
-                y_train.append(label)
-                idx += 1
+            label = np.array([
+                labels.loc[file_id]['L MCA'],
+                labels.loc[file_id]['R MCA'],
+                labels.loc[file_id]['L ICA'],
+                labels.loc[file_id]['R ICA'],
+                labels.loc[file_id]['L Vert'],
+                labels.loc[file_id]['R Vert'],
+                labels.loc[file_id]['Basilar'],
+            ])
+            label = label.astype(int)
+            y_train.append(label)
+            idx += 1
 
     x_val = []
     y_val = []
@@ -83,9 +80,10 @@ def load_probs(labels: pd.DataFrame):
     for blob in bucket.list_blobs(prefix='chunk_data/preds/val'):
         if idx % 100 == 0:
             print(f'successfully loaded {idx} validation scans and labels')
+        file_id = blob.name.split('/')[-1].split('.')[0]
         arr = download_array(blob)
         diff = 784 - arr.shape[0]
-        if diff > 0:
+        if diff > 0 and file_id in labels.index.values:
             arr = arr.tolist()
             for i in range(diff):
                 arr.append([0])
@@ -93,21 +91,18 @@ def load_probs(labels: pd.DataFrame):
             arr = np.reshape(arr, (28, 28, 1))
             x_val.append(arr)
 
-            file_id = blob.name.split('/')[-1].split('.')[0]
-
-            if file_id in labels.index.values:
-                label = np.array([
-                    labels.loc[file_id]['L MCA'],
-                    labels.loc[file_id]['R MCA'],
-                    labels.loc[file_id]['L ICA'],
-                    labels.loc[file_id]['R ICA'],
-                    labels.loc[file_id]['L Vert'],
-                    labels.loc[file_id]['R Vert'],
-                    labels.loc[file_id]['Basilar'],
-                ])
-                label = label.astype(int)
-                y_val.append(label)
-                idx += 1
+            label = np.array([
+                labels.loc[file_id]['L MCA'],
+                labels.loc[file_id]['R MCA'],
+                labels.loc[file_id]['L ICA'],
+                labels.loc[file_id]['R ICA'],
+                labels.loc[file_id]['L Vert'],
+                labels.loc[file_id]['R Vert'],
+                labels.loc[file_id]['Basilar'],
+            ])
+            label = label.astype(int)
+            y_val.append(label)
+            idx += 1
     x_train = np.asarray(x_train)
     y_train = np.asarray(y_train)
     x_val = np.asarray(x_val)
