@@ -42,13 +42,15 @@ def main():
         reader = csv.reader(pos_file, delimiter=',')
         for row in reader:
             print(row)
-            train_ids[row[0]] = ''
+            if row[1] != '0':
+                train_ids[row[0]] = ''
 
     with open('val_ids.csv', 'r') as pos_file:
         reader = csv.reader(pos_file, delimiter=',')
         for row in reader:
             print(row)
-            train_ids[row[0]] = ''
+            if row[1] != '0':
+                val_ids[row[0]] = ''
 
     print(train_ids)
     print(val_ids)
@@ -75,7 +77,9 @@ def main():
                     chunk = arr[i: i + 32,
                                 j: j + 32,
                                 k: k + 32]
-                    chunks.append(chunk)
+                    chunk = np.asarray(chunk)
+                    if chunk.shape == (32, 32, 32):
+                        chunks.append(chunk)
 
         preds = model.predict(chunks, batch_size=16)
         print(preds)
