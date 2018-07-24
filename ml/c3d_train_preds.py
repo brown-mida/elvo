@@ -104,3 +104,6 @@ def main():
         if val:
             save_preds_to_cloud(preds, 'val', file_id)
 
+
+if __name__ == '__main__':
+    main()
