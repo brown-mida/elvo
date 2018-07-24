@@ -5,7 +5,6 @@ from google.cloud import storage
 from lib import cloud_management
 import pickle
 import logging
-import pandas as pd
 
 
 def configure_logger():
@@ -34,72 +33,46 @@ prelim_label_data = {}
 with open('tmp/augmented_annotated_labels.csv', 'r') as pos_file:
     reader = csv.reader(pos_file, delimiter=',')
     for row in reader:
-        if row[1] != 'Unnamed: 0.1': # might get mad at us here
+        if row[1] != 'Unnamed: 0.1':
             prelim_label_data[row[1]] = int(row[2])
             # prelim_label_data[row[2]] = int(row[3])
 
 # Get all of the positives from the label data
 positive_label_data = {}
-logging.info('getting 12168 positive labels')
+logging.info('getting unaugmented positive labels')
 for id_, label in list(prelim_label_data.items()):
-    if label == 1 and '_' in id_:
+    if label == 1 and id_.endswith('_1'):
         positive_label_data[id_] = label
 
+print(len(positive_label_data))
 positive_train_label_data = {}
 positive_val_label_data = {}
-train = {}
-val = {}
 
 for i, id_ in enumerate(list(positive_label_data.keys())):
-    if i % 24 == 0:
-        seed = random.randint(1, 100)
-        stripped_id = id_[:-1]
-        meta_id = id_[:16]
-        if seed > 10:
-            positive_train_label_data[id_] = 1
-            train[meta_id] = ''
-            for j in range(2, 25):
-                positive_train_label_data[stripped_id + str(j)] = 1
-        else:
-            positive_val_label_data[id_] = 1
-            val[meta_id] = ''
-            for j in range(2, 25):
-                positive_val_label_data[stripped_id + str(j)] = 1
+    seed = random.randint(1, 100)
+    if seed > 10:
+        positive_train_label_data[id_] = 1
+    else:
+        positive_val_label_data[id_] = 1
 
 # Get 14500 random negatives from the label data to feed into our generator
 negative_counter = 0
 negative_train_label_data = {}
 negative_val_label_data = {}
-logging.info("getting 14500 random negative labels")
-while negative_counter < 14500:
+logging.info("getting 600 random negative labels")
+while negative_counter < 600:
     id_, label = random.choice(list(prelim_label_data.items()))
     if label == 0:
-        if negative_counter % 500 == 0:
+        if negative_counter % 100 == 0:
             logging.info(f'gotten {negative_counter} labels so far')
 
-        meta_id = id_[:16]
-        if meta_id in train:
+        seed = random.randint(1, 100)
+        if seed > 10:
             negative_train_label_data[id_] = label
-
-        elif meta_id in val:
-            negative_val_label_data[id_] = label
-
         else:
-            seed = random.randint(1, 100)
-            if seed > 10:
-                negative_train_label_data[id_] = label
-                train[meta_id] = ''
-            else:
-                negative_val_label_data[id_] = label
-                val[meta_id] = ''
-
+            negative_val_label_data[id_] = label
         del prelim_label_data[id_]
         negative_counter += 1
-
-train_df = pd.DataFrame.from_dict(train, orient='index')
-val_df = pd.DataFrame.from_dict(val, orient='index')
-train_df.to_csv('train_ids.csv')
-val_df.to_csv('val_ids.csv')
 
 train_chunks = []
 train_labels = []
@@ -108,7 +81,7 @@ val_labels = []
 
 i = 1
 for id_, label in list(positive_train_label_data.items()):
-    if i % 500 == 0:
+    if i % 100 == 0:
         logging.info(f'got chunk {i}')
     i += 1
     blob = bucket.get_blob('chunk_data/normal/positive/' + id_ + '.npy')
@@ -121,7 +94,7 @@ logging.info(f'{i} total positive training chunks')
 
 i = 1
 for id_, label in list(positive_val_label_data.items()):
-    if i % 500 == 0:
+    if i % 100 == 0:
         logging.info(f'got chunk {i}')
     i += 1
     blob = bucket.get_blob('chunk_data/normal/positive/' + id_ + '.npy')
@@ -134,7 +107,7 @@ logging.info(f'{i} total positive validation chunks')
 
 i = 1
 for id_, label in list(negative_train_label_data.items()):
-    if i % 500 == 0:
+    if i % 100 == 0:
         logging.info(f'got chunk {i}')
     i += 1
     blob = bucket.get_blob('chunk_data/normal/negative/' + id_ + '.npy')
@@ -147,7 +120,7 @@ logging.info(f'{i} total negative chunks')
 
 i = 1
 for id_, label in list(negative_val_label_data.items()):
-    if i % 500 == 0:
+    if i % 100 == 0:
         logging.info(f'got chunk {i}')
     i += 1
     blob = bucket.get_blob('chunk_data/normal/negative/' + id_ + '.npy')
@@ -168,19 +141,19 @@ val_chunks, val_labels = zip(*tmp)
 
 # Turn into numpy arrays
 logging.info('splitting based on validation split')
-full_x_train = np.asarray(train_chunks)
-full_y_train = np.asarray(train_labels)
+x_train = np.asarray(train_chunks)
+y_train = np.asarray(train_labels)
 x_val = np.asarray(val_chunks)
 y_val = np.asarray(val_labels)
 
 logging.info(f'{len(train_chunks)} total chunks to train with')
-logging.info(f'full training data: {full_x_train.shape}, {full_y_train.shape}')
+logging.info(f'full training data: {x_train.shape}, {y_train.shape}')
 logging.info(f'full validation data: {x_val.shape}, {y_val.shape}')
 
-full_arr = np.array([full_x_train,
-                     full_y_train,
+full_arr = np.array([x_train,
+                     y_train,
                      x_val,
                      y_val])
 
-with open('chunk_data_separated_ids.pkl', 'wb') as outfile:
+with open('chunk_data_no_aug.pkl', 'wb') as outfile:
     pickle.dump(full_arr, outfile, pickle.HIGHEST_PROTOCOL)
