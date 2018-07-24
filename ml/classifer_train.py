@@ -9,7 +9,7 @@ import io
 import os
 
 BLACKLIST = []
-LEARN_RATE = 1e-2
+LEARN_RATE = 1e-3
 
 
 def download_array(blob: storage.Blob) -> np.ndarray:
@@ -26,7 +26,7 @@ def train(x_train, y_train, x_val, y_val):
                   metrics=['accuracy'])
     history = model.fit(x=x_train,
                         y=y_train,
-                        batch_size=16,
+                        batch_size=128,
                         epochs=50,
                         validation_data=(x_val, y_val))
 
