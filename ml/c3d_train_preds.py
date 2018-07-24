@@ -41,14 +41,12 @@ def main():
     with open('train_ids.csv', 'r') as pos_file:
         reader = csv.reader(pos_file, delimiter=',')
         for row in reader:
-            print(row)
             if row[1] != '0':
                 train_ids[row[0]] = ''
 
     with open('val_ids.csv', 'r') as pos_file:
         reader = csv.reader(pos_file, delimiter=',')
         for row in reader:
-            print(row)
             if row[1] != '0':
                 val_ids[row[0]] = ''
 
@@ -88,15 +86,12 @@ def main():
         print(file_id)
 
         if file_id in train_ids:
-            print('train')
             train = True
 
         elif file_id in val_ids:
-            print('val')
             val = True
 
         else:
-            print('unencountered ID, putting into random bucket')
             rand = random.randint(1, 100)
             if rand > 10:
                 train = True
