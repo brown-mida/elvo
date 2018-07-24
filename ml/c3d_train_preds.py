@@ -72,18 +72,20 @@ def main():
                     chunk = arr[i: i + 32,
                                 j: j + 32,
                                 k: k + 32]
-                    # chunk = np.asarray(chunk)
-                    if chunk.shape == (32, 32, 32):
-                        chunk = np.expand_dims(chunk, axis=-1)
-                        chunks.append(chunk)
+                    airspace = np.where(chunk < -300)
+                    # if it's less than 90% airspace
+                    if (airspace[0].size / chunk.size) < 0.9:
+                        if chunk.shape == (32, 32, 32):
+                            chunk = np.expand_dims(chunk, axis=-1)
+                            chunks.append(chunk)
 
         chunks = np.asarray(chunks)
         preds = model.predict(chunks, batch_size=16)
+        print(preds.shape)
 
         train = False
         val = False
         file_id = blob.name.split('/')[-1].split('.')[0][:16]
-        print(file_id)
 
         if file_id in train_ids:
             train = True
