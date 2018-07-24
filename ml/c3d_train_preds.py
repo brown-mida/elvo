@@ -69,7 +69,7 @@ def main():
     for blob in bucket.list_blobs(prefix='airflow/npy'):
 
         arr = download_array(blob)
-        chunks = []
+        preds = []
 
         for i in range(0, len(arr), 32):
             for j in range(0, len(arr[0]), 32):
@@ -79,9 +79,10 @@ def main():
                                 k: k + 32]
                     chunk = np.asarray(chunk)
                     if chunk.shape == (32, 32, 32):
-                        chunks.append(chunk)
+                        pred = model.predict(chunk)
+                        preds.append(pred)
 
-        preds = model.predict(chunks, batch_size=16)
+        preds = np.asarray(preds)
         print(preds)
 
         train = False
