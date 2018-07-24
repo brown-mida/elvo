@@ -22,11 +22,10 @@ app = flask.Flask(__name__)
 client = storage.Client(project='elvo-198322')
 bucket = client.bucket('elvos')
 
+# TODO(#116): Cache that works >1 instance
 cache = {}
 
 SPREADSHEET_CREDENTIALS = os.environ['SPREADSHEET_CREDENTIALS']
-
-models = [{}]
 
 
 def configure_logger():
@@ -48,20 +47,6 @@ def index():
 @app.route('/annotator')
 def annotator():
     return flask.render_template('annotator.html')
-
-
-@app.route('/trainer')
-def trainer():
-    return flask.render_template('trainer.html')
-
-
-@app.route('/model', methods=['POST'])
-def create_model():
-    data = flask.json.dumps(flask.request.get_json())
-    response = requests.post('http://104.196.51.205:8080/api/experimental/dags/'
-                             'train_model/dag_runs',
-                             json={'conf': data})
-    return response.content, response.status_code, response.headers.items()
 
 
 @app.route('/roi', methods=['POST'])
@@ -251,6 +236,20 @@ def _send_slice(arr: np.ndarray):
     out_stream.seek(0)
     return flask.send_file(out_stream,
                            mimetype='image/png')
+
+
+@app.route('/trainer')
+def trainer():
+    return flask.render_template('trainer.html')
+
+
+@app.route('/model', methods=['POST'])
+def create_model():
+    data = flask.json.dumps(flask.request.get_json())
+    response = requests.post('http://104.196.51.205:8080/api/experimental/dags/'
+                             'train_model/dag_runs',
+                             json={'conf': data})
+    return response.content, response.status_code, response.headers.items()
 
 
 def validator():

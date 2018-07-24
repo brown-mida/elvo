@@ -49,14 +49,12 @@ def test_roi():
 
 @pytest.mark.skipif('SPREADSHEET_CREDENTIALS' not in os.environ,
                     reason='Spreadsheet credentials required')
-def test_model_pop():
+def test_create_model():
     from main import app
     app.testing = True
     client = app.test_client()
-    data = {
-        # TODO: Define the schema
-    }
-    r = client.get('/model/pop',
-                   data=json.dumps(data),
-                   content_type='application/json')
+    data = {}
+    r = client.post('/model',
+                    data=json.dumps(data),
+                    content_type='application/json')
     assert r.status_code == 200

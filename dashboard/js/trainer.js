@@ -8,8 +8,6 @@ import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 
-const DIR_PATH = '/home/lzhu7/elvo-analysis/data';
-
 const styles = {
   inputField: {
     margin: 10,
@@ -26,7 +24,10 @@ class Trainer extends Component {
       authorName: 'webbie',
       jobName: 'my-job',
       modelName: 'resnet',
+      // Keep the hyper-parameters as strings and use the material-ui
+      // components to validate the input.
       valSplit: '0.1',
+      // TODO(luke): Validate as integer but not float
       batchSize: '8',
       maxEpochs: '70',
     };
@@ -55,6 +56,7 @@ class Trainer extends Component {
   }
 
   render() {
+    // TODO: Descriptions of the different fields.
     console.log('state', this.state);
     return (
         <div>
@@ -84,6 +86,9 @@ class Trainer extends Component {
                 value={this.state.dataName}
                 onChange={this.handleChange('dataName')}
             >
+              {/* TODO(luke): Make this a list element. Find a way to keep
+               this in sync with what's available on GCS (perhaps a metadata
+               db)*/}
               <option value={'processed-lower'}>processed-lower</option>
               <option value={'processed-lower-nbv'}>processed-lower-nbv</option>
               <option value={'processed-lower-no-vert'}>processed-lower-no-vert</option>
