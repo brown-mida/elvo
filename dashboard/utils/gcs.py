@@ -2,8 +2,8 @@
 Google Cloud Storage related logic.
 """
 
-import logging
 import io
+import numpy as np
 from google.cloud import storage
 
 
@@ -24,3 +24,8 @@ def upload_to_gcs(file, filename, bucket):
     out_blob = storage.Blob(filename, bucket)
     out_blob.upload_from_file(buf)
 
+
+def upload_npy_to_gcs(arr, filename, user, bucket):
+    np.save('../tmp/{}.npy'.format(filename), arr)
+    out_blob = bucket.blob('{}/files/{}.npy'.format(user, filename))
+    out_blob.upload_from_filename('../tmp/{}.npy'.format(filename))
