@@ -1,3 +1,5 @@
+import pathlib
+
 import keras
 import numpy as np
 import os
@@ -37,10 +39,20 @@ def test_full_multiclass_report_binary():
     X = np.random.rand(500, 224, 224, 3)
     y = np.random.randint(0, 2, size=(500, 1))
 
+    cm_path = pathlib.Path('/tmp/test_cm.png')
+    tp_path = pathlib.Path('/tmp/test_true_positives.png')
+    fp_path = pathlib.Path('/tmp/test_false_positives.png')
+    tn_path = pathlib.Path('/tmp/test_true_negatives.png')
+    fn_path = pathlib.Path('/tmp/test_false_negatives.png')
     print(blueno.slack.full_multiclass_report(model,
                                               X,
                                               y,
-                                              classes=[0, 1]))
+                                              classes=[0, 1],
+                                              cm_path=cm_path,
+                                              tp_path=tp_path,
+                                              fp_path=fp_path,
+                                              tn_path=tn_path,
+                                              fn_path=fn_path))
 
 
 def test_full_multiclass_report_multiclass():
@@ -55,10 +67,20 @@ def test_full_multiclass_report_multiclass():
 
     assert y.shape == (500, 3)
 
+    cm_path = pathlib.Path('/tmp/test_cm.png')
+    tp_path = pathlib.Path('/tmp/test_true_positives.png')
+    fp_path = pathlib.Path('/tmp/test_false_positives.png')
+    tn_path = pathlib.Path('/tmp/test_true_negatives.png')
+    fn_path = pathlib.Path('/tmp/test_false_negatives.png')
     print(blueno.slack.full_multiclass_report(model,
                                               X,
                                               y,
-                                              classes=[0, 1, 2]))
+                                              classes=[0, 1, 2],
+                                              cm_path=cm_path,
+                                              tp_path=tp_path,
+                                              fp_path=fp_path,
+                                              tn_path=tn_path,
+                                              fn_path=fn_path))
 
 
 def test_slack_upload_cm():
@@ -73,10 +95,21 @@ def test_slack_upload_cm():
 
     assert y.shape == (500, 3)
 
+    cm_path = pathlib.Path('/tmp/test_cm.png')
+    tp_path = pathlib.Path('/tmp/test_true_positives.png')
+    fp_path = pathlib.Path('/tmp/test_false_positives.png')
+    tn_path = pathlib.Path('/tmp/test_true_negatives.png')
+    fn_path = pathlib.Path('/tmp/test_false_negatives.png')
+
     report = blueno.slack.full_multiclass_report(model,
                                                  X,
                                                  y,
-                                                 classes=[0, 1, 2])
+                                                 classes=[0, 1, 2],
+                                                 cm_path=cm_path,
+                                                 tp_path=tp_path,
+                                                 fp_path=fp_path,
+                                                 tn_path=tn_path,
+                                                 fn_path=fn_path)
     blueno.slack.upload_to_slack('/tmp/cm.png', report, SLACK_TOKEN,
                                  channels=['#tests'])
 
@@ -139,10 +172,18 @@ def test_save_misclassification_plots_with_ids():
     y_pred_binary = y_pred > 0
 
     print('starting save')
+    tp_path = pathlib.Path('/tmp/test_true_positives.png')
+    fp_path = pathlib.Path('/tmp/test_false_positives.png')
+    tn_path = pathlib.Path('/tmp/test_true_negatives.png')
+    fn_path = pathlib.Path('/tmp/test_false_negatives.png')
     blueno.slack.save_misclassification_plots(X,
                                               y_valid_binary,
                                               y_pred_binary,
-                                              ids)
+                                              tp_path=tp_path,
+                                              fp_path=fp_path,
+                                              tn_path=tn_path,
+                                              fn_path=fn_path,
+                                              id_valid=ids)
     blueno.slack.upload_to_slack('/tmp/false_positives.png',
                                  'false positives',
                                  SLACK_TOKEN,

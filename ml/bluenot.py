@@ -29,7 +29,6 @@ import datetime
 import importlib
 import logging
 import multiprocessing
-import os
 import pathlib
 import time
 from argparse import ArgumentParser
@@ -37,6 +36,7 @@ from typing import List, Union
 
 import keras
 import numpy as np
+import os
 from elasticsearch_dsl import connections
 from sklearn import model_selection
 
@@ -154,7 +154,9 @@ def start_job(x_train: np.ndarray,
         logging.info('generating slack report')
         blueno.slack.slack_report(x_train, x_valid, y_valid, model, history,
                                   job_name,
-                                  params, slack_token, id_valid=id_valid)
+                                  params,
+                                  slack_token,
+                                  id_valid=id_valid)
     else:
         logging.info('no slack token found, not generating report')
 
