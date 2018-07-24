@@ -25,8 +25,8 @@ def save_preds_to_cloud(arr: np.ndarray, type: str, id: str):
     """
     try:
         print(f'gs://elvos/chunk_data/preds/{id}.npy')
-        np.save(file_io.FileIO(f'gs://elvos/chunk_data/preds/{type}/{id}.npy', 'w'),
-                arr)
+        np.save(file_io.FileIO(f'gs://elvos/chunk_data/preds/{type}/{id}.npy',
+                               'w'), arr)
     except Exception as e:
         logging.error(f'for patient ID: {id} {e}')
 
