@@ -132,9 +132,18 @@ def test_save_misclassification_plots():
     y_pred_binary = y_pred > 0
 
     print('starting save')
+    plot_dir = '/tmp'
+    tp_path = pathlib.Path(plot_dir) / 'true_positives.png'
+    fp_path = pathlib.Path(plot_dir) / 'false_positives.png'
+    tn_path = pathlib.Path(plot_dir) / 'true_negatives.png'
+    fn_path = pathlib.Path(plot_dir) / 'false_negatives.png'
     blueno.slack.save_misclassification_plots(X,
                                               y_valid_binary,
-                                              y_pred_binary)
+                                              y_pred_binary,
+                                              tp_path=tp_path,
+                                              fp_path=fp_path,
+                                              tn_path=tn_path,
+                                              fn_path=fn_path)
     blueno.slack.upload_to_slack('/tmp/false_positives.png',
                                  'false positives',
                                  SLACK_TOKEN,
