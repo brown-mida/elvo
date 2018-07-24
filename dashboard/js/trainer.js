@@ -35,7 +35,7 @@ class Trainer extends Component {
     super(props);
 
     this.state = {
-      dataName: '',
+      dataName: 'processed-lower',
       authorName: 'web-luke',
       jobName: 'web-job',
       modelName: 'resnet',
@@ -51,7 +51,7 @@ class Trainer extends Component {
       offset: 0,
 
       allPlots: [],
-      selectedPlot: '',
+      selectedPlot: 'processed-lower_2-classes-2018-07-24T17:49:23.336454',
 
       viewType: 'data',
     };
@@ -132,6 +132,7 @@ class Trainer extends Component {
 
   // Returns the training view
   trainView() {
+    // TODO: Labels with the images
     const baseURL = 'https://storage.googleapis.com/elvos-public/processed';
     const images = this.state.imageNames
         .slice(this.state.offset, this.state.offset + 32)
