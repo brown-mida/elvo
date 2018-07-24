@@ -22,6 +22,9 @@ const styles = {
   plotImg: {
     maxWidth: '60%',
   },
+  dataImg: {
+    maxWidth: 64,
+  },
 };
 
 class Trainer extends Component {
@@ -30,7 +33,7 @@ class Trainer extends Component {
     super(props);
 
     this.state = {
-      dataName: 'processed-lower',
+      dataName: '',
       authorName: 'web-luke',
       jobName: 'web-job',
       modelName: 'resnet',
@@ -41,11 +44,16 @@ class Trainer extends Component {
       batchSize: '8',
       maxEpochs: '70',
 
+      allDataNames: [],
+      imageNames: [],
+      offset: 0,
+
       allPlots: [],
       selectedPlot: '',
     };
 
     this.handleChange = this.handleChange.bind(this);
+    this.handleDataChange = this.handleDataChange.bind(this);
     this.sendJobRequest = this.sendJobRequest.bind(this);
     this.evalView = this.evalView.bind(this);
   }
@@ -56,6 +64,17 @@ class Trainer extends Component {
         .then(response => {
           this.setState({
             allPlots: response.data,
+          });
+        })
+        .catch(error => {
+          console.error(error);
+        });
+
+    // Set allDataNames
+    axios.get('/data')
+        .then(response => {
+          this.setState({
+            allDataNames: response.data,
           });
         })
         .catch(error => {
@@ -74,12 +93,31 @@ class Trainer extends Component {
         });
   }
 
+  // Handles general changes in the input fields
   handleChange(name) {
     return event => {
       this.setState({
         [name]: event.target.value,
       });
     };
+  }
+
+  // When the  data is changed, ImageURLs is also updated
+  handleDataChange(event) {
+    const dataName = event.target.value;
+    this.setState({
+      dataName,
+    });
+    // Update imageNames
+    axios.get('/data/' + dataName)
+        .then(response => {
+          this.setState({
+            imageNames: response.data,
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
   }
 
   plotUrl(jobWithDate, plotType) {
@@ -90,7 +128,20 @@ class Trainer extends Component {
 
   // Returns the training view
   trainView() {
-    // TODO(luke)
+    const baseURL = 'https://storage.googleapis.com/elvos-public/processed';
+    const images = this.state.imageNames
+        .slice(this.state.offset, this.state.offset + 32)
+        .map((name) => {
+          return (
+              <Grid item xs={4}>
+                <img src={`${baseURL}/${this.state.dataName}/arrays/${name}`}/>
+              </Grid>);
+        });
+    return (
+        <Grid container spacing={8} style={styles.grid}>
+          {images}
+        </Grid>
+    );
   }
 
   // Returns the evaluation view
@@ -171,6 +222,12 @@ class Trainer extends Component {
     // TODO: Descriptions of the different fields.
     console.log('state', this.state);
 
+    const dataOptions = this.state.allDataNames.map(name => {
+      return <option key={name} value={name}>{name}</option>;
+    });
+
+    dataOptions.unshift(<option key={''} value={''}>{''}</option>);
+
     // Also accept the empty option as a default
     const plotOptions = [<option key={''} value={''}>{''}</option>];
 
@@ -209,15 +266,9 @@ class Trainer extends Component {
               <Select
                   native
                   value={this.state.dataName}
-                  onChange={this.handleChange('dataName')}
+                  onChange={this.handleDataChange}
               >
-                {/* TODO(luke): Make this a list element. Find a way to keep
-               this in sync with what's available on GCS (perhaps a metadata
-               db)*/}
-                <option value={'processed-lower'}>processed-lower</option>
-                <option value={'processed-lower-nbv'}>processed-lower-nbv</option>
-                <option value={'processed-lower-no-vert'}>processed-lower-no-vert</option>
-                <option value={'processed-no-basvert'}>processed-no-basvert</option>
+                {dataOptions}
               </Select>
             </FormControl>
 
@@ -264,7 +315,7 @@ class Trainer extends Component {
           </Drawer>
 
           {/* Start of the main body */}
-          {this.evalView()}
+          {this.trainView()}
         </div>
     );
   }

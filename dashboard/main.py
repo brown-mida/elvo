@@ -258,7 +258,7 @@ def create_model():
 @app.route('/plots')
 def list_plots():
     """
-    Gets all available plot urls.
+    Gets all available plots.
 
     :return: a JSON object containing the gs urls of the available plots.
     """
@@ -269,6 +269,38 @@ def list_plots():
         plot_dir = blob.name.split('/')[1]
         plots.add(plot_dir)
     return flask.json.jsonify(list(plots))
+
+
+@app.route('/data')
+def list_datasets():
+    """
+    Gets all available datasets.
+
+    :return: a JSON object containing the gs urls of the available plots.
+    """
+    datasets = set()
+
+    blob: storage.Blob
+    for blob in pub_bucket.list_blobs(prefix='processed/'):
+        data_name = blob.name.split('/')[1]
+        datasets.add(data_name)
+    return flask.json.jsonify(list(datasets))
+
+
+@app.route('/data/<image_name>')
+def get_images(image_name: str):
+    """
+    Returns the image names (ex. 0ABCSDFS.png) which have the given data name
+
+    :return:
+    """
+    images = []
+
+    blob: storage.Blob
+    for blob in pub_bucket.list_blobs(prefix=f'processed/{image_name}/'):
+        image_name = blob.name.split('/')[-1]
+        images.append(image_name)
+    return flask.json.jsonify(list(images))
 
 
 def validator():
