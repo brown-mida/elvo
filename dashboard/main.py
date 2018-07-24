@@ -21,6 +21,9 @@ app = flask.Flask(__name__)
 
 client = storage.Client(project='elvo-198322')
 bucket = client.bucket('elvos')
+# TODO(luke): Start splitting the development/private bucket from the public
+# TODO(luke): Also start considering user-specific buckets.
+pub_bucket = client.bucket('elvos-public')
 
 # TODO(#116): Cache that works >1 instance
 cache = {}
@@ -250,6 +253,22 @@ def create_model():
                              'dags/train_model/dag_runs',
                              json={'conf': data})
     return response.content, response.status_code, response.headers.items()
+
+
+@app.route('/plots')
+def list_plots():
+    """
+    Gets all available plot urls.
+
+    :return: a JSON object containing the gs urls of the available plots.
+    """
+    plots = []
+
+    blob: storage.Blob
+    for blob in pub_bucket.list_blobs(prefix='plots/'):
+        plot_dir = blob.name.split('/')[1]
+        plots.append(plot_dir)
+    return flask.json.jsonify(plots)
 
 
 def validator():

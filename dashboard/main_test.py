@@ -1,6 +1,7 @@
 import json
 import os
 
+import flask
 import pytest
 
 
@@ -58,3 +59,15 @@ def test_create_model():
                     data=json.dumps(data),
                     content_type='application/json')
     assert r.status_code == 200
+
+
+@pytest.mark.skipif('SPREADSHEET_CREDENTIALS' not in os.environ,
+                    reason='Spreadsheet credentials required')
+def test_list_plots():
+    from main import app
+    app.testing = True
+    client = app.test_client()
+    r: flask.Response
+    r = client.get('/plots')
+    assert r.status_code == 200
+    assert 'test_gcs-2018-07-24T17:30:15.191204' in json.loads(r.data)

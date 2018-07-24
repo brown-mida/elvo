@@ -24,7 +24,7 @@
     "webpack-cli": "^3.0.8"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "GOOGLE_APPLICATION_CREDENTIALS='elvo-7136c1299dea.json' SPREADSHEET_CREDENTIALS='elvo-de539f4b4cd3.json' pytest",
     "build": "webpack",
     "start": "python main.py",
     "flask": "GOOGLE_APPLICATION_CREDENTIALS='elvo-7136c1299dea.json' SPREADSHEET_CREDENTIALS='elvo-de539f4b4cd3.json' python main.py",

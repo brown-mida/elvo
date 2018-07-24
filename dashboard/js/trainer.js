@@ -21,8 +21,8 @@ class Trainer extends Component {
 
     this.state = {
       dataName: 'processed-lower',
-      authorName: 'webbie',
-      jobName: 'my-job',
+      authorName: 'web-luke',
+      jobName: 'web-job',
       modelName: 'resnet',
       // Keep the hyper-parameters as strings and use the material-ui
       // components to validate the input.
