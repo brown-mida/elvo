@@ -24,7 +24,7 @@ def save_preds_to_cloud(arr: np.ndarray, type: str, id: str):
     """Uploads chunk .npy files to gs://elvos/chunk_data/<patient_id>.npy
     """
     try:
-        print(f'gs://elvos/chunk_data/preds/{id}.npy')
+        print(f'gs://elvos/chunk_data/preds/{type}/{id}.npy')
         np.save(file_io.FileIO(f'gs://elvos/chunk_data/preds/{type}/{id}.npy',
                                'w'), arr)
     except Exception as e:
@@ -51,9 +51,6 @@ def main():
             print(row)
             if row[1] != '0':
                 val_ids[row[0]] = ''
-
-    print(train_ids)
-    print(val_ids)
 
     # Get npy files from Google Cloud Storage
     gcs_client = storage.Client.from_service_account_json(
@@ -83,9 +80,7 @@ def main():
                         chunks.append(chunk)
 
         chunks = np.asarray(chunks)
-        print(chunks.shape)
         preds = model.predict(chunks, batch_size=16)
-        print(preds)
 
         train = False
         val = False
@@ -93,12 +88,15 @@ def main():
         print(file_id)
 
         if file_id in train_ids:
+            print('train')
             train = True
 
         elif file_id in val_ids:
+            print('val')
             val = True
 
         else:
+            print('unencountered ID, putting into random bucket')
             rand = random.randint(1, 100)
             if rand > 10:
                 train = True
