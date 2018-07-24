@@ -48,7 +48,7 @@ def upload_dataset():
             "id": file_id,
             "name": file.filename,
             "date": current_date,
-            "gcs_url": '{}/files/{}.npy'.format(data['user'], file_id),
+            "gcs_url": '{}/default/{}.npy'.format(data['user'], file_id),
             "status": "running",
             "message": "Please wait for the file to finish loading."
         }
@@ -68,8 +68,8 @@ def get_dataset():
     results = datasets.find({'user': user})
     data = []
     for doc in results:
-        print(doc)
         data.append({'name': doc['name'],
+                     'id': doc['id'],
                      'date': doc['date'],
                      'status': doc['status'],
                      'message': doc['message']})
@@ -81,16 +81,30 @@ def process_file(file, file_id, user, date, bucket):
         "mongodb://bluenoml:elvoanalysis@104.196.51.205/elvo"
     )
     db = client.elvo.datasets
+    try:
+        npy = preprocess.process_cab(file, file.filename, '../tmp/cab_files/')
+        preprocess.generate_images(npy, user, 'default', file_id,
+                                   bucket, '../tmp/')
+        gcs.upload_npy_to_gcs(npy, file_id, user, 'default', bucket)
+        dataset = {
+            "user": user,
+            "id": file_id,
+            "name": file.filename,
+            "date": date,
+            "gcs_url": '{}/default/{}.npy'.format(user, file_id),
+            "status": "loaded",
+            "message": "Successfully loaded."
+        }
+        db.replace_one({'id': file_id}, dataset)
+    except Exception as e:
+        dataset = {
+            "user": user,
+            "id": file_id,
+            "name": file.filename,
+            "date": date,
+            "gcs_url": '{}/default/{}.npy'.format(user, file_id),
+            "status": "failed",
+            "message": "Failed: {}".format(e)
+        }
+        db.replace_one({'id': file_id}, dataset)
 
-    npy = preprocess.process_cab(file, file.filename, '../tmp/cab_files/')
-    gcs.upload_npy_to_gcs(npy, file_id, user, bucket)
-    dataset = {
-        "user": user,
-        "id": file_id,
-        "name": file.filename,
-        "date": date,
-        "gcs_url": '{}/files/{}.npy'.format(user, file_id),
-        "status": "loaded",
-        "message": "Successfully loaded."
-    }
-    db.replace_one({'id': file_id}, dataset)

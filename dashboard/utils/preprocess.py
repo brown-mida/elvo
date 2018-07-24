@@ -11,6 +11,7 @@ import shutil
 import subprocess
 from typing import List
 
+from utils.gcs import upload_to_gcs, save_npy_as_image_and_upload
 from utils.transforms import get_pixels_hu, standardize_spacing
 
 
@@ -34,6 +35,7 @@ def process_cab(file, filename, tmp_dir):
     logging.info('Loading scans from {}'.format(dcm_path))
     processed_scan = _process_cab(dcm_path)
     shutil.rmtree(list(os.walk('.'))[1][0])
+    os.remove(filename)
     os.chdir(current_dir)
     return processed_scan
 
@@ -67,3 +69,15 @@ def preprocess_scan(slices: List[pydicom.FileDataset]) -> np.array:
     scan = get_pixels_hu(slices)
     scan = standardize_spacing(scan, slices)
     return scan
+
+
+def generate_images(arr, user, dataset, file_id, bucket, tmp_dir):
+    axial = arr.max(axis=0)
+    coronal = arr.max(axis=1)
+    sagittal = arr.max(axis=2)
+    save_npy_as_image_and_upload(axial, user, dataset, 'axial',
+                                 file_id, bucket, tmp_dir)
+    save_npy_as_image_and_upload(coronal, user, dataset, 'coronal',
+                                 file_id, bucket, tmp_dir)
+    save_npy_as_image_and_upload(sagittal, user, dataset, 'sagittal',
+                                 file_id, bucket, tmp_dir)
