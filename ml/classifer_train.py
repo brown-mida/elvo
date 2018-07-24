@@ -1,6 +1,6 @@
 import tensorflow as tf
 from models.three_d import cube_classifier
-from keras.optimizers import Adadelta
+from keras.optimizers import Adadelta, SGD
 from keras.losses import categorical_crossentropy
 import pandas as pd
 import numpy as np
@@ -9,6 +9,7 @@ import io
 import os
 
 BLACKLIST = []
+LEARN_RATE = 1e-3
 
 
 def download_array(blob: storage.Blob) -> np.ndarray:
@@ -19,9 +20,10 @@ def download_array(blob: storage.Blob) -> np.ndarray:
 
 
 def train(x_train, y_train, x_val, y_val):
+    opt = SGD(lr=LEARN_RATE, momentum=0.9, nesterov=True),
     model = cube_classifier.CubeClassifierBuilder.build()
     model.compile(loss=categorical_crossentropy,
-                  optimizer=Adadelta(),
+                  optimizer=opt,
                   metrics=['accuracy'])
     history = model.fit(x=x_train,
                         y=y_train,
