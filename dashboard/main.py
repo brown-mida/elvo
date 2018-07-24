@@ -262,13 +262,13 @@ def list_plots():
 
     :return: a JSON object containing the gs urls of the available plots.
     """
-    plots = []
+    plots = set()
 
     blob: storage.Blob
     for blob in pub_bucket.list_blobs(prefix='plots/'):
         plot_dir = blob.name.split('/')[1]
-        plots.append(plot_dir)
-    return flask.json.jsonify(plots)
+        plots.add(plot_dir)
+    return flask.json.jsonify(list(plots))
 
 
 def validator():
