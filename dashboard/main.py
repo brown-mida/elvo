@@ -246,8 +246,8 @@ def trainer():
 @app.route('/model', methods=['POST'])
 def create_model():
     data = flask.json.dumps(flask.request.get_json())
-    response = requests.post('http://104.196.51.205:8080/api/experimental/dags/'
-                             'train_model/dag_runs',
+    response = requests.post('http://104.196.51.205:8080/api/experimental/'
+                             'dags/train_model/dag_runs',
                              json={'conf': data})
     return response.content, response.status_code, response.headers.items()
 
