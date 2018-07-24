@@ -20,10 +20,9 @@ def download_array(blob: storage.Blob) -> np.ndarray:
 
 
 def train(x_train, y_train, x_val, y_val):
-    opt = SGD(lr=LEARN_RATE, momentum=0.9, nesterov=True),
     model = cube_classifier.CubeClassifierBuilder.build()
     model.compile(loss=categorical_crossentropy,
-                  optimizer=opt,
+                  optimizer=SGD(lr=LEARN_RATE, momentum=0.9, nesterov=True),
                   metrics=['accuracy'])
     history = model.fit(x=x_train,
                         y=y_train,
