@@ -57,9 +57,9 @@ def main():
 
     # Get npy files from Google Cloud Storage
     gcs_client = storage.Client.from_service_account_json(
-        # '/home/harold_triedman/elvo-analysis/credentials/client_secret.json'
+        '/home/harold_triedman/elvo-analysis/credentials/client_secret.json'
 
-        'credentials/client_secret.json'
+        # 'credentials/client_secret.json'
     )
     bucket = gcs_client.get_bucket('elvos')
 
