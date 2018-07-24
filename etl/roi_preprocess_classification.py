@@ -42,7 +42,7 @@ def process_labels():
     idx 6: Basilar
     """
     for index, row in positives_df.iterrows():
-        patient_id = row[0]
+        patient_id = row[0][:16]
         occlusion_type = row[1].lower()
         occlusion_label = np.zeros(7)
         print("ID: " + patient_id
