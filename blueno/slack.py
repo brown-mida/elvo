@@ -51,8 +51,37 @@ def slack_report(x_train: np.ndarray,
     tn_path = pathlib.Path(plot_dir) / 'true_negatives.png'
     fn_path = pathlib.Path(plot_dir) / 'false_negatives.png'
 
-    save_history(history, loss_path, acc_path)
+    report = _create_all_plots(x_train, x_valid, y_valid, model, history,
+                               loss_path, acc_path, cm_path, tn_path, tp_path,
+                               fn_path, fp_path, chunk, id_valid)
 
+    upload_to_slack(loss_path, f'{name}\n\nparams:\n{str(params)}', token)
+    upload_to_slack(acc_path, f'{name}\n\nparams:\n{str(params)}', token)
+    upload_to_slack(cm_path, report, token)
+    upload_to_slack(fp_path, f'{name}\n\nfalse positives', token)
+    upload_to_slack(fn_path, f'{name}\n\nfalse negatives', token)
+    upload_to_slack(tp_path, f'{name}\n\ntrue positives', token)
+    upload_to_slack(tn_path, f'{name}\n\ntrue negatives', token)
+
+
+def _create_all_plots(
+        x_train: np.ndarray,
+        x_valid: np.ndarray,
+        y_valid: np.ndarray,
+        model: keras.Model,
+        history: keras.callbacks.History,
+        loss_path: pathlib.Path,
+        acc_path: pathlib.Path,
+        cm_path: pathlib.Path,
+        tn_path: pathlib.Path,
+        tp_path: pathlib.Path,
+        fn_path: pathlib.Path,
+        fp_path: pathlib.Path,
+        chunk: bool = False,
+        id_valid: np.ndarray = None):
+    """Saves all plots to the given paths.
+    """
+    save_history(history, loss_path, acc_path)
     # TODO: Refactor this
     if chunk:
         y_valid = np.reshape(y_valid, (len(y_valid), 1))
@@ -86,14 +115,7 @@ def slack_report(x_train: np.ndarray,
                                         fn_path=fn_path,
                                         id_valid=id_valid,
                                         chunk=chunk)
-
-    upload_to_slack(loss_path, f'{name}\n\nparams:\n{str(params)}', token)
-    upload_to_slack(acc_path, f'{name}\n\nparams:\n{str(params)}', token)
-    upload_to_slack(cm_path, report, token)
-    upload_to_slack(fp_path, f'{name}\n\nfalse positives', token)
-    upload_to_slack(fn_path, f'{name}\n\nfalse negatives', token)
-    upload_to_slack(tp_path, f'{name}\n\ntrue positives', token)
-    upload_to_slack(tn_path, f'{name}\n\ntrue negatives', token)
+    return report
 
 
 def save_history(history: keras.callbacks.History,

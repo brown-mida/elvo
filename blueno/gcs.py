@@ -4,12 +4,16 @@ Connection logic with Google Cloud Storage.
 import logging
 import pathlib
 import subprocess
-import warnings
 
+import keras
+import numpy as np
+import os
+import warnings
 from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import storage
 
 from blueno.elasticsearch import JOB_INDEX
+from blueno.slack import _create_all_plots
 
 
 def equal_array_counts(arrays_dir: pathlib.Path,
@@ -20,7 +24,7 @@ def equal_array_counts(arrays_dir: pathlib.Path,
     # +1 to avoid leading /
     prefix_i = arrays_gsurl.find('elvos') + len('elvos') + 1
     try:
-        client = storage.Client()
+        client = storage.Client(project='elvo-198322')
     except DefaultCredentialsError:
         warnings.warn('Set GOOGLE_APPLICATION_CREDENTIALS in your config '
                       'file')
@@ -112,3 +116,51 @@ def upload_model_to_gcs(job_name, created_at, model_filepath):
              '/gpfs/main/home/lzhu7/google-cloud-sdk/bin/'
              'gsutil cp {} {}'.format(model_filepath, gcs_filepath)],
             check=True)
+
+
+def upload_gcs_plots(x_train: np.ndarray,
+                     x_valid: np.ndarray,
+                     y_valid: np.ndarray,
+                     model: keras.models.Model,
+                     history: keras.callbacks.History,
+                     job_name: str,
+                     created_at: str,
+                     id_valid: np.ndarray = None,
+                     chunk: bool = False,
+                     plot_dir: pathlib.Path = pathlib.Path('/tmp')):
+    """
+    Uploads a loss graph, accuracy, and confusion matrix plots in addition
+    to useful data about the model to gcs.
+
+    Saves to gs://elvos-public/plots/{job_name}-{created_at}/
+
+    :param x_train:
+    :param x_valid:
+    :param y_valid:
+    :param model:
+    :param history:
+    :param job_name:
+    :param params:
+    :param token:
+    :param id_valid:
+    :param chunk:
+    :param plot_dir:
+    :return:
+    """
+    os.makedirs(str(plot_dir), exist_ok=True)
+    loss_path = pathlib.Path(plot_dir) / 'loss.png'
+    acc_path = pathlib.Path(plot_dir) / 'acc.png'
+    cm_path = pathlib.Path(plot_dir) / 'cm.png'
+    tp_path = pathlib.Path(plot_dir) / 'true_positives.png'
+    fp_path = pathlib.Path(plot_dir) / 'false_positives.png'
+    tn_path = pathlib.Path(plot_dir) / 'true_negatives.png'
+    fn_path = pathlib.Path(plot_dir) / 'false_negatives.png'
+
+    _create_all_plots(x_train, x_valid, y_valid, model, history,
+                      loss_path, acc_path, cm_path, tn_path, tp_path,
+                      fn_path, fp_path, chunk, id_valid)
+    client = storage.Client(project='elvo-198322')
+    bucket = client.bucket('elvos-public')
+    for filename in os.listdir(str(plot_dir)):
+        blob = bucket.blob(f'plots/{job_name}-{created_at}/{filename}')
+        blob.upload_from_filename(str(plot_dir / filename))

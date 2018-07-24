@@ -62,6 +62,7 @@ def start_job(x_train: np.ndarray,
               params: blueno.ParamConfig,
               slack_token: str = None,
               log_dir: str = None,
+              plot_dir=None,
               id_valid: np.ndarray = None) -> None:
     """
     Builds, fits, and evaluates a model.
@@ -80,11 +81,16 @@ def start_job(x_train: np.ndarray,
     :param slack_token: the slack token
     :param params: the parameters specified
     :param log_dir:
+    :param plot_dir: the directory to save plots to, defaults to /tmp/plots-
     :param id_valid: the patient ids ordered to correspond with y_valid
     :return:
     """
     num_classes = y_train.shape[1]
     created_at = datetime.datetime.utcnow().isoformat()
+
+    if plot_dir is None:
+        gpu = os.environ["CUDA_VISIBLE_DEVICES"]
+        plot_dir = pathlib.Path('tmp') / f'plots-{gpu}'
 
     # Configure the job to log all output to a specific file
     csv_filepath = None
@@ -150,12 +156,18 @@ def start_job(x_train: np.ndarray,
                                   verbose=2,
                                   callbacks=callbacks)
 
+    blueno.gcs.upload_gcs_plots(x_train, x_valid, y_valid, model, history,
+                                job_name,
+                                created_at,
+                                plot_dir=plot_dir,
+                                id_valid=id_valid)
     if slack_token:
         logging.info('generating slack report')
         blueno.slack.slack_report(x_train, x_valid, y_valid, model, history,
                                   job_name,
                                   params,
                                   slack_token,
+                                  plot_dir=plot_dir,
                                   id_valid=id_valid)
     else:
         logging.info('no slack token found, not generating report')
