@@ -12,6 +12,7 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
+import Divider from '@material-ui/core/Divider';
 
 
 const styles = {
@@ -247,6 +248,8 @@ class Trainer extends Component {
               variant="permanent"
               anchor="left"
           >
+            <h3 style={{ paddingLeft: 10 }}>Training Options</h3>
+
             <TextField
                 id="jobName"
                 label={'Job Name'}
@@ -307,7 +310,9 @@ class Trainer extends Component {
               Create Training Job
             </Button>
 
-            {/*TODO: Divider*/}
+            <Divider/>
+
+            <h3 style={{ paddingLeft: 10 }}>Results Options</h3>
 
             <FormControl style={styles.inputField}>
               <InputLabel>Plots</InputLabel>
@@ -319,6 +324,12 @@ class Trainer extends Component {
                 {plotOptions}
               </Select>
             </FormControl>
+
+            <Button href={'http://104.196.51.205:5601/'}>Kibana</Button>
+
+            <Divider/>
+
+            <h3 style={{ paddingLeft: 10 }}>View</h3>
 
             <BottomNavigation
                 value={this.state.viewType}
