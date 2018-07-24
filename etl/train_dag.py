@@ -1,10 +1,12 @@
 import datetime
 import logging
+import os
 
 import paramiko
 from airflow import DAG
 from airflow.models import BaseOperator
 from airflow.operators.sensors import BaseSensorOperator
+from airflow.operators.slack_operator import SlackAPIPostOperator
 
 
 def run_bluenot(config: dict):
@@ -111,4 +113,14 @@ sense_complete_op = WebTrainerSensor(task_id='sense_complete',
                                      dag=train_dag,
                                      retries=3)
 
+slack_confirm_op = SlackAPIPostOperator(
+    task_id='slack_confirmation',
+    channel='tests',
+    username='airflow',
+    token=os.environ['SLACK_TOKEN'],
+    text=f'DAG {train_dag_id} has finished',
+    dag=train_dag,
+)
+
 run_bluenot_op >> sense_complete_op
+sense_complete_op >> slack_confirm_op
