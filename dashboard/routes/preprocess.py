@@ -33,17 +33,21 @@ def upload_dataset():
     client = gcs.authenticate()
     bucket = client.get_bucket('blueno-ml-files')
     for file in files:
-        file_id = ('{}.{}'.format(file.filename, str(datetime.datetime.now())))
+        current_date = str(datetime.datetime.now())
+        file_id = ('{}.{}'.format(file.filename, current_date))
 
         # Upload file
         process = Process(target=process_file,
-                          args=(file, file_id, data['user'], bucket))
+                          args=(file, file_id, data['user'],
+                                current_date, bucket))
         process.start()
 
         # Save user-file relationship in MongoDB
         dataset = {
             "user": data['user'],
             "id": file_id,
+            "name": file.filename,
+            "date": current_date,
             "gcs_url": '{}/files/{}.npy'.format(data['user'], file_id),
             "status": "running",
             "message": "Please wait for the file to finish loading."
@@ -54,7 +58,25 @@ def upload_dataset():
     return flask.json.jsonify({'status': 'success'})
 
 
-def process_file(file, file_id, user, bucket):
+@app_preprocess.route('/get-dataset', methods=['GET'])
+def get_dataset():
+    client = pymongo.MongoClient(
+        "mongodb://bluenoml:elvoanalysis@104.196.51.205/elvo"
+    )
+    datasets = client.elvo.datasets
+    user = flask.request.args.get('user')
+    results = datasets.find({'user': user})
+    data = []
+    for doc in results:
+        print(doc)
+        data.append({'name': doc['name'],
+                     'date': doc['date'],
+                     'status': doc['status'],
+                     'message': doc['message']})
+    return flask.json.jsonify({'data': data})
+
+
+def process_file(file, file_id, user, date, bucket):
     client = pymongo.MongoClient(
         "mongodb://bluenoml:elvoanalysis@104.196.51.205/elvo"
     )
@@ -65,6 +87,8 @@ def process_file(file, file_id, user, bucket):
     dataset = {
         "user": user,
         "id": file_id,
+        "name": file.filename,
+        "date": date,
         "gcs_url": '{}/files/{}.npy'.format(user, file_id),
         "status": "loaded",
         "message": "Successfully loaded."
