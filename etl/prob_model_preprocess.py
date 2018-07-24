@@ -5,6 +5,7 @@ from google.cloud import storage
 from lib import cloud_management
 import pickle
 import logging
+import pandas as pd
 
 
 def configure_logger():
@@ -94,6 +95,11 @@ while negative_counter < 14500:
 
         del prelim_label_data[id_]
         negative_counter += 1
+
+train_df = pd.DataFrame.from_dict(train, orient='index')
+val_df = pd.DataFrame.from_dict(val, orient='index')
+train_df.to_csv('train_ids.csv')
+val_df.to_csv('val_ids.csv')
 
 train_chunks = []
 train_labels = []

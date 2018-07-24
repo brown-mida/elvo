@@ -15,7 +15,7 @@ LEARN_RATE = 1e-5
 
 sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
 
-with open('chunk_data_separated.pkl', 'rb') as infile:
+with open('chunk_data_separated_ids.pkl', 'rb') as infile:
     full_data = pickle.load(infile)
 
 full_x_train = full_data[0]
@@ -29,8 +29,8 @@ metrics = ['acc',
            utils.sensitivity,
            utils.specificity]
 
-for i in range(1, 11):
-# for i in range(10, 11):
+# for i in range(1, 11):
+for i in range(10, 11):
 
     model = c3d.C3DBuilder.build()
     opt = SGD(lr=LEARN_RATE, momentum=0.9, nesterov=True)
@@ -47,7 +47,7 @@ for i in range(1, 11):
                                        y_valid=y_val,
                                        normalize=False)
 
-    checkpoint = ModelCheckpoint(f'tmp/c3d_{i*10}_3.hdf5',
+    checkpoint = ModelCheckpoint(f'tmp/c3d_separated_ids.hdf5',
                                  monitor='val_acc',
                                  verbose=1, save_best_only=True,
                                  mode='auto')
