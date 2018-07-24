@@ -283,7 +283,8 @@ def list_datasets():
     blob: storage.Blob
     for blob in pub_bucket.list_blobs(prefix='processed/'):
         data_name = blob.name.split('/')[1]
-        datasets.add(data_name)
+        if not data_name.startswith('test'):
+            datasets.add(data_name)
     return flask.json.jsonify(list(datasets))
 
 
