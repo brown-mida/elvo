@@ -95,7 +95,9 @@ class TrainingJob(elasticsearch_dsl.Document):
 
 class ValidationJob(elasticsearch_dsl.Document):
     """
-    Barebones object for validation data.
+    Object for validation data.
+    TODO: Can this be merged with TrainingJob, with a common
+        parent object?
     """
     id = elasticsearch_dsl.Integer()
     schema_version = elasticsearch_dsl.Integer()
@@ -506,6 +508,9 @@ def _fill_author_gpu1708(created_at, job_name):
 
 
 def create_new_connection(address, index='training_jobs'):
+    """
+    Creates a new connection to elasticsearch.
+    """
     elasticsearch_dsl.connections.create_connection(
         hosts=[address]
     )
@@ -513,6 +518,15 @@ def create_new_connection(address, index='training_jobs'):
 
 
 def search_top_models(address, lower=0.8, upper=0.923):
+    """
+    Search training models from Kibana.
+
+    :params address: Address to connect to
+    :params lower: Lower bound validation accuracy to search
+    :params upper: Upper bound validation accuracy to search
+    :returns: A ElasticSearch response object with bounded validation
+        accuracy. Use a for loop to iterate through them.
+    """
     index = create_new_connection(address)
 
     matches = index.search()
@@ -524,6 +538,14 @@ def search_top_models(address, lower=0.8, upper=0.923):
 
 
 def filter_top_models(address, models):
+    """
+    Take training params obtained from search_top_models, and cull
+    params that have already been used and uploaded to the
+    validation_jobs index in Kibana.
+
+    :params address: Address to connect to
+    :params models: Params list
+    """
     index = create_new_connection(address, index='validation_jobs')
 
     matches = index.search()
@@ -542,6 +564,9 @@ def filter_top_models(address, models):
 
 
 def get_validation_job_from_log(log_path):
+    """
+    Creates a ValidationJob from the log.
+    """
     with open(log_path) as f:
         lines = f.read().splitlines()
         params = lines[1]

@@ -231,6 +231,9 @@ def full_multiclass_report(model: keras.models.Model,
 
 
 def write_to_slack(comment, token):
+    """
+    Write results to slack.
+    """
     channels = 'CBUA09G68'
 
     r = requests.get(
@@ -245,6 +248,9 @@ def write_iteration_results(params, result, slack_token,
                             purported_loss=None,
                             purported_sensitivity=None,
                             final=False, i=0):
+    """
+    Write iteration results (during validation) to Slack.
+    """
     if final:
         text = "-----Final Results-----\n"
     else:

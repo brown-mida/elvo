@@ -58,9 +58,9 @@ def get_models_to_train(address, lower, upper, data_dir):
     specified.
 
     :param address: Address to connect to Kibana
-    :lower: Lower bound of best_val_acc
-    :upper: Upper bound of best_val_acc
-    :data_dir: Local directory to specify where the datasets are.
+    :param lower: Lower bound of best_val_acc
+    :param upper: Upper bound of best_val_acc
+    :param data_dir: Local directory to specify where the datasets are.
         This is required for specifying 'data_dir' in DataConfig.
 
     :return: A list of configs to train.
@@ -204,7 +204,8 @@ def __train_model(params, x_train, y_train, x_valid, y_valid,
     :params y_train: The training labels
     :params x_valid: The validation data
     :params y_valid: The validation labels
-    :params num_gpu: The number of GPUs to use
+    :params no_early_stopping: Determine whether to use no early stopping
+    :params data_dir: Temp directory
 
     :return: The trained model, and the training history.
     """
@@ -272,7 +273,6 @@ def evaluate_model(x_test, y_test, model, params,
     :params normalize: Whether to normalize the test data based on
         training data
     :params x_train: The training data (used to normalize test data)
-    :params num_gpus: The number of GPUs to use
     :return: Evaluation results (list of metrics)
     """
     if normalize:
@@ -307,7 +307,8 @@ def evaluate_model(x_test, y_test, model, params,
 
 
 def iterate_eval(num_iterations, params, gpu,
-                 job_name='None', job_date='None', author='None',
+                 job_name='None',
+                 job_date=str(datetime.datetime.now()), author='None',
                  purported_loss='None', purported_accuracy='None',
                  purported_sensitivity='None',
                  slack_token=None,
@@ -315,7 +316,23 @@ def iterate_eval(num_iterations, params, gpu,
                  log_dir='../logs/', data_dir='../tmp/',
                  address=None):
     """
-    Beautiful piece of text that has more logging than code.
+    Creates logs, and trains the model for a number of iterations.
+
+    :params num_iterations: Number of iterations to run the model
+    :params params: The ParamConfig to use
+    :params gpu: The GPU number to use
+    :params job_name: The job name
+    :params job_date: The job date
+    :params author: The author
+    :params purported_loss: The purported loss (from validation)
+    :params purported_acc: The purported accuracy (from validation)
+    :prams purported_sensitivity: The purported sensitivity (from validation)
+    :params slack_token: The slack token, to upload to Slack
+    :params no_early_stopping: Determine whether to use early stopping
+    :params log_dir: The directory to store logs
+    :params data_dir: Temporary directory to store random files
+    :params address: Address to upload to Kibana
+    :returns:
     """
     os.environ['CUDA_VISIBLE_DEVICES'] = gpu
 
@@ -408,6 +425,19 @@ def iterate_eval(num_iterations, params, gpu,
 def multiprocess(models, num_iterations, gpus, slack_token=None,
                  no_early_stopping=False, address=None,
                  log_dir='../logs/', data_dir='../tmp/'):
+    """
+    Separate training to multiple processes.
+
+    :params models: The param list to use
+    :params num_iterations: Number of iterations to train each model
+    :params gpus: The list of GPUS to use; a list of number strings
+    :params slack_token: Slack token to use, to upload to Slack
+    :params no_early_stopping: Determine whether to use early stopping
+    :params address: Address to upload log to Kibana
+    :params log_dir: Directory to store logs
+    :params data_dir: Temporary directory to store random files
+    :returns:
+    """
     gpu_index = 0
     processes = []
     print(gpus)
