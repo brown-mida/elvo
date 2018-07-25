@@ -4,14 +4,15 @@ This script converts the compressed files containing dicom files
 to numpy files.
 """
 import logging
+import subprocess
+from typing import List
+
 import numpy as np
 import os
 import pydicom
 import shutil
-import subprocess
-from typing import List
 
-from utils.gcs import upload_to_gcs, save_npy_as_image_and_upload
+from utils.gcs import save_npy_as_image_and_upload
 from utils.transforms import get_pixels_hu, standardize_spacing
 
 

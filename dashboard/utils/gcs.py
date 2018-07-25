@@ -2,15 +2,17 @@
 Google Cloud Storage related logic.
 """
 
-import io
 import logging
-import os
+
+import io
 import numpy as np
-from google.cloud import storage
+import os
 import scipy.misc
+from google.cloud import storage
 
 
 def authenticate():
+    # TODO(luke): This won't work on app engine
     return storage.Client.from_service_account_json(
         # for running on the airflow GPU
         # '/home/lukezhu/elvo-analysis/credentials/client_secret.json'
