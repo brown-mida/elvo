@@ -1,15 +1,20 @@
 import itertools
+import pathlib
 import typing
 
 import keras
 import matplotlib
 import numpy as np
+import os
 import pandas as pd
 import requests
 import sklearn.metrics
 
 matplotlib.use('Agg')  # noqa: E402
 from matplotlib import pyplot as plt
+
+
+# TODO(luke): Split this into a slack and a plotting module.
 
 
 def slack_report(x_train: np.ndarray,
@@ -21,7 +26,8 @@ def slack_report(x_train: np.ndarray,
                  params: typing.Any,
                  token: str,
                  id_valid: np.ndarray = None,
-                 chunk: bool = False):
+                 chunk: bool = False,
+                 plot_dir: pathlib.Path = pathlib.Path('/tmp')):
     """
     Uploads a loss graph, accuacy, and confusion matrix plots in addition
     to useful data about the model to Slack.
@@ -36,21 +42,61 @@ def slack_report(x_train: np.ndarray,
     :param token: your slack API token
     :param id_valid: the ids ordered to correspond with y_valid
     :param chunk: whether or not we're analyzing 3D data
+    :param plot_dir: the directory to save the plots in
     :return:
     """
-    print(x_valid.shape)
-    save_history(history)
-    upload_to_slack('/tmp/loss.png', f'{name}\n\nparams:\n{str(params)}',
-                    token)
-    upload_to_slack('/tmp/acc.png', f'{name}\n\nparams:\n{str(params)}',
-                    token)
+    os.makedirs(str(plot_dir), exist_ok=True)
+    loss_path = pathlib.Path(plot_dir) / 'loss.png'
+    acc_path = pathlib.Path(plot_dir) / 'acc.png'
+    cm_path = pathlib.Path(plot_dir) / 'cm.png'
+    tp_path = pathlib.Path(plot_dir) / 'true_positives.png'
+    fp_path = pathlib.Path(plot_dir) / 'false_positives.png'
+    tn_path = pathlib.Path(plot_dir) / 'true_negatives.png'
+    fn_path = pathlib.Path(plot_dir) / 'false_negatives.png'
 
+    report = _create_all_plots(x_train, x_valid, y_valid, model, history,
+                               loss_path, acc_path, cm_path, tn_path, tp_path,
+                               fn_path, fp_path, chunk, id_valid)
+
+    upload_to_slack(loss_path, f'{name}\n\nparams:\n{str(params)}', token)
+    upload_to_slack(acc_path, f'{name}\n\nparams:\n{str(params)}', token)
+    upload_to_slack(cm_path, report, token)
+    upload_to_slack(fp_path, f'{name}\n\nfalse positives', token)
+    upload_to_slack(fn_path, f'{name}\n\nfalse negatives', token)
+    upload_to_slack(tp_path, f'{name}\n\ntrue positives', token)
+    upload_to_slack(tn_path, f'{name}\n\ntrue negatives', token)
+
+
+def _create_all_plots(
+        x_train: np.ndarray,
+        x_valid: np.ndarray,
+        y_valid: np.ndarray,
+        model: keras.Model,
+        history: keras.callbacks.History,
+        loss_path: pathlib.Path,
+        acc_path: pathlib.Path,
+        cm_path: pathlib.Path,
+        tn_path: pathlib.Path,
+        tp_path: pathlib.Path,
+        fn_path: pathlib.Path,
+        fp_path: pathlib.Path,
+        chunk: bool = False,
+        id_valid: np.ndarray = None):
+    """Saves all plots to the given paths.
+    """
+    save_history(history, loss_path, acc_path)
+    # TODO: Refactor this
     if chunk:
         y_valid = np.reshape(y_valid, (len(y_valid), 1))
         report = full_multiclass_report(model,
                                         x_valid,
                                         y_valid,
-                                        [0, 1],
+                                        classes=[0, 1],
+                                        cm_path=cm_path,
+                                        tp_path=tp_path,
+                                        fp_path=fp_path,
+                                        tn_path=tn_path,
+                                        fn_path=fn_path,
                                         id_valid=id_valid,
                                         chunk=chunk)
     else:
@@ -58,24 +104,34 @@ def slack_report(x_train: np.ndarray,
                            x_train[:, :, :, 1].mean(),
                            x_train[:, :, :, 2].mean()])
         x_std = np.array([x_train[:, :, :, 0].std(),
-                         x_train[:, :, :, 1].std(),
-                         x_train[:, :, :, 2].std()])
+                          x_train[:, :, :, 1].std(),
+                          x_train[:, :, :, 2].std()])
         x_valid_standardized = (x_valid - x_mean) / x_std
         report = full_multiclass_report(model,
                                         x_valid_standardized,
                                         y_valid,
-                                        [0, 1],
+                                        classes=[0, 1],
+                                        cm_path=cm_path,
+                                        tp_path=tp_path,
+                                        fp_path=fp_path,
+                                        tn_path=tn_path,
+                                        fn_path=fn_path,
                                         id_valid=id_valid,
                                         chunk=chunk)
-
-    upload_to_slack('/tmp/cm.png', report, token)
-    upload_to_slack('/tmp/false_positives.png', 'false positives', token)
-    upload_to_slack('/tmp/false_negatives.png', 'false negatives', token)
-    upload_to_slack('/tmp/true_positives.png', 'true positives', token)
-    upload_to_slack('/tmp/true_negatives.png', 'true negatives', token)
+    return report
 
 
-def save_history(history: keras.callbacks.History):
+def save_history(history: keras.callbacks.History,
+                 loss_path: pathlib.Path,
+                 acc_path: pathlib.Path):
+    """
+    Saves plots of the loss/acc over epochs in the given paths.
+
+    :param history:
+    :param loss_path:
+    :param acc_path:
+    :return:
+    """
     loss_list = [s for s in history.history.keys() if
                  'loss' in s and 'val' not in s]
     val_loss_list = [s for s in history.history.keys() if
@@ -90,6 +146,7 @@ def save_history(history: keras.callbacks.History):
         return
 
     epochs = range(1, len(history.history[loss_list[0]]) + 1)
+
     plt.figure()
     for l in loss_list:
         plt.plot(epochs, history.history[l], 'b',
@@ -104,8 +161,7 @@ def save_history(history: keras.callbacks.History):
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
     plt.legend()
-    # TODO(#73): Refactor so it's testable and no hard coded path
-    plt.savefig('/tmp/loss.png')
+    plt.savefig(loss_path)
 
     plt.figure()
     for l in acc_list:
@@ -121,16 +177,16 @@ def save_history(history: keras.callbacks.History):
     plt.xlabel('Epochs')
     plt.ylabel('Accuracy')
     plt.legend()
-    # TODO(#73): Refactor so it's testable and no hard coded path
-    plt.savefig('/tmp/acc.png')
+    plt.savefig(acc_path)
 
 
 def save_confusion_matrix(cm, classes,
+                          cm_path: pathlib.Path,
                           normalize=False,
                           title='Confusion matrix',
                           cmap=plt.cm.Blues):
     """
-    This function prints and plots the confusion matrix.
+    This function prints, plots, and saves the confusion matrix.
     Normalization can be applied by setting `normalize=True`.
     """
     if normalize:
@@ -141,6 +197,7 @@ def save_confusion_matrix(cm, classes,
 
     print(cm)
 
+    plt.figure()
     plt.imshow(cm, interpolation='nearest', cmap=cmap)
     plt.title(title)
     plt.colorbar()
@@ -159,14 +216,18 @@ def save_confusion_matrix(cm, classes,
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
 
-    # TODO(#73): Refactor so it's testable and no hard coded path
-    plt.savefig('/tmp/cm.png')
+    plt.savefig(cm_path)
 
 
 def full_multiclass_report(model: keras.models.Model,
-                           x,
-                           y_true,
-                           classes,
+                           x: np.ndarray,
+                           y_true: np.ndarray,
+                           classes: typing.Sequence,
+                           cm_path: pathlib.Path,
+                           tp_path: pathlib.Path,
+                           tn_path: pathlib.Path,
+                           fp_path: pathlib.Path,
+                           fn_path: pathlib.Path,
                            id_valid: np.ndarray = None,
                            chunk=False):
     """
@@ -178,7 +239,7 @@ def full_multiclass_report(model: keras.models.Model,
 
     The output is the report as a string.
 
-    The report also generates a confusion matrix plot in /tmp/cm.png
+    The report also generates a confusion matrix plot and tp/fp examples.
 
     :param model:
     :param x:
@@ -188,6 +249,7 @@ def full_multiclass_report(model: keras.models.Model,
     :param chunk
     :return:
     """
+    # TODO(luke): Split this into separate functions.
     y_proba = model.predict(x, batch_size=8)
     assert y_true.shape == y_proba.shape
 
@@ -221,12 +283,16 @@ def full_multiclass_report(model: keras.models.Model,
     cnf_matrix = sklearn.metrics.confusion_matrix(y_true, y_pred)
     comment += '\n'
     comment += str(cnf_matrix)
-    save_confusion_matrix(cnf_matrix, classes=classes)
+    save_confusion_matrix(cnf_matrix, classes=classes, cm_path=cm_path)
     save_misclassification_plots(x,
                                  y_true_binary,
                                  y_pred_binary,
                                  id_valid=id_valid,
-                                 chunk=chunk)
+                                 chunk=chunk,
+                                 tp_path=tp_path,
+                                 fp_path=fp_path,
+                                 tn_path=tn_path,
+                                 fn_path=fn_path)
     return comment
 
 
@@ -282,15 +348,22 @@ def write_iteration_results(params, result, slack_token,
 def upload_to_slack(filename,
                     comment,
                     token,
-                    channels=('#model-results')):
+                    channels='#model-results'):
+    """
+    Uploads the file at the given path to the channel.
+
+    :param filename:
+    :param comment:
+    :param token:
+    :param channels:
+    :return:
+    """
     my_file = {
-        'file': (filename, open(filename, 'rb'), 'png')
+        'file': (str(filename), open(filename, 'rb'), 'png')
     }
 
-    print(my_file)
-
     payload = {
-        "filename": "history.png",
+        "filename": str(filename),
         "token": token,
         'initial_comment': comment,
         "channels": channels,
@@ -305,9 +378,13 @@ def upload_to_slack(filename,
 def save_misclassification_plots(x_valid,
                                  y_true,
                                  y_pred,
+                                 tp_path: pathlib.Path,
+                                 tn_path: pathlib.Path,
+                                 fp_path: pathlib.Path,
+                                 fn_path: pathlib.Path,
                                  id_valid: np.ndarray = None,
                                  chunk=False):
-    """Saves the 4 true/fals positive/negative plots.
+    """Saves the 4 true/false positive/negative plots.
 
     The y inputs must be binary and 1 dimensional.
     """
@@ -316,10 +393,10 @@ def save_misclassification_plots(x_valid,
         raise ValueError('y_true/y_pred should be binary 0/1')
 
     plot_name_dict = {
-        (0, 0): '/tmp/true_negatives.png',
-        (1, 1): '/tmp/true_positives.png',
-        (0, 1): '/tmp/false_positives.png',
-        (1, 0): '/tmp/false_negatives.png',
+        (0, 0): tn_path,
+        (1, 1): tp_path,
+        (0, 1): fp_path,
+        (1, 0): fn_path,
     }
 
     for i in (0, 1):
