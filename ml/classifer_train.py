@@ -20,18 +20,23 @@ def download_array(blob: storage.Blob) -> np.ndarray:
 
 
 def train(x_train, y_train, x_val, y_val):
-    model = cube_classifier.CubeClassifierBuilder.build()
-    model.compile(loss=categorical_crossentropy,
-                  optimizer=SGD(lr=LEARN_RATE, momentum=0.9, nesterov=True),
-                  metrics=['accuracy'])
-    history = model.fit(x=x_train,
-                        y=y_train,
-                        batch_size=128,
-                        epochs=50,
-                        validation_data=(x_val, y_val))
+    results = []
+    for i in range(10):
+        model = cube_classifier.CubeClassifierBuilder.build()
+        model.compile(loss=categorical_crossentropy,
+                      optimizer=SGD(lr=LEARN_RATE, momentum=0.9, nesterov=True),
+                      metrics=['accuracy'])
+        model.fit(x=x_train,
+                  y=y_train,
+                  batch_size=128,
+                  epochs=50,
+                  validation_data=(x_val, y_val))
 
-    model.evaluate(x_val, y_val, verbose=1)
-    return history
+        result = model.evaluate(x_val, y_val, verbose=1)
+        results.append(result)
+
+    for result in results:
+        print(result)
 
 
 def load_probs(labels: pd.DataFrame):
@@ -124,7 +129,7 @@ def main():
     x_train, y_train, x_val, y_val = load_probs(labels)
     print(x_train.shape, y_train.shape)
     print(x_val.shape, y_train.shape)
-    history = train(x_train, y_train, x_val, y_val)
+    train(x_train, y_train, x_val, y_val)
 
 
 if __name__ == '__main__':
