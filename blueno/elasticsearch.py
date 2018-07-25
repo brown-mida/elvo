@@ -9,7 +9,9 @@ import re
 from pandas.errors import EmptyDataError
 
 TRAINING_JOBS = 'training_jobs'
+VALIDATION_JOBS = 'validation_jobs'
 JOB_INDEX = elasticsearch_dsl.Index(TRAINING_JOBS)
+VALIDATION_JOB_INDEX = elasticsearch_dsl.Index(VALIDATION_JOBS)
 
 Metrics = namedtuple('Metrics', ['epochs',
                                  'train_acc',
@@ -91,6 +93,90 @@ class TrainingJob(elasticsearch_dsl.Document):
         name = TRAINING_JOBS
 
 
+class ValidationJob(elasticsearch_dsl.Document):
+    """
+    Barebones object for validation data.
+    """
+    id = elasticsearch_dsl.Integer()
+    schema_version = elasticsearch_dsl.Integer()
+    job_name = elasticsearch_dsl.Keyword()
+    author = elasticsearch_dsl.Keyword()
+    created_at = elasticsearch_dsl.Date()
+    params = elasticsearch_dsl.Text()
+    raw_log = elasticsearch_dsl.Text()
+
+    # Metrics
+    purported_acc = elasticsearch_dsl.Float()
+    purported_loss = elasticsearch_dsl.Float()
+    purported_sensitivity = elasticsearch_dsl.Float()
+
+    avg_test_acc = elasticsearch_dsl.Float()
+    avg_test_loss = elasticsearch_dsl.Float()
+    avg_test_sensitivity = elasticsearch_dsl.Float()
+    avg_test_specificity = elasticsearch_dsl.Float()
+    avg_test_true_pos = elasticsearch_dsl.Float()
+    avg_test_false_neg = elasticsearch_dsl.Float()
+    avg_test_auc = elasticsearch_dsl.Float()
+
+    best_test_acc = elasticsearch_dsl.Float()
+    best_test_loss = elasticsearch_dsl.Float()
+    best_test_sensitivity = elasticsearch_dsl.Float()
+    best_test_specificity = elasticsearch_dsl.Float()
+    best_test_true_pos = elasticsearch_dsl.Float()
+    best_test_false_neg = elasticsearch_dsl.Float()
+    best_test_auc = elasticsearch_dsl.Float()
+    best_end_val_acc = elasticsearch_dsl.Float()
+    best_end_val_loss = elasticsearch_dsl.Float()
+    best_max_val_acc = elasticsearch_dsl.Float()
+    best_max_val_loss = elasticsearch_dsl.Float()
+
+    # Params
+    batch_size = elasticsearch_dsl.Integer()
+    val_split = elasticsearch_dsl.Float()
+    seed = elasticsearch_dsl.Integer()
+
+    rotation_range = elasticsearch_dsl.Float()
+    width_shift_range = elasticsearch_dsl.Float()
+    height_shift_range = elasticsearch_dsl.Float()
+    shear_range = elasticsearch_dsl.Float()
+    zoom_range = elasticsearch_dsl.Keyword()
+    horizontal_flip = elasticsearch_dsl.Boolean()
+    vertical_flip = elasticsearch_dsl.Boolean()
+
+    dropout_rate1 = elasticsearch_dsl.Float()
+    dropout_rate2 = elasticsearch_dsl.Float()
+
+    data_dir = elasticsearch_dsl.Keyword()
+    gcs_url = elasticsearch_dsl.Keyword()
+
+    mip_thickness = elasticsearch_dsl.Integer()
+    height_offset = elasticsearch_dsl.Integer()
+    pixel_value_range = elasticsearch_dsl.Keyword()
+
+    # We need to keep a list of params for the parser because
+    # we can't use traditional approaches to get the class attrs
+    params_to_parse = ['batch_size',
+                       'val_split',
+                       'seed',
+                       'rotation_range',
+                       'width_shift_range',
+                       'height_shift_range',
+                       'shear_range',
+                       'zoom_range',
+                       'horizontal_flip',
+                       'vertical_flip',
+                       'dropout_rate1',
+                       'dropout_rate2',
+                       'data_dir',
+                       'gcs_url',
+                       'mip_thickness',
+                       'height_offset',
+                       'pixel_value_range']
+
+    class Index:
+        name = VALIDATION_JOBS
+
+
 def insert_or_replace_filepaths(log_file: pathlib.Path,
                                 csv_file: typing.Optional[pathlib.Path],
                                 gpu1708=False,
@@ -158,24 +244,25 @@ def insert_or_replace(training_job: TrainingJob, alias='default'):
     training_job.save(using=alias)
 
 
-def insert_or_ignore(training_job: TrainingJob, alias='default'):
+def insert_or_ignore(job: elasticsearch_dsl.Document, alias='default',
+                     index=JOB_INDEX):
     """Inserts the training job into the elasticsearch index
     if no job with the same name and creation timestamp exists.
     """
-    if 'slack' not in training_job.raw_log:
+    if index == JOB_INDEX and 'slack' not in job.raw_log:
         print('job is incomplete, returning')
         return
 
-    matches = JOB_INDEX.search() \
-        .query('match', job_name=training_job.job_name) \
-        .query('match', created_at=training_job.created_at) \
+    matches = index.search() \
+        .query('match', job_name=job.job_name) \
+        .query('match', created_at=job.created_at) \
         .count()
 
     if matches == 0:
-        training_job.save(using=alias)
+        job.save(using=alias)
     else:
         print('job {} created at {} exists'.format(
-            training_job.job_name, training_job.created_at))
+            job.job_name, job.created_at))
 
 
 def construct_job_from_filepaths(
@@ -418,11 +505,13 @@ def _fill_author_gpu1708(created_at, job_name):
     return author
 
 
-def create_new_connection(address):
+def create_new_connection(address, index='training_jobs'):
     elasticsearch_dsl.connections.create_connection(
         hosts=[address]
     )
-    return JOB_INDEX
+    VALIDATION_JOB_INDEX.delete(ignore=404)
+    VALIDATION_JOB_INDEX.create()
+    return elasticsearch_dsl.Index(index)
 
 
 def search_top_models(address, lower=0.8, upper=0.923):
@@ -434,3 +523,73 @@ def search_top_models(address, lower=0.8, upper=0.923):
     count = matches.count()
     response = matches[0:count].execute()
     return response
+
+
+def get_validation_job_from_log(log_path):
+    with open(log_path) as f:
+        lines = f.read().splitlines()
+        params = lines[1]
+        job_name = lines[2].split(' ')[-1]
+        author = lines[3].split(' ')[-1]
+        job_date = lines[4].split(' ')[-1]
+        purported_acc = lines[5].split(' ')[-1]
+        purported_loss = lines[6].split(' ')[-1]
+        purported_sensitivity = lines[7].split(' ')[-1]
+
+        # Get the line indexes which display results.
+        result_lines = []
+        for i, line in enumerate(lines):
+            if 'Results' in line:
+                result_lines.append(i)
+
+        # Get the final (averaged) metrics.
+        avg_results = []
+        for i in range(1, 8):
+            avg_results.append(lines[result_lines[-1] + i].split(' ')[-1])
+
+        # Get the best metrics from the n iterations.
+        best_results = [[] for i in range(11)]
+        for i in result_lines[:-1]:
+            for j in range(11):
+                best_results[j].append(lines[i + j + 2].split(' ')[-1])
+        best_results = [max(li) for li in best_results]
+
+        # Get params
+        params_dict = _parse_params_str(params)
+
+        job = ValidationJob(
+            schema_version=1,
+            job_name=job_name,
+            author=author,
+            created_at=job_date,
+            params=params.split('INFO - ')[-1],
+            raw_log='\n'.join(lines),
+            purported_acc=purported_acc,
+            purported_loss=purported_loss,
+            purported_sensitivity=purported_sensitivity,
+            avg_test_loss=avg_results[0],
+            avg_test_acc=avg_results[1],
+            avg_test_sensitivity=avg_results[2],
+            avg_test_specificity=avg_results[3],
+            avg_test_true_pos=avg_results[4],
+            avg_test_false_neg=avg_results[5],
+            avg_test_auc=avg_results[6],
+            best_test_acc=best_results[0],
+            best_test_loss=best_results[1],
+            best_test_sensitivity=best_results[2],
+            best_test_specificity=best_results[3],
+            best_test_true_pos=best_results[4],
+            best_test_false_neg=best_results[5],
+            best_test_auc=best_results[6],
+            best_end_val_acc=best_results[7],
+            best_end_val_loss=best_results[8],
+            best_max_val_acc=best_results[9],
+            best_max_val_loss=best_results[10])
+
+        if params_dict:
+            for key, val in params_dict.items():
+                if key is 'data_dir' and val.endswith('/'):
+                    val = val[:-1]
+                job.__setattr__(key, val)
+
+        return job

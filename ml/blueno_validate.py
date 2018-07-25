@@ -38,12 +38,15 @@ import time
 import numpy as np
 import keras
 import keras.metrics as metrics
-from keras.utils import multi_gpu_model
 from keras.callbacks import ModelCheckpoint
 from keras.models import load_model
+import sklearn.metrics
 
 from blueno.elasticsearch import search_top_models
-from blueno import types, preprocessing, utils, logger, slack
+from blueno import (
+    types, preprocessing, utils,
+    elasticsearch, logger, slack
+)
 from models.luke import resnet
 from generators.luke import standard_generators
 
@@ -71,6 +74,10 @@ def get_models_to_train(address, lower, upper, data_dir):
         data['purported_sensitivity'] = doc.best_val_sensitivity
         data['date'] = doc.created_at
         data['job_name'] = doc.job_name
+        if hasattr(doc, 'author'):
+            data['author'] = doc.author
+        else:
+            data['author'] = 'None'
 
         # Dataset information
         if 'gcs_url' in doc:
@@ -235,7 +242,7 @@ def __train_model(params, x_train, y_train, x_valid, y_valid,
                                      reduce_lr=params.reduce_lr)
 
     history = model.fit_generator(train_gen,
-                                  epochs=params.max_epochs,
+                                  epochs=2, #params.max_epochs,
                                   validation_data=valid_gen,
                                   verbose=2,
                                   callbacks=cbs)
@@ -288,25 +295,50 @@ def evaluate_model(x_test, y_test, model, params,
 
     results = model.evaluate(x=x_test, y=y_test, batch_size=1,
                              verbose=1)
+
+    y_pred = model.predict(x_test, batch_size=1, verbose=1)
+    auc_score = sklearn.metrics.roc_auc_score(y_test, y_pred)
+    results.append(auc_score)
     return results
 
 
 def iterate_eval(num_iterations, params, gpu,
-                 job_name=None, job_date=None,
-                 purported_loss=None, purported_accuracy=None,
-                 purported_sensitivity=None,
+                 job_name='None', job_date='None', author='None',
+                 purported_loss='None', purported_accuracy='None',
+                 purported_sensitivity='None',
                  slack_token=None,
-                 no_early_stopping=False):
+                 no_early_stopping=False,
+                 log_dir='../logs/',
+                 address=None):
     """
     Beautiful piece of text that has more logging than code.
     """
     os.environ['CUDA_VISIBLE_DEVICES'] = gpu
 
+    # Configure the job to log all output to a specific file
+    log_filepath = None
+    filename = str(datetime.datetime.now())
+    if log_dir:
+        if '/' in job_name:
+            raise ValueError("Job name cannot contain '/' character")
+        log_filepath = str(pathlib.Path(log_dir) / '{}.log'.format(filename))
+        assert log_filepath.startswith(log_dir)
+        logger.configure_job_logger(log_filepath, level=logging.INFO)
+
+    logging.info("----------------Evaluation-------------------")
+    logging.info(params)
+    logging.info('Job name: {}'.format(job_name))
+    logging.info('Author: {}'.format(author))
+    logging.info('Job date: {}'.format(job_date))
+    logging.info('Purported accuracy: {}'.format(purported_accuracy))
+    logging.info('Purported loss: {}'.format(purported_loss))
+    logging.info('Purported sensitivity: {}'.format(purported_sensitivity))
+
     result_list = []
     for i in range(int(num_iterations)):
         logging.info("-----Iteration {}-----".format(i + 1))
         params.seed = random.randint(0, 1000000)
-        logging.info("Using seed {}".format(params.seed))
+        logging.info("Seed: {}".format(params.seed))
         (x_train, x_valid, x_test, y_train, y_valid, y_test,
          _, _, _) = __load_data(params)
         model, history = __train_model(params, x_train, y_train,
@@ -315,88 +347,65 @@ def iterate_eval(num_iterations, params, gpu,
         result = evaluate_model(x_test, y_test, model, params,
                                 normalize=True, x_train=x_train)
         result_list.append(result)
-        logging.info("-----Results-----")
+        logging.info("-----Results {}-----".format(i + 1))
+        logging.info("Seed: {}".format(params.seed))
         logging.info('Loss: {}'.format(result[0]))
         logging.info('Acc: {}'.format(result[1]))
         logging.info('Sensitivity: {}'.format(result[2]))
         logging.info('Specificity: {}'.format(result[3]))
         logging.info('True Positives: {}'.format(result[4]))
         logging.info('False Negatives: {}'.format(result[5]))
+        logging.info('AUC: {}'.format(result[6]))
 
-        if (slack_token is not None):
-            text = "-----Iteration {}-----\n".format(i + 1)
-            text += "Seed: {}\n".format(params.seed)
-            text += "Params: {}\n".format(params)
-            if (job_name is not None):
-                text += 'Job name: {}\n'.format(job_name)
-                text += 'Job date: {}\n'.format(job_date)
-                text += 'Purported accuracy: {}\n'.format(
-                    purported_accuracy)
-                text += 'Purported loss: {}\n'.format(
-                    purported_loss)
-                text += 'Purported sensitivity: {}\n'.format(
-                    purported_sensitivity)
-            text += "\n-----Results-----\n"
-            text += 'Loss: {}\n'.format(result[0])
-            text += 'Acc: {}\n'.format(result[1])
-            text += 'Sensitivity: {}\n'.format(result[2])
-            text += 'Specificity: {}\n'.format(result[3])
-            text += 'True Positives: {}\n'.format(result[4])
-            text += 'False Negatives: {}\n'.format(result[5])
-            slack.write_to_slack(text, slack_token)
+        val_loss_list = [s for s in history.history.keys() if
+                         'loss' in s and 'val' in s]
+        val_acc_list = [s for s in history.history.keys() if
+                        'acc' in s and 'val' in s]
+        for l in val_loss_list:
+            logging.info('End val loss: {}'.format(history.history[l][-1]))
+            logging.info('Max val loss: {}'.format(max(history.history[l])))
+        for l in val_acc_list:
+            logging.info('End val acc: {}'.format(history.history[l][-1]))
+            logging.info('Max val loss: {}'.format(max(history.history[l])))
 
-    result_list = np.average(result_list, axis=0)
-    logging.info("---------------Final Results---------------")
-    logging.info('Loss: {}'.format(result_list[0]))
-    logging.info('Acc: {}'.format(result_list[1]))
-    logging.info('Sensitivity: {}'.format(result_list[2]))
-    logging.info('Specificity: {}'.format(result_list[3]))
-    logging.info('True Positives: {}'.format(result_list[4]))
-    logging.info('False Negatives: {}'.format(result_list[5]))
+        if slack_token is not None:
+            slack.write_iteration_results(
+                params, result, slack_token, job_name=job_name,
+                job_date=job_date, purported_accuracy=purported_accuracy,
+                purported_loss=purported_loss,
+                purported_sensitivity=purported_sensitivity, i=i)
 
-    if (slack_token is not None):
-            text = "-----Final Results-----\n"
-            text += "Seed: {}\n".format(params.seed)
-            text += "Params: {}\n".format(params)
-            if (job_name is not None):
-                text += 'Job name: {}\n'.format(job_name)
-                text += 'Job date: {}\n'.format(job_date)
-                text += 'Purported accuracy: {}\n'.format(
-                    purported_accuracy)
-                text += 'Purported loss: {}\n'.format(
-                    purported_loss)
-                text += 'Purported sensitivity: {}\n'.format(
-                    purported_sensitivity)
-            text += "\n-----Average Results-----\n"
-            text += 'Loss: {}\n'.format(result_list[0])
-            text += 'Acc: {}\n'.format(result_list[1])
-            text += 'Sensitivity: {}\n'.format(result_list[2])
-            text += 'Specificity: {}'.format(result_list[3])
-            text += 'True Positives: {}\n'.format(result_list[4])
-            text += 'False Negatives: {}\n'.format(result_list[5])
-            slack.write_to_slack(text, slack_token)
+    average_list = np.average(result_list, axis=0)
+    logging.info("-----Final Results-----")
+    logging.info('Loss: {}'.format(average_list[0]))
+    logging.info('Acc: {}'.format(average_list[1]))
+    logging.info('Sensitivity: {}'.format(average_list[2]))
+    logging.info('Specificity: {}'.format(average_list[3]))
+    logging.info('True Positives: {}'.format(average_list[4]))
+    logging.info('False Negatives: {}'.format(average_list[5]))
+    logging.info('AUC: {}'.format(average_list[6]))
+
+    if slack_token is not None:
+        slack.write_iteration_results(
+            params, average_list, slack_token, job_name=job_name,
+            job_date=job_date, purported_accuracy=purported_accuracy,
+            purported_loss=purported_loss,
+            purported_sensitivity=purported_sensitivity, final=True)
+
+    # Upload to Kibana
+    if log_dir:
+        val_index = elasticsearch.create_new_connection(
+            address, index='validation_jobs')
+        val_job = elasticsearch.get_validation_job_from_log(log_filepath)
+        elasticsearch.insert_or_ignore(val_job, index=val_index)
 
 
 def multiprocess(models, num_iterations, gpus, slack_token=None,
-                 no_early_stopping=False):
+                 no_early_stopping=False, address=None):
     gpu_index = 0
     processes = []
 
     for model in models:
-        logging.info("----------------Evaluation-------------------")
-        if 'job_name' in model:
-            logging.info('Job name: {}'.format(model['job_name']))
-        logging.info('Job date: {}'.format(model['date']))
-        if 'purported_accuracy' in model:
-            logging.info('Purported accuracy: {}'.format(
-                model['purported_accuracy']))
-        if 'purported_loss' in model:
-            logging.info('Purported loss: {}'.format(
-                model['purported_loss']))
-        if 'purported_sensitivity' in model:
-            logging.info('Purported sensitivity: {}'.format(
-                model['purported_sensitivity']))
-
         params = model['params']
         data_loaded = __get_data_if_not_exists(params.data.gcs_url,
                                                model['local_dir'])
@@ -409,11 +418,13 @@ def multiprocess(models, num_iterations, gpus, slack_token=None,
                 kwargs={
                     'job_name': model['job_name'],
                     'job_date': model['date'],
+                    'author': model['author'],
                     'purported_accuracy': model['purported_accuracy'],
                     'purported_loss': model['purported_loss'],
                     'purported_sensitivity': model['purported_sensitivity'],
                     'slack_token': slack_token,
-                    'no_early_stopping': no_early_stopping
+                    'no_early_stopping': no_early_stopping,
+                    'address': address
                 })
             gpu_index += 1
             gpu_index %= len(gpus)
@@ -559,7 +570,8 @@ def main(args=None):
         models = get_models_to_train(args.address, args.lower,
                                      args.upper, '../tmp')
         multiprocess(models, num_iterations, gpus, slack_token=slack_token,
-                     no_early_stopping=args.no_early_stopping)
+                     no_early_stopping=args.no_early_stopping,
+                     address=args.address)
 
     else:
         # Manual evaluation of a list of ParamConfig
@@ -569,7 +581,8 @@ def main(args=None):
 
         params = param_list_config.EVAL_PARAM_LIST
         multiprocess(params, num_iterations, gpus, slack_token=slack_token,
-                     no_early_stopping=args.no_early_stopping)
+                     no_early_stopping=args.no_early_stopping,
+                     address=args.address)
 
 
 if __name__ == '__main__':
