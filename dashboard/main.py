@@ -8,6 +8,7 @@ from routes.preprocess import app_preprocess
 from routes.train import app_train
 
 app = flask.Flask(__name__)
+# TODO(luke): Migrate the JS code to blueno-ui
 app.register_blueprint(app_preprocess)
 app.register_blueprint(app_train)
 app.register_blueprint(app_annotate)

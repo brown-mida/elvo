@@ -9,4 +9,4 @@ gspread==3.0.0
 google-api-python-client==1.7.3
 oauth2client==4.1.2
 pymongo==3.7.1
-
+git+https://github.com/elvoai/elvo-analysis.git#egg=blueno[cpu]
