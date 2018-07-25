@@ -1,14 +1,13 @@
 import datetime
-import os
 
 import matplotlib
 import numpy as np
+import os
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from google.cloud import storage
 
-matplotlib.use('agg')
-
+matplotlib.use('agg')  # noqa: E402
 from matplotlib import pyplot as plt
 
 # A list of subdirectories of 'gs://elvos/processed' to ignore
@@ -79,7 +78,7 @@ default_args = {
     'start_date': datetime.datetime(2018, 7, 24),
 }
 
-dag = DAG(dag_id='uploaded_processed_data',
+dag = DAG(dag_id='upload_processed_data',
           description='Uploads processed numpy array data as pngs for the'
                       ' web app',
           default_args=default_args)
