@@ -509,8 +509,6 @@ def create_new_connection(address, index='training_jobs'):
     elasticsearch_dsl.connections.create_connection(
         hosts=[address]
     )
-    VALIDATION_JOB_INDEX.delete(ignore=404)
-    VALIDATION_JOB_INDEX.create()
     return elasticsearch_dsl.Index(index)
 
 
@@ -523,6 +521,24 @@ def search_top_models(address, lower=0.8, upper=0.923):
     count = matches.count()
     response = matches[0:count].execute()
     return response
+
+
+def filter_top_models(address, models):
+    index = create_new_connection(address, index='validation_jobs')
+
+    matches = index.search()
+    count = matches.count()
+    response = matches[0:count].execute()
+
+    result = []
+    for model in models:
+        flagged = False
+        for r in response:
+            if model.created_at == r.created_at:
+                flagged = True
+        if not flagged:
+            result.append(model)
+    return result
 
 
 def get_validation_job_from_log(log_path):

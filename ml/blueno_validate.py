@@ -42,7 +42,7 @@ from keras.callbacks import ModelCheckpoint
 from keras.models import load_model
 import sklearn.metrics
 
-from blueno.elasticsearch import search_top_models
+from blueno.elasticsearch import search_top_models, filter_top_models
 from blueno import (
     types, preprocessing, utils,
     elasticsearch, logger, slack
@@ -66,6 +66,7 @@ def get_models_to_train(address, lower, upper, data_dir):
     :return: A list of configs to train.
     """
     docs = search_top_models(address, lower=lower, upper=upper)
+    docs = filter_top_models(address, docs)
     docs_to_train = []
     for doc in docs:
         data = {}
