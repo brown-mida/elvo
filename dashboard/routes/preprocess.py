@@ -3,7 +3,6 @@ import logging
 
 import flask
 import pymongo
-from multiprocessing import Process
 
 from utils import gcs, preprocess
 
@@ -130,4 +129,3 @@ def process_file(file, file_id, user, date, bucket):
     #         "message": "Failed: {}".format(e)
     #     }
     #     db.replace_one({'id': file_id}, dataset)
-
