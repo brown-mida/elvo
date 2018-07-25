@@ -228,10 +228,12 @@ def __train_model(params, x_train, y_train, x_valid, y_valid,
         metrics=model_metrics)
 
     if no_early_stopping:
+        model_filename = str(datetime.datetime.now())
+        model_filepath = '../tmp/{}.hdf5'.format(model_filename)
         cbs = utils.create_callbacks(x_train, y_train, x_valid, y_valid,
                                      early_stopping=False,
                                      reduce_lr=params.reduce_lr)
-        cbs.append(ModelCheckpoint(filepath='../tmp/model.hdf5',
+        cbs.append(ModelCheckpoint(filepath=model_filepath,
                                    save_best_only=True,
                                    monitor='val_acc',
                                    mode='max',
@@ -252,7 +254,8 @@ def __train_model(params, x_train, y_train, x_valid, y_valid,
         metrics.specificity = utils.specificity
         metrics.true_positives = utils.true_positives
         metrics.false_negatives = utils.false_negatives
-        model = load_model('../tmp/model.hdf5')
+        model = load_model(model_filepath)
+        os.remove(model_filepath)
     return model, history
 
 
@@ -404,6 +407,7 @@ def multiprocess(models, num_iterations, gpus, slack_token=None,
                  no_early_stopping=False, address=None):
     gpu_index = 0
     processes = []
+    print(gpus)
 
     for model in models:
         params = model['params']
@@ -426,18 +430,18 @@ def multiprocess(models, num_iterations, gpus, slack_token=None,
                     'no_early_stopping': no_early_stopping,
                     'address': address
                 })
+            logging.info('Running at GPU {}'.format(gpus[gpu_index]))
             gpu_index += 1
             gpu_index %= len(gpus)
 
-            logging.info('Running at GPU {}'.format(gpus[gpu_index]))
             p.start()
             processes.append(p)
 
             if gpu_index == 0:
                 logging.info('All gpus used, calling join on processes...')
-            for p in processes:
-                p.join()
-            processes = []
+                for p in processes:
+                    p.join()
+                processes = []
             time.sleep(60)
 
 
