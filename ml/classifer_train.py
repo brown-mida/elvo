@@ -1,6 +1,7 @@
 import tensorflow as tf
 from models.three_d import cube_classifier
 from keras.optimizers import Adadelta, SGD
+from keras.callbacks import EarlyStopping
 from keras.losses import categorical_crossentropy
 import pandas as pd
 import numpy as np
@@ -9,7 +10,25 @@ import io
 import os
 
 BLACKLIST = []
-LEARN_RATE = 1e-4
+LEARN_RATES = [5e-3, 1e-3,
+               5e-4, 1e-4,
+               5e-5, 1e-5,
+               5e-6, 1e-6,
+               5e-7, 1e-7]
+
+DROPOUTS = [(0.25, 0.5),
+            (0.3, 0.55),
+            (0.35, 0.6),
+            (0.4, 0.65),
+            (0.45, 0.7),
+            (0.5, 0.75),
+            (0.55, 0.8),
+            (0.3, 0.3),
+            (0.4, 0.4),
+            (0.5, 0.5),
+            (0.6, 0.6),
+            (0.7, 0.7),
+            (0.8, 0.8)]
 
 
 def download_array(blob: storage.Blob) -> np.ndarray:
@@ -19,24 +38,56 @@ def download_array(blob: storage.Blob) -> np.ndarray:
     return np.load(in_stream)
 
 
+def find_best_models(results):
+    max_accs = {}
+    avg_accs = {}
+    var_accs = {}
+    for model, result in list(results.items()):
+        max_accs[model] = results['max']
+        avg_accs[model] = results['avg']
+        var_accs[model] = results['var']
+
+    sorted_max = [(model, max_accs[model]) for model in sorted(max_accs, key=max_accs.get, reverse=True)]
+    sorted_avg = [(model, avg_accs[model]) for model in sorted(avg_accs, key=avg_accs.get, reverse=True)]
+    sorted_var = [(model, var_accs[model]) for model in sorted(var_accs, key=var_accs.get, reverse=True)]
+    print('\n\n------------------------\nMODELS RANKED BY MAX ACC\n------------------------\n')
+    for i, result in enumerate(sorted_max):
+        print(i, result)
+
+    print('\n\n------------------------\nMODELS RANKED BY AVG ACC\n------------------------\n')
+    for i, result in enumerate(sorted_avg):
+        print(i, result)
+
+    print('\n\n------------------------\nMODELS RANKED BY VAR ACC\n------------------------\n')
+    for i, result in enumerate(sorted_var):
+        print(i, result)
+
+
 def train(x_train, y_train, x_val, y_val):
+    models = {}
     results = []
-    for i in range(10):
-        model = cube_classifier.CubeClassifierBuilder.build()
-        model.compile(loss=categorical_crossentropy,
-                      optimizer=SGD(lr=LEARN_RATE, momentum=0.9, nesterov=True),
-                      metrics=['accuracy'])
-        model.fit(x=x_train,
-                  y=y_train,
-                  batch_size=128,
-                  epochs=50,
-                  validation_data=(x_val, y_val))
+    for lr in LEARN_RATES:
+        for dropout in DROPOUTS:
+            for i in range(10):
+                model = cube_classifier.CubeClassifierBuilder.build(dropout=dropout)
+                model.compile(loss=categorical_crossentropy,
+                              optimizer=SGD(lr=lr, momentum=0.9, nesterov=True),
+                              metrics=['accuracy'])
+                model.fit(x=x_train,
+                          y=y_train,
+                          batch_size=128,
+                          callbacks=EarlyStopping(monitor='val_acc', patience=10),
+                          epochs=100,
+                          validation_data=(x_val, y_val))
 
-        result = model.evaluate(x_val, y_val, verbose=1)
-        results.append(result)
+                result = model.evaluate(x_val, y_val, verbose=1)
+                results.append(result[1])
+            results = np.asarray(results)
+            models[f'lr: {lr}, dropout: {dropout}'] = {'max': np.max(results),
+                                                       'avg': np.mean(results),
+                                                       'var': np.var(results)}
 
-    for result in results:
-        print(result)
+    return models
 
 
 def load_probs(labels: pd.DataFrame):
@@ -129,7 +180,8 @@ def main():
     x_train, y_train, x_val, y_val = load_probs(labels)
     print(x_train.shape, y_train.shape)
     print(x_val.shape, y_train.shape)
-    train(x_train, y_train, x_val, y_val)
+    results = train(x_train, y_train, x_val, y_val)
+    find_best_models(results)
 
 
 if __name__ == '__main__':
