@@ -1,6 +1,6 @@
 import datetime
-import os
 
+import os
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.slack_operator import SlackAPIPostOperator
@@ -15,7 +15,8 @@ default_args = {
 
 dag = DAG(dag_id='load_annotations',
           description='Load the annotations from Drive to GCS',
-          default_args=default_args)
+          default_args=default_args,
+          catchup=False)
 
 load_op = PythonOperator(task_id='load',
                          python_callable=roi_to_gcs,

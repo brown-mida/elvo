@@ -1,6 +1,6 @@
-import os
 from datetime import datetime
 
+import os
 from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonOperator
@@ -21,7 +21,11 @@ ELVOS_ANON = 'ELVOs_anon/'
 RAW_NUMPY = 'airflow/npy/'
 COMPRESSED_NUMPY = 'airflow/npz/'
 
-dag = DAG(dag_id='elvo_main', default_args=default_args)
+dag = DAG(dag_id='elvo_main',
+          description='The main DAG for loading ELVO data from Dropbox and'
+                      ' and Google Drive',
+          default_args=default_args,
+          catchup=False)
 
 dropbox_to_gcs = BashOperator(task_id='dropbox_to_gcs',
                               bash_command='python3 /home/lukezhu/'

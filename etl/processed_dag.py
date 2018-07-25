@@ -81,7 +81,8 @@ default_args = {
 dag = DAG(dag_id='upload_processed_data',
           description='Uploads processed numpy array data as pngs for the'
                       ' web app',
-          default_args=default_args)
+          default_args=default_args,
+          catchup=False)
 
 upload_numpy_files_op = PythonOperator(task_id='upload_numpy_files',
                                        python_callable=upload_numpy_files,
