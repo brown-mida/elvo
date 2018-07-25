@@ -68,6 +68,10 @@ def train(x_train, y_train, x_val, y_val):
     results = []
     for lr in LEARN_RATES:
         for dropout in DROPOUTS:
+            print(f'\n\n-----------------------------------------------\n'
+                  f'TRAINING MODEL : LR = {lr}, DROPOUT = {dropout}'
+                  f'\n-----------------------------------------------\n')
+
             for i in range(10):
                 model = cube_classifier.CubeClassifierBuilder.build(dropout=dropout)
                 model.compile(loss=categorical_crossentropy,
