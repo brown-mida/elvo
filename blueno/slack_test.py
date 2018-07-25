@@ -1,8 +1,8 @@
+import os
 import pathlib
 
 import keras
 import numpy as np
-import os
 import pytest
 import sklearn.preprocessing
 
@@ -83,6 +83,8 @@ def test_full_multiclass_report_multiclass():
                                               fn_path=fn_path))
 
 
+@pytest.mark.skipif(os.uname().nodename != 'gpu1708',
+                    reason='Test uses token only on gpu1708')
 def test_slack_upload_cm():
     model = keras.Sequential([
         keras.layers.Flatten(input_shape=(224, 224, 3)),

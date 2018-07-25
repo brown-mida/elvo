@@ -29,6 +29,7 @@ import datetime
 import importlib
 import logging
 import multiprocessing
+import os
 import pathlib
 import time
 from argparse import ArgumentParser
@@ -36,8 +37,8 @@ from typing import List, Union
 
 import keras
 import numpy as np
-import os
 from elasticsearch_dsl import connections
+from google.auth.exceptions import DefaultCredentialsError
 from sklearn import model_selection
 
 import blueno
@@ -156,11 +157,15 @@ def start_job(x_train: np.ndarray,
                                   verbose=2,
                                   callbacks=callbacks)
 
-    blueno.gcs.upload_gcs_plots(x_train, x_valid, y_valid, model, history,
-                                job_name,
-                                created_at,
-                                plot_dir=plot_dir,
-                                id_valid=id_valid)
+    try:
+        blueno.gcs.upload_gcs_plots(x_train, x_valid, y_valid, model, history,
+                                    job_name,
+                                    created_at,
+                                    plot_dir=plot_dir,
+                                    id_valid=id_valid)
+    except DefaultCredentialsError as e:
+        logging.warning(e)
+
     if slack_token:
         logging.info('generating slack report')
         blueno.slack.slack_report(x_train, x_valid, y_valid, model, history,
