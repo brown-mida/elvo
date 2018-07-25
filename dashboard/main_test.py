@@ -73,6 +73,8 @@ def test_list_plots():
     assert 'test_gcs-2018-07-24T17:30:15.191204' in json.loads(r.data)
 
 
+@pytest.mark.skipif('SPREADSHEET_CREDENTIALS' not in os.environ,
+                    reason='Spreadsheet credentials required')
 def test_list_transforms():
     from main import app
     app.testing = True
@@ -83,7 +85,7 @@ def test_list_transforms():
     assert 'bound_pixels' in json.loads(r.data)
 
 
-# @pytest.mark.skip(reason="Takes too long and wastes lots of $$")
+@pytest.mark.skip(reason="Takes too long and wastes lots of $$")
 def test_preprocess_data():
     from main import app
     app.testing = True
