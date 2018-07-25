@@ -242,7 +242,7 @@ def __train_model(params, x_train, y_train, x_valid, y_valid,
                                      reduce_lr=params.reduce_lr)
 
     history = model.fit_generator(train_gen,
-                                  epochs=2, #params.max_epochs,
+                                  epochs=params.max_epochs,
                                   validation_data=valid_gen,
                                   verbose=2,
                                   callbacks=cbs)
@@ -503,7 +503,7 @@ def parse_args(args):
         '--no-early-stopping',
         help=('Saves best model after running max epochs, '
               'instead of early stopping'),
-        default=False
+        action='store_true'
     )
 
     return parser.parse_args(args)
@@ -565,12 +565,18 @@ def main(args=None):
     else:
         slack_token = args.slack_token
 
+    # No early stopping
+    if args.config is not None and user_config.NO_EARLY_STOPPING is not None:
+        no_early_stopping = user_config.NO_EARLY_STOPPING
+    else:
+        no_early_stopping = args.no_early_stopping
+
     if args.eval_type == 'kibana':
         # Fetch params list from Kibana to evaluate
         models = get_models_to_train(args.address, args.lower,
                                      args.upper, '../tmp')
         multiprocess(models, num_iterations, gpus, slack_token=slack_token,
-                     no_early_stopping=args.no_early_stopping,
+                     no_early_stopping=no_early_stopping,
                      address=args.address)
 
     else:
@@ -581,7 +587,7 @@ def main(args=None):
 
         params = param_list_config.EVAL_PARAM_LIST
         multiprocess(params, num_iterations, gpus, slack_token=slack_token,
-                     no_early_stopping=args.no_early_stopping,
+                     no_early_stopping=no_early_stopping,
                      address=args.address)
 
 
