@@ -29,7 +29,6 @@ import datetime
 import importlib
 import logging
 import multiprocessing
-import os
 import pathlib
 import time
 from argparse import ArgumentParser
@@ -37,6 +36,7 @@ from typing import List, Union
 
 import keras
 import numpy as np
+import os
 from elasticsearch_dsl import connections
 from google.auth.exceptions import DefaultCredentialsError
 from sklearn import model_selection
@@ -307,8 +307,14 @@ def check_data_in_sync(params: blueno.ParamConfig):
     else:
         array_url = gcs_url + '/arrays'
 
-    if not gcs.equal_array_counts(data_dir,
-                                  array_url):
+    try:
+        is_equal = gcs.equal_array_counts(data_dir, array_url)
+    except DefaultCredentialsError as e:
+        logging.warning(e)
+        logging.warning('Will not check GCS for syncing')
+        return
+
+    if is_equal:
         raise ValueError(f'{data_dir} and {array_url} have a different'
                          f' number of files')
 

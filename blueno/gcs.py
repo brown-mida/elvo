@@ -8,8 +8,6 @@ import subprocess
 import keras
 import numpy as np
 import os
-import warnings
-from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import storage
 
 from blueno.elasticsearch import JOB_INDEX
@@ -18,21 +16,24 @@ from blueno.slack import _create_all_plots
 
 def equal_array_counts(arrays_dir: pathlib.Path,
                        arrays_gsurl: str):
+    """
+    Returns True if the number of files in arrays_dir equals the number
+    of files in the GCS folder.
+
+    Raises an error if credentials are not set.
+
+    :param arrays_dir: the path to an arrays directory, like
+        evlo-analysis/data/processed/processed-lower/arrays
+    :param arrays_gsurl: a GCS URL, like
+        gs://elvos/processed/processed-lower/arrays
+    :return:
+    """
     if 'elvos' not in arrays_gsurl:
         raise ValueError('Expected elvos in URL')
 
-    # +1 to avoid leading /
+    # +1 to avoid include the leading /
     prefix_i = arrays_gsurl.find('elvos') + len('elvos') + 1
-    try:
-        client = storage.Client(project='elvo-198322')
-    except DefaultCredentialsError:
-        warnings.warn('Set GOOGLE_APPLICATION_CREDENTIALS in your config '
-                      'file')
-        client = storage.Client.from_service_account_json(
-            '/gpfs/main/home/lzhu7/elvo-analysis/secrets/'
-            'elvo-7136c1299dea.json',
-        )
-
+    client = storage.Client(project='elvo-198322')
     bucket = client.get_bucket('elvos')
     gcs_count = len(list(bucket.list_blobs(prefix=arrays_gsurl[prefix_i:])))
     local_count = len([0 for _ in arrays_dir.iterdir()])
@@ -55,6 +56,7 @@ def fetch_model(service_account_path=None, save_path=None, **kwargs):
     :raise ValueError: If the parameter query returns no result, or
         returns more than 1 result.
     """
+    # TODO(luke): Avoid using relative paths.
     if service_account_path is None:
         service_account_path = '../credentials/client_secret.json'
 
@@ -87,6 +89,7 @@ def fetch_model(service_account_path=None, save_path=None, **kwargs):
     )
 
 
+# TODO(luke): Use the Python client instead of subprocess
 def upload_model_to_gcs(job_name, created_at, model_filepath):
     """Uploads the model at the given filepath to
     gs://elvos/sorted_models/{job_name}-{created_at}.hdf5
@@ -131,6 +134,8 @@ def upload_gcs_plots(x_train: np.ndarray,
     """
     Uploads a loss graph, accuracy, and confusion matrix plots in addition
     to useful data about the model to gcs.
+
+    Raises an error if credentials are not set.
 
     Saves to gs://elvos-public/plots/{job_name}-{created_at}/
 

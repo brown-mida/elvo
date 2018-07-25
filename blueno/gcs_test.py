@@ -11,8 +11,8 @@ from .gcs import equal_array_counts, upload_gcs_plots
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
 
 
-@pytest.mark.skipif(os.uname().nodename != 'gpu1708',
-                    reason='Test uses data only on gpu1708')
+@pytest.mark.skipif('TRAVIS' not in os.environ,
+                    reason='Test requires GCS credentials')
 def test_compare_dir_len():
     # ls processed-lower/arrays | wc -l
     # gsutil ls gs://elvos/processed/processed-lower/arrays | wc -l
@@ -23,8 +23,8 @@ def test_compare_dir_len():
     assert equal_array_counts(arrays_dir, array_url)
 
 
-@pytest.mark.skipif(os.uname().nodename != 'gpu1708',
-                    reason='Test uses data only on gpu1708')
+@pytest.mark.skipif('TRAVIS' not in os.environ,
+                    reason='Test requires GCS credentials')
 def test_gcs_plots():
     model = keras.Sequential([
         keras.layers.Flatten(input_shape=(224, 224, 3)),
