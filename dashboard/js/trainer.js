@@ -68,6 +68,7 @@ class Trainer extends Component {
     this.handleDataChange = this.handleDataChange.bind(this);
     this.handleTransformChange = this.handleTransformChange.bind(this);
     this.sendJobRequest = this.sendJobRequest.bind(this);
+    this.sendPreprocessRequest = this.sendPreprocessRequest.bind(this);
   }
 
   componentDidMount() {
@@ -111,7 +112,8 @@ class Trainer extends Component {
   sendPreprocessRequest() {
     // TODO(luke): At some point filter the params
     const data = this.state;
-    axios.post('/preprocessing', data)
+    const dataName = this.state.processedName;
+    axios.post('/preprocessing/' + processedName, data)
         .then(response => {
           console.log(response);
         })

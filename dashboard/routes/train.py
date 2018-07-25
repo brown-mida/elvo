@@ -114,10 +114,13 @@ def preprocess_data(data_name: str):
     """
     # TODO(luke): Since this requests takes so long it may be better to do this
     # operation on a different server.
-    crop_length = 200  # TODO(luke): Validate this so it fits in ResNet
-    mip_thickness = 25
-    height_offset = 30
-    pixel_value_range = (0, 200)
+    data = flask.request.get_json()
+    # TODO(luke): Validate this so it fits in ResNet
+    crop_length = int(data['cropLength'])
+    mip_thickness = int(data['mipThickness'])
+    height_offset = int(data['heightOffset'])
+    pixel_value_range = (int(data['minPixelValue']),
+                         int(data['maxPixelValue']))
 
     input_blob: storage.Blob
     for input_blob in priv_bucket.list_blobs(prefix=f'airflow/npy'):
