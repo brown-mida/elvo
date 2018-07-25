@@ -29,16 +29,16 @@ import datetime
 import importlib
 import logging
 import multiprocessing
-import os
 import pathlib
-import subprocess
 import time
 from argparse import ArgumentParser
 from typing import List, Union
 
 import keras
 import numpy as np
+import os
 from elasticsearch_dsl import connections
+from google.auth.exceptions import DefaultCredentialsError
 from sklearn import model_selection
 
 import blueno
@@ -49,6 +49,7 @@ from blueno import (
     logger,
     gcs,
 )
+from blueno.gcs import upload_model_to_gcs
 
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
 
@@ -62,6 +63,7 @@ def start_job(x_train: np.ndarray,
               params: blueno.ParamConfig,
               slack_token: str = None,
               log_dir: str = None,
+              plot_dir=None,
               id_valid: np.ndarray = None) -> None:
     """
     Builds, fits, and evaluates a model.
@@ -80,11 +82,16 @@ def start_job(x_train: np.ndarray,
     :param slack_token: the slack token
     :param params: the parameters specified
     :param log_dir:
+    :param plot_dir: the directory to save plots to, defaults to /tmp/plots-
     :param id_valid: the patient ids ordered to correspond with y_valid
     :return:
     """
     num_classes = y_train.shape[1]
     created_at = datetime.datetime.utcnow().isoformat()
+
+    if plot_dir is None:
+        gpu = os.environ["CUDA_VISIBLE_DEVICES"]
+        plot_dir = pathlib.Path('tmp') / f'plots-{gpu}'
 
     # Configure the job to log all output to a specific file
     csv_filepath = None
@@ -150,11 +157,23 @@ def start_job(x_train: np.ndarray,
                                   verbose=2,
                                   callbacks=callbacks)
 
+    try:
+        blueno.gcs.upload_gcs_plots(x_train, x_valid, y_valid, model, history,
+                                    job_name,
+                                    created_at,
+                                    plot_dir=plot_dir,
+                                    id_valid=id_valid)
+    except DefaultCredentialsError as e:
+        logging.warning(e)
+
     if slack_token:
         logging.info('generating slack report')
         blueno.slack.slack_report(x_train, x_valid, y_valid, model, history,
                                   job_name,
-                                  params, slack_token, id_valid=id_valid)
+                                  params,
+                                  slack_token,
+                                  plot_dir=plot_dir,
+                                  id_valid=id_valid)
     else:
         logging.info('no slack token found, not generating report')
 
@@ -175,34 +194,6 @@ def start_job(x_train: np.ndarray,
             pathlib.Path(log_filepath),
             pathlib.Path(csv_filepath),
         )
-
-
-def upload_model_to_gcs(job_name, created_at, model_filepath):
-    gcs_filepath = 'gs://elvos/sorted_models/{}-{}.hdf5'.format(
-        # Remove the extension
-        job_name,
-        created_at,
-    )
-    # Do not change, this is log is used to get the gcs link
-    logging.info('uploading model {} to {}'.format(
-        model_filepath,
-        gcs_filepath,
-    ))
-
-    try:
-        subprocess.run(
-            ['/bin/bash',
-             '-c',
-             'gsutil cp {} {}'.format(model_filepath, gcs_filepath)],
-            check=True)
-    except subprocess.CalledProcessError:
-        # gpu1708 specific code
-        subprocess.run(
-            ['/bin/bash',
-             '-c',
-             '/gpfs/main/home/lzhu7/google-cloud-sdk/bin/'
-             'gsutil cp {} {}'.format(model_filepath, gcs_filepath)],
-            check=True)
 
 
 def hyperoptimize(hyperparams: Union[blueno.ParamGrid,
@@ -316,8 +307,14 @@ def check_data_in_sync(params: blueno.ParamConfig):
     else:
         array_url = gcs_url + '/arrays'
 
-    if not gcs.equal_array_counts(data_dir,
-                                  array_url):
+    try:
+        is_equal = gcs.equal_array_counts(data_dir, array_url)
+    except DefaultCredentialsError as e:
+        logging.warning(e)
+        logging.warning('Will not check GCS for syncing')
+        return
+
+    if is_equal:
         raise ValueError(f'{data_dir} and {array_url} have a different'
                          f' number of files')
 
