@@ -86,7 +86,7 @@ def main(args=None):
     if args is None:
         args = sys.argv[1:]
     args = parse_args(args)
-    throw
+
     logging.info('Using config {}'.format(args.config))
     user_config = importlib.import_module(args.config)
 

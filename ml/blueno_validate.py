@@ -194,7 +194,7 @@ def __load_data(params):
 
 
 def __train_model(params, x_train, y_train, x_valid, y_valid,
-                  no_early_stopping=False):
+                  no_early_stopping=False, data_dir='../tmp/'):
     """
     Trains the model.
 
@@ -229,7 +229,7 @@ def __train_model(params, x_train, y_train, x_valid, y_valid,
 
     if no_early_stopping:
         model_filename = str(datetime.datetime.now())
-        model_filepath = '../tmp/{}.hdf5'.format(model_filename)
+        model_filepath = '{}/{}.hdf5'.format(data_dir, model_filename)
         cbs = utils.create_callbacks(x_train, y_train, x_valid, y_valid,
                                      early_stopping=False,
                                      reduce_lr=params.reduce_lr)
@@ -311,7 +311,7 @@ def iterate_eval(num_iterations, params, gpu,
                  purported_sensitivity='None',
                  slack_token=None,
                  no_early_stopping=False,
-                 log_dir='../logs/',
+                 log_dir='../logs/', data_dir='../tmp/',
                  address=None):
     """
     Beautiful piece of text that has more logging than code.
@@ -346,7 +346,8 @@ def iterate_eval(num_iterations, params, gpu,
          _, _, _) = __load_data(params)
         model, history = __train_model(params, x_train, y_train,
                                        x_valid, y_valid,
-                                       no_early_stopping=no_early_stopping)
+                                       no_early_stopping=no_early_stopping,
+                                       data_dir=data_dir)
         result = evaluate_model(x_test, y_test, model, params,
                                 normalize=True, x_train=x_train)
         result_list.append(result)
@@ -404,7 +405,8 @@ def iterate_eval(num_iterations, params, gpu,
 
 
 def multiprocess(models, num_iterations, gpus, slack_token=None,
-                 no_early_stopping=False, address=None):
+                 no_early_stopping=False, address=None,
+                 log_dir='../logs/', data_dir='../tmp/'):
     gpu_index = 0
     processes = []
     print(gpus)
@@ -428,7 +430,9 @@ def multiprocess(models, num_iterations, gpus, slack_token=None,
                     'purported_sensitivity': model['purported_sensitivity'],
                     'slack_token': slack_token,
                     'no_early_stopping': no_early_stopping,
-                    'address': address
+                    'address': address,
+                    'log_dir': log_dir,
+                    'data_dir': data_dir
                 })
             logging.info('Running at GPU {}'.format(gpus[gpu_index]))
             gpu_index += 1
@@ -485,6 +489,13 @@ def parse_args(args):
         help=('Location to store logs.'),
         default='../logs/'
     )
+
+    parser.add_argument(
+        '--data-dir',
+        help=('Location to store temporary files.'),
+        default='../tmp/'
+    )
+
     parser.add_argument(
         '--config',
         help=('Configuration file, if you want to specify GPU and '
@@ -513,12 +524,29 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def check_user_config(config):
+    """
+    Check param-list-config to see if it is valid.
+    """
+    logging.info('Checking that user config has all required attributes')
+    logging.info('LOG_DIR: {}'.format(config.LOG_DIR))
+    logging.info('DATA_DIR: {}'.format(config.DATA_DIR))
+    logging.info('gpus: {}'.format(config.gpus))
+    logging.info('num_iterations: {}'.format(config.num_iterations))
+    logging.info('SLACK_TOKEN: {}'.format(config.SLACK_TOKEN))
+    logging.info('no_early_stopping: {}'.format(config.no_early_stopping))
+    for attr in ['LOG_DIR', 'DATA_DIR', 'gpus', 'num_iterations',
+                 'SLACK_TOKEN', 'no_early_stopping']:
+        if not hasattr(config, attr):
+            raise AttributeError('User config file is missing {}'.format(attr))
+
+
 def check_config(config):
     """
     Check param-list-config to see if it is valid.
     """
     logging.info('Checking that config has all required attributes')
-    logging.debug('EVAL_PARAM_LIST: {}'.format(config.EVAL_PARAM_LIST))
+    logging.info('EVAL_PARAM_LIST: {}'.format(config.EVAL_PARAM_LIST))
     if (not (isinstance(config.EVAL_PARAM_LIST, list)) or
        not (isinstance(config.EVAL_PARAM_LIST[0], types.ParamConfig))):
         raise ValueError('EVAL_PARAM_LIST must be a list of ParamConfig')
@@ -531,57 +559,43 @@ def main(args=None):
     args = parse_args(args)
 
     # Set config if exists
-    if args.config:
+    if args.config is not None:
         user_config = importlib.import_module(args.config)
+        check_user_config(user_config)
+        args.log_dir = user_config.LOG_DIR
+        args.data_dir = user_config.DATA_DIR
+        args.gpu = user_config.gpus
+        args.num_iterations = user_config.num_iterations
+        args.slack_token = user_config.SLACK_TOKEN
+        args.no_early_stopping = user_config.no_early_stopping
 
     # Set logger
-    if args.config is not None and user_config.LOG_DIR is not None:
-        parent_log_file = pathlib.Path(
-            user_config.LOG_DIR) / 'eval-results-{}.txt'.format(
-            datetime.datetime.utcnow().isoformat()
-        )
-    else:
-        parent_log_file = pathlib.Path(
-            args.log_dir) / 'eval-results-{}.txt'.format(
-            datetime.datetime.utcnow().isoformat()
-        )
+    parent_log_file = pathlib.Path(
+        args.log_dir) / 'eval-results-{}.txt'.format(
+        datetime.datetime.utcnow().isoformat()
+    )
     logger.configure_parent_logger(parent_log_file, level=logging.INFO)
 
     # Choose GPU to use
     if args.gpu:
         os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
         gpus = args.gpu.split(',')
-    elif args.config is not None and user_config.gpus is not None:
-        os.environ['CUDA_VISIBLE_DEVICES'] = user_config.gpus
-        gpus = user_config.gpus.split(',')
     else:
         gpus = ['0']
 
-    # Number of iterations
-    if args.config is not None and user_config.num_iterations is not None:
-        num_iterations = user_config.num_iterations
-    else:
-        num_iterations = args.num_iterations
-
-    # Slack token
-    if args.config is not None and user_config.SLACK_TOKEN is not None:
-        slack_token = user_config.SLACK_TOKEN
-    else:
-        slack_token = args.slack_token
-
-    # No early stopping
-    if args.config is not None and user_config.NO_EARLY_STOPPING is not None:
-        no_early_stopping = user_config.NO_EARLY_STOPPING
-    else:
-        no_early_stopping = args.no_early_stopping
+    # Set configurations
+    num_iterations = args.num_iterations
+    slack_token = args.slack_token
+    no_early_stopping = args.no_early_stopping
 
     if args.eval_type == 'kibana':
         # Fetch params list from Kibana to evaluate
         models = get_models_to_train(args.address, args.lower,
-                                     args.upper, '../tmp')
+                                     args.upper, args.data_dir)
         multiprocess(models, num_iterations, gpus, slack_token=slack_token,
                      no_early_stopping=no_early_stopping,
-                     address=args.address)
+                     address=args.address, log_dir=args.log_dir,
+                     data_dir=args.data_dir)
 
     else:
         # Manual evaluation of a list of ParamConfig
@@ -592,7 +606,8 @@ def main(args=None):
         params = param_list_config.EVAL_PARAM_LIST
         multiprocess(params, num_iterations, gpus, slack_token=slack_token,
                      no_early_stopping=no_early_stopping,
-                     address=args.address)
+                     address=args.address, log_dir=args.log_dir,
+                     data_dir=args.data_dir)
 
 
 if __name__ == '__main__':
