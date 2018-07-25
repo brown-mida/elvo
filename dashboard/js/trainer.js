@@ -8,11 +8,11 @@ import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Drawer from '@material-ui/core/Drawer';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import Divider from '@material-ui/core/Divider';
+import TrainerResultsView from './TrainerResultsView';
+import TrainerDataView from './TrainerDataView';
 
 
 const styles = {
@@ -21,12 +21,6 @@ const styles = {
   },
   grid: {
     paddingLeft: 500,
-  },
-  plotImg: {
-    maxWidth: '60%',
-  },
-  dataImg: {
-    maxWidth: 64,
   },
 };
 
@@ -52,7 +46,7 @@ class Trainer extends Component {
       offset: 0,
 
       allPlots: [],
-      selectedPlot: null,
+      selectedPlot: '',
       plotSortType: 'date',
 
       viewType: 'data',
@@ -61,7 +55,6 @@ class Trainer extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleDataChange = this.handleDataChange.bind(this);
     this.sendJobRequest = this.sendJobRequest.bind(this);
-    this.evalView = this.evalView.bind(this);
   }
 
   componentDidMount() {
@@ -128,105 +121,6 @@ class Trainer extends Component {
         });
   }
 
-  plotUrl(jobWithDate, plotType) {
-    const url = 'https://storage.googleapis.com/elvos-public/plots/' +
-        jobWithDate + '/' + plotType + '.png';
-    return url;
-  }
-
-  // Returns the training view
-  trainView() {
-    // TODO: Labels with the images
-    const baseURL = 'https://storage.googleapis.com/elvos-public/processed';
-    const images = this.state.imageNames
-        .slice(this.state.offset, this.state.offset + 32)
-        .map((name) => {
-          return (
-              <Grid item xs={4}>
-                <img src={`${baseURL}/${this.state.dataName}/arrays/${name}`}/>
-              </Grid>);
-        });
-    return (
-        <Grid container spacing={8} style={styles.grid}>
-          {images}
-        </Grid>
-    );
-  }
-
-  // Returns the evaluation view
-  evalView() {
-    return (
-        <Grid container spacing={8} style={styles.grid}>
-          <Grid item xs={12}>
-            <Paper>
-              <img src={this.plotUrl(this.state.selectedPlot, 'loss')}
-                   style={styles.plotImg}
-              />
-            </Paper>
-          </Grid>
-
-          <Grid item xs={12}>
-            <Paper>
-              <img src={this.plotUrl(this.state.selectedPlot, 'acc')}
-                   style={styles.plotImg}
-              />
-            </Paper>
-          </Grid>
-
-          <Grid item xs={12}>
-            <Paper>
-              <img src={this.plotUrl(this.state.selectedPlot, 'cm')}
-                   style={styles.plotImg}
-              />
-            </Paper>
-          </Grid>
-
-          <Grid item xs={12}>
-            <Paper>
-              <h4>True Positives</h4>
-              <img
-                  src={
-                    this.plotUrl(this.state.selectedPlot, 'true_positives')}
-                  style={styles.plotImg}
-              />
-            </Paper>
-          </Grid>
-
-          <Grid item xs={12}>
-            <Paper>
-              <h4>False Positives</h4>
-              <img src={
-                this.plotUrl(this.state.selectedPlot, 'false_positives')}
-                   style={styles.plotImg}
-              />
-            </Paper>
-          </Grid>
-
-
-          <Grid item xs={12}>
-            <h4>True Negatives</h4>
-            <Paper>
-              <img src={
-                this.plotUrl(this.state.selectedPlot, 'true_negatives')}
-                   style={styles.plotImg}
-              />
-            </Paper>
-          </Grid>
-
-
-          <Grid item xs={12}>
-            <Paper>
-              <h4>False Negatives</h4>
-              <img src={
-                this.plotUrl(this.state.selectedPlot, 'false_negatives')}
-                   style={styles.plotImg}
-              />
-            </Paper>
-          </Grid>
-        </Grid>
-    );
-  }
-
   render() {
     // TODO: Descriptions of the different fields.
     console.log('state', this.state);
@@ -238,14 +132,35 @@ class Trainer extends Component {
     const sortedAllPlots = this.state.allPlots
         .slice()
         .sort((a, b) => sortByDate(a, b, false));
-
-    console.log(sortedAllPlots);
-
     const plotOptions = [];
-
     sortedAllPlots.forEach((e) => {
       plotOptions.push(<option key={e} value={e}>{e}</option>);
     });
+
+    let bodyView;
+    switch (this.state.viewType) {
+      case 'data':
+        bodyView = (
+            <TrainerDataView
+                dataName={this.state.dataName}
+                imageNames={this.state.imageNames}
+                offset={this.state.offset}
+                parentStyles={styles}
+            />
+        );
+        break;
+      case 'results':
+        bodyView = (
+            <TrainerResultsView
+                selectedPlot={this.state.selectedPlot}
+                parentStyles={styles}
+            />
+        );
+        break;
+      default:
+        console.error(this.state.viewType + ' is not valid');
+        bodyView = <div>Error :(</div>;
+    }
 
     return (
         <div>
@@ -348,9 +263,7 @@ class Trainer extends Component {
               <BottomNavigationAction label="Results View" value="results"/>
             </BottomNavigation>
           </Drawer>
-
-          {/* Start of the main body */}
-          {this.state.viewType === 'data' ? this.trainView() : this.evalView()}
+          {bodyView}
         </div>
     );
   }
