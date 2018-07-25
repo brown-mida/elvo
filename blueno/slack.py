@@ -296,6 +296,55 @@ def full_multiclass_report(model: keras.models.Model,
     return comment
 
 
+def write_to_slack(comment, token):
+    """
+    Write results to slack.
+    """
+    channels = 'CBUA09G68'
+
+    r = requests.get(
+        'https://slack.com/api/chat.postMessage?' +
+        'token={}&channel={}&text={}'.format(token, channels, comment))
+    return r
+
+
+def write_iteration_results(params, result, slack_token,
+                            job_name=None, job_date=None,
+                            purported_accuracy=None,
+                            purported_loss=None,
+                            purported_sensitivity=None,
+                            final=False, i=0):
+    """
+    Write iteration results (during validation) to Slack.
+    """
+    if final:
+        text = "-----Final Results-----\n"
+    else:
+        text = "-----Iteration {}-----\n".format(i + 1)
+    text += "Seed: {}\n".format(params.seed)
+    text += "Params: {}\n".format(params)
+    if (job_name is not None):
+        text += 'Job name: {}\n'.format(job_name)
+        text += 'Job date: {}\n'.format(job_date)
+        text += 'Purported accuracy: {}\n'.format(
+            purported_accuracy)
+        text += 'Purported loss: {}\n'.format(
+            purported_loss)
+        text += 'Purported sensitivity: {}\n'.format(
+            purported_sensitivity)
+    if final:
+        text += "\n-----Average Results-----\n"
+    else:
+        text += "\n-----Results-----\n"
+    text += 'Loss: {}\n'.format(result[0])
+    text += 'Acc: {}\n'.format(result[1])
+    text += 'Sensitivity: {}\n'.format(result[2])
+    text += 'Specificity: {}\n'.format(result[3])
+    text += 'True Positives: {}\n'.format(result[4])
+    text += 'False Negatives: {}\n'.format(result[5])
+    write_to_slack(text, slack_token)
+
+
 def upload_to_slack(filename,
                     comment,
                     token,
