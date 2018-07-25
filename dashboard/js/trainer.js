@@ -52,7 +52,8 @@ class Trainer extends Component {
       offset: 0,
 
       allPlots: [],
-      selectedPlot: 'processed-lower_2-classes-2018-07-24T17:49:23.336454',
+      selectedPlot: null,
+      plotSortType: 'date',
 
       viewType: 'data',
     };
@@ -64,11 +65,12 @@ class Trainer extends Component {
   }
 
   componentDidMount() {
-    // Set allPlots
+    // Set allPlots and selectedPLot
     axios.get('/plots')
         .then(response => {
           this.setState({
             allPlots: response.data,
+            selectedPlot: response.data[0],
           });
         })
         .catch(error => {
@@ -80,6 +82,7 @@ class Trainer extends Component {
         .then(response => {
           this.setState({
             allDataNames: response.data,
+            dateName: response.data[0],
           });
         })
         .catch(error => {
@@ -232,12 +235,15 @@ class Trainer extends Component {
       return <option key={name} value={name}>{name}</option>;
     });
 
-    dataOptions.unshift(<option key={''} value={''}>{''}</option>);
+    const sortedAllPlots = this.state.allPlots
+        .slice()
+        .sort((a, b) => sortByDate(a, b, false));
 
-    // Also accept the empty option as a default
-    const plotOptions = [<option key={''} value={''}>{''}</option>];
+    console.log(sortedAllPlots);
 
-    this.state.allPlots.forEach((e) => {
+    const plotOptions = [];
+
+    sortedAllPlots.forEach((e) => {
       plotOptions.push(<option key={e} value={e}>{e}</option>);
     });
 
@@ -348,6 +354,27 @@ class Trainer extends Component {
         </div>
     );
   }
+}
+
+// TODO(luke): This won't work in 2020. This kind of code appears
+// in a few other places as well.
+function sortByDate(a, b, ascending = true) {
+  const aDateIndex = a.indexOf('201');
+  const bDateIndex = b.indexOf('201');
+  const aDate = a.slice(aDateIndex);
+  const bDate = b.slice(bDateIndex);
+
+  const sign = (ascending === true) ? 1 : -1;
+
+  if (aDate < bDate) {
+    return -sign;
+  }
+
+  if (aDate > bDate) {
+    return sign;
+  }
+
+  return 0;
 }
 
 ReactDOM.render(<Trainer/>, document.getElementById('reactEntry'));

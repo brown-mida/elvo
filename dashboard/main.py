@@ -1,12 +1,12 @@
 import datetime
-import io
 import logging
-import os
 
 import flask
 import gspread
+import io
 import matplotlib as mpl
 import numpy as np
+import os
 import requests
 from google.cloud import storage
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
@@ -267,7 +267,8 @@ def list_plots():
     blob: storage.Blob
     for blob in pub_bucket.list_blobs(prefix='plots/'):
         plot_dir = blob.name.split('/')[1]
-        plots.add(plot_dir)
+        if not plot_dir.startswith('test_'):
+            plots.add(plot_dir)
     return flask.json.jsonify(list(plots))
 
 
