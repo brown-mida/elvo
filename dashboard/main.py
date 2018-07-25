@@ -7,6 +7,7 @@ import flask
 import gspread
 import matplotlib as mpl
 import numpy as np
+import requests
 from google.cloud import storage
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from oauth2client.service_account import ServiceAccountCredentials
@@ -20,8 +21,14 @@ app = flask.Flask(__name__)
 
 client = storage.Client(project='elvo-198322')
 bucket = client.bucket('elvos')
+# TODO(luke): Start splitting the development/private bucket from the public
+# TODO(luke): Also start considering user-specific buckets.
+pub_bucket = client.bucket('elvos-public')
 
+# TODO(#116): Cache that works >1 instance
 cache = {}
+
+SPREADSHEET_CREDENTIALS = os.environ['SPREADSHEET_CREDENTIALS']
 
 
 def configure_logger():
@@ -89,7 +96,7 @@ def roi():
     scope = ['https://spreadsheets.google.com/feeds']
     logging.debug('getting service account credentials')
     credentials = ServiceAccountCredentials.from_json_keyfile_name(
-        os.environ['SPREADSHEET_CREDENTIALS'],
+        SPREADSHEET_CREDENTIALS,
         scope
     )
     spread_client = gspread.authorize(credentials)
@@ -232,6 +239,69 @@ def _send_slice(arr: np.ndarray):
     out_stream.seek(0)
     return flask.send_file(out_stream,
                            mimetype='image/png')
+
+
+@app.route('/trainer')
+def trainer():
+    return flask.render_template('trainer.html')
+
+
+@app.route('/model', methods=['POST'])
+def create_model():
+    data = flask.json.dumps(flask.request.get_json())
+    response = requests.post('http://104.196.51.205:8080/api/experimental/'
+                             'dags/train_model/dag_runs',
+                             json={'conf': data})
+    return response.content, response.status_code, response.headers.items()
+
+
+@app.route('/plots')
+def list_plots():
+    """
+    Gets all available plots.
+
+    :return: a JSON object containing the gs urls of the available plots.
+    """
+    plots = set()
+
+    blob: storage.Blob
+    for blob in pub_bucket.list_blobs(prefix='plots/'):
+        plot_dir = blob.name.split('/')[1]
+        plots.add(plot_dir)
+    return flask.json.jsonify(list(plots))
+
+
+@app.route('/data')
+def list_datasets():
+    """
+    Gets all available datasets.
+
+    :return: a JSON object containing the gs urls of the available plots.
+    """
+    datasets = set()
+
+    blob: storage.Blob
+    for blob in pub_bucket.list_blobs(prefix='processed/'):
+        data_name = blob.name.split('/')[1]
+        if not data_name.startswith('test'):
+            datasets.add(data_name)
+    return flask.json.jsonify(list(datasets))
+
+
+@app.route('/data/<image_name>')
+def get_images(image_name: str):
+    """
+    Returns the image names (ex. 0ABCSDFS.png) which have the given data name
+
+    :return:
+    """
+    images = []
+
+    blob: storage.Blob
+    for blob in pub_bucket.list_blobs(prefix=f'processed/{image_name}/'):
+        image_name = blob.name.split('/')[-1]
+        images.append(image_name)
+    return flask.json.jsonify(list(images))
 
 
 def validator():

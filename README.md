@@ -1,8 +1,9 @@
 [![Build Status](https://travis-ci.com/elvoai/elvo-analysis.svg?branch=master)](https://travis-ci.com/elvoai/elvo-analysis)
 [![codecov](https://codecov.io/gh/elvoai/elvo-analysis/branch/master/graph/badge.svg)](https://codecov.io/gh/elvoai/elvo-analysis)
+[![Documentation Status](https://readthedocs.org/projects/elvo-analysis/badge/?version=latest)](https://elvo-analysis.readthedocs.io/en/latest/?badge=latest)
 
 ### Getting started
-Create a virtual environment, run `pip install -r requirements.txt`
+Create a virtual environment, run `pip install -e .`
 and then run `pytest`. If the test cases pass you should be good to
 start developing.
 
@@ -13,6 +14,7 @@ start developing.
 The project contains the following core folders:
 
 - `credentials/` # The other secrets folder
+- `blueno/` # Shared code for our ML platform
 - `dashboard/` # Code for the ELVO App Engine dashboard
 - `data/` # Contains all downloaded data. Data used in the code should be stored in the cloud.
 - `docs/` # Documentation for the project.

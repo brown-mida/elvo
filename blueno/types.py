@@ -65,6 +65,18 @@ class GeneratorConfig:
     vertical_flip: bool = False
 
 
+@dataclass
+class EvalConfig:
+    """
+    Config data structure required to evaluate a given model.
+    """
+    model: ModelConfig
+    model_weights: str
+    data: DataConfig
+    val_split: float
+    seed: int
+
+
 # Keep the below two classes in sync
 
 @dataclass

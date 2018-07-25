@@ -91,6 +91,19 @@ class TrainingJob(elasticsearch_dsl.Document):
         name = TRAINING_JOBS
 
 
+def insert_or_replace_filepaths(log_file: pathlib.Path,
+                                csv_file: typing.Optional[pathlib.Path],
+                                gpu1708=False,
+                                alias='default'):
+    training_job = construct_job_from_filepaths(log_file,
+                                                csv_file,
+                                                gpu1708)
+    if training_job is None:
+        print('training job is none, not inserting')
+        return
+    insert_or_replace(training_job, alias=alias)
+
+
 def insert_or_ignore_filepaths(log_file: pathlib.Path,
                                csv_file: typing.Optional[pathlib.Path],
                                gpu1708=False,
@@ -105,6 +118,79 @@ def insert_or_ignore_filepaths(log_file: pathlib.Path,
     :param log_file:
     :param csv_file:
     :param gpu1708:
+    :return:
+    """
+    training_job = construct_job_from_filepaths(log_file,
+                                                csv_file,
+                                                gpu1708)
+    if training_job is None:
+        print('training job is none, not inserting')
+        return
+    insert_or_ignore(training_job, alias=alias)
+
+
+def insert_or_replace(training_job: TrainingJob, alias='default'):
+    """Inserts the training job into the TrainingJob index, replacing
+    the old match, if one exists.
+
+    Raises a ValueError if multiple matches exist.
+    """
+    if 'slack' not in training_job.raw_log:
+        print('job is incomplete, returning')
+        return
+
+    search: elasticsearch_dsl.Search = JOB_INDEX.search(using=alias) \
+        .query('match', job_name=training_job.job_name) \
+        .query('match', created_at=training_job.created_at)
+
+    if len(search.execute()) > 1:
+        raise ValueError(f'Found two matches to {training_job.job_name}'
+                         f'created at {training_job.created_at}')
+    elif len(search.execute()) == 1:
+        print('replacing result {} created at'.format(training_job.job_name,
+                                                      training_job.created_at))
+    else:
+        print('no match found for {} created at'.format(
+            training_job.job_name,
+            training_job.created_at))
+
+    search.delete()
+    training_job.save(using=alias)
+
+
+def insert_or_ignore(training_job: TrainingJob, alias='default'):
+    """Inserts the training job into the elasticsearch index
+    if no job with the same name and creation timestamp exists.
+    """
+    if 'slack' not in training_job.raw_log:
+        print('job is incomplete, returning')
+        return
+
+    matches = JOB_INDEX.search() \
+        .query('match', job_name=training_job.job_name) \
+        .query('match', created_at=training_job.created_at) \
+        .count()
+
+    if matches == 0:
+        training_job.save(using=alias)
+    else:
+        print('job {} created at {} exists'.format(
+            training_job.job_name, training_job.created_at))
+
+
+def construct_job_from_filepaths(
+        log_file: pathlib.Path,
+        csv_file: typing.Optional[pathlib.Path],
+        gpu1708=False) -> typing.Optional[TrainingJob]:
+    """
+    Creates a TrainingJob instance from the given files.
+
+    Returns None if a job cannot be created.
+
+    :param log_file:
+    :param csv_file:
+    :param gpu1708:
+    :param alias:
     :return:
     """
     filename = str(log_file.name)
@@ -130,7 +216,7 @@ def insert_or_ignore_filepaths(log_file: pathlib.Path,
         metrics = _extract_metrics(csv_file)
     except (ValueError, EmptyDataError):
         print('metrics file {} is empty'.format(csv_file))
-        return
+        return None
 
     training_job = construct_job(job_name,
                                  created_at,
@@ -144,27 +230,7 @@ def insert_or_ignore_filepaths(log_file: pathlib.Path,
                                  final_val_auc=final_val_auc,
                                  best_val_auc=best_val_auc,
                                  params_dict=params_dict)
-    insert_or_ignore(training_job, alias=alias)
-
-
-def insert_or_ignore(training_job: TrainingJob, alias='default'):
-    """Inserts the training job into the elasticsearch index
-    if no job with the same name and creation timestamp exists.
-    """
-    matches = JOB_INDEX.search() \
-        .query('match', job_name=training_job.job_name) \
-        .query('match', created_at=training_job.created_at) \
-        .count()
-
-    if 'slack' not in training_job.raw_log:
-        print('job is incomplete, returning')
-        return
-
-    if matches == 0:
-        training_job.save(using=alias)
-    else:
-        print('job {} created at {} exists'.format(
-            training_job.job_name, training_job.created_at))
+    return training_job
 
 
 def construct_job(job_name,
@@ -282,10 +348,21 @@ def _extract_auc(log_path: pathlib.Path) -> typing.Optional[float]:
 
 
 def _extract_best_auc(log_path: pathlib.Path) -> typing.Optional[float]:
+    aucs = []
+
     with open(log_path) as f:
         for line in f:
             if 'INFO - val_auc:' in line:
-                return float(line.split(' ')[-1].rstrip('\n'))
+                try:
+                    auc = float(line.split(' ')[-1].rstrip('\n'))
+                    aucs.append(auc)
+                except ValueError:
+                    print('matching line could not be parsed: {}'.format(line))
+
+    if len(aucs) == 0:
+        return None
+
+    return max(aucs)
 
 
 def _parse_params_str(params_str: str) -> typing.Dict[str, typing.Any]:

@@ -1,14 +1,14 @@
 import itertools
 import multiprocessing
+import os
 import pathlib
+import random
 import time
 from typing import List, Tuple
 
 import elasticsearch_dsl
 import keras
 import numpy as np
-import os
-import random
 from dataclasses import dataclass
 from elasticsearch_dsl import connections
 from elasticsearch_dsl.response import Hit
@@ -19,7 +19,7 @@ from keras.preprocessing.image import ImageDataGenerator
 import blueno
 from blueno import utils
 from blueno.io import load_model
-from bluenot import prepare_data
+from blueno.preprocessing import prepare_data
 
 
 @dataclass
@@ -84,7 +84,7 @@ def load_and_evaluate(model_info: ModelInfo, bucket):
         val_split=model_info.val_split
     )
 
-    x_train, x_valid, y_train, y_valid, _, _ = prepare_data(params)
+    x_train, x_valid, y_train, y_valid, _, _ = prepare_data(params, False)
     datagen = ImageDataGenerator(featurewise_center=True,
                                  featurewise_std_normalization=True)
     datagen.fit(x_train)
@@ -161,7 +161,7 @@ def ensemble(seed=0,
         val_split=val_split
     )
 
-    x_train, x_valid, y_train, y_valid, _, _ = prepare_data(params)
+    x_train, x_valid, y_train, y_valid, _, _ = prepare_data(params, False)
 
     datagen = ImageDataGenerator(featurewise_center=True,
                                  featurewise_std_normalization=True)
