@@ -113,7 +113,7 @@ class Trainer extends Component {
     // TODO(luke): At some point filter the params
     const data = this.state;
     const dataName = this.state.processedName;
-    axios.post('/preprocessing/' + processedName, data)
+    axios.post('/preprocessing/' + dataName, data)
         .then(response => {
           console.log(response);
         })

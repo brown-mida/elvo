@@ -11,6 +11,7 @@ setup(
     url='https://github.com/elvoai/elvo-analysis',
     packages=['blueno'],
     install_requires=[
+        # TODO(luke): Reduce the number of dependencies to improve deploy speed
         'dataclasses>=0.6',
         'dropbox>=8.9.0',
         'elasticsearch-dsl>=6.2.1',

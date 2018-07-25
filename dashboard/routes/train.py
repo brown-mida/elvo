@@ -5,6 +5,7 @@ Responsible for the routes related to the /trainer endpoint.
 import io
 import logging
 import types
+from concurrent.futures import ThreadPoolExecutor
 
 import flask
 import matplotlib
@@ -24,6 +25,8 @@ client = storage.Client(project='elvo-198322')
 # TODO(luke): Also start considering user-specific buckets.
 priv_bucket = client.bucket('elvos')
 pub_bucket = client.bucket('elvos-public')
+
+executor = ThreadPoolExecutor(2)
 
 
 @app_train.route('/trainer')
@@ -123,6 +126,15 @@ def preprocess_data(data_name: str):
                          int(data['maxPixelValue']))
 
     input_blob: storage.Blob
+    executor.submit(_process_arrays,
+                    data_name, crop_length, height_offset, mip_thickness,
+                    pixel_value_range)
+
+    return '', 204  # No Content code
+
+
+def _process_arrays(data_name, crop_length, height_offset,
+                    mip_thickness, pixel_value_range):
     for input_blob in priv_bucket.list_blobs(prefix=f'airflow/npy'):
         logging.info(f'downloading numpy file: {input_blob.name}')
         input_filename = input_blob.name.split('/')[-1]
@@ -133,8 +145,8 @@ def preprocess_data(data_name: str):
 
         logging.debug(f'processing numpy array')
         try:
-            arr = _processs_arr(arr, crop_length, height_offset,
-                                mip_thickness, pixel_value_range)
+            arr = _process_arr(arr, crop_length, height_offset,
+                               mip_thickness, pixel_value_range)
         except AssertionError:
             logging.debug(f'file {input_filename} could not be processed,'
                           f' has input shape {arr.shape}')
@@ -155,14 +167,12 @@ def preprocess_data(data_name: str):
         logging.info(f'uploading png file: {output_blob.name}')
         output_blob.upload_from_file(output_stream)
 
-    return '', 204  # No Content code
 
-
-def _processs_arr(arr,
-                  crop_length,
-                  height_offset,
-                  mip_thickness,
-                  pixel_value_range):
+def _process_arr(arr,
+                 crop_length,
+                 height_offset,
+                 mip_thickness,
+                 pixel_value_range):
     arr = blueno.transforms.crop(arr,
                                  (3 * mip_thickness,
                                   crop_length,
