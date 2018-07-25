@@ -2,6 +2,7 @@ import datetime
 import logging
 
 import flask
+from flask_cors import CORS
 import gspread
 import io
 import matplotlib as mpl
@@ -13,11 +14,16 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from oauth2client.service_account import ServiceAccountCredentials
 from skimage import measure
 
+from routes.preprocess import app_preprocess
+
 mpl.use('Agg')
 from matplotlib import image  # noqa: E402
 from matplotlib import pyplot as plt  # noqa: E402
 
+
 app = flask.Flask(__name__)
+app.register_blueprint(app_preprocess)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 client = storage.Client(project='elvo-198322')
 bucket = client.bucket('elvos')
