@@ -39,7 +39,7 @@ setup(
             'keras==2.1.3',
         ],
         'etl': [
-            'apache-airflow[slack]==1.8.2',
+            'apache-airflow[slack,gcp_api,postgres]==1.8.2',
         ],
         'test': [
             'pytest>=3.6.1',

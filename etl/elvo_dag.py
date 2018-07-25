@@ -25,7 +25,8 @@ dag = DAG(dag_id='elvo_main',
           description='The main DAG for loading ELVO data from Dropbox and'
                       ' and Google Drive',
           default_args=default_args,
-          catchup=False)
+          catchup=False,
+          max_active_runs=1)
 
 dropbox_to_gcs = BashOperator(task_id='dropbox_to_gcs',
                               bash_command='python3 /home/lukezhu/'
