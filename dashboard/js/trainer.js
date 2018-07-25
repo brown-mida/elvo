@@ -13,6 +13,7 @@ import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import Divider from '@material-ui/core/Divider';
 import TrainerResultsView from './TrainerResultsView';
 import TrainerDataView from './TrainerDataView';
+import TrainerGuideView from './TrainerGuideView';
 
 
 const styles = {
@@ -49,7 +50,7 @@ class Trainer extends Component {
       selectedPlot: '',
       plotSortType: 'date',
 
-      viewType: 'data',
+      viewType: 'guide',
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -157,6 +158,11 @@ class Trainer extends Component {
             />
         );
         break;
+      case 'guide':
+        bodyView = (
+            <TrainerGuideView parentStyles={styles}/>
+        );
+        break;
       default:
         console.error(this.state.viewType + ' is not valid');
         bodyView = <div>Error :(</div>;
@@ -259,8 +265,9 @@ class Trainer extends Component {
                 }}
                 showLabels
             >
-              <BottomNavigationAction label="Data View" value="data"/>
-              <BottomNavigationAction label="Results View" value="results"/>
+              <BottomNavigationAction label="Data" value="data"/>
+              <BottomNavigationAction label="Results" value="results"/>
+              <BottomNavigationAction label="Guide" value="guide"/>
             </BottomNavigation>
           </Drawer>
           {bodyView}

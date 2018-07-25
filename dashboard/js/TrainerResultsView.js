@@ -62,8 +62,8 @@ const TrainerResultsView = ({ selectedPlot, parentStyles }) => {
 
 
     <Grid item xs={12}>
-      <h4>True Negatives</h4>
       <Paper>
+        <h4>True Negatives</h4>
         <img src={
           plotUrl(selectedPlot, 'true_negatives')}
              style={styles.plotImg}
