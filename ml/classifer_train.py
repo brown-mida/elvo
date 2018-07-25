@@ -10,14 +10,12 @@ import io
 import os
 
 BLACKLIST = []
-LEARN_RATES = [5e-3, 1e-3,
-               5e-4, 1e-4,
+LEARN_RATES = [5e-4, 1e-4,
                5e-5, 1e-5,
                5e-6, 1e-6,
                5e-7, 1e-7]
 
-DROPOUTS = [(0.25, 0.5),
-            (0.3, 0.55),
+DROPOUTS = [(0.3, 0.55),
             (0.35, 0.6),
             (0.4, 0.65),
             (0.45, 0.7),
@@ -27,8 +25,7 @@ DROPOUTS = [(0.25, 0.5),
             (0.4, 0.4),
             (0.5, 0.5),
             (0.6, 0.6),
-            (0.7, 0.7),
-            (0.8, 0.8)]
+            (0.7, 0.7)]
 
 
 def download_array(blob: storage.Blob) -> np.ndarray:
