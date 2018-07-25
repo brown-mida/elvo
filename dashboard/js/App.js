@@ -18,6 +18,8 @@ const styles = {
   },
 };
 
+// TODO(luke): Move this class to annotator.js
+// TODO(luke): Identify reusable components in this class
 class Annotator extends Component {
   constructor(props) {
     super(props);
@@ -93,6 +95,7 @@ class Annotator extends Component {
     return (false);
   }
 
+  // TODO: This should be a separate stateless component
   static userGuide() {
     return (
         <Paper style={styles.dividerPaper}>
@@ -209,6 +212,7 @@ class Annotator extends Component {
 
   }
 
+  // TODO(luke): Convert to a stateless component
   annotationInputView() {
     return (
         <Paper style={styles.dividerPaper}>

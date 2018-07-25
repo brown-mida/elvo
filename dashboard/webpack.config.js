@@ -1,5 +1,6 @@
 const webpack = require('webpack');
 module.exports = {
+  // TODO(luke): Separate production webpack build.
   mode: 'development',
   entry: {
     annotator: './js/annotator.js',

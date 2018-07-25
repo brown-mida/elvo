@@ -14,6 +14,9 @@ matplotlib.use('Agg')  # noqa: E402
 from matplotlib import pyplot as plt
 
 
+# TODO(luke): Split this into a slack and a plotting module.
+
+
 def slack_report(x_train: np.ndarray,
                  x_valid: np.ndarray,
                  y_valid: np.ndarray,
@@ -121,6 +124,14 @@ def _create_all_plots(
 def save_history(history: keras.callbacks.History,
                  loss_path: pathlib.Path,
                  acc_path: pathlib.Path):
+    """
+    Saves plots of the loss/acc over epochs in the given paths.
+
+    :param history:
+    :param loss_path:
+    :param acc_path:
+    :return:
+    """
     loss_list = [s for s in history.history.keys() if
                  'loss' in s and 'val' not in s]
     val_loss_list = [s for s in history.history.keys() if
@@ -175,7 +186,7 @@ def save_confusion_matrix(cm, classes,
                           title='Confusion matrix',
                           cmap=plt.cm.Blues):
     """
-    This function prints and plots the confusion matrix.
+    This function prints, plots, and saves the confusion matrix.
     Normalization can be applied by setting `normalize=True`.
     """
     if normalize:
@@ -238,6 +249,7 @@ def full_multiclass_report(model: keras.models.Model,
     :param chunk
     :return:
     """
+    # TODO(luke): Split this into separate functions.
     y_proba = model.predict(x, batch_size=8)
     assert y_true.shape == y_proba.shape
 
@@ -288,11 +300,18 @@ def upload_to_slack(filename,
                     comment,
                     token,
                     channels='#model-results'):
+    """
+    Uploads the file at the given path to the channel.
+
+    :param filename:
+    :param comment:
+    :param token:
+    :param channels:
+    :return:
+    """
     my_file = {
         'file': (str(filename), open(filename, 'rb'), 'png')
     }
-
-    print(my_file)
 
     payload = {
         "filename": str(filename),
@@ -316,7 +335,7 @@ def save_misclassification_plots(x_valid,
                                  fn_path: pathlib.Path,
                                  id_valid: np.ndarray = None,
                                  chunk=False):
-    """Saves the 4 true/fals positive/negative plots.
+    """Saves the 4 true/false positive/negative plots.
 
     The y inputs must be binary and 1 dimensional.
     """
