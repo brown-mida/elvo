@@ -32,6 +32,8 @@ import importlib
 import pathlib
 import datetime
 import random
+import multiprocessing
+import time
 
 import numpy as np
 import keras
@@ -185,7 +187,7 @@ def __load_data(params):
 
 
 def __train_model(params, x_train, y_train, x_valid, y_valid,
-                  num_gpu=0, no_early_stopping=False):
+                  no_early_stopping=False):
     """
     Trains the model.
 
@@ -208,9 +210,6 @@ def __train_model(params, x_train, y_train, x_valid, y_valid,
     model = params.model.model_callable(input_shape=x_train.shape[1:],
                                         num_classes=y_train.shape[1],
                                         **params.model.__dict__)
-    model_original = model
-    if num_gpu > 0:
-        model = multi_gpu_model(model, gpus=num_gpu)
     model_metrics = ['acc',
                      utils.sensitivity,
                      utils.specificity,
@@ -222,18 +221,18 @@ def __train_model(params, x_train, y_train, x_valid, y_valid,
         metrics=model_metrics)
 
     if no_early_stopping:
-        cbs = [utils.create_callbacks(x_train, y_train, x_valid, y_valid,
-                                      early_stopping=False,
-                                      reduce_lr=params.reduce_lr)]
+        cbs = utils.create_callbacks(x_train, y_train, x_valid, y_valid,
+                                     early_stopping=False,
+                                     reduce_lr=params.reduce_lr)
         cbs.append(ModelCheckpoint(filepath='../tmp/model.hdf5',
                                    save_best_only=True,
                                    monitor='val_acc',
                                    mode='max',
                                    verbose=1))
     else:
-        cbs = [utils.create_callbacks(x_train, y_train, x_valid, y_valid,
-                                      early_stopping=params.early_stopping,
-                                      reduce_lr=params.reduce_lr)]
+        cbs = utils.create_callbacks(x_train, y_train, x_valid, y_valid,
+                                     early_stopping=params.early_stopping,
+                                     reduce_lr=params.reduce_lr)
 
     history = model.fit_generator(train_gen,
                                   epochs=params.max_epochs,
@@ -246,13 +245,12 @@ def __train_model(params, x_train, y_train, x_valid, y_valid,
         metrics.specificity = utils.specificity
         metrics.true_positives = utils.true_positives
         metrics.false_negatives = utils.false_negatives
-        model_original = load_model('../tmp/model.hdf5')
-    return model_original, history
+        model = load_model('../tmp/model.hdf5')
+    return model, history
 
 
 def evaluate_model(x_test, y_test, model, params,
-                   normalize=True, x_train=None,
-                   num_gpus=0):
+                   normalize=True, x_train=None):
     """
     Evaluates the model.
 
@@ -279,9 +277,6 @@ def evaluate_model(x_test, y_test, model, params,
                               x_train[:, :, :, 2].std()])
             x_test = (x_test - x_mean) / x_std
 
-    if num_gpus > 0:
-        model = multi_gpu_model(model)
-
     metrics = ['acc',
                utils.sensitivity,
                utils.specificity,
@@ -294,6 +289,145 @@ def evaluate_model(x_test, y_test, model, params,
     results = model.evaluate(x=x_test, y=y_test, batch_size=1,
                              verbose=1)
     return results
+
+
+def iterate_eval(num_iterations, params, gpu,
+                 job_name=None, job_date=None,
+                 purported_loss=None, purported_accuracy=None,
+                 purported_sensitivity=None,
+                 slack_token=None,
+                 no_early_stopping=False):
+    """
+    Beautiful piece of text that has more logging than code.
+    """
+    os.environ['CUDA_VISIBLE_DEVICES'] = gpu
+
+    result_list = []
+    for i in range(int(num_iterations)):
+        logging.info("-----Iteration {}-----".format(i + 1))
+        params.seed = random.randint(0, 1000000)
+        logging.info("Using seed {}".format(params.seed))
+        (x_train, x_valid, x_test, y_train, y_valid, y_test,
+         _, _, _) = __load_data(params)
+        model, history = __train_model(params, x_train, y_train,
+                                       x_valid, y_valid,
+                                       no_early_stopping=no_early_stopping)
+        result = evaluate_model(x_test, y_test, model, params,
+                                normalize=True, x_train=x_train)
+        result_list.append(result)
+        logging.info("-----Results-----")
+        logging.info('Loss: {}'.format(result[0]))
+        logging.info('Acc: {}'.format(result[1]))
+        logging.info('Sensitivity: {}'.format(result[2]))
+        logging.info('Specificity: {}'.format(result[3]))
+        logging.info('True Positives: {}'.format(result[4]))
+        logging.info('False Negatives: {}'.format(result[5]))
+
+        if (slack_token is not None):
+            text = "-----Iteration {}-----\n".format(i + 1)
+            text += "Seed: {}\n".format(params.seed)
+            text += "Params: {}\n".format(params)
+            if (job_name is not None):
+                text += 'Job name: {}\n'.format(job_name)
+                text += 'Job date: {}\n'.format(job_date)
+                text += 'Purported accuracy: {}\n'.format(
+                    purported_accuracy)
+                text += 'Purported loss: {}\n'.format(
+                    purported_loss)
+                text += 'Purported sensitivity: {}\n'.format(
+                    purported_sensitivity)
+            text += "\n-----Results-----\n"
+            text += 'Loss: {}\n'.format(result[0])
+            text += 'Acc: {}\n'.format(result[1])
+            text += 'Sensitivity: {}\n'.format(result[2])
+            text += 'Specificity: {}\n'.format(result[3])
+            text += 'True Positives: {}\n'.format(result[4])
+            text += 'False Negatives: {}\n'.format(result[5])
+            slack.write_to_slack(text, slack_token)
+
+    result_list = np.average(result_list, axis=0)
+    logging.info("---------------Final Results---------------")
+    logging.info('Loss: {}'.format(result_list[0]))
+    logging.info('Acc: {}'.format(result_list[1]))
+    logging.info('Sensitivity: {}'.format(result_list[2]))
+    logging.info('Specificity: {}'.format(result_list[3]))
+    logging.info('True Positives: {}'.format(result_list[4]))
+    logging.info('False Negatives: {}'.format(result_list[5]))
+
+    if (slack_token is not None):
+            text = "-----Final Results-----\n"
+            text += "Seed: {}\n".format(params.seed)
+            text += "Params: {}\n".format(params)
+            if (job_name is not None):
+                text += 'Job name: {}\n'.format(job_name)
+                text += 'Job date: {}\n'.format(job_date)
+                text += 'Purported accuracy: {}\n'.format(
+                    purported_accuracy)
+                text += 'Purported loss: {}\n'.format(
+                    purported_loss)
+                text += 'Purported sensitivity: {}\n'.format(
+                    purported_sensitivity)
+            text += "\n-----Average Results-----\n"
+            text += 'Loss: {}\n'.format(result_list[0])
+            text += 'Acc: {}\n'.format(result_list[1])
+            text += 'Sensitivity: {}\n'.format(result_list[2])
+            text += 'Specificity: {}'.format(result_list[3])
+            text += 'True Positives: {}\n'.format(result_list[4])
+            text += 'False Negatives: {}\n'.format(result_list[5])
+            slack.write_to_slack(text, slack_token)
+
+
+def multiprocess(models, num_iterations, gpus, slack_token=None,
+                 no_early_stopping=False):
+    gpu_index = 0
+    processes = []
+
+    for model in models:
+        logging.info("----------------Evaluation-------------------")
+        if 'job_name' in model:
+            logging.info('Job name: {}'.format(model['job_name']))
+        logging.info('Job date: {}'.format(model['date']))
+        if 'purported_accuracy' in model:
+            logging.info('Purported accuracy: {}'.format(
+                model['purported_accuracy']))
+        if 'purported_loss' in model:
+            logging.info('Purported loss: {}'.format(
+                model['purported_loss']))
+        if 'purported_sensitivity' in model:
+            logging.info('Purported sensitivity: {}'.format(
+                model['purported_sensitivity']))
+
+        params = model['params']
+        data_loaded = __get_data_if_not_exists(params.data.gcs_url,
+                                               model['local_dir'])
+        if not data_loaded:
+            logging.info('This directory does not exist. Moving on...')
+        else:
+            p = multiprocessing.Process(
+                target=iterate_eval,
+                args=(num_iterations, params, gpus[gpu_index]),
+                kwargs={
+                    'job_name': model['job_name'],
+                    'job_date': model['date'],
+                    'purported_accuracy': model['purported_accuracy'],
+                    'purported_loss': model['purported_loss'],
+                    'purported_sensitivity': model['purported_sensitivity'],
+                    'slack_token': slack_token,
+                    'no_early_stopping': no_early_stopping
+                })
+            gpu_index += 1
+            gpu_index %= len(gpus)
+
+            logging.info('Running at GPU {}'.format(gpus[gpu_index]))
+            p.start()
+            processes.append(p)
+
+            if gpu_index == 0:
+                logging.info('All gpus used, calling join on processes...')
+            for p in processes:
+                p.join()
+            processes = []
+            time.sleep(60)
 
 
 def parse_args(args):
@@ -375,91 +509,6 @@ def check_config(config):
         raise ValueError('EVAL_PARAM_LIST must be a list of ParamConfig')
 
 
-def iterate_eval(num_iterations, params, num_gpu,
-                 job_name=None, job_date=None,
-                 purported_loss=None, purported_accuracy=None,
-                 purported_sensitivity=None,
-                 slack_token=None,
-                 no_early_stopping=False):
-    """
-    Beautiful piece of text that has more logging than code.
-    """
-    result_list = []
-    for i in range(int(num_iterations)):
-        logging.info("-----Iteration {}-----".format(i + 1))
-        params.seed = random.randint(0, 1000000)
-        logging.info("Using seed {}".format(params.seed))
-        (x_train, x_valid, x_test, y_train, y_valid, y_test,
-         _, _, _) = __load_data(params)
-        model, history = __train_model(params, x_train, y_train,
-                                       x_valid, y_valid,
-                                       num_gpu=num_gpu,
-                                       no_early_stopping=no_early_stopping)
-        result = evaluate_model(x_test, y_test, model, params,
-                                normalize=True, x_train=x_train)
-        result_list.append(result)
-        logging.info("-----Results-----")
-        logging.info('Loss: {}'.format(result[0]))
-        logging.info('Acc: {}'.format(result[1]))
-        logging.info('Sensitivity: {}'.format(result[2]))
-        logging.info('Specificity: {}'.format(result[3]))
-        logging.info('True Positives: {}'.format(result[4]))
-        logging.info('False Negatives: {}'.format(result[5]))
-
-        if (slack_token is not None):
-            text = "-----Iteration {}-----\n".format(i + 1)
-            text += "Seed: {}\n".format(params.seed)
-            text += "Params: {}\n".format(params)
-            if (job_name is not None):
-                text += 'Job name: {}\n'.format(job_name)
-                text += 'Job date: {}\n'.format(job_date)
-                text += 'Purported accuracy: {}\n'.format(
-                    purported_accuracy)
-                text += 'Purported loss: {}\n'.format(
-                    purported_loss)
-                text += 'Purported sensitivity: {}\n'.format(
-                    purported_sensitivity)
-            text += "\n-----Results-----\n"
-            text += 'Loss: {}\n'.format(result[0])
-            text += 'Acc: {}\n'.format(result[1])
-            text += 'Sensitivity: {}\n'.format(result[2])
-            text += 'Specificity: {}\n'.format(result[3])
-            text += 'True Positives: {}\n'.format(result[4])
-            text += 'False Negatives: {}\n'.format(result[5])
-            slack.write_to_slack(text, slack_token)
-
-    result_list = np.average(result_list, axis=0)
-    logging.info("---------------Final Results---------------")
-    logging.info('Loss: {}'.format(result_list[0]))
-    logging.info('Acc: {}'.format(result_list[1]))
-    logging.info('Sensitivity: {}'.format(result_list[2]))
-    logging.info('Specificity: {}'.format(result_list[3]))
-    logging.info('True Positives: {}'.format(result_list[4]))
-    logging.info('False Negatives: {}'.format(result_list[5]))
-
-    if (slack_token is not None):
-            text = "-----Final Results-----\n"
-            text += "Seed: {}\n".format(params.seed)
-            text += "Params: {}\n".format(params)
-            if (job_name is not None):
-                text += 'Job name: {}\n'.format(job_name)
-                text += 'Job date: {}\n'.format(job_date)
-                text += 'Purported accuracy: {}\n'.format(
-                    purported_accuracy)
-                text += 'Purported loss: {}\n'.format(
-                    purported_loss)
-                text += 'Purported sensitivity: {}\n'.format(
-                    purported_sensitivity)
-            text += "\n-----Average Results-----\n"
-            text += 'Loss: {}\n'.format(result_list[0])
-            text += 'Acc: {}\n'.format(result_list[1])
-            text += 'Sensitivity: {}\n'.format(result_list[2])
-            text += 'Specificity: {}'.format(result_list[3])
-            text += 'True Positives: {}\n'.format(result_list[4])
-            text += 'False Negatives: {}\n'.format(result_list[5])
-            slack.write_to_slack(text, slack_token)
-
-
 def main(args=None):
     # Parse arguments
     if args is None:
@@ -486,12 +535,12 @@ def main(args=None):
     # Choose GPU to use
     if args.gpu:
         os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
-        num_gpu = len(args.gpu.split(','))
+        gpus = args.gpu.split(',')
     elif args.config is not None and user_config.gpus is not None:
         os.environ['CUDA_VISIBLE_DEVICES'] = user_config.gpus
-        num_gpu = len(user_config.gpus.split(','))
+        gpus = user_config.gpus.split(',')
     else:
-        num_gpu = 0
+        gpus = ['0']
 
     # Number of iterations
     if args.config is not None and user_config.num_iterations is not None:
@@ -509,31 +558,8 @@ def main(args=None):
         # Fetch params list from Kibana to evaluate
         models = get_models_to_train(args.address, args.lower,
                                      args.upper, '../tmp')
-        for model in models:
-            logging.info("----------------Evaluation-------------------")
-            logging.info('Job name: {}'.format(model['job_name']))
-            logging.info('Job date: {}'.format(model['date']))
-            logging.info('Purported accuracy: {}'.format(
-                model['purported_accuracy']))
-            logging.info('Purported loss: {}'.format(
-                model['purported_loss']))
-            logging.info('Purported sensitivity: {}'.format(
-                model['purported_sensitivity']))
-            params = model['params']
-            data_loaded = __get_data_if_not_exists(params.data.gcs_url,
-                                                   model['local_dir'])
-            if not data_loaded:
-                logging.info('This directory does not exist. Moving on...')
-            else:
-                iterate_eval(
-                    num_iterations, params, num_gpu,
-                    job_name=model['job_name'],
-                    job_date=model['date'],
-                    purported_accuracy=model['purported_accuracy'],
-                    purported_loss=model['purported_loss'],
-                    purported_sensitivity=model['purported_sensitivity'],
-                    slack_token=slack_token,
-                    no_early_stopping=args.no_early_stopping)
+        multiprocess(models, num_iterations, gpus, slack_token=slack_token,
+                     no_early_stopping=args.no_early_stopping)
 
     else:
         # Manual evaluation of a list of ParamConfig
@@ -542,12 +568,8 @@ def main(args=None):
         check_config(param_list_config)
 
         params = param_list_config.EVAL_PARAM_LIST
-        for param in params:
-            __get_data_if_not_exists(param.data.gcs_url,
-                                     param.data.data_dir)
-            iterate_eval(num_iterations, param, num_gpu,
-                         slack_token=slack_token,
-                         no_early_stopping=args.no_early_stopping)
+        multiprocess(params, num_iterations, gpus, slack_token=slack_token,
+                     no_early_stopping=args.no_early_stopping)
 
 
 if __name__ == '__main__':
