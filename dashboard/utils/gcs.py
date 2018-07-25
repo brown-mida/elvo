@@ -3,6 +3,7 @@ Google Cloud Storage related logic.
 """
 
 import io
+import logging
 import os
 import numpy as np
 from google.cloud import storage
@@ -41,3 +42,13 @@ def save_npy_as_image_and_upload(arr, user, dataset, folder,
                                                     folder, filename))
     out_blob.upload_from_filename('{}/{}.jpg'.format(tmp_dir, filename))
     os.remove('{}/{}.jpg'.format(tmp_dir, filename))
+
+
+def download_image(user, dataset, data_type, filename, bucket):
+    logging.info("A")
+    blob = bucket.blob('{}/{}/{}/{}.jpg'.format(user, dataset,
+                                                data_type, filename))
+    out_stream = io.BytesIO()
+    blob.download_to_file(out_stream)
+    out_stream.seek(0)
+    return out_stream
