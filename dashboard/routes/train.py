@@ -112,9 +112,9 @@ def preprocess_data(data_name: str):
     :param data_name:
     :return:
     """
-    # TODO: Since this requests takes so long it may be better to do this
+    # TODO(luke): Since this requests takes so long it may be better to do this
     # operation on a different server.
-    crop_length = 200  # TODO: Validate this so it fits in ResNet
+    crop_length = 200  # TODO(luke): Validate this so it fits in ResNet
     mip_thickness = 25
     height_offset = 30
     pixel_value_range = (0, 200)
@@ -139,7 +139,7 @@ def preprocess_data(data_name: str):
         logging.debug(f'converting processed array into png')
         output_stream = io.BytesIO()
         # Standardize to [0, 1] otherwise it fails
-        # TODO: Consider standardizing by feature (RGB) as that is how
+        # TODO(luke): Consider standardizing by feature (RGB) as that is how
         # Keras does it
         standardized = (arr - arr.min()) / arr.max()
         plt.imsave(output_stream, standardized)
