@@ -167,10 +167,10 @@ def clean_csv():
 def run_transform():
     configure_logger()
     clean_csv()
-    #clean_old_data()
-    #generate_csv()
-    #transform_positives()
-    #clean_new_data()
+    # clean_old_data()
+    # generate_csv()
+    # transform_positives()
+    # clean_new_data()
 
 
 if __name__ == '__main__':
