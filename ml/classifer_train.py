@@ -68,9 +68,9 @@ def train(x_train, y_train, x_val, y_val):
     results = []
     for lr in LEARN_RATES:
         for dropout in DROPOUTS:
-            print(f'\n\n-----------------------------------------------\n'
+            print(f'\n\n---------------------------------------------------\n'
                   f'TRAINING MODEL : LR = {lr}, DROPOUT = {dropout}'
-                  f'\n-----------------------------------------------\n')
+                  f'\n---------------------------------------------------\n')
 
             for i in range(10):
                 model = cube_classifier.CubeClassifierBuilder.build(dropout=dropout)
@@ -80,7 +80,7 @@ def train(x_train, y_train, x_val, y_val):
                 model.fit(x=x_train,
                           y=y_train,
                           batch_size=128,
-                          callbacks=EarlyStopping(monitor='val_acc', patience=10),
+                          callbacks=[EarlyStopping(monitor='val_acc', patience=10, verbose=1)],
                           epochs=100,
                           validation_data=(x_val, y_val))
 
