@@ -85,7 +85,7 @@ def train(x_train, y_train, x_val, y_val):
                           validation_data=(x_val, y_val))
 
                 result = model.evaluate(x_val, y_val, verbose=1)
-                results.append(result[1])
+                results = np.append(results, result[1])
             results = np.asarray(results)
             models[f'lr: {lr}, dropout: {dropout}'] = {'max': np.max(results),
                                                        'avg': np.mean(results),
