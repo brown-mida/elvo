@@ -3,7 +3,6 @@ import logging
 
 import flask
 import pymongo
-from multiprocessing import Process
 
 from utils import gcs, preprocess
 from utils.mongodb import get_db
