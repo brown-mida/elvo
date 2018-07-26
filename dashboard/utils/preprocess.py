@@ -12,7 +12,7 @@ import subprocess
 from typing import List
 
 from utils.gcs import upload_to_gcs, save_npy_as_image_and_upload
-from utils.transforms import get_pixels_hu, standardize_spacing
+import utils.transforms as t
 
 
 def process_cab(file, filename, tmp_dir):
@@ -66,18 +66,46 @@ def preprocess_scan(slices: List[pydicom.FileDataset]) -> np.array:
     """Transforms the input dicom slices into a numpy array of pixels
     in Hounsfield units with standardized spacing.
     """
-    scan = get_pixels_hu(slices)
-    scan = standardize_spacing(scan, slices)
+    scan = t.get_pixels_hu(slices)
+    scan = t.standardize_spacing(scan, slices)
     return scan
 
 
-def generate_images(arr, user, dataset, file_id, bucket, tmp_dir):
+def generate_images(arr, user, dataset, filename, bucket, tmp_dir):
     axial = arr.max(axis=0)
     coronal = arr.max(axis=1)
     sagittal = arr.max(axis=2)
     save_npy_as_image_and_upload(axial, user, dataset, 'axial',
-                                 file_id, bucket, tmp_dir)
+                                 filename, bucket, tmp_dir)
     save_npy_as_image_and_upload(coronal, user, dataset, 'coronal',
-                                 file_id, bucket, tmp_dir)
+                                 filename, bucket, tmp_dir)
     save_npy_as_image_and_upload(sagittal, user, dataset, 'sagittal',
-                                 file_id, bucket, tmp_dir)
+                                 filename, bucket, tmp_dir)
+
+
+def generate_mip_images(arr, user, dataset, filename, bucket, tmp_dir):
+    save_npy_as_image_and_upload(arr, user, dataset, 'mip',
+                                 filename, bucket, tmp_dir)
+
+
+def transform_array(arr, params):
+    if params['cropZ']:
+        crop_min = int(float(params['cropZmin']))
+        crop_max = int(float(params['cropZmax']))
+        arr = t.crop_z(arr, crop_min, crop_max)
+
+    if params['centerCropXY']:
+        crop_size = int(float(params['centerCropSize']))
+        arr = t.center_crop_xy(arr, crop_size)
+
+    if params['boundHu']:
+        bound_min = int(float(params['boundHuMin']))
+        bound_max = int(float(params['boundHuMax']))
+        arr = t.bound_hu(arr, bound_min, bound_max)
+
+    if params['mip']:
+        if params['multichannelMip']:
+            arr = t.mip_multichannel(arr)
+        else:
+            arr = t.mip_normal(arr)
+    return arr

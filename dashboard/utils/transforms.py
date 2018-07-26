@@ -47,3 +47,37 @@ def standardize_spacing(image, slices):
     resize_factor = new_shape / image.shape
 
     return zoom(image, resize_factor, mode='nearest')
+
+
+def mip_normal(array, index=0):
+    array = np.max(array, axis=index)
+    return np.expand_dims(array, axis=2)
+
+
+def mip_multichannel(array, num_slices=3, index=0):
+    slices = [array.shape[0] // 3, (array.shape[0] * 2) // 3, array.shape[0]]
+    array = [array[:slices[0]],
+             array[slices[0]:slices[1]],
+             array[slices[1]:]]
+    for i in range(len(array)):
+        array[i] = np.max(array[i], axis=index)
+    array = np.array(array)
+    return np.moveaxis(array, index, 2)
+
+
+def crop_z(arr, lower, upper):
+    return arr[lower:upper, :, :]
+
+
+def center_crop_xy(arr, size):
+    center_x = arr.shape[1] // 2
+    center_y = arr.shape[2] // 2
+    return arr[:, center_x - (size // 2):center_x + (size // 2),
+               center_y - (size // 2):center_y + (size // 2)]
+
+
+def bound_hu(arr, min_hu, max_hu):
+    arr = np.clip(arr, min_hu, max_hu)
+    arr[arr == min_hu] = -50
+    arr[arr == max_hu] = -50
+    return arr
