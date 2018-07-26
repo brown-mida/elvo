@@ -121,22 +121,27 @@ def upload_model_to_gcs(job_name, created_at, model_filepath):
             check=True)
 
 
-def download_to_gpu1708(gcs_url, data_dir, recursive=False):
+def download_to_gpu1708(gcs_url, local_path, folder=False):
     """
-    Creates an directory with the array data in the gcs url.
+    Downloads the data from the GCS url to the localpath.
+
+    If folder is true, sync the files (not-recursively).
 
     :param gcs_url: the source gcs url
-    :param data_dir:
+    :param local_path:
     :return:
     """
     # gpu1708 specific code
-    os.makedirs(data_dir, exist_ok=True)
-    r_flag = '-r' if recursive else ''
+    if folder:
+        os.makedirs(local_path, exist_ok=True)
+        cmd = 'rsync'
+    else:
+        cmd = 'cp'
     subprocess.run(
         ['/bin/bash',
          '-c',
          '/gpfs/main/home/lzhu7/google-cloud-sdk/bin/'
-         'gsutil rsync {} {} {}'.format(r_flag, gcs_url, data_dir)],
+         'gsutil {} {} {}'.format(cmd, gcs_url, local_path)],
         check=True)
 
 

@@ -316,7 +316,7 @@ def check_data_in_sync(params: blueno.ParamConfig):
         is_equal = gcs.equal_array_counts(data_dir, array_url)
     except FileNotFoundError:
         logging.info('downloading data to {')
-        gcs.download_to_gpu1708(array_url, data_dir, recursive=True)
+        gcs.download_to_gpu1708(array_url, data_dir, folder=True)
         # TODO(luke): Allow web users to generate labels
         default_label_url = 'gs://elvos/processed/processed-lower/labels.csv'
         labels_path = params.data.labels_path

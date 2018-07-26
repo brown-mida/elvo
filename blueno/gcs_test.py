@@ -48,9 +48,18 @@ def test_gcs_plots():
 
 
 @pytest.mark.skipif(os.uname().nodename != 'gpu1708',
-                    reason='Only works on gpu1708')
+                    reason='Function only for  gpu1708')
 def test_download_gpu1708():
     download_to_gpu1708('gs://elvos/processed/processed-sumera-1/',
                         '/home/lzhu7/elvo-analysis/'
                         'data/processed-sumera-1/',
-                        recursive=True)
+                        folder=True)
+
+
+@pytest.mark.skipif(os.uname().nodename != 'gpu1708',
+                    reason='Function only  for gpu1708')
+def test_download_gpu1708_file():
+    download_to_gpu1708('gs://elvos/processed/processed-sumera-1/labels.csv',
+                        '/home/lzhu7/elvo-analysis/'
+                        'data/processed-sumera-1/labels.csv',
+                        folder=False)
