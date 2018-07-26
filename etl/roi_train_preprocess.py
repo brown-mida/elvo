@@ -273,7 +273,7 @@ y_test = np.asarray(test_labels)
 logging.info(f'{len(train_chunks)} total chunks to train with')
 logging.info(f'full training data: {full_x_train.shape}, {full_y_train.shape}')
 logging.info(f'full validation data: {x_val.shape}, {y_val.shape}')
-logging.info(f'full test data: {x_test}, {y_test}')
+logging.info(f'full test data: {x_test.shape}, {y_test.shape}')
 
 # save as pickle to preserve order of train/val/test labels
 full_arr = np.array([full_x_train,

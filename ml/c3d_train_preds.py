@@ -38,6 +38,7 @@ def main():
 
     train_ids = {}
     val_ids = {}
+    test_ids = {}
     with open('train_ids.csv', 'r') as pos_file:
         reader = csv.reader(pos_file, delimiter=',')
         for row in reader:
@@ -49,6 +50,12 @@ def main():
         for row in reader:
             if row[1] != '0':
                 val_ids[row[0]] = ''
+
+    with open('test_ids.csv', 'r') as pos_file:
+        reader = csv.reader(pos_file, delimiter=',')
+        for row in reader:
+            if row[1] != '0':
+                test_ids[row[0]] = ''
 
     # Get npy files from Google Cloud Storage
     gcs_client = storage.Client.from_service_account_json(
@@ -85,6 +92,7 @@ def main():
 
         train = False
         val = False
+        test = False
         file_id = blob.name.split('/')[-1].split('.')[0][:16]
 
         if file_id in train_ids:
@@ -93,18 +101,26 @@ def main():
         elif file_id in val_ids:
             val = True
 
+        elif file_id in test_ids:
+            test = True
+
         else:
             rand = random.randint(1, 100)
-            if rand > 10:
+            if rand > 20:
                 train = True
-            else:
+            elif rand > 10:
                 val = True
+            else:
+                test = True
 
         if train:
             save_preds_to_cloud(preds, 'train', file_id)
 
         if val:
             save_preds_to_cloud(preds, 'val', file_id)
+
+        if test:
+            save_preds_to_cloud(preds, 'test', file_id)
 
 
 if __name__ == '__main__':
