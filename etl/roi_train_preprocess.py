@@ -29,6 +29,13 @@ test_ids = {'9UIAZ2U1711BN4IW': '',
             'Z3AINLH4Y07ITBRR': '',
             'ZUEK5YSS7CITVWIP': ''}
 
+pos_train = 0
+neg_train = 0
+pos_val = 0
+neg_val = 0
+pos_test = 19
+neg_test = 0
+
 
 def configure_logger():
     root_logger = logging.getLogger()
@@ -82,17 +89,20 @@ for i, id_ in enumerate(list(positive_label_data.keys())):
             for j in range(2, 25):
                 positive_train_label_data[stripped_id + str(j)] = 1
             train_ids[meta_id] = ''
+            pos_train += 1
         elif seed > 10:
             positive_val_label_data[id_] = 1
             for j in range(2, 25):
                 positive_val_label_data[stripped_id + str(j)] = 1
             val_ids[meta_id] = ''
+            pos_val += 1
         else:
             positive_test_label_data[id_] = 1
             for j in range(2, 25):
                 positive_test_label_data[stripped_id + str(j)] = 1
             if meta_id not in test_ids:
                 test_ids[meta_id] = ''
+                pos_test += 1
 
 # Get 14500 random negatives from the label data to feed into our generator
 negative_train_label_data = {}
@@ -124,15 +134,24 @@ while negative_counter < 14500:
             seed = random.randint(1, 100)
             if seed > 20:
                 negative_train_label_data[id_] = label
+                train_ids[meta_id] = ''
+                neg_train += 1
             elif seed > 10:
                 negative_val_label_data[id_] = label
+                val_ids[meta_id] = ''
+                neg_val += 1
             else:
                 negative_test_label_data[id_] = label
+                test_ids[meta_id] = ''
+                neg_test += 1
         del prelim_label_data[id_]
         negative_counter += 1
 
 # save train/val/test split by IDs
 logging.info("saving train/val/test metadata IDs")
+logging.info(f"training brains:   {pos_train} ELVO positive, {neg_train} ELVO negative\n"
+             f"validation brains: {pos_val} ELVO positive, {neg_val} ELVO negative\n"
+             f"testing brains:    {pos_test} ELVO positive, {neg_test} ELVO negative")
 pd.DataFrame.from_dict(train_ids, 'index').to_csv('train_ids.csv')
 pd.DataFrame.from_dict(val_ids, 'index').to_csv('val_ids.csv')
 pd.DataFrame.from_dict(test_ids, 'index').to_csv('test_ids.csv')
