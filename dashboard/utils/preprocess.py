@@ -16,7 +16,20 @@ from utils.gcs import save_npy_as_image_and_upload
 import utils.transforms as t
 
 
-def process_cab(file, filename, tmp_dir):
+def process_cab_from_file(file, filename, tmp_dir):
+    """
+    Downloads the blob and return a 3D standardized numpy array.
+
+    :param blob:
+    :param patient_id:
+    :return:
+    """
+    # TODO: Fix issues with process_cab workingdir failing
+    file.save(os.path.join(tmp_dir, filename))
+    return process_cab(filename, tmp_dir)
+
+
+def process_cab(filename, tmp_dir):
     """
     Downloads the blob and return a 3D standardized numpy array.
 
@@ -26,7 +39,6 @@ def process_cab(file, filename, tmp_dir):
     """
     # TODO: Fix issues with process_cab workingdir failing
     current_dir = os.getcwd()
-    file.save(os.path.join(tmp_dir, filename))
     os.chdir(tmp_dir)
 
     subprocess.call(['cabextract', filename], stdout=open(os.devnull, 'wb'))

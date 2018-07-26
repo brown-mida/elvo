@@ -5,7 +5,7 @@ from multiprocessing import Process
 import flask
 import pymongo
 
-from utils import gcs, preprocess
+from utils import gcs, preprocess, dbx
 from utils.mongodb import get_db
 
 app_preprocess = flask.Blueprint('app_preprocess', __name__)
@@ -61,43 +61,136 @@ def upload_dataset():
 
 
 def __process_file(files, user, date, bucket):
+    client = pymongo.MongoClient(
+        "mongodb://bluenoml:elvoanalysis@104.196.51.205/elvo"
+    )
+    db = client.elvo.datasets
     for file in files:
-        client = pymongo.MongoClient(
-            "mongodb://bluenoml:elvoanalysis@104.196.51.205/elvo"
-        )
-        db = client.elvo.datasets
+        # try:
+        npy = preprocess.process_cab_from_file(file, file.filename,
+                                               '../tmp/cab_files/')
+        preprocess.generate_images(npy, user, 'default', file.filename,
+                                   bucket, '../tmp/')
+        gcs.upload_npy_to_gcs(npy, file.filename, user, 'default', bucket)
+        dataset = {
+            "user": user,
+            "name": file.filename,
+            "date": date,
+            "mip": False,
+            "shape": npy.shape,
+            "dataset": 'default',
+            "gcs_url": '{}/default/{}.npy'.format(user, file.filename),
+            "status": "loaded",
+            "message": "Successfully loaded."
+        }
+        db.replace_one({'name': file.filename, 'dataset': 'default'},
+                       dataset)
+        # except Exception as e:
+        #     dataset = {
+        #         "user": user,
+        #         "name": file.filename,
+        #         "date": date,
+        #         "mip": False,
+        #         "shape": "None",
+        #         "dataset": 'default',
+        #         "gcs_url": '{}/default/{}.npy'.format(user, file.filename),
+        #         "status": "failed",
+        #         "message": "Failed: {}".format(e)
+        #     }
+        #     db.replace_one({'name': file.filename, 'dataset': 'default'},
+        #                    dataset)
+
+
+@app_preprocess.route('/upload-dropbox-dataset', methods=['POST'])
+def upload_dataset_from_dropbox():
+    data = flask.request.get_json()
+
+    if 'user' not in data:
+        return flask.json.jsonify({'error': 'User not specified'})
+
+    if 'path' not in data:
+        return flask.json.jsonify({'error': 'Path not specified'})
+
+    if 'token' not in data:
+        return flask.json.jsonify({'error': 'Token not specified'})
+
+    db = get_db()
+    dbx_client = dbx.authenticate(data['token'])
+
+    try:
+        dbx_client.users_get_current_account()
+    except Exception:
+        return flask.json.jsonify({'error': 'Invalid token'})
+
+    try:
+        files = dbx.get_cab_from_folder(dbx_client, data['path'])
+    except Exception:
+        return flask.json.jsonify({'error': 'Invalid path'})
+
+    current_date = str(datetime.datetime.now())
+    for file in files:
+        # Save user-file relationship in MongoDB
+        dataset = {
+            "user": data['user'],
+            "name": file,
+            "date": current_date,
+            "mip": False,
+            "shape": "None",
+            "dataset": 'default',
+            "gcs_url": '{}/default/{}.npy'.format(data['user'], file),
+            "status": "running",
+            "message": "Please wait for the file to finish loading."
+        }
+        db.replace_one({'name': file, 'dataset': 'default'},
+                       dataset, upsert=True)
+
+    p = Process(target=__process_dbx_file,
+                args=(files, data['user'], current_date,
+                      data['path'], data['token']))
+    p.start()
+    return flask.json.jsonify({'status': 'success'})
+
+
+def __process_dbx_file(files, user, date, path, token):
+    db = get_db()
+    dbx_client = dbx.authenticate(token)
+    client = gcs.authenticate()
+    bucket = client.get_bucket('blueno-ml-files')
+
+    for file in files:
         try:
-            npy = preprocess.process_cab(file, file.filename,
-                                         '../tmp/cab_files/')
-            preprocess.generate_images(npy, user, 'default', file.filename,
+            dbx.download_from_dropbox(dbx_client, '../tmp/cab_files/',
+                                      path, file)
+            npy = preprocess.process_cab(file, '../tmp/cab_files/')
+            preprocess.generate_images(npy, user, 'default', file,
                                        bucket, '../tmp/')
-            gcs.upload_npy_to_gcs(npy, file.filename, user, 'default', bucket)
+            gcs.upload_npy_to_gcs(npy, file, user, 'default', bucket)
             dataset = {
                 "user": user,
-                "name": file.filename,
+                "name": file,
                 "date": date,
                 "mip": False,
                 "shape": npy.shape,
                 "dataset": 'default',
-                "gcs_url": '{}/default/{}.npy'.format(user, file.filename),
+                "gcs_url": '{}/default/{}.npy'.format(user, file),
                 "status": "loaded",
                 "message": "Successfully loaded."
             }
-            db.replace_one({'name': file.filename, 'dataset': 'default'},
+            db.replace_one({'name': file, 'dataset': 'default'},
                            dataset)
         except Exception as e:
             dataset = {
                 "user": user,
-                "name": file.filename,
+                "name": file,
                 "date": date,
                 "mip": False,
                 "shape": "None",
                 "dataset": 'default',
-                "gcs_url": '{}/default/{}.npy'.format(user, file.filename),
+                "gcs_url": '{}/default/{}.npy'.format(user, file),
                 "status": "failed",
                 "message": "Failed: {}".format(e)
             }
-            db.replace_one({'name': file.filename, 'dataset': 'default'},
+            db.replace_one({'name': file, 'dataset': 'default'},
                            dataset)
 
 
