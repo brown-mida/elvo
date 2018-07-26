@@ -90,6 +90,9 @@ def generate_mip_images(arr, user, dataset, filename, bucket, tmp_dir):
 
 
 def transform_array(arr, params):
+    if params['flipZ']:
+        arr = np.flip(arr, axis=0)
+
     if params['cropZ']:
         crop_min = int(float(params['cropZmin']))
         crop_max = int(float(params['cropZmax']))
