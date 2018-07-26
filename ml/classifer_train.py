@@ -12,16 +12,12 @@ import os
 BLACKLIST = []
 LEARN_RATES = [5e-4, 1e-4,
                5e-5, 1e-5,
-               5e-6, 1e-6,
-               5e-7, 1e-7]
+               5e-6]
 
-DROPOUTS = [(0.3, 0.55),
-            (0.35, 0.6),
-            (0.4, 0.65),
+DROPOUTS = [(0.4, 0.65),
             (0.45, 0.7),
             (0.5, 0.75),
             (0.55, 0.8),
-            (0.3, 0.3),
             (0.4, 0.4),
             (0.5, 0.5),
             (0.6, 0.6),
@@ -40,9 +36,9 @@ def find_best_models(results):
     avg_accs = {}
     var_accs = {}
     for model, result in list(results.items()):
-        max_accs[model] = results['max']
-        avg_accs[model] = results['avg']
-        var_accs[model] = results['var']
+        max_accs[model] = result['max']
+        avg_accs[model] = result['avg']
+        var_accs[model] = result['var']
 
     sorted_max = [(model, max_accs[model]) for model in sorted(max_accs, key=max_accs.get, reverse=True)]
     sorted_avg = [(model, avg_accs[model]) for model in sorted(avg_accs, key=avg_accs.get, reverse=True)]
@@ -77,8 +73,8 @@ def train(x_train, y_train, x_val, y_val):
                 model.fit(x=x_train,
                           y=y_train,
                           batch_size=128,
-                          callbacks=[EarlyStopping(monitor='val_acc', patience=10, verbose=1)],
-                          epochs=100,
+                          callbacks=[EarlyStopping(monitor='val_loss', patience=10, verbose=1)],
+                          epochs=150,
                           validation_data=(x_val, y_val))
 
                 result = model.evaluate(x_val, y_val, verbose=1)
