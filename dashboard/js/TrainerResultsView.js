@@ -16,6 +16,9 @@ const plotUrl = (jobWithDate, plotType) => {
 const TrainerResultsView = ({ selectedPlot, parentStyles }) => {
   return (<Grid container spacing={8} style={parentStyles.grid}>
     <Grid item xs={12}>
+      <h2>Results from {selectedPlot}</h2>
+    </Grid>
+    <Grid item xs={12}>
       <Paper>
         <img src={plotUrl(selectedPlot, 'loss')}
              style={styles.plotImg}

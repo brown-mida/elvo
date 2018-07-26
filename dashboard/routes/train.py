@@ -50,7 +50,7 @@ def list_plots():
         plot_dir = blob.name.split('/')[1]
         if not plot_dir.startswith('test_'):
             plots.add(plot_dir)
-    return flask.json.jsonify(list(plots))
+    return flask.json.jsonify(sorted(plots))
 
 
 @app_train.route('/data')
@@ -67,7 +67,7 @@ def list_datasets():
         data_name = blob.name.split('/')[1]
         if not data_name.startswith('test'):
             datasets.add(data_name)
-    return flask.json.jsonify(list(datasets))
+    return flask.json.jsonify(sorted(datasets))
 
 
 @app_train.route('/data/<data_name>')
@@ -83,7 +83,7 @@ def get_images(data_name: str):
     for blob in pub_bucket.list_blobs(prefix=f'processed/{data_name}/'):
         data_name = blob.name.split('/')[-1]
         images.append(data_name)
-    return flask.json.jsonify(list(images))
+    return flask.json.jsonify(sorted(images))
 
 
 @app_train.route('/preprocessing/transforms', methods=['GET'])
@@ -122,3 +122,18 @@ def preprocess_data(data_name: str):
                              'dags/preprocess_web/dag_runs',
                              json={'conf': data_json})
     return response.content, response.status_code, response.headers.items()
+
+
+@app_train.route('/preprocessing/<data_name>/count', methods=['GET'])
+def count_data(data_name: str):
+    """
+    Processes the images using the preprocessing functions defined in
+    the payload, saving the output in gs://elvos-public/processed/data_name.
+
+    :param data_name:
+    :return:
+    """
+    count = len(
+        [1 for _ in priv_bucket.list_blobs(prefix=f'processed/{data_name}/')])
+
+    return flask.json.jsonify({'count': count})

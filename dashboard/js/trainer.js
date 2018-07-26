@@ -9,15 +9,25 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import List from '@material-ui/core/List';
 import Paper from '@material-ui/core/Paper';
-import BottomNavigation from '@material-ui/core/BottomNavigation';
-import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 import Divider from '@material-ui/core/Divider';
 import TrainerResultsView from './TrainerResultsView';
 import TrainerDataView from './TrainerDataView';
 import TrainerGuideView from './TrainerGuideView';
+import TrainerProgressView from './TrainerProgressView';
 
 
 const styles = {
+  sidebarList: {
+    float: 'left',
+    height: '90vh',
+    width: '300px',
+    overflowY: 'scroll',
+    paddingLeft: 10,
+  },
+  mainView: { height: '90vh', overflow: 'scroll' },
   inputField: {
     margin: 10,
   },
@@ -32,7 +42,7 @@ class Trainer extends Component {
     super(props);
 
     this.state = {
-      dataName: 'processed-lower',
+      dataName: '',
       authorName: 'web-luke',
       jobName: 'web-job',
       modelName: 'resnet',
@@ -67,6 +77,7 @@ class Trainer extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleDataChange = this.handleDataChange.bind(this);
     this.handleTransformChange = this.handleTransformChange.bind(this);
+    this.handlePlotChange = this.handlePlotChange.bind(this);
     this.sendJobRequest = this.sendJobRequest.bind(this);
     this.sendPreprocessRequest = this.sendPreprocessRequest.bind(this);
   }
@@ -89,8 +100,19 @@ class Trainer extends Component {
         .then(response => {
           this.setState({
             allDataNames: response.data,
-            dateName: response.data[0],
           });
+          const dataName = response.data[0];
+          // Set the selectedData so urls also load
+          axios.get('/data/' + dataName)
+              .then(response => {
+                this.setState({
+                  dataName,
+                  imageNames: response.data,
+                });
+              })
+              .catch((error) => {
+                console.error(error);
+              });
         })
         .catch(error => {
           console.error(error);
@@ -116,6 +138,9 @@ class Trainer extends Component {
     axios.post('/preprocessing/' + dataName, data)
         .then(response => {
           console.log(response);
+          this.setState({
+            viewType: 'progress',
+          });
         })
         .catch(error => {
           console.error(error);
@@ -127,6 +152,9 @@ class Trainer extends Component {
     axios.post('/model', data)
         .then(response => {
           console.log(response);
+          this.setState({
+            viewType: 'progress',
+          });
         })
         .catch(error => {
           console.error(error);
@@ -145,19 +173,26 @@ class Trainer extends Component {
   // When the  data is changed, ImageURLs is also updated
   handleDataChange(event) {
     const dataName = event.target.value;
-    this.setState({
-      dataName,
-    });
     // Update imageNames
     axios.get('/data/' + dataName)
         .then(response => {
           this.setState({
+            dataName,
             imageNames: response.data,
+            viewType: 'data',
           });
         })
         .catch((error) => {
           console.error(error);
         });
+  }
+
+  handlePlotChange(event) {
+    const selectedPlot = event.target.value;
+    this.setState({
+      selectedPlot,
+      viewType: 'results',
+    });
   }
 
   handleTransformChange(index) {
@@ -232,181 +267,205 @@ class Trainer extends Component {
             <TrainerGuideView parentStyles={styles}/>
         );
         break;
+      case 'progress':
+        bodyView = (
+            <TrainerProgressView
+                processedName={this.state.processedName}
+                parentStyles={styles}
+            />
+        );
+        break;
       default:
         console.error(this.state.viewType + ' is not valid');
         bodyView = <div>Error :(</div>;
     }
 
     return (
-        <div style={{ display: 'flex' }}>
-          <Paper style={{ alignSelf: 'flex-start' }}>
-            {/* Start of the sidebar */}
-            {/* TODO(luke): Put style up above*/}
-            <List component="nav"
-                  style={{ float: 'left', height: '100vh', width: '300px', overflowY: 'scroll' }}>
-              <h3 style={{ paddingLeft: 10 }}>Preprocessing Options</h3>
+        <div>
+          <AppBar
+              position="static"
+          >
+            <Tabs
+                value={this.state.viewType}
+                onChange={(event, viewType) => {
+                  this.setState({ viewType });
+                }}
+            >
+              <Tab label="Progress"
+                   value="progress"/>
+              <Tab label="Data" value="data"/>
+              <Tab label="Results" value="results"/>
+              <Tab label="Guide" value="guide"/>
+            </Tabs>
+          </AppBar>
+          <div style={{ display: 'flex' }}>
+            <Paper style={{ alignSelf: 'flex-start' }}>
+              {/* Start of the sidebar */}
+              {/* TODO(luke): Put style up above*/}
+              <List component="nav"
+                    style={styles.sidebarList}>
+                <h3 style={{ paddingLeft: 10 }}>Preprocessing Options</h3>
 
-              {/*{transformSelects}*/}
-              <TextField
-                  id="processedName"
-                  label={'processedName'}
-                  value={this.state.processedName}
-                  onChange={this.handleChange('processedName')}
-                  margin="normal"
-                  style={styles.inputField}
-              />
+                {/*{transformSelects}*/}
+                <TextField
+                    id="processedName"
+                    label={'processedName'}
+                    value={this.state.processedName}
+                    onChange={this.handleChange('processedName')}
+                    margin="normal"
+                    style={styles.inputField}
+                />
 
-              <TextField
-                  id="cropLength"
-                  label={'Crop Length'}
-                  value={this.state.cropLength}
-                  onChange={this.handleChange('cropLength')}
-                  margin="normal"
-                  style={styles.inputField}
-              />
+                <TextField
+                    id="cropLength"
+                    label={'Crop Length'}
+                    value={this.state.cropLength}
+                    onChange={this.handleChange('cropLength')}
+                    margin="normal"
+                    style={styles.inputField}
+                />
 
-              <TextField
-                  id="mipThickness"
-                  label={'MIP Thickness'}
-                  value={this.state.mipThickness}
-                  onChange={this.handleChange('mipThickness')}
-                  margin="normal"
-                  style={styles.inputField}
-              />
+                <TextField
+                    id="mipThickness"
+                    label={'MIP Thickness'}
+                    value={this.state.mipThickness}
+                    onChange={this.handleChange('mipThickness')}
+                    margin="normal"
+                    style={styles.inputField}
+                />
 
-              <TextField
-                  id="heightOffset"
-                  label={'Height Offset'}
-                  value={this.state.heightOffset}
-                  onChange={this.handleChange('heightOffset')}
-                  margin="normal"
-                  style={styles.inputField}
-              />
+                <TextField
+                    id="heightOffset"
+                    label={'Height Offset'}
+                    value={this.state.heightOffset}
+                    onChange={this.handleChange('heightOffset')}
+                    margin="normal"
+                    style={styles.inputField}
+                />
 
-              <TextField
-                  id="minPixelValue"
-                  label={'Min Pixel Value'}
-                  value={this.state.minPixelValue}
-                  onChange={this.handleChange('minPixelValue')}
-                  margin="normal"
-                  style={styles.inputField}
-              />
+                <TextField
+                    id="minPixelValue"
+                    label={'Min Pixel Value'}
+                    value={this.state.minPixelValue}
+                    onChange={this.handleChange('minPixelValue')}
+                    margin="normal"
+                    style={styles.inputField}
+                />
 
-              <TextField
-                  id="maxPixelValue"
-                  label={'Max Pixel Value'}
-                  value={this.state.maxPixelValue}
-                  onChange={this.handleChange('maxPixelValue')}
-                  margin="normal"
-                  style={styles.inputField}
-              />
+                <TextField
+                    id="maxPixelValue"
+                    label={'Max Pixel Value'}
+                    value={this.state.maxPixelValue}
+                    onChange={this.handleChange('maxPixelValue')}
+                    margin="normal"
+                    style={styles.inputField}
+                />
 
-              <Button
-                  variant="outlined"
-                  onClick={this.sendPreprocessRequest}
-              >
-                Preprocess Data
-              </Button>
-
-
-              <h3 style={{ paddingLeft: 10 }}>Training Options</h3>
-
-              <TextField
-                  id="jobName"
-                  label={'Job Name'}
-                  value={this.state.jobName}
-                  onChange={this.handleChange('jobName')}
-                  margin="normal"
-                  style={styles.inputField}
-              />
-
-              <TextField
-                  id="authorName"
-                  label={'Your Name'}
-                  value={this.state.authorName}
-                  onChange={this.handleChange('authorName')}
-                  margin="normal"
-                  style={styles.inputField}
-              />
-              <br/>
-
-              <FormControl style={styles.inputField}>
-                <InputLabel>Data</InputLabel>
-                <Select
-                    native
-                    value={this.state.dataName}
-                    onChange={this.handleDataChange}
+                <Button
+                    variant="contained" color="primary"
+                    onClick={this.sendPreprocessRequest}
                 >
-                  {dataOptions}
-                </Select>
-              </FormControl>
+                  Preprocess Data
+                </Button>
 
-              <FormControl style={styles.inputField}>
-                <InputLabel>Model</InputLabel>
-                <Select
-                    native
-                    value={this.state.modelName}
-                    onChange={this.handleChange('modelName')}
+                <div style={{ height: 20 }}/>
+                <Divider/>
+
+
+                <h3 style={{ paddingLeft: 10 }}>Training Options</h3>
+
+                <TextField
+                    id="jobName"
+                    label={'Job Name'}
+                    value={this.state.jobName}
+                    onChange={this.handleChange('jobName')}
+                    margin="normal"
+                    style={styles.inputField}
+                />
+
+                <TextField
+                    id="authorName"
+                    label={'Your Name'}
+                    value={this.state.authorName}
+                    onChange={this.handleChange('authorName')}
+                    margin="normal"
+                    style={styles.inputField}
+                />
+                <br/>
+
+                <FormControl style={styles.inputField}>
+                  <InputLabel>Data</InputLabel>
+                  <Select
+                      native
+                      value={this.state.dataName}
+                      onChange={this.handleDataChange}
+                  >
+                    {dataOptions}
+                  </Select>
+                </FormControl>
+
+                <FormControl style={styles.inputField}>
+                  <InputLabel>Model</InputLabel>
+                  <Select
+                      native
+                      value={this.state.modelName}
+                      onChange={this.handleChange('modelName')}
+                  >
+                    <option value={'resnet'}>ResNet</option>
+                  </Select>
+                </FormControl>
+
+                {/*<TextField*/}
+                {/*id="batchSize"*/}
+                {/*label={'Batch Size'}*/}
+                {/*value={this.state.batchSize}*/}
+                {/*onChange={this.handleChange('batchSize')}*/}
+                {/*margin="normal"*/}
+                {/*type="number"*/}
+                {/*/>*/}
+
+                <br/>
+                <br/>
+
+                <Button
+                    variant="contained" color="primary"
+                    onClick={this.sendJobRequest}
                 >
-                  <option value={'resnet'}>ResNet</option>
-                </Select>
-              </FormControl>
+                  Train Model
+                </Button>
 
-              {/*<TextField*/}
-              {/*id="batchSize"*/}
-              {/*label={'Batch Size'}*/}
-              {/*value={this.state.batchSize}*/}
-              {/*onChange={this.handleChange('batchSize')}*/}
-              {/*margin="normal"*/}
-              {/*type="number"*/}
-              {/*/>*/}
+                <div style={{ height: 20 }}/>
+                <Divider/>
 
-              <br/>
-              <br/>
+                <h3 style={{ paddingLeft: 10 }}>Results Options</h3>
 
-              <Button
-                  variant="outlined"
-                  onClick={this.sendJobRequest}
-              >
-                Create Training Job
-              </Button>
+                <FormControl style={styles.inputField}>
+                  <InputLabel>Plots</InputLabel>
+                  <Select
+                      native
+                      value={this.state.selectedPlot}
+                      onChange={this.handlePlotChange}
+                  >
+                    {plotOptions}
+                  </Select>
+                </FormControl>
 
-              <Divider/>
-
-              <h3 style={{ paddingLeft: 10 }}>Results Options</h3>
-
-              <FormControl style={styles.inputField}>
-                <InputLabel>Plots</InputLabel>
-                <Select
-                    native
-                    value={this.state.selectedPlot}
-                    onChange={this.handleChange('selectedPlot')}
-                >
-                  {plotOptions}
-                </Select>
-              </FormControl>
-
-              <Button href={'http://104.196.51.205:5601/'}>Kibana</Button>
-
-              <Divider/>
-
-              <h3 style={{ paddingLeft: 10 }}>View</h3>
-
-              <BottomNavigation
-                  value={this.state.viewType}
-                  onChange={(event, viewType) => {
-                    this.setState({ viewType });
-                  }}
-                  showLabels
-              >
-                <BottomNavigationAction label="Data" value="data"/>
-                <BottomNavigationAction label="Results" value="results"/>
-                <BottomNavigationAction label="Guide" value="guide"/>
-              </BottomNavigation>
-            </List>
-          </Paper>
-          <div style={{ height: '100vh', overflow: 'scroll' }}>
-            {bodyView}
+                <Button
+                    variant={'contained'}
+                    color={'secondary'}
+                    href={'http://104.196.51.205:5601/'}
+                >Kibana</Button>
+                <Button
+                    variant={'contained'}
+                    color={'secondary'}
+                    href={'https://elvomachinelearning.slack.com/'}
+                    style={{ marginLeft: 10 }}
+                >Slack</Button>
+              </List>
+            </Paper>
+            <div style={styles.mainView}>
+              {bodyView}
+            </div>
           </div>
         </div>
     );

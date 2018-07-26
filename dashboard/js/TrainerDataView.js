@@ -17,6 +17,7 @@ const TrainerDataView = ({ dataName, imageNames, offset, parentStyles }) => {
 
   return (
       <Grid container spacing={8} style={parentStyles.grid}>
+        <Grid item xs={12}><h2>Dataset: {dataName}</h2></Grid>
         {images}
       </Grid>
   );
