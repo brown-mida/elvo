@@ -314,7 +314,7 @@ def check_data_in_sync(params: blueno.ParamConfig):
         logging.warning('Will not check GCS for syncing')
         return
 
-    if not is_equal:
+    if is_equal:
         raise ValueError(f'{data_dir} and {array_url} have a different'
                          f' number of files')
 
