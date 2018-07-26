@@ -1,6 +1,12 @@
+"""
+This script attempts to find the best hyperparameters for training the
+classifier model with, and just generally trains the classifer model on
+probability distribution data.
+"""
+
 import tensorflow as tf
-from models.three_d import cube_classifier
-from keras.optimizers import Adadelta, SGD
+from ml.models.three_d import cube_classifier
+from keras.optimizers import SGD
 from keras.callbacks import EarlyStopping
 from keras.losses import categorical_crossentropy
 import pandas as pd
@@ -10,6 +16,7 @@ import io
 import os
 
 BLACKLIST = []
+# Initially, this included values from 1e-3 to 1e-7; these two performed best
 LEARN_RATES = [1e-4, 5e-5]
 
 DROPOUTS = [(0.4, 0.65),
@@ -20,6 +27,11 @@ DROPOUTS = [(0.4, 0.65),
 
 
 def download_array(blob: storage.Blob) -> np.ndarray:
+    """Downloads a blob to a numpy array
+
+    :param blob: GCS blob to download as a numpy array
+    :return: numpy array
+    """
     in_stream = io.BytesIO()
     blob.download_to_file(in_stream)
     in_stream.seek(0)  # Read from the start of the file-like object
@@ -27,31 +39,69 @@ def download_array(blob: storage.Blob) -> np.ndarray:
 
 
 def find_best_models(results):
+    """Sorts/prints out the best performing models by max accuracy, average
+     accuracy, and variance in accuracies across runs
+
+    :param results: dict of avg acc, max acc, and variance in accuracy
+    :return:
+    """
     max_accs = {}
     avg_accs = {}
     var_accs = {}
+
+    # Copy results to individual dicts
     for model, result in list(results.items()):
         max_accs[model] = result['max']
         avg_accs[model] = result['avg']
         var_accs[model] = result['var']
 
-    sorted_max = [(model, max_accs[model]) for model in sorted(max_accs, key=max_accs.get, reverse=True)]
-    sorted_avg = [(model, avg_accs[model]) for model in sorted(avg_accs, key=avg_accs.get, reverse=True)]
-    sorted_var = [(model, var_accs[model]) for model in sorted(var_accs, key=var_accs.get, reverse=True)]
-    print('\n\n------------------------\nMODELS RANKED BY MAX ACC\n------------------------\n')
+    # Sort results by highest performance
+    sorted_max = [(model, max_accs[model])
+                  for model in sorted(max_accs,
+                                      key=max_accs.get,
+                                      reverse=True)]
+    sorted_avg = [(model, avg_accs[model])
+                  for model in sorted(avg_accs,
+                                      key=avg_accs.get,
+                                      reverse=True)]
+    sorted_var = [(model, var_accs[model])
+                  for model in sorted(var_accs,
+                                      key=var_accs.get)]
+
+    # Print max accuracy results
+    print('\n\n------------------------\n'
+          'MODELS RANKED BY MAX ACC'
+          '\n------------------------\n')
     for i, result in enumerate(sorted_max):
         print(i, result)
 
-    print('\n\n------------------------\nMODELS RANKED BY AVG ACC\n------------------------\n')
+    # Print avg accuracy results
+    print('\n\n------------------------\n'
+          'MODELS RANKED BY AVG ACC'
+          '\n------------------------\n')
     for i, result in enumerate(sorted_avg):
         print(i, result)
 
-    print('\n\n------------------------\nMODELS RANKED BY VAR ACC\n------------------------\n')
+    # Print accuracy variance results
+    print('\n\n------------------------\n'
+          'MODELS RANKED BY VAR ACC'
+          '\n------------------------\n')
     for i, result in enumerate(sorted_var):
         print(i, result)
 
 
 def train(x_train, y_train, x_val, y_val, x_test, y_test):
+    """A function that iteratively trains the model on a grid search of
+    parameters for learning rate and dropout
+
+    :param x_train: training data
+    :param y_train: training labels
+    :param x_val: validation data
+    :param y_val: validation labels
+    :param x_test: test data
+    :param y_test: test labels
+    :return:
+    """
     models = {}
     results = []
     for lr in LEARN_RATES:
