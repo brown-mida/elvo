@@ -2,9 +2,10 @@
 =======================
 ## Step 1: Getting the Script to airflow
 
-Make a PR and push your changes to the airflow branch.
+Make sure your script (written in `etl`) works locally.
+This means writing tests as necessary.
 
-After your changes are on `origin/airflow`, run the following commmands in your terminal:
+After your changes are on `origin/master`, run the following commmands in your terminal:
 
 ```
 gcloud compute ssh lukezhu@airflow
@@ -46,4 +47,9 @@ source venv/bin/activate
 
 - Environment variables are set in /home/lukezhu/.bashrc
 - Use the airflow.cfg in /home/lukezhu/elvo-analysis
-- We should periodically rebase this branch onto master
+- To set up a new Airflow server, one would preferably create a snapshot.
+- The required setup steps from scratch are:
+    - Install Python 3.6 (preferably with miniconda)
+    - Git clone elvo-analysis and run `pip install -e .[cpu,etl]`
+    - Set the environment variables in .bashrc and get the corresponding files to put in `secrets`
+    - Copy over the `airflow.cfg` file and change the necessary params

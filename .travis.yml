@@ -1,6 +1,8 @@
 language: python
 python:
   - 3.6
+env:
+  - SLACK_TOKEN=''
 install: 
   - pip install .[test,cpu,etl]  # Install blueno
   - pip install -r dashboard/requirements.txt

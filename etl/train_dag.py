@@ -1,10 +1,12 @@
 import datetime
 import logging
+import os
 
 import paramiko
 from airflow import DAG
 from airflow.models import BaseOperator
 from airflow.operators.sensors import BaseSensorOperator
+from airflow.operators.slack_operator import SlackAPIPostOperator
 
 
 def run_bluenot(config: dict):
@@ -24,7 +26,8 @@ def run_bluenot(config: dict):
         stdin, stdout, stderr = client.exec_command(
             "ssh gpu1708 'cd elvo-analysis;"
             " source venv/bin/activate;"
-            " nohup python3 ml/bluenot.py"
+            " nohup python3 ml/bluenow.py"
+            # TODO(luke): Escape/validate user input (if necessary)
             f" --data_name={config['dataName']}"
             f" --max_epochs={config['maxEpochs']}"
             f" --job_name={config['jobName']}"
@@ -74,6 +77,7 @@ def count_processes_matching(fragment: str):
 class WebTrainerSensor(BaseSensorOperator):
     def __init__(self, fragment, *args, **kwargs):
         self.fragment = fragment
+        self.retries = 5
         super().__init__(*args, **kwargs)
 
     def poke(self, context):
@@ -105,7 +109,18 @@ run_bluenot_op = RunBluenotOperator(task_id='run_bluenot',
                                     dag=train_dag)
 
 sense_complete_op = WebTrainerSensor(task_id='sense_complete',
-                                     fragment='data_name',
-                                     dag=train_dag)
+                                     fragment='bluenow',
+                                     dag=train_dag,
+                                     retries=3)
+
+slack_confirm_op = SlackAPIPostOperator(
+    task_id='slack_confirmation',
+    channel='tests',
+    username='airflow',
+    token=os.environ['SLACK_TOKEN'],
+    text=f'DAG {train_dag_id} has finished',
+    dag=train_dag,
+)
 
 run_bluenot_op >> sense_complete_op
+sense_complete_op >> slack_confirm_op

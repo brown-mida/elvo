@@ -29,21 +29,19 @@ import datetime
 import importlib
 import logging
 import multiprocessing
-import os
 import pathlib
-import subprocess
 import time
 from argparse import ArgumentParser
 from typing import List, Union
 
 import keras
 import numpy as np
+import os
 from elasticsearch_dsl import connections
+from google.auth.exceptions import DefaultCredentialsError
 from sklearn import model_selection
 
 import blueno
-import generators.luke
-import models.luke
 from blueno import (
     utils,
     preprocessing,
@@ -51,6 +49,7 @@ from blueno import (
     logger,
     gcs,
 )
+from blueno.gcs import upload_model_to_gcs
 
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
 
@@ -64,6 +63,7 @@ def start_job(x_train: np.ndarray,
               params: blueno.ParamConfig,
               slack_token: str = None,
               log_dir: str = None,
+              plot_dir=None,
               id_valid: np.ndarray = None) -> None:
     """
     Builds, fits, and evaluates a model.
@@ -82,11 +82,16 @@ def start_job(x_train: np.ndarray,
     :param slack_token: the slack token
     :param params: the parameters specified
     :param log_dir:
+    :param plot_dir: the directory to save plots to, defaults to /tmp/plots-
     :param id_valid: the patient ids ordered to correspond with y_valid
     :return:
     """
     num_classes = y_train.shape[1]
     created_at = datetime.datetime.utcnow().isoformat()
+
+    if plot_dir is None:
+        gpu = os.environ["CUDA_VISIBLE_DEVICES"]
+        plot_dir = pathlib.Path('tmp') / f'plots-{gpu}'
 
     # Configure the job to log all output to a specific file
     csv_filepath = None
@@ -152,11 +157,23 @@ def start_job(x_train: np.ndarray,
                                   verbose=2,
                                   callbacks=callbacks)
 
+    try:
+        blueno.gcs.upload_gcs_plots(x_train, x_valid, y_valid, model, history,
+                                    job_name,
+                                    created_at,
+                                    plot_dir=plot_dir,
+                                    id_valid=id_valid)
+    except DefaultCredentialsError as e:
+        logging.warning(e)
+
     if slack_token:
         logging.info('generating slack report')
         blueno.slack.slack_report(x_train, x_valid, y_valid, model, history,
                                   job_name,
-                                  params, slack_token, id_valid=id_valid)
+                                  params,
+                                  slack_token,
+                                  plot_dir=plot_dir,
+                                  id_valid=id_valid)
     else:
         logging.info('no slack token found, not generating report')
 
@@ -177,34 +194,6 @@ def start_job(x_train: np.ndarray,
             pathlib.Path(log_filepath),
             pathlib.Path(csv_filepath),
         )
-
-
-def upload_model_to_gcs(job_name, created_at, model_filepath):
-    gcs_filepath = 'gs://elvos/sorted_models/{}-{}.hdf5'.format(
-        # Remove the extension
-        job_name,
-        created_at,
-    )
-    # Do not change, this is log is used to get the gcs link
-    logging.info('uploading model {} to {}'.format(
-        model_filepath,
-        gcs_filepath,
-    ))
-
-    try:
-        subprocess.run(
-            ['/bin/bash',
-             '-c',
-             'gsutil cp {} {}'.format(model_filepath, gcs_filepath)],
-            check=True)
-    except subprocess.CalledProcessError:
-        # gpu1708 specific code
-        subprocess.run(
-            ['/bin/bash',
-             '-c',
-             '/gpfs/main/home/lzhu7/google-cloud-sdk/bin/'
-             'gsutil cp {} {}'.format(model_filepath, gcs_filepath)],
-            check=True)
 
 
 def hyperoptimize(hyperparams: Union[blueno.ParamGrid,
@@ -318,8 +307,14 @@ def check_data_in_sync(params: blueno.ParamConfig):
     else:
         array_url = gcs_url + '/arrays'
 
-    if not gcs.equal_array_counts(data_dir,
-                                  array_url):
+    try:
+        is_equal = gcs.equal_array_counts(data_dir, array_url)
+    except DefaultCredentialsError as e:
+        logging.warning(e)
+        logging.warning('Will not check GCS for syncing')
+        return
+
+    if not is_equal:
         raise ValueError(f'{data_dir} and {array_url} have a different'
                          f' number of files')
 
@@ -338,104 +333,39 @@ def check_config(config):
     logging.debug('SLACK_TOKEN: {}'.format(config.SLACK_TOKEN))
 
 
-def run_web_gpu1708_job(data_name: str,
-                        batch_size: int,
-                        val_split: float,
-                        max_epochs: int,
-                        job_name: str,
-                        author_name: str):
-    blueno_home = pathlib.Path('/home/lzhu7/elvo-analysis')
-
-    data_dir = blueno_home / 'data'
-    log_dir = blueno_home / 'logs'
-
-    param_config = blueno.ParamConfig(
-        data=blueno.DataConfig(
-            data_dir=str(data_dir / data_name / 'arrays'),
-            labels_path=str(data_dir / data_name / 'labels.csv'),
-            index_col='Anon ID',
-            label_col='occlusion_exists',
-            gcs_url=f'gs://elvos/processed/{data_name}',
-        ),
-        generator=blueno.GeneratorConfig(
-            generator_callable=generators.luke.standard_generators,
-        ),
-        model=blueno.ModelConfig(
-            model_callable=models.luke.resnet,
-            optimizer=keras.optimizers.Adam(lr=1e-5),
-            loss=keras.losses.categorical_crossentropy,
-        ),
-        batch_size=int(batch_size),
-        seed=0,
-        val_split=float(val_split),
-        max_epochs=int(max_epochs),
-        job_name=job_name,
-    )
-
-    logging.info('training web job {}'.format(param_config))
-
-    hyperoptimize(
-        [param_config],
-        author_name,
-        num_gpus=1,
-        gpu_offset=3,
-        log_dir=str(log_dir),
-    )
-
-
 if __name__ == '__main__':
     parser = ArgumentParser()
-    parser.add_argument('--data_name',
-                        help='The json config, used by the web trainer')
-    parser.add_argument('--batch_size',
-                        help='The json config, used by the web trainer')
-    parser.add_argument('--val_split',
-                        help='The json config, used by the web trainer')
-    parser.add_argument('--max_epochs',
-                        help='The json config, used by the web trainer')
-    parser.add_argument('--job_name',
-                        help='The json config, used by the web trainer')
-    parser.add_argument('--author_name',
-                        help='The json config, used by the web trainer')
     parser.add_argument('--config',
                         help='The config module (ex. config_luke)',
                         default='config-1')
     args = parser.parse_args()
 
-    if args.data_name:
-        run_web_gpu1708_job(args.data_name,
-                            args.batch_size,
-                            args.val_split,
-                            args.max_epochs,
-                            args.job_name,
-                            args.author_name)
+    logging.info('using config {}'.format(args.config))
+    user_config = importlib.import_module(args.config)
+
+    parent_log_file = pathlib.Path(
+        user_config.LOG_DIR) / 'results-{}.txt'.format(
+        datetime.datetime.utcnow().isoformat()
+    )
+    logger.configure_parent_logger(parent_log_file)
+    check_config(user_config)
+
+    logging.info('checking param grid')
+    if isinstance(user_config.PARAM_GRID, blueno.ParamGrid):
+        param_grid = user_config.PARAM_GRID
+    elif isinstance(user_config.PARAM_GRID, list):
+        param_grid = user_config.PARAM_GRID
+    elif isinstance(user_config.PARAM_GRID, dict):
+        logging.warning('creating param grid from dictionary, it is'
+                        'recommended that you define your config'
+                        'with ParamConfig')
+        param_grid = blueno.ParamGrid(**user_config.PARAM_GRID)
     else:
-        logging.info('using config {}'.format(args.config))
-        user_config = importlib.import_module(args.config)
-
-        parent_log_file = pathlib.Path(
-            user_config.LOG_DIR) / 'results-{}.txt'.format(
-            datetime.datetime.utcnow().isoformat()
-        )
-        logger.configure_parent_logger(parent_log_file)
-        check_config(user_config)
-
-        logging.info('checking param grid')
-        if isinstance(user_config.PARAM_GRID, blueno.ParamGrid):
-            param_grid = user_config.PARAM_GRID
-        elif isinstance(user_config.PARAM_GRID, list):
-            param_grid = user_config.PARAM_GRID
-        elif isinstance(user_config.PARAM_GRID, dict):
-            logging.warning('creating param grid from dictionary, it is'
-                            'recommended that you define your config'
-                            'with ParamConfig')
-            param_grid = blueno.ParamGrid(**user_config.PARAM_GRID)
-        else:
-            raise ValueError('user_config.PARAM_GRID must be a ParamGrid,'
-                             ' list, or dict')
-        hyperoptimize(param_grid,
-                      user_config.USER,
-                      user_config.SLACK_TOKEN,
-                      num_gpus=user_config.NUM_GPUS,
-                      gpu_offset=user_config.GPU_OFFSET,
-                      log_dir=user_config.LOG_DIR)
+        raise ValueError('user_config.PARAM_GRID must be a ParamGrid,'
+                         ' list, or dict')
+    hyperoptimize(param_grid,
+                  user_config.USER,
+                  user_config.SLACK_TOKEN,
+                  num_gpus=user_config.NUM_GPUS,
+                  gpu_offset=user_config.GPU_OFFSET,
+                  log_dir=user_config.LOG_DIR)

@@ -19,15 +19,31 @@ def teardown_module():
 @pytest.mark.skipif(os.uname().nodename != 'airflow',
                     reason='Requires correct ssh configuration')
 def test_run_bluenot_return():
-    pid = run_bluenot()
+    conf = {
+        'dataName': 'processed-lower',
+        'maxEpochs': '1',
+        'jobName': 'test_run_bluenot',
+        'authorName': 'test_run_bluenot',
+        'batchSize': '8',
+        'valSplit': '0.1',
+    }
+    pid = run_bluenot(conf)
     assert isinstance(pid, int)
 
 
 @pytest.mark.skipif(os.uname().nodename != 'airflow',
                     reason='Requires correct ssh configuration')
 def test_run_bluenot_creates_process():
-    run_bluenot()
+    conf = {
+        'dataName': 'processed-lower',
+        'maxEpochs': '1',
+        'jobName': 'test_run_bluenot',
+        'authorName': 'test_run_bluenot',
+        'batchSize': '8',
+        'valSplit': '0.1',
+    }
+    run_bluenot(conf)
 
     time.sleep(3)  # Sleep so the command can be propagated.
 
-    assert count_processes_matching('config_luke') > 0
+    assert count_processes_matching('bluenow') > 0
