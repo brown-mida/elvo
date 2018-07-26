@@ -309,7 +309,7 @@ class Trainer extends Component {
                 {/*{transformSelects}*/}
                 <TextField
                     id="processedName"
-                    label={'processedName'}
+                    label={'Preprocessed Data'}
                     value={this.state.processedName}
                     onChange={this.handleChange('processedName')}
                     margin="normal"
