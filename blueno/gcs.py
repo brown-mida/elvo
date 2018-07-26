@@ -121,6 +121,25 @@ def upload_model_to_gcs(job_name, created_at, model_filepath):
             check=True)
 
 
+def download_to_gpu1708(gcs_url, data_dir, recursive=False):
+    """
+    Creates an directory with the array data in the gcs url.
+
+    :param gcs_url: the source gcs url
+    :param data_dir:
+    :return:
+    """
+    # gpu1708 specific code
+    os.makedirs(data_dir, exist_ok=True)
+    r_flag = '-r' if recursive else ''
+    subprocess.run(
+        ['/bin/bash',
+         '-c',
+         '/gpfs/main/home/lzhu7/google-cloud-sdk/bin/'
+         'gsutil rsync {} {} {}'.format(r_flag, gcs_url, data_dir)],
+        check=True)
+
+
 def upload_gcs_plots(x_train: np.ndarray,
                      x_valid: np.ndarray,
                      y_valid: np.ndarray,
