@@ -10,18 +10,13 @@ import io
 import os
 
 BLACKLIST = []
-LEARN_RATES = [5e-4, 1e-4,
-               5e-5, 1e-5,
-               5e-6]
+LEARN_RATES = [1e-4, 5e-5]
 
 DROPOUTS = [(0.4, 0.65),
             (0.45, 0.7),
             (0.5, 0.75),
-            (0.55, 0.8),
             (0.4, 0.4),
-            (0.5, 0.5),
-            (0.6, 0.6),
-            (0.7, 0.7)]
+            (0.5, 0.5)]
 
 
 def download_array(blob: storage.Blob) -> np.ndarray:
@@ -74,7 +69,7 @@ def train(x_train, y_train, x_val, y_val):
                           y=y_train,
                           batch_size=128,
                           callbacks=[EarlyStopping(monitor='val_loss', patience=10, verbose=1)],
-                          epochs=150,
+                          epochs=300,
                           validation_data=(x_val, y_val))
 
                 result = model.evaluate(x_val, y_val, verbose=1)
@@ -100,8 +95,7 @@ def load_probs(labels: pd.DataFrame):
 
     x_train = []
     y_train = []
-    idx = 0
-    for blob in bucket.list_blobs(prefix='chunk_data/preds/train'):
+    for idx, blob in enumerate(bucket.list_blobs(prefix='chunk_data/preds/train')):
         if idx % 100 == 0:
             print(f'successfully loaded {idx} training scans and labels')
         file_id = blob.name.split('/')[-1].split('.')[0]
@@ -126,12 +120,10 @@ def load_probs(labels: pd.DataFrame):
             ])
             label = label.astype(int)
             y_train.append(label)
-            idx += 1
 
     x_val = []
     y_val = []
-    idx = 0
-    for blob in bucket.list_blobs(prefix='chunk_data/preds/val'):
+    for idx, blob in enumerate(bucket.list_blobs(prefix='chunk_data/preds/val')):
         if idx % 100 == 0:
             print(f'successfully loaded {idx} validation scans and labels')
         file_id = blob.name.split('/')[-1].split('.')[0]
@@ -156,7 +148,6 @@ def load_probs(labels: pd.DataFrame):
             ])
             label = label.astype(int)
             y_val.append(label)
-            idx += 1
     x_train = np.asarray(x_train)
     y_train = np.asarray(y_train)
     x_val = np.asarray(x_val)
