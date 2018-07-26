@@ -4,7 +4,7 @@ import scipy.ndimage
 
 def crop(image, output_shape=(200, 200, 200)):
     """Crops the input pixel array. Centering the width and length,
-    and taking the top portion in the height axis
+    and taking the top portion in the z axis
     """
     assert image.ndim == 3
     assert all([image.shape[i] >= output_shape[i] for i in range(3)])
@@ -36,6 +36,7 @@ def crop_center(img, cropx, cropy):
     return img[:, startx:startx + cropx, starty:starty + cropy]
 
 
+# TODO: Deprecate/delete the following 5 functions
 def rotate_img(img):
     angle = np.random.uniform(-15, 15)
     return scipy.ndimage.rotate(img, angle)
