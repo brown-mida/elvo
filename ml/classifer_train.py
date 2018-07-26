@@ -51,7 +51,7 @@ def find_best_models(results):
         print(i, result)
 
 
-def train(x_train, y_train, x_val, y_val):
+def train(x_train, y_train, x_val, y_val, x_test, y_test):
     models = {}
     results = []
     for lr in LEARN_RATES:
@@ -72,7 +72,7 @@ def train(x_train, y_train, x_val, y_val):
                           epochs=300,
                           validation_data=(x_val, y_val))
 
-                result = model.evaluate(x_val, y_val, verbose=1)
+                result = model.evaluate(x_test, y_test)
                 results = np.append(results, result[1])
             results = np.asarray(results)
             models[f'lr: {lr}, dropout: {dropout}'] = {'max': np.max(results),
@@ -96,7 +96,7 @@ def load_probs(labels: pd.DataFrame):
     x_train = []
     y_train = []
     for idx, blob in enumerate(bucket.list_blobs(prefix='chunk_data/preds/train')):
-        if idx % 100 == 0:
+        if idx % 10 == 0:
             print(f'successfully loaded {idx} training scans and labels')
         file_id = blob.name.split('/')[-1].split('.')[0]
         arr = download_array(blob)
@@ -124,7 +124,7 @@ def load_probs(labels: pd.DataFrame):
     x_val = []
     y_val = []
     for idx, blob in enumerate(bucket.list_blobs(prefix='chunk_data/preds/val')):
-        if idx % 100 == 0:
+        if idx % 10 == 0:
             print(f'successfully loaded {idx} validation scans and labels')
         file_id = blob.name.split('/')[-1].split('.')[0]
         arr = download_array(blob)
@@ -148,11 +148,42 @@ def load_probs(labels: pd.DataFrame):
             ])
             label = label.astype(int)
             y_val.append(label)
+
+    x_test = []
+    y_test = []
+    for idx, blob in enumerate(bucket.list_blobs(prefix='chunk_data/preds/test')):
+        if idx % 10 == 0:
+            print(f'successfully loaded {idx} test scans and labels')
+        file_id = blob.name.split('/')[-1].split('.')[0]
+        arr = download_array(blob)
+        diff = 784 - arr.shape[0]
+        if diff > 0 and file_id in labels.index.values:
+            arr = arr.tolist()
+            for i in range(diff):
+                arr.append([0])
+            arr = np.asarray(arr)
+            arr = np.reshape(arr, (28, 28, 1))
+            x_test.append(arr)
+
+            label = np.array([
+                labels.loc[file_id]['L MCA'],
+                labels.loc[file_id]['R MCA'],
+                labels.loc[file_id]['L ICA'],
+                labels.loc[file_id]['R ICA'],
+                labels.loc[file_id]['L Vert'],
+                labels.loc[file_id]['R Vert'],
+                labels.loc[file_id]['Basilar'],
+            ])
+            label = label.astype(int)
+            y_test.append(label)
+
     x_train = np.asarray(x_train)
     y_train = np.asarray(y_train)
     x_val = np.asarray(x_val)
     y_val = np.asarray(y_val)
-    return x_train, y_train, x_val, y_val
+    x_test = np.asarray(x_test)
+    y_test = np.asarray(y_test)
+    return x_train, y_train, x_val, y_val, x_test, y_test
 
 
 def load_labels():
@@ -165,10 +196,11 @@ def main():
     tf.Session(config=tf.ConfigProto(log_device_placement=True))
 
     labels = load_labels()
-    x_train, y_train, x_val, y_val = load_probs(labels)
+    x_train, y_train, x_val, y_val, x_test, y_test = load_probs(labels)
     print(x_train.shape, y_train.shape)
     print(x_val.shape, y_train.shape)
-    results = train(x_train, y_train, x_val, y_val)
+    print(x_test.shape, y_test.shape)
+    results = train(x_train, y_train, x_val, y_val, x_test, y_test)
     find_best_models(results)
 
 
