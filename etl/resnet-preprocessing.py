@@ -5,7 +5,6 @@ used to produce numpy arrays used as training data on the Resnet-50 model.
 """
 
 import os
-import pathlib
 import typing
 import logging
 
@@ -55,7 +54,7 @@ def process_images(data: typing.Dict[str, np.ndarray]):
 
 def process_labels(labels: pd.DataFrame, data: typing.Dict[str, np.ndarray]):
     # TODO: Remove duplicate HLXOSVDF27JWNCMJ, IYDXJTFVWJEX36DO from ELVO_key
-    labels = labels.loc[~labels.index.duplicated()] # Remove duplicate ids
+    labels = labels.loc[~labels.index.duplicated()]  # Remove duplicate ids
     labels = labels.loc[list(data.keys())]
     assert len(labels) == len(data)
     return labels
@@ -93,4 +92,3 @@ if __name__ == '__main__':
     labels_df = process_labels(labels_df, data_dict)
     plot_images({k: arr for k, arr in data_dict.items()}, labels_df, 5,
                 offset=20)
-
