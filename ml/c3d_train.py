@@ -1,7 +1,7 @@
 import tensorflow as tf
-from ml.models.three_d import c3d
 from blueno.slack import slack_report
 from blueno import utils
+from ml.models.three_d import c3d
 from keras.optimizers import SGD
 from keras.callbacks import ModelCheckpoint
 import pickle
