@@ -52,7 +52,7 @@ def main():
     # Make sure GPU is being used
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-    sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
+    tf.Session(config=tf.ConfigProto(log_device_placement=True))
 
     # Load training set IDs, validation set IDs, and testing set IDs
     train_ids = {}

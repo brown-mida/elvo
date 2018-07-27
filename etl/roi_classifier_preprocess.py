@@ -34,7 +34,7 @@ prelim_label_data = {}
 with open('tmp/augmented_annotated_labels.csv', 'r') as pos_file:
     reader = csv.reader(pos_file, delimiter=',')
     for row in reader:
-        if row[1] != 'Unnamed: 0.1': # might get mad at us here
+        if row[1] != 'Unnamed: 0.1':  # might get mad at us here
             prelim_label_data[row[1]] = int(row[2])
             # prelim_label_data[row[2]] = int(row[3])
 
