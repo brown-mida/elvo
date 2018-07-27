@@ -322,4 +322,3 @@ def __processing_job_helper(image_list, data, current_date):
             }
             db.replace_one({'name': image['name'], 'dataset': data['name']},
                            dataset)
-
