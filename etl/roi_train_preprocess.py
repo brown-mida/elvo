@@ -15,7 +15,7 @@ pos_train = 0
 neg_train = 0
 pos_val = 0
 neg_val = 0
-pos_test = 19
+pos_test = 0
 neg_test = 0
 
 
@@ -126,6 +126,7 @@ while negative_counter < 14500:
             negative_val_label_data[id_] = label
         # case id is in test IDs
         elif meta_id in test_ids:
+            neg_test += 1
             continue
         # case id is new
         else:
