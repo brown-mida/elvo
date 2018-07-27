@@ -1,23 +1,28 @@
-import tensorflow as tf
-from models.three_d import c3d
+"""
+This script serves serves as a way to train the C3D model on subsets of the
+training data of varying sizes, reporting the results of that training to
+the model_results channel on Slack.
+"""
 from blueno.slack import slack_report
 from blueno import utils
-import numpy as np
+import tensorflow as tf
+from ml.models.three_d import c3d
 from keras.optimizers import SGD
+from keras.callbacks import ModelCheckpoint
 import pickle
 import os
-
-os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"   # see issue #152
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 BLACKLIST = []
 LEARN_RATE = 1e-5
 
+# Make sure that the GPU is being used
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
 
-with open('chunk_data.pkl', 'rb') as infile:
+# load and unpack data separated by IDs (from etl/roi_train_preprocess.py)
+with open('chunk_data_separated_ids.pkl', 'rb') as infile:
     full_data = pickle.load(infile)
-
 full_x_train = full_data[0]
 full_y_train = full_data[1]
 x_val = full_data[2]
@@ -29,25 +34,35 @@ metrics = ['acc',
            utils.sensitivity,
            utils.specificity]
 
-print(np.asarray(x_val).shape)
+# for each possible fraction of the data
+# for i in range(1, 11):
+for i in range(10, 11):
 
-for i in range(1, 11):
-
+    # build a model
     model = c3d.C3DBuilder.build()
     opt = SGD(lr=LEARN_RATE, momentum=0.9, nesterov=True)
     model.compile(optimizer=opt,
                   loss={"out_class": "binary_crossentropy"},
                   metrics=metrics)
 
+    # Downsample the training data
     frac = i / 10
     x_train = full_x_train[:int(len(full_x_train) * frac)]
     y_train = full_y_train[:int(len(full_y_train) * frac)]
+
+    # make callbacks — AUC, sensitivity, specificity, accuracy, ModelCheckpoint
     callbacks = utils.create_callbacks(x_train=x_train,
                                        y_train=y_train,
                                        x_valid=x_val,
                                        y_valid=y_val,
                                        normalize=False)
+    checkpoint = ModelCheckpoint(f'tmp/c3d_separated_ids.hdf5',
+                                 monitor='val_acc',
+                                 verbose=1, save_best_only=True,
+                                 mode='auto')
+    callbacks.append(checkpoint)
 
+    # train the model
     history = model.fit(x=x_train,
                         y=y_train,
                         epochs=100,
@@ -56,10 +71,7 @@ for i in range(1, 11):
                         validation_data=(x_val, y_val),
                         verbose=1)
 
-    # predictions = model.predict(x_val, batch_size=8)
-    # print(predictions)
-    # print(predictions.shape)
-
+    # output a slack report about how well the model trained
     slack_report(x_train=x_train,
                  x_valid=x_val,
                  y_valid=y_val,
