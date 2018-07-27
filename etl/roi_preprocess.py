@@ -205,11 +205,11 @@ def process_labels():
         '/home/harold_triedman/elvo-analysis/annotations.csv')
     # annotations_df = pd.read_csv(
     #         '/Users/haltriedman/Desktop/annotations.csv')
-    annotations_df = annotations_df.drop(['created_by',
-                                          'created_at',
-                                          'ROI Link',
-                                          'Unnamed: 10',
-                                          'Mark here if Matt should review'],
+    annotations_df = annotations_df.drop(['Unnamed: 1',
+                                          'Unnamed: 2',
+                                          'Unnamed: 4',
+                                          'Unnamed: 5',
+                                          'Unnamed: 6'],
                                          axis=1)
     annotations_df = annotations_df[
         annotations_df.red1 == annotations_df.red1]
