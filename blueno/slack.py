@@ -236,6 +236,7 @@ def full_multiclass_report(model: keras.models.Model,
         - AUC
         - classification report
         - confusion matrix
+        - 7/31/2018 metrics
 
     The output is the report as a string.
 
@@ -284,6 +285,33 @@ def full_multiclass_report(model: keras.models.Model,
     comment += '\n'
     comment += str(cnf_matrix)
     save_confusion_matrix(cnf_matrix, classes=classes, cm_path=cm_path)
+
+    # Compute additional metrics for the 7/31 paper
+    try:
+        tn, fp, fn, tp = cnf_matrix.ravel()
+        comment += f'\n\nAdditional statistics:\n'
+        sensitivity = tp / (tp + fn)
+        comment += f'Sensitivity: {sensitivity}\n'
+        specificity = tn / (tn + fp)
+        comment += f'Specificity: {tn / (tn + fp)}\n'
+        comment += f'Precision: {tp / (tp + fp)}\n'
+        total_acc = (tp + tn) / (tp + tn + fp + fn)
+        random_acc = (((tn + fp) * (tn + fn) + (fn + tp) * (fp + tp))
+                      / (tp + tn + fp + fn))
+        comment += f'\n\nNamed statistics:\n'
+        kappa = (total_acc - random_acc) / (1 - random_acc)
+        comment += f'Cohen\'s Kappa: {kappa}\n'
+        youdens = sensitivity - (1 - specificity)
+        comment += f'Youden\'s index: {youdens}\n'
+
+        comment += f'\n\nOther sklearn statistics:\n'
+        log_loss = sklearn.metrics.classification.log_loss(y_true, y_pred)
+        comment += f'Log loss: {log_loss}\n'
+        comment += f'F-1: {sklearn.metrics.f1_score(y_true, y_pred)}\n'
+    except ValueError as e:
+        comment += '\nCould not add additional statistics (tp, fp, etc.)'
+        comment += str(e)
+
     save_misclassification_plots(x,
                                  y_true_binary,
                                  y_pred_binary,
@@ -294,6 +322,55 @@ def full_multiclass_report(model: keras.models.Model,
                                  tn_path=tn_path,
                                  fn_path=fn_path)
     return comment
+
+
+def write_to_slack(comment, token):
+    """
+    Write results to slack.
+    """
+    channels = 'CBUA09G68'
+
+    r = requests.get(
+        'https://slack.com/api/chat.postMessage?' +
+        'token={}&channel={}&text={}'.format(token, channels, comment))
+    return r
+
+
+def write_iteration_results(params, result, slack_token,
+                            job_name=None, job_date=None,
+                            purported_accuracy=None,
+                            purported_loss=None,
+                            purported_sensitivity=None,
+                            final=False, i=0):
+    """
+    Write iteration results (during validation) to Slack.
+    """
+    if final:
+        text = "-----Final Results-----\n"
+    else:
+        text = "-----Iteration {}-----\n".format(i + 1)
+    text += "Seed: {}\n".format(params.seed)
+    text += "Params: {}\n".format(params)
+    if (job_name is not None):
+        text += 'Job name: {}\n'.format(job_name)
+        text += 'Job date: {}\n'.format(job_date)
+        text += 'Purported accuracy: {}\n'.format(
+            purported_accuracy)
+        text += 'Purported loss: {}\n'.format(
+            purported_loss)
+        text += 'Purported sensitivity: {}\n'.format(
+            purported_sensitivity)
+    if final:
+        text += "\n-----Average Results-----\n"
+    else:
+        text += "\n-----Results-----\n"
+    text += 'Loss: {}\n'.format(result[0])
+    text += 'Acc: {}\n'.format(result[1])
+    text += 'Sensitivity: {}\n'.format(result[2])
+    text += 'Specificity: {}\n'.format(result[3])
+    text += 'True Positives: {}\n'.format(result[4])
+    text += 'False Negatives: {}\n'.format(result[5])
+    write_to_slack(text, slack_token)
 
 
 def upload_to_slack(filename,

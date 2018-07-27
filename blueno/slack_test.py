@@ -1,8 +1,8 @@
-import os
 import pathlib
 
 import keras
 import numpy as np
+import os
 import pytest
 import sklearn.preprocessing
 
@@ -85,7 +85,39 @@ def test_full_multiclass_report_multiclass():
 
 @pytest.mark.skipif(os.uname().nodename != 'gpu1708',
                     reason='Test uses token only on gpu1708')
-def test_slack_upload_cm():
+def test_slack_upload_cm_two_classes():
+    model = keras.Sequential([
+        keras.layers.Flatten(input_shape=(224, 224, 3)),
+        keras.layers.Dense(2, activation='softmax'),
+    ])
+
+    X = np.random.rand(500, 224, 224, 3)
+    y = model.predict(X)
+
+    assert y.shape == (500, 2)
+
+    cm_path = pathlib.Path('/tmp/test_cm.png')
+    tp_path = pathlib.Path('/tmp/test_true_positives.png')
+    fp_path = pathlib.Path('/tmp/test_false_positives.png')
+    tn_path = pathlib.Path('/tmp/test_true_negatives.png')
+    fn_path = pathlib.Path('/tmp/test_false_negatives.png')
+
+    report = blueno.slack.full_multiclass_report(model,
+                                                 X,
+                                                 y,
+                                                 classes=[0, 1],
+                                                 cm_path=cm_path,
+                                                 tp_path=tp_path,
+                                                 fp_path=fp_path,
+                                                 tn_path=tn_path,
+                                                 fn_path=fn_path)
+    blueno.slack.upload_to_slack('/tmp/cm.png', report, SLACK_TOKEN,
+                                 channels=['#tests'])
+
+
+@pytest.mark.skipif(os.uname().nodename != 'gpu1708',
+                    reason='Test uses token only on gpu1708')
+def test_slack_upload_cm_three_classes():
     model = keras.Sequential([
         keras.layers.Flatten(input_shape=(224, 224, 3)),
         keras.layers.Dense(3, activation='softmax'),
