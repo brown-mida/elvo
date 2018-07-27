@@ -1,9 +1,7 @@
 import logging
-
-import numpy as np
 import pandas as pd
 
-from lib import cloud_management as cloud  # , roi_transforms, transforms
+from lib import cloud_management as cloud
 
 
 def configure_logger():
@@ -51,10 +49,10 @@ def create_chunks(annotations_df: pd.DataFrame):
             logging.info(f'downloading {file_id}')
             cloud.save_chunks_to_cloud(arr, 'normal',
                                        'positive_no_aug',
-                                        file_id)
+                                       file_id)
 
 
-def create_labels(annotations_df: pd.DataFrame):
+def create_labels():
     labels_df = pd.read_csv('/home/amy/data/augmented'
                             '_annotated_labels1.csv')
     print(len(labels_df))
@@ -87,7 +85,7 @@ def run_preprocess():
     configure_logger()
     annotations_df = process_labels()
     create_labels(annotations_df)
-    #create_chunks(annotations_df)
+    create_chunks(annotations_df)
 
 
 if __name__ == '__main__':

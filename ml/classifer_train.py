@@ -111,14 +111,18 @@ def train(x_train, y_train, x_val, y_val, x_test, y_test):
                   f'\n---------------------------------------------------\n')
 
             for i in range(10):
-                model = cube_classifier.CubeClassifierBuilder.build(dropout=dropout)
+                model = cube_classifier.\
+                    CubeClassifierBuilder.build(dropout=dropout)
+                opt = SGD(lr=lr, momentum=0.9, nesterov=True)
                 model.compile(loss=categorical_crossentropy,
-                              optimizer=SGD(lr=lr, momentum=0.9, nesterov=True),
+                              optimizer=opt,
                               metrics=['accuracy'])
                 model.fit(x=x_train,
                           y=y_train,
                           batch_size=128,
-                          callbacks=[EarlyStopping(monitor='val_loss', patience=10, verbose=1)],
+                          callbacks=[EarlyStopping(monitor='val_loss',
+                                                   patience=10,
+                                                   verbose=1)],
                           epochs=300,
                           validation_data=(x_val, y_val))
 
@@ -145,7 +149,8 @@ def load_probs(labels: pd.DataFrame):
 
     x_train = []
     y_train = []
-    for idx, blob in enumerate(bucket.list_blobs(prefix='chunk_data/preds/train')):
+    blobs = bucket.list_blobs(prefix='chunk_data/preds/train')
+    for idx, blob in enumerate(blobs):
         if idx % 10 == 0:
             print(f'successfully loaded {idx} training scans and labels')
         file_id = blob.name.split('/')[-1].split('.')[0]
@@ -173,7 +178,8 @@ def load_probs(labels: pd.DataFrame):
 
     x_val = []
     y_val = []
-    for idx, blob in enumerate(bucket.list_blobs(prefix='chunk_data/preds/val')):
+    blobs = bucket.list_blobs(prefix='chunk_data/preds/val')
+    for idx, blob in enumerate(blobs):
         if idx % 10 == 0:
             print(f'successfully loaded {idx} validation scans and labels')
         file_id = blob.name.split('/')[-1].split('.')[0]
@@ -201,7 +207,8 @@ def load_probs(labels: pd.DataFrame):
 
     x_test = []
     y_test = []
-    for idx, blob in enumerate(bucket.list_blobs(prefix='chunk_data/preds/test')):
+    blobs = bucket.list_blobs(prefix='chunk_data/preds/test')
+    for idx, blob in enumerate(blobs):
         if idx % 10 == 0:
             print(f'successfully loaded {idx} test scans and labels')
         file_id = blob.name.split('/')[-1].split('.')[0]
@@ -241,7 +248,7 @@ def load_labels():
 
 
 def main():
-    os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"   # see issue #152
+    os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ["CUDA_VISIBLE_DEVICES"] = "0"
     tf.Session(config=tf.ConfigProto(log_device_placement=True))
 

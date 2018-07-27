@@ -157,7 +157,7 @@ def clean_csv():
     labels_df = pd.read_csv('/home/amy/data/augmented_annotated_labels.csv')
     print(len(labels_df))
     for index, row in labels_df.iterrows():
-        if row[2] == 1 and not '_' in row[1]:
+        if row[2] == 1 and '_' not in row[1]:
             labels_df = labels_df.drop(row[0])
     print(len(labels_df))
     labels_df = labels_df.drop(columns=['Unnamed: 0'])

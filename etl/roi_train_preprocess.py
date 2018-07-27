@@ -9,25 +9,7 @@ import logging
 
 train_ids = {}
 val_ids = {}
-test_ids = {'9UIAZ2U1711BN4IW': '',
-            'HXLMZWH3SFX3SPAN': '',
-            'IAUKV5R644JZFD55': '',
-            'ILNTKMBVTXNXURGV': '',
-            'JJMENP4QE4CSXSHV': '',
-            'JWKB7SHIBYWSEVMC': '',
-            'KOE9CU24WK2TUQ43': '',
-            'LGFNFIWO2ZEQYK36': '',
-            'LINKQMUO9DQ43BNH': '',
-            'LUVMEPI5JWYL67RF': '',
-            'NHXCOHZ4HH53NLQ6': '',
-            'RKBSU42WA7AY22E7': '',
-            'RSKIY1U4X5QAUAAK': '',
-            'SMGWMDYTYR8ZB3F5': '',
-            'TRRYZ5WXYHUMTPCQ': '',
-            'WWEFFBIMLZ3KLQVZ': '',
-            'XSSFSN7XYAV4E3OA': '',
-            'Z3AINLH4Y07ITBRR': '',
-            'ZUEK5YSS7CITVWIP': ''}
+test_ids = {}
 
 pos_train = 0
 neg_train = 0
@@ -48,6 +30,13 @@ def configure_logger():
 
 
 configure_logger()
+
+# get test ids from test_ids.csv
+with open('test_ids.csv') as infile:
+    reader = csv.reader(infile, delimiter=',')
+    for row in reader:
+        if row[0] != '':
+            test_ids[row[0]] = ''
 
 # Access Google Cloud Storage
 gcs_client = storage.Client.from_service_account_json(
@@ -84,36 +73,44 @@ for i, id_ in enumerate(list(positive_label_data.keys())):
         seed = random.randint(1, 100)
         meta_id = id_[:16]
         stripped_id = id_[:-1]
-        if seed > 20:
+
+        # if the ID is in the test set add it to positive_test_label_data
+        if meta_id in test_ids:
+            pos_test += 1
+            positive_test_label_data[id_] = 1
+            for j in range(2, 25):
+                positive_test_label_data[stripped_id + str(j)] = 1
+            continue
+
+        # if the ID is in the train set add it to positive_train_label_data
+        if seed > 10:
             positive_train_label_data[id_] = 1
             for j in range(2, 25):
                 positive_train_label_data[stripped_id + str(j)] = 1
             train_ids[meta_id] = ''
             pos_train += 1
-        elif seed > 10:
+
+        # if the ID is in the val set add it to positive_val_label_data
+        else:
             positive_val_label_data[id_] = 1
             for j in range(2, 25):
                 positive_val_label_data[stripped_id + str(j)] = 1
             val_ids[meta_id] = ''
             pos_val += 1
-        else:
-            positive_test_label_data[id_] = 1
-            for j in range(2, 25):
-                positive_test_label_data[stripped_id + str(j)] = 1
-            if meta_id not in test_ids:
-                test_ids[meta_id] = ''
-                pos_test += 1
 
 # Get 14500 random negatives from the label data to feed into our generator
 negative_train_label_data = {}
 negative_val_label_data = {}
 negative_test_label_data = {}
 
+# get negatives in test set into negative_test_label_data
+for id_, label in list(prelim_label_data.items()):
+    if id_[:16] in test_ids and label == 0:
+        negative_test_label_data[id_] = 0
+
 logging.info("getting 14500 random negative labels")
 negative_counter = 0
-
-# split negatives into train/test/val by
-# previous splits in positive/new random number
+# split negatives into train/test/val
 while negative_counter < 14500:
     id_, label = random.choice(list(prelim_label_data.items()))
     if label == 0:
@@ -121,37 +118,37 @@ while negative_counter < 14500:
             logging.info(f'gotten {negative_counter} labels so far')
 
         meta_id = id_[:16]
+        # case id is in train IDs
         if meta_id in train_ids:
             negative_train_label_data[id_] = label
-
+        # case id is in val IDs
         elif meta_id in val_ids:
             negative_val_label_data[id_] = label
-
+        # case id is in test IDs
         elif meta_id in test_ids:
-            negative_test_label_data[id_] = label
-
+            continue
+        # case id is new
         else:
             seed = random.randint(1, 100)
-            if seed > 20:
+            if seed > 10:
                 negative_train_label_data[id_] = label
                 train_ids[meta_id] = ''
                 neg_train += 1
-            elif seed > 10:
+            else:
                 negative_val_label_data[id_] = label
                 val_ids[meta_id] = ''
                 neg_val += 1
-            else:
-                negative_test_label_data[id_] = label
-                test_ids[meta_id] = ''
-                neg_test += 1
         del prelim_label_data[id_]
         negative_counter += 1
 
 # save train/val/test split by IDs
 logging.info("saving train/val/test metadata IDs")
-logging.info(f"training brains:   {pos_train} ELVO positive, {neg_train} ELVO negative\n"
-             f"validation brains: {pos_val} ELVO positive, {neg_val} ELVO negative\n"
-             f"testing brains:    {pos_test} ELVO positive, {neg_test} ELVO negative")
+logging.info(f"\ntraining brains:   "
+             f"{pos_train} ELVO positive, {neg_train} ELVO negative\n"
+             f"validation brains: "
+             f"{pos_val} ELVO positive, {neg_val} ELVO negative\n"
+             f"testing brains:    "
+             f"{pos_test} ELVO positive, {neg_test} ELVO negative")
 pd.DataFrame.from_dict(train_ids, 'index').to_csv('train_ids.csv')
 pd.DataFrame.from_dict(val_ids, 'index').to_csv('val_ids.csv')
 pd.DataFrame.from_dict(test_ids, 'index').to_csv('test_ids.csv')

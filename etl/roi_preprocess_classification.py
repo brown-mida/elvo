@@ -91,8 +91,9 @@ def process_labels():
 
 
 def get_binary_labels():
-    # class_labels_df = pd.read_csv('classification_vectors.csv')
-    class_labels_df = pd.read_csv('/Users/haltriedman/PycharmProjects/elvo-analysis/classification_vectors.csv')
+    class_labels_df = pd.read_csv('classification_vectors.csv')
+    # class_labels_df = pd.read_csv('/Users/haltriedman/PycharmProjects/'
+    #                               'elvo-analysis/classification_vectors.csv')
     binary_labels = {}
     for _, row in class_labels_df.iterrows():
         if row['L MCA'] == 1:
@@ -112,7 +113,9 @@ def get_binary_labels():
         else:
             binary_labels[row['Unnamed: 0']] = 0
 
-    binary_labels_df = pd.DataFrame.from_dict(binary_labels, orient='index', columns=['labels'])
+    binary_labels_df = pd.DataFrame.from_dict(binary_labels,
+                                              orient='index',
+                                              columns=['labels'])
     binary_labels_df.to_csv('binary_vectors.csv')
 
 
