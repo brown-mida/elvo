@@ -54,3 +54,11 @@ def download_image(user, dataset, data_type, filename, bucket):
     blob.download_to_file(out_stream)
     out_stream.seek(0)
     return out_stream
+
+
+def download_array(gcs_url, bucket):
+    blob = bucket.blob(gcs_url)
+    in_stream = io.BytesIO()
+    blob.download_to_file(in_stream)
+    in_stream.seek(0)  # Read from the start of the file-like object
+    return np.load(in_stream)
