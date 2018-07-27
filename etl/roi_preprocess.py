@@ -207,7 +207,8 @@ def process_labels():
     #         '/Users/haltriedman/Desktop/annotations.csv')
     annotations_df = annotations_df.drop(['created_by',
                                           'created_at',
-                                          'ROI Link'],
+                                          'ROI Link',
+                                          'Unnamed: 10'],
                                          axis=1)
     annotations_df = annotations_df[
         annotations_df.red1 == annotations_df.red1]
