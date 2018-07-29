@@ -36,52 +36,53 @@ metrics = ['acc',
 
 # for each possible fraction of the data
 # for i in range(1, 11):
-for i in range(10, 11):
+for i in range(10):
+    for j in range(10, 11):
 
-    # build a model
-    model = c3d.C3DBuilder.build()
-    opt = SGD(lr=LEARN_RATE, momentum=0.9, nesterov=True)
-    model.compile(optimizer=opt,
-                  loss={"out_class": "binary_crossentropy"},
-                  metrics=metrics)
+        # build a model
+        model = c3d.C3DBuilder.build()
+        opt = SGD(lr=LEARN_RATE, momentum=0.9, nesterov=True)
+        model.compile(optimizer=opt,
+                      loss={"out_class": "binary_crossentropy"},
+                      metrics=metrics)
 
-    # Downsample the training data
-    frac = i / 10
-    x_train = full_x_train[:int(len(full_x_train) * frac)]
-    y_train = full_y_train[:int(len(full_y_train) * frac)]
+        # Downsample the training data
+        frac = j / 10
+        x_train = full_x_train[:int(len(full_x_train) * frac)]
+        y_train = full_y_train[:int(len(full_y_train) * frac)]
 
-    # make callbacks — AUC, sensitivity, specificity, accuracy, ModelCheckpoint
-    callbacks = utils.create_callbacks(x_train=x_train,
-                                       y_train=y_train,
-                                       x_valid=x_val,
-                                       y_valid=y_val,
-                                       normalize=False)
-    checkpoint = ModelCheckpoint(f'tmp/c3d_separated_ids.hdf5',
-                                 monitor='val_acc',
-                                 verbose=1, save_best_only=True,
-                                 mode='auto')
-    callbacks.append(checkpoint)
+        # make callbacks — AUC, sensitivity, specificity, accuracy, ModelCheckpoint
+        callbacks = utils.create_callbacks(x_train=x_train,
+                                           y_train=y_train,
+                                           x_valid=x_val,
+                                           y_valid=y_val,
+                                           normalize=False)
+        checkpoint = ModelCheckpoint(f'tmp/c3d_separated_ids.hdf5',
+                                     monitor='val_acc',
+                                     verbose=1, save_best_only=True,
+                                     mode='auto')
+        callbacks.append(checkpoint)
 
-    # train the model
-    history = model.fit(x=x_train,
-                        y=y_train,
-                        epochs=100,
-                        batch_size=16,
-                        callbacks=callbacks,
-                        validation_data=(x_val, y_val),
-                        verbose=1)
+        # train the model
+        history = model.fit(x=x_train,
+                            y=y_train,
+                            epochs=100,
+                            batch_size=16,
+                            callbacks=callbacks,
+                            validation_data=(x_val, y_val),
+                            verbose=1)
 
-    # output a slack report about how well the model trained
-    slack_report(x_train=x_train,
-                 x_valid=x_val,
-                 y_valid=y_val,
-                 model=model,
-                 history=history,
-                 name=f'Basic C3D (training on {frac * 100}% of data)',
-                 params=f'The most basic, non-optimized version of C3D, '
-                        f'training on {frac * 100}% of data',
-                 token='xoxp-314216549302'
-                       '-332571517623'
-                       '-402064251175'
-                       '-cde67240d96f69a3534e5c919ff097e7',
-                 chunk=True)
+        # output a slack report about how well the model trained
+        slack_report(x_train=x_train,
+                     x_valid=x_val,
+                     y_valid=y_val,
+                     model=model,
+                     history=history,
+                     name=f'Basic C3D (training on {frac * 100}% of data)',
+                     params=f'The most basic, non-optimized version of C3D, '
+                            f'training on {frac * 100}% of data',
+                     token='xoxp-314216549302'
+                           '-332571517623'
+                           '-402064251175'
+                           '-cde67240d96f69a3534e5c919ff097e7',
+                     chunk=True)

@@ -58,7 +58,7 @@ with open('tmp/augmented_annotated_labels.csv', 'r') as pos_file:
 
 # Get all of the positives from the label data
 positive_label_data = {}
-logging.info('getting 12168 positive labels')
+logging.info('getting positive labels')
 for id_, label in list(prelim_label_data.items()):
     if label == 1 and '_' in id_:
         positive_label_data[id_] = label
