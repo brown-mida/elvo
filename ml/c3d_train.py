@@ -27,6 +27,12 @@ full_x_train = full_data[0]
 full_y_train = full_data[1]
 x_val = full_data[2]
 y_val = full_data[3]
+x_test = full_data[4]
+y_test = full_data[5]
+
+assert len(full_x_train) == len(full_y_train)
+assert len(x_val) == len(y_val)
+assert len(x_test) == len(y_test)
 
 metrics = ['acc',
            utils.true_positives,
@@ -57,7 +63,7 @@ for i in range(10):
                                            x_valid=x_val,
                                            y_valid=y_val,
                                            normalize=False)
-        checkpoint = ModelCheckpoint(f'tmp/c3d_separated_ids.hdf5',
+        checkpoint = ModelCheckpoint(f'tmp/FINAL_RUN_{i}.hdf5',
                                      monitor='val_acc',
                                      verbose=1, save_best_only=True,
                                      mode='auto')
@@ -74,8 +80,8 @@ for i in range(10):
 
         # output a slack report about how well the model trained
         slack_report(x_train=x_train,
-                     x_valid=x_val,
-                     y_valid=y_val,
+                     x_valid=x_test,
+                     y_valid=y_test,
                      model=model,
                      history=history,
                      name=f'Basic C3D (training on {frac * 100}% of data)',
