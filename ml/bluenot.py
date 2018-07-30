@@ -178,8 +178,8 @@ def start_job(x_train: np.ndarray,
         logging.info('no slack token found, not generating report')
 
     acc_i = model.metrics_names.index('acc')
-    if model.evaluate_generator(valid_gen)[acc_i] >= 0.8:
-        upload_model_to_gcs(job_name, created_at, model_filepath)
+    # if model.evaluate_generator(valid_gen)[acc_i] >= 0.8:
+    upload_model_to_gcs(job_name, created_at, model_filepath)
 
     end_time = datetime.datetime.utcnow().isoformat()
     # Do not change, this generates the ended at ES field
@@ -315,7 +315,8 @@ def check_data_in_sync(params: blueno.ParamConfig):
     try:
         is_equal = gcs.equal_array_counts(data_dir, array_url)
     except FileNotFoundError:
-        logging.info('downloading data to {')
+        logging.info(f'data on GCS does not exist locally,'
+                     f' downloading data to {data_dir}')
         gcs.download_to_gpu1708(array_url, data_dir, folder=True)
         # TODO(luke): Allow web users to generate labels
         default_label_url = 'gs://elvos/processed/processed-lower/labels.csv'
