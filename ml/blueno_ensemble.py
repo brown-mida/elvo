@@ -82,9 +82,8 @@ def simple_ensemble(model_blob_names: List[str],
         val_split=val_split
     )
 
-    x_train, x_valid, y_train, y_valid, _, _ = prepare_data(params,
-                                                            train_test_val=train_test_val,
-                                                            sort=sort)
+    x_train, x_valid, y_train, y_valid, _, _ = prepare_data(
+        params, train_test_val=train_test_val, sort=sort)
     datagen = ImageDataGenerator(featurewise_center=True,
                                  featurewise_std_normalization=True)
     datagen.fit(x_train)
@@ -184,13 +183,12 @@ def evaluate_model(model: keras.Model, datagen, x_valid, y_valid):
 
 
 if __name__ == '__main__':
-    """This script allows you to build ensembles by mainually defining
-    model names.
-    
-    See the docstring for simple_ensemble for more info on how this
-    script should be used. Be very careful to get all of the arguments
-    correct, otherwise you'll likely get unreasonably good results.
-    """
+    # This script allows you to build ensembles by mainually defining
+    # model names.
+
+    # See the docstring for simple_ensemble for more info on how this
+    # script should be used. Be very careful to get all of the arguments
+    # correct, otherwise you'll likely get unreasonably good results.
     data_dir = '/gpfs/main/home/lzhu7/elvo-analysis/data/processed-lower' \
                '/arrays'
     labels_path = '/gpfs/main/home/lzhu7/elvo-analysis/data/' \

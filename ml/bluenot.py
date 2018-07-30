@@ -177,7 +177,9 @@ def start_job(x_train: np.ndarray,
     else:
         logging.info('no slack token found, not generating report')
 
-    acc_i = model.metrics_names.index('acc')
+    # acc_i = model.metrics_names.index('acc')
+    # TODO(luke): Document this change, originally we only upload good models,
+    # now we upload all models to GCS
     # if model.evaluate_generator(valid_gen)[acc_i] >= 0.8:
     upload_model_to_gcs(job_name, created_at, model_filepath)
 
