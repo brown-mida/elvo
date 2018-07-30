@@ -297,7 +297,7 @@ def full_multiclass_report(model: keras.models.Model,
         comment += f'Precision: {tp / (tp + fp)}\n'
         total_acc = (tp + tn) / (tp + tn + fp + fn)
         random_acc = (((tn + fp) * (tn + fn) + (fn + tp) * (fp + tp))
-                      / (tp + tn + fp + fn))
+                      / (tp + tn + fp + fn) ** 2)
         comment += f'\n\nNamed statistics:\n'
         kappa = (total_acc - random_acc) / (1 - random_acc)
         comment += f'Cohen\'s Kappa: {kappa}\n'
