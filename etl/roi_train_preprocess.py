@@ -109,6 +109,7 @@ for id_, label in list(prelim_label_data.items()):
     if test_counter % 25 == 0:
         if id_[:16] in test_ids and label == 0:
             negative_test_label_data[id_] = 0
+            neg_test += 1
     test_counter += 1
 
 logging.info("getting 14500 random negative labels")
@@ -129,7 +130,6 @@ while negative_counter < 14000:
             negative_val_label_data[id_] = label
         # case id is in test IDs
         elif meta_id in test_ids:
-            neg_test += 1
             continue
         # case id is new
         else:
