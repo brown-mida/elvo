@@ -104,9 +104,12 @@ negative_val_label_data = {}
 negative_test_label_data = {}
 
 # get negatives in test set into negative_test_label_data
+test_counter = 0
 for id_, label in list(prelim_label_data.items()):
-    if id_[:16] in test_ids and label == 0:
-        negative_test_label_data[id_] = 0
+    if test_counter % 25 == 0:
+        if id_[:16] in test_ids and label == 0:
+            negative_test_label_data[id_] = 0
+    test_counter += 1
 
 logging.info("getting 14500 random negative labels")
 negative_counter = 0
@@ -187,7 +190,7 @@ for id_, label in list(negative_train_label_data.items()):
         arr = np.expand_dims(arr, axis=-1)
         train_chunks.append(arr)
         train_labels.append(label)
-logging.info(f'{i} total negative chunks')
+logging.info(f'{i} total negative training chunks')
 
 # get positive val chunks and labels
 i = 1
@@ -215,7 +218,7 @@ for id_, label in list(negative_val_label_data.items()):
         arr = np.expand_dims(arr, axis=-1)
         val_chunks.append(arr)
         val_labels.append(label)
-logging.info(f'{i} total negative chunks')
+logging.info(f'{i} total negative validation chunks')
 
 # get positive test chunks and labels
 i = 1
@@ -229,7 +232,7 @@ for id_, label in list(positive_test_label_data.items()):
         arr = np.expand_dims(arr, axis=-1)
         test_chunks.append(arr)
         test_labels.append(label)
-logging.info(f'{i} total positive validation chunks')
+logging.info(f'{i} total positive test chunks')
 
 # get negative test chunks and labels
 i = 1
@@ -243,7 +246,7 @@ for id_, label in list(negative_test_label_data.items()):
         arr = np.expand_dims(arr, axis=-1)
         test_chunks.append(arr)
         test_labels.append(label)
-logging.info(f'{i} total negative chunks')
+logging.info(f'{i} total negative test chunks')
 
 # shuffle training chunk order
 tmp = list(zip(train_chunks, train_labels))
