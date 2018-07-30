@@ -294,8 +294,8 @@ def check_data_in_sync(params: blueno.ParamConfig):
 
 
     TODO(luke): Refactor
-    If the data doesn't exist, an attempt to download the data from
-    gcs will be made.
+    If the data doesn't exist and we're on gpu1708, an attempt to download
+    the data from GCS will be made, so the web trainer works.
 
     This also assumes that gcs_url/arrays contains the arrays.
 
@@ -317,22 +317,23 @@ def check_data_in_sync(params: blueno.ParamConfig):
     try:
         is_equal = gcs.equal_array_counts(data_dir, array_url)
     except FileNotFoundError:
-        logging.info(f'data on GCS does not exist locally,'
-                     f' downloading data to {data_dir}')
-        gcs.download_to_gpu1708(array_url, data_dir, folder=True)
-        # TODO(luke): Allow web users to generate labels
-        default_label_url = 'gs://elvos/processed/processed-lower/labels.csv'
-        labels_path = params.data.labels_path
-        gcs.download_to_gpu1708(default_label_url, labels_path)
-        return
+        # TODO(luke): Refactor this
+        if os.uname().nodename == 'gpu1708':
+            logging.info(f'data on GCS does not exist locally,'
+                         f' downloading data to {data_dir}')
+            gcs.download_to_gpu1708(array_url, data_dir, folder=True)
+            # TODO(luke): Allow web users to generate labels
+            default_label_url = \
+                'gs://elvos/processed/processed-lower/labels.csv'
+            labels_path = params.data.labels_path
+            gcs.download_to_gpu1708(default_label_url, labels_path)
     except DefaultCredentialsError as e:
         logging.warning(e)
         logging.warning('Will not check GCS for syncing')
-        return
-
-    if not is_equal:
-        raise ValueError(f'{data_dir} and {array_url} have a different'
-                         f' number of files')
+    else:
+        if not is_equal:
+            raise ValueError(f'{data_dir} and {array_url} have a different'
+                             f' number of files')
 
 
 def check_config(config):
