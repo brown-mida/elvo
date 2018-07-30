@@ -71,3 +71,25 @@ def test_list_plots():
     r = client.get('/plots')
     assert r.status_code == 200
     assert 'test_gcs-2018-07-24T17:30:15.191204' in json.loads(r.data)
+
+
+@pytest.mark.skipif('SPREADSHEET_CREDENTIALS' not in os.environ,
+                    reason='Spreadsheet credentials required')
+def test_list_transforms():
+    from main import app
+    app.testing = True
+    client = app.test_client()
+    r: flask.Response
+    r = client.get('/preprocessing/transforms')
+    assert r.status_code == 200
+    assert 'bound_pixels' in json.loads(r.data)
+
+
+@pytest.mark.skip(reason="Takes too long and wastes lots of $$")
+def test_preprocess_data():
+    from main import app
+    app.testing = True
+    client = app.test_client()
+    r: flask.Response
+    r = client.post('/preprocessing/<pytest>')
+    assert r.status_code == 200
