@@ -1,7 +1,7 @@
 import datetime
-import io
 import logging
 
+import io
 import matplotlib
 import numpy as np
 from airflow.models import BaseOperator, DAG
@@ -150,6 +150,7 @@ dag = DAG(dag_id='preprocess_web',
           description='Preprocesses data using a configuration passed by'
                       ' the web app.',
           default_args=default_args,
+          schedule_interval=None,
           catchup=False)
 
 preprocess_op = PreprocessOperator(task_id='preprocess',
