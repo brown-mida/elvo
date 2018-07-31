@@ -1,4 +1,3 @@
-import csv
 import io
 import logging
 import os
@@ -23,7 +22,48 @@ def download_array(blob: storage.Blob) -> np.ndarray:
     return np.load(in_stream)
 
 
-def display_preds(preds: np.ndarray):
+def display_preds(preds, blobs):
+    # Get npy files from Google Cloud Storage
+    gcs_client = storage.Client.from_service_account_json(
+        # Use this when running on VM
+        '/home/harold_triedman/elvo-analysis/credentials/client_secret.json'
+
+        # Use this when running locally
+        # 'credentials/client_secret.json'
+    )
+    bucket = gcs_client.get_bucket('elvos')
+
+    # Get every scan in airflow/test_npy
+    for h, blob in enumerate(blobs):
+        if not blob.name.endswith('.npy'):
+            continue
+        arr = download_array(blob)
+        pred = preds[h]
+
+        mips = []
+        preds = []
+        for a, i in enumerate(range(0, len(arr), 32)):
+            if i + 32 > len(arr):
+                mip = arr[i:]
+            else:
+                mip = arr[i:i+32]
+            mip = np.max(mip)
+            print(mip.shape)
+            hm = np.kron(pred[a], np.ones(shape=(len(arr[0]), len(arr[0][0]))))
+            print(hm)
+            print(hm.shape)
+            plt.figure(figsize=(7, 7))
+            plt.subplot(1, 2, 1)
+            plt.imshow(mip, interpolation='none')
+            plt.subplot(1, 2, 2)
+            plt.imshow(hm, cmap='Reds')
+            plt.show()
+            mips.append(mip)
+            preds.append(hm)
+
+        mips = np.asarray(mips)
+        preds = np.asarray(preds)
+
     return
 
 
@@ -42,9 +82,11 @@ def make_preds():
     model = c3d.C3DBuilder.build()
     model.load_weights('tmp/FINAL_RUN_6.hdf5')
     # model.load_weights('/Users/haltriedman/Desktop/FINAL_RUN_6.hdf5')
+    metapreds = []
+    blobs = bucket.list_blobs(prefix='airflow/test_npy/')
 
     # Get every scan in airflow/npy
-    for blob in bucket.list_blobs(prefix='airflow/test_npy/'):
+    for blob in blobs:
         if not blob.name.endswith('.npy'):
             continue
         arr = download_array(blob)
@@ -53,9 +95,7 @@ def make_preds():
         preds = []
         for i in range(0, len(arr), 32):
             layer = np.zeros(shape=(int(math.ceil(len(arr[0]) / 32) * math.ceil(len(arr[0][0]) / 32))))
-            print(int(math.ceil(len(arr[0]) / 32)), int(math.ceil(len(arr[0][0]) / 32)))
             layer_idx = 0
-            print(layer.shape)
             for j in range(0, len(arr[0]), 32):
                 for k in range(0, len(arr[0][0]), 32):
                     chunk = arr[i: i + 32,
@@ -74,13 +114,14 @@ def make_preds():
             preds.append(layer)
 
         preds = np.asarray(preds)
-        print(arr.shape)
-        print(preds.shape)
+        metapreds.append(preds)
+    return np.asarray(metapreds), blobs
 
 
 def main():
     tf.Session(config=tf.ConfigProto(log_device_placement=True))
-    make_preds()
+    preds, blobs = make_preds()
+    display_preds(preds, blobs)
 
 
 if __name__ == '__main__':
