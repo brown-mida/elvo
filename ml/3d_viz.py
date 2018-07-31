@@ -70,7 +70,7 @@ def make_preds():
                             chunk = np.expand_dims(chunk, axis=0)
                             layer[layer_idx] = model.predict(chunk)
                     layer_idx += 1
-            layer = layer.reshape((int(math.ceil(len(arr[0] / 32))), int(math.ceil(len(arr[0][0] / 32)))))
+            layer = layer.reshape((int(math.ceil(len(arr[0]) / 32)), int(math.ceil(len(arr[0][0]) / 32))))
             preds.append(layer)
 
         preds = np.asarray(preds)
