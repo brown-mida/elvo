@@ -112,7 +112,7 @@ def train(x_train, y_train, x_val, y_val, x_test, y_test):
 
             for i in range(10):
                 model = cube_classifier.\
-                    CubeClassifierBuilder.build(dropout=dropout)
+                    CubeClassifierBuilder.build(dropout=dropout, binary=True)
                 opt = SGD(lr=lr, momentum=0.9, nesterov=True)
                 model.compile(loss=binary_crossentropy,
                               optimizer=opt,
@@ -217,7 +217,6 @@ def load_probs(labels: pd.DataFrame):
     y_val = np.asarray(y_val)
     x_test = np.asarray(x_test)
     y_test = np.asarray(y_test)
-    print(x_train.shape, y_train.shape, x_val.shape, y_val.shape, x_test.shape, y_test.shape)
     return x_train, y_train, x_val, y_val, x_test, y_test
 
 
@@ -233,7 +232,7 @@ def main():
     labels = load_labels()
     x_train, y_train, x_val, y_val, x_test, y_test = load_probs(labels)
     print(x_train.shape, y_train.shape)
-    print(x_val.shape, y_train.shape)
+    print(x_val.shape, y_val.shape)
     print(x_test.shape, y_test.shape)
     results = train(x_train, y_train, x_val, y_val, x_test, y_test)
     find_best_models(results)
