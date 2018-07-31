@@ -40,8 +40,8 @@ def make_preds():
 
     # load model
     model = c3d.C3DBuilder.build()
-    # model.load_weights('tmp/FINAL_RUN_6.hdf5')
-    model.load_weights('/Users/haltriedman/Desktop/FINAL_RUN_6.hdf5')
+    model.load_weights('tmp/FINAL_RUN_6.hdf5')
+    # model.load_weights('/Users/haltriedman/Desktop/FINAL_RUN_6.hdf5')
 
     # Get every scan in airflow/npy
     for blob in bucket.list_blobs(prefix='airflow/test_npy/'):
