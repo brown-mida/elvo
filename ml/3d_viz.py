@@ -69,6 +69,7 @@ def make_preds():
             preds.append(layer)
 
         preds = np.asarray(preds)
+        print(arr.shape)
         print(preds.shape)
 
 
