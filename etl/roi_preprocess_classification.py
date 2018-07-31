@@ -91,9 +91,9 @@ def process_labels():
 
 
 def get_binary_labels():
-    class_labels_df = pd.read_csv('classification_vectors.csv')
-    # class_labels_df = pd.read_csv('/Users/haltriedman/PycharmProjects/'
-    #                               'elvo-analysis/classification_vectors.csv')
+    # class_labels_df = pd.read_csv('classification_vectors.csv')
+    class_labels_df = pd.read_csv('/Users/haltriedman/PycharmProjects/'
+                                  'elvo-analysis/classification_vectors.csv')
     binary_labels = {}
     for _, row in class_labels_df.iterrows():
         if row['L MCA'] == 1:
@@ -122,7 +122,7 @@ def get_binary_labels():
 def run_preprocess():
     configure_logger()
     process_labels()
-    get_binary_labels()
+    # get_binary_labels()
 
 
 if __name__ == '__main__':

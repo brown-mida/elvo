@@ -5,7 +5,7 @@ import os
 import random
 from matplotlib import pyplot as plt
 import math
-from ml.models.three_d import c3d
+from models.three_d import c3d
 import tensorflow as tf
 from google.cloud import storage
 import numpy as np
@@ -24,23 +24,23 @@ def download_array(blob: storage.Blob) -> np.ndarray:
 
 
 def display_preds(preds: np.ndarray):
-
+    return
 
 
 def make_preds():
     # Get npy files from Google Cloud Storage
     gcs_client = storage.Client.from_service_account_json(
         # Use this when running on VM
-        '/home/harold_triedman/elvo-analysis/credentials/client_secret.json'
+        # '/home/harold_triedman/elvo-analysis/credentials/client_secret.json'
 
         # Use this when running locally
-        # 'credentials/client_secret.json'
+        'credentials/client_secret.json'
     )
     bucket = gcs_client.get_bucket('elvos')
 
     # load model
     model = c3d.C3DBuilder.build()
-    model.load_weights('tmp/[insert best model here].hdf5')
+    model.load_weights('/Users/haltriedman/Desktop/FINAL_RUN_6.hdf5')
 
     # Get every scan in airflow/npy
     for blob in bucket.list_blobs(prefix='airflow/test_npy'):
@@ -74,7 +74,7 @@ def make_preds():
 
 def main():
     tf.Session(config=tf.ConfigProto(log_device_placement=True))
-    preds = make_preds()
+    make_preds()
 
 
 if __name__ == '__main__':
