@@ -86,7 +86,7 @@ def main():
 
     # load model
     model = c3d.C3DBuilder.build()
-    model.load_weights('tmp/c3d_separated_ids.hdf5')
+    model.load_weights('tmp/FINAL_RUN_6.hdf5')
 
     # Get every scan in airflow/npy
     for blob in bucket.list_blobs(prefix='airflow/npy'):
@@ -128,12 +128,10 @@ def main():
         # If it's in none of them, randomly figure out which one it's in
         else:
             rand = random.randint(1, 100)
-            if rand > 20:
+            if rand > 10:
                 train = True
-            elif rand > 10:
-                val = True
             else:
-                test = True
+                val = True
 
         # Upload to GCS
         if train:
