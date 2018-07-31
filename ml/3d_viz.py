@@ -52,8 +52,8 @@ def make_preds():
         # Get every chunk in the scan
         preds = []
         for i in range(0, len(arr), 32):
-            layer = np.zeros(shape=(int(math.ceil(len(arr[0] / 32)) * math.ceil(len(arr[0][0] / 32)))))
-            print(int(math.ceil(len(arr[0] / 32))), int(math.ceil(len(arr[0][0] / 32))))
+            layer = np.zeros(shape=(int(math.ceil(len(arr[0]) / 32) * math.ceil(len(arr[0][0]) / 32))))
+            print(int(math.ceil(len(arr[0]) / 32)), int(math.ceil(len(arr[0][0]) / 32)))
             layer_idx = 0
             print(layer.shape)
             for j in range(0, len(arr[0]), 32):
