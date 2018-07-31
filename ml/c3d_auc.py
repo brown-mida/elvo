@@ -13,12 +13,12 @@ sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
 # load the test data
 with open('chunk_data_separated_ids.pkl', 'rb') as infile:
     full_data = pickle.load(infile)
-x_test = full_data[2]
-y_test = full_data[3]
+x_test = full_data[4]
+y_test = full_data[5]
 
 # load the model
 model = c3d.C3DBuilder.build()
-model.load_weights('tmp/c3d_separated_ids.hdf5')
+model.load_weights('tmp/FINAL_RUN_6.hdf5')
 
 # make predictions on test data
 y_pred_keras = model.predict(x_test).ravel()
