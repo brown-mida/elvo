@@ -22,19 +22,23 @@ def download_array(blob: storage.Blob) -> np.ndarray:
     return np.load(in_stream)
 
 
-def display_preds(preds, blobs):
+def display_preds(preds):
     # Get npy files from Google Cloud Storage
     gcs_client = storage.Client.from_service_account_json(
         # Use this when running on VM
-        '/home/harold_triedman/elvo-analysis/credentials/client_secret.json'
+        # '/home/harold_triedman/elvo-analysis/credentials/client_secret.json'
 
         # Use this when running locally
-        # 'credentials/client_secret.json'
+        'credentials/client_secret.json'
     )
     bucket = gcs_client.get_bucket('elvos')
+    blobs = bucket.list_blobs(prefix='airflow/test_npy/')
 
     # Get every scan in airflow/test_npy
     for h, blob in enumerate(blobs):
+        print(blob.name)
+        if h > 5:
+            break
         if not blob.name.endswith('.npy'):
             continue
         arr = download_array(blob)
@@ -71,22 +75,25 @@ def make_preds():
     # Get npy files from Google Cloud Storage
     gcs_client = storage.Client.from_service_account_json(
         # Use this when running on VM
-        '/home/harold_triedman/elvo-analysis/credentials/client_secret.json'
+        # '/home/harold_triedman/elvo-analysis/credentials/client_secret.json'
 
         # Use this when running locally
-        # 'credentials/client_secret.json'
+        'credentials/client_secret.json'
     )
     bucket = gcs_client.get_bucket('elvos')
 
     # load model
     model = c3d.C3DBuilder.build()
-    model.load_weights('tmp/FINAL_RUN_6.hdf5')
-    # model.load_weights('/Users/haltriedman/Desktop/FINAL_RUN_6.hdf5')
+    # model.load_weights('tmp/FINAL_RUN_6.hdf5')
+    model.load_weights('/Users/haltriedman/Desktop/FINAL_RUN_6.hdf5')
     metapreds = []
     blobs = bucket.list_blobs(prefix='airflow/test_npy/')
 
     # Get every scan in airflow/npy
-    for blob in blobs:
+    for i, blob in enumerate(blobs):
+        if i > 5:
+            break
+        print(blob.name)
         if not blob.name.endswith('.npy'):
             continue
         arr = download_array(blob)
@@ -115,13 +122,13 @@ def make_preds():
 
         preds = np.asarray(preds)
         metapreds.append(preds)
-    return np.asarray(metapreds), blobs
+    return np.asarray(metapreds)
 
 
 def main():
     tf.Session(config=tf.ConfigProto(log_device_placement=True))
-    preds, blobs = make_preds()
-    display_preds(preds, blobs)
+    preds = make_preds()
+    display_preds(preds)
 
 
 if __name__ == '__main__':
