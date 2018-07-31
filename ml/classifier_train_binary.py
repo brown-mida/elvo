@@ -113,7 +113,7 @@ def train(x_train, y_train, x_val, y_val, x_test, y_test):
             for i in range(10):
                 model = cube_classifier.\
                     CubeClassifierBuilder.build(dropout=dropout, binary=True)
-                opt = SGD(lr=lr, momentum=0.9, nesterov=True)
+                opt = SGD(lr=1e-6, momentum=0.9, nesterov=True)
                 model.compile(loss=binary_crossentropy,
                               optimizer=opt,
                               metrics=['accuracy'])
