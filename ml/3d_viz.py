@@ -31,19 +31,22 @@ def make_preds():
     # Get npy files from Google Cloud Storage
     gcs_client = storage.Client.from_service_account_json(
         # Use this when running on VM
-        '/home/harold_triedman/elvo-analysis/credentials/client_secret.json'
+        # '/home/harold_triedman/elvo-analysis/credentials/client_secret.json'
 
         # Use this when running locally
-        # 'credentials/client_secret.json'
+        'credentials/client_secret.json'
     )
     bucket = gcs_client.get_bucket('elvos')
 
     # load model
     model = c3d.C3DBuilder.build()
-    model.load_weights('tmp/FINAL_RUN_6.hdf5')
+    # model.load_weights('tmp/FINAL_RUN_6.hdf5')
+    model.load_weights('/Users/haltriedman/Desktop/FINAL_RUN_6.hdf5')
 
     # Get every scan in airflow/npy
-    for blob in bucket.list_blobs(prefix='airflow/test_npy'):
+    for blob in bucket.list_blobs(prefix='airflow/test_npy/'):
+        if not blob.name.endswith('.npy'):
+            continue
         arr = download_array(blob)
 
         # Get every chunk in the scan
@@ -63,6 +66,7 @@ def make_preds():
                         # append it to a list of chunks for this brain
                         if chunk.shape == (32, 32, 32):
                             chunk = np.expand_dims(chunk, axis=-1)
+                            chunk = np.expand_dims(chunk, axis=0)
                             layer[layer_idx] = model.predict(chunk)
                     layer_idx += 1
             layer = layer.reshape((int(math.ceil(len(arr[0] / 32))), int(math.ceil(len(arr[0][0] / 32)))))
