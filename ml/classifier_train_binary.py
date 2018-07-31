@@ -120,9 +120,9 @@ def train(x_train, y_train, x_val, y_val, x_test, y_test):
                 model.fit(x=x_train,
                           y=y_train,
                           batch_size=128,
-                          callbacks=[EarlyStopping(monitor='val_loss',
-                                                   patience=10,
-                                                   verbose=1)],
+                          # callbacks=[EarlyStopping(monitor='val_loss',
+                          #                          patience=10,
+                          #                          verbose=1)],
                           epochs=300,
                           validation_data=(x_val, y_val))
 
