@@ -37,12 +37,12 @@ def display_preds(preds):
     # Get every scan in airflow/test_npy
     for h, blob in enumerate(blobs):
         print(blob.name)
-        if h > 5:
+        if h > 1:
             break
         if not blob.name.endswith('.npy'):
             continue
         arr = download_array(blob)
-        pred = preds[h]
+        pred = preds[0]
 
         mips = []
         preds = []
@@ -57,7 +57,7 @@ def display_preds(preds):
             hm = np.kron(pred[a], np.ones(shape=(32, 32)))
             print(hm)
             print(hm.shape)
-            fig = plt.figure(figsize=(7, 7))
+            fig = plt.figure(figsize=(12, 7))
             fig.add_subplot(1, 2, 1)
             plt.imshow(mip, interpolation='none')
             fig.add_subplot(1, 2, 2)
@@ -94,7 +94,7 @@ def make_preds():
 
     # Get every scan in airflow/npy
     for h, blob in enumerate(blobs):
-        if h > 5:
+        if h > 1:
             break
         print(blob.name)
         if not blob.name.endswith('.npy'):
