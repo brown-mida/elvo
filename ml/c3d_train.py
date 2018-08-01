@@ -21,7 +21,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
 
 # load and unpack data separated by IDs (from etl/roi_train_preprocess.py)
-with open('chunk_data_separated_ids.pkl', 'rb') as infile:
+with open('chunk_data_separated_ids_hard.pkl', 'rb') as infile:
     full_data = pickle.load(infile)
 full_x_train = full_data[0]
 full_y_train = full_data[1]
@@ -63,7 +63,7 @@ for i in range(6, 10):
                                            x_valid=x_val,
                                            y_valid=y_val,
                                            normalize=False)
-        checkpoint = ModelCheckpoint(f'tmp/FINAL_RUN_{i}.hdf5',
+        checkpoint = ModelCheckpoint(f'tmp/hard_training_{i}.hdf5',
                                      monitor='val_acc',
                                      verbose=1, save_best_only=True,
                                      mode='auto')
