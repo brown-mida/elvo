@@ -63,7 +63,9 @@ def test_extract_metrics():
                                      final_val_loss=0.7228950116728327,
                                      best_val_loss=0.5968567865529084,
                                      final_val_sensitivity=0.7044334990050405,
-                                     best_val_sensitivity=0.7192118223664796)
+                                     best_val_sensitivity=0.7192118223664796,
+                                     final_val_specificity=0.7044334990050405,
+                                     best_val_specificity=0.7192118223664796)
 
     assert elasticsearch._extract_metrics(path) == expected
 
@@ -211,3 +213,16 @@ def test_insert_or_ignore():
         'processed-only-m1_2-classes-2018-07-18T15:47:54.618535.log')
     elasticsearch.insert_or_ignore_filepaths(log_file,
                                              metrics_file)
+
+
+@pytest.mark.skipif(os.uname().nodename != 'gpu1708',
+                    reason='Test uses data only on gpu1708')
+def test_insert_or_update():
+    metrics_file = pathlib.Path(
+        '/gpfs/main/home/lzhu7/elvo-analysis/logs/'
+        'processed-only-m1_2-classes-2018-07-18T15:47:54.618535.csv')
+    log_file = pathlib.Path(
+        '/gpfs/main/home/lzhu7/elvo-analysis/logs/'
+        'processed-only-m1_2-classes-2018-07-18T15:47:54.618535.log')
+    elasticsearch.insert_or_replace_filepaths(log_file,
+                                              metrics_file)

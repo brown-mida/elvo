@@ -20,7 +20,9 @@ Metrics = namedtuple('Metrics', ['epochs',
                                  'final_val_loss',
                                  'best_val_loss',
                                  'final_val_sensitivity',
-                                 'best_val_sensitivity'])
+                                 'best_val_sensitivity',
+                                 'final_val_specificity',
+                                 'best_val_specificity'])
 
 
 class TrainingJob(elasticsearch_dsl.Document):
@@ -43,6 +45,8 @@ class TrainingJob(elasticsearch_dsl.Document):
     best_val_loss = elasticsearch_dsl.Float()
     final_val_sensitivity = elasticsearch_dsl.Float()
     best_val_sensitivity = elasticsearch_dsl.Float()
+    final_val_specificity = elasticsearch_dsl.Float()
+    best_val_specificity = elasticsearch_dsl.Float()
     final_val_auc = elasticsearch_dsl.Float()
     best_val_auc = elasticsearch_dsl.Float()
 
@@ -326,7 +330,7 @@ def construct_job(job_name,
                   created_at,
                   params: str,
                   raw_log,
-                  metrics,
+                  metrics: Metrics,
                   metrics_filename,
                   author=None,
                   ended_at=None,
@@ -379,6 +383,9 @@ def construct_job(job_name,
             metrics.final_val_sensitivity
         training_job.best_val_sensitivity = \
             metrics.best_val_sensitivity
+        training_job.final_val_specificity = metrics.final_val_specificity
+        training_job.best_val_specificity = metrics.best_val_specificity
+
     return training_job
 
 
@@ -494,7 +501,9 @@ def _extract_metrics(csv_path: pathlib.Path):
                    final_val_loss=df['val_loss'].iloc[-1],
                    best_val_loss=df['val_loss'].min(),
                    final_val_sensitivity=df['val_sensitivity'].iloc[-1],
-                   best_val_sensitivity=df['val_sensitivity'].max())
+                   best_val_sensitivity=df['val_sensitivity'].max(),
+                   final_val_specificity=df['val_specificity'].iloc[-1],
+                   best_val_specificity=df['val_specificity'].max())
 
 
 def _fill_author_gpu1708(created_at, job_name):

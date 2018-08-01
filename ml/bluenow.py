@@ -45,6 +45,7 @@ def run_web_gpu1708_job(data_name: str,
         batch_size=int(batch_size),
         seed=0,
         val_split=float(val_split),
+        early_stopping=False,
         max_epochs=int(max_epochs),
         job_name=job_name,
     )
