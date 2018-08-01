@@ -34,9 +34,9 @@ default_args = {
 dag = DAG(dag_id='mip_dag', default_args=default_args)
 
 # Define operation in DAG (convert axial thin CTA data to coronal and saggital
-#       thin CTA data)
+#       thin CTA data and upload to gs://elvos/numpy/{coronal or saggital}/ )
 # task_id: name of operation, self explanatory
-# bash_command: the terminal command that will be called by this operation
+# python_callable: the imported method that will be called by this operation
 # dag: the previously created DAG
 axial_to_coronal_and_sagittal_op = \
     PythonOperator(task_id='axial_to_coronal_and_sagittal',
@@ -44,25 +44,27 @@ axial_to_coronal_and_sagittal_op = \
                    dag=dag)
 
 # Define operation in DAG (generate normal axial and coronal MIPs and upload to
-#       gs://elvos/mip_data/numpy/normal/{id}.npy')
+#       gs://elvos/mip_data/numpy/normal/{axial or coronal}/)
 # task_id: name of operation, self explanatory
-# bash_command: the terminal command that will be called by this operation
+# python_callable: the imported method that will be called by this operation
 # dag: the previously created DAG
 normal_mip_op = PythonOperator(task_id='normal_mip',
                                python_callable=normal_mip,
                                dag=dag)
 
-# Define operation in DAG (generate 3-channel MIPs and upload to )
+# Define operation in DAG (generate 3-channel MIPs and upload to
+#        gs://elvos/mip_data/numpy/multichannel/{axial or coronal}/)
 # task_id: name of operation, self explanatory
-# bash_command: the terminal command that will be called by this operation
+# python_callable: the imported method that will be called by this operation
 # dag: the previously created DAG
 multichannel_mip_op = PythonOperator(task_id='multichannel_mip',
                                      python_callable=multichannel_mip,
                                      dag=dag)
 
-# Define operation in DAG (generate overlapping MIPs and upload to)
+# Define operation in DAG (generate 20-channel overlapping MIPs and upload to
+#        gs://elvos/mip_data/numpy/overlap/{axial or coronal}/)
 # task_id: name of operation, self explanatory
-# bash_command: the terminal command that will be called by this operation
+# python_callable: the imported method that will be called by this operation
 # dag: the previously created DAG
 overlap_mip_op = PythonOperator(task_id='overlap_mip',
                                 python_callable=overlap_mip,

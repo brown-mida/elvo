@@ -1,3 +1,9 @@
+"""
+Creates a Directed Acyclic Graph (DAG) to convert MIPed numpy arrays
+into PNGs and upload them Google Cloud Storage using Airflow. Compatible with
+blueno training methods.
+"""
+
 import datetime
 
 import matplotlib
@@ -21,7 +27,7 @@ BLACKLIST = [
 
 def to_public_png(npy_blob: storage.Blob, public_bucket: storage.Bucket):
     """
-    Converts the .npy blob into a png file and uploads it to the public
+    Converts a .npy blob into a png file and uploads it to the public
     bucket.
 
     :param npy_blob:
@@ -44,7 +50,7 @@ def to_public_png(npy_blob: storage.Blob, public_bucket: storage.Bucket):
 
 def upload_numpy_files():
     """
-    Uploads all numpy files to gs://elvos-public.
+    Uploads all numpy files to gs://elvos-public as PNGs.
 
     Only the extension of the name will be changed. For example
     gs://elvos/processed/processed-lower/abc.npy will be uploaded
@@ -71,19 +77,34 @@ def upload_numpy_files():
             print(f'uploading blob {blob.name}')
             to_public_png(blob, out_bucket)
 
-
+# Set outermost parameters
 default_args = {
     'owner': 'luke',
     'email': 'luke_zhu@brown.edu',
     'start_date': datetime.datetime(2018, 7, 24),
 }
 
+# Create DAG
+# dag_id: DAG name, self explanatory
+# description: description of DAG's purpose
+# default_args: previously specified params
+# catchup: whether or not intervals are automated; set to False to
+#         indicate that the DAG will only run for the most current instance
+#         of the interval series
+# max_active_runs: maximum number of active DAG runs, beyond this
+#         number of DAG runs in a running state, the scheduler won't create
+#         new active DAG runs
 dag = DAG(dag_id='upload_processed_data',
           description='Uploads processed numpy array data as pngs for the'
                       ' web app',
           default_args=default_args,
           catchup=False)
 
+# Define operation in DAG (convert numpy arrays into PNGs
+#       and upload files to Google Cloud Storage)
+# task_id: name of operation, self explanatory
+# python_callable: the imported method that will be called by this operation
+# dag: the previously created DAG
 upload_numpy_files_op = PythonOperator(task_id='upload_numpy_files',
                                        python_callable=upload_numpy_files,
                                        dag=dag)
