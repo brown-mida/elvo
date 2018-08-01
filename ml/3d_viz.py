@@ -48,19 +48,22 @@ def display_preds(preds):
         preds = []
         for a, i in enumerate(range(0, len(arr), 32)):
             if i + 32 > len(arr):
-                mip = arr[i:]
+                mip = np.asarray(arr[i:])
             else:
-                mip = arr[i:i+32]
-            mip = np.max(mip)
+                mip = np.asarray(arr[i:i+32])
             print(mip.shape)
-            hm = np.kron(pred[a], np.ones(shape=(len(arr[0]), len(arr[0][0]))))
+            mip = np.max(mip, axis=0)
+            print(mip.shape)
+            hm = np.kron(pred[a], np.ones(shape=(32, 32)))
             print(hm)
             print(hm.shape)
-            plt.figure(figsize=(7, 7))
-            plt.subplot(1, 2, 1)
+            fig = plt.figure(figsize=(7, 7))
+            fig.add_subplot(1, 2, 1)
             plt.imshow(mip, interpolation='none')
-            plt.subplot(1, 2, 2)
+            fig.add_subplot(1, 2, 2)
             plt.imshow(hm, cmap='Reds')
+            fig.tight_layout()
+            plt.plot()
             plt.show()
             mips.append(mip)
             preds.append(hm)
@@ -90,8 +93,8 @@ def make_preds():
     blobs = bucket.list_blobs(prefix='airflow/test_npy/')
 
     # Get every scan in airflow/npy
-    for i, blob in enumerate(blobs):
-        if i > 5:
+    for h, blob in enumerate(blobs):
+        if h > 5:
             break
         print(blob.name)
         if not blob.name.endswith('.npy'):

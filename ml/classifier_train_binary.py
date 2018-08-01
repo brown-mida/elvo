@@ -12,6 +12,7 @@ from keras.losses import binary_crossentropy
 import pandas as pd
 import numpy as np
 from google.cloud import storage
+from scipy.ndimage.interpolation import zoom
 import io
 import os
 
@@ -156,11 +157,12 @@ def load_probs(labels: pd.DataFrame):
             print(f'successfully loaded {idx} training scans and labels')
         file_id = blob.name.split('/')[-1].split('.')[0]
         arr = download_array(blob)
-        diff = 784 - arr.shape[0]
-        if diff > 0 and file_id in labels.index.values:
-            arr = arr.tolist()
-            for i in range(diff):
-                arr.append([0])
+        # diff = 784 - arr.shape[0]
+        if file_id in labels.index.values:
+            arr = zoom(arr, (784 / len(arr)))
+            # arr = arr.tolist()
+            # for i in range(diff):
+            #     arr.append([0])
             arr = np.asarray(arr)
             arr = np.reshape(arr, (28, 28, 1))
             x_train.append(arr)
@@ -177,11 +179,12 @@ def load_probs(labels: pd.DataFrame):
             print(f'successfully loaded {idx} validation scans and labels')
         file_id = blob.name.split('/')[-1].split('.')[0]
         arr = download_array(blob)
-        diff = 784 - arr.shape[0]
-        if diff > 0 and file_id in labels.index.values:
-            arr = arr.tolist()
-            for i in range(diff):
-                arr.append([0])
+        # diff = 784 - arr.shape[0]
+        if file_id in labels.index.values:
+            arr = zoom(arr, (784 / len(arr)))
+            # arr = arr.tolist()
+            # for i in range(diff):
+            #     arr.append([0])
             arr = np.asarray(arr)
             arr = np.reshape(arr, (28, 28, 1))
             x_val.append(arr)
@@ -198,11 +201,12 @@ def load_probs(labels: pd.DataFrame):
             print(f'successfully loaded {idx} test scans and labels')
         file_id = blob.name.split('/')[-1].split('.')[0]
         arr = download_array(blob)
-        diff = 784 - arr.shape[0]
-        if diff > 0 and file_id in labels.index.values:
-            arr = arr.tolist()
-            for i in range(diff):
-                arr.append([0])
+        # diff = 784 - arr.shape[0]
+        if file_id in labels.index.values:
+            arr = zoom(arr, (784 / len(arr)))
+            # arr = arr.tolist()
+            # for i in range(diff):
+            #     arr.append([0])
             arr = np.asarray(arr)
             arr = np.reshape(arr, (28, 28, 1))
             x_test.append(arr)
