@@ -42,7 +42,7 @@ def transform_one(arr, file_id):
                 flipped = rotated[:, :, ::-1]
                 # save to the numpy generator source directory
             file_id_new = file_id + "_" + str(transform_number)
-            cloud.save_chunks_to_cloud(flipped, 'normal',
+            cloud.save_chunks_to_cloud(flipped, 'filtered',
                                        'positive', file_id_new)
 
 
@@ -52,13 +52,10 @@ def transform_positives():
     bucket = client.get_bucket('elvos')
 
     # iterate through every source directory...
-    prefix = "chunk_data/normal/positive"
+    prefix = "chunk_data/filtered/positive"
     logging.info(f"transforming positive chunks from {prefix}")
 
     for in_blob in bucket.list_blobs(prefix=prefix):
-        # blacklist
-        if in_blob.name == prefix + 'LAUIHISOEZIM5ILF.npy':
-            continue
 
         # perform the normal cropping procedure
         logging.info(f'downloading {in_blob.name}')
@@ -132,7 +129,7 @@ def clean_new_data():
 
 def generate_csv():
     configure_logger()
-    labels_df = pd.read_csv('/home/amy/data/annotated_labels.csv')
+    labels_df = pd.read_csv('/home/harold_triedman/elvo-analysis/annotated_labels.csv')
     for index, row in labels_df.iterrows():
         logging.info(index, row[1])
         if row[1] == 1:
@@ -166,11 +163,11 @@ def clean_csv():
 
 def run_transform():
     configure_logger()
-    clean_csv()
+    # clean_csv()
     # clean_old_data()
-    # generate_csv()
-    # transform_positives()
-    # clean_new_data()
+    generate_csv()
+    transform_positives()
+    clean_new_data()
 
 
 if __name__ == '__main__':

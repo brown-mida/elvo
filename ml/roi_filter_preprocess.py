@@ -135,6 +135,7 @@ def create_chunks(annotations_df: pd.DataFrame, model):
                     chunk = arr[i:(i + 32), j:(j + 32), k:(k + 32)]
 
                     if np.asarray(chunk).shape != (32, 32, 32):
+                        h += 1
                         continue
                     # calculate the airspace
                     airspace = np.where(chunk < -300)
@@ -229,6 +230,7 @@ def create_labels(annotations_df: pd.DataFrame, model):
                     # copy the chunk
                     chunk = arr[i:(i + 32), j:(j + 32), k:(k + 32)]
                     if np.asarray(chunk).shape != (32, 32, 32):
+                        h += 1
                         continue
                     # calculate the airspace
                     airspace = np.where(chunk < -300)

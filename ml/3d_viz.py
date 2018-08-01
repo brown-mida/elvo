@@ -1,7 +1,4 @@
 import io
-import logging
-import os
-import random
 from matplotlib import pyplot as plt
 import math
 from models.three_d import c3d
@@ -37,8 +34,9 @@ def display_preds(preds):
     # Get every scan in airflow/test_npy
     for h, blob in enumerate(blobs):
         print(blob.name)
-        if h > 1:
-            break
+        if blob.name != 'airflow/test_npy/GJ35FZQ5DSP09A4L.npy':
+            continue
+        print('hi')
         if not blob.name.endswith('.npy'):
             continue
         arr = download_array(blob)
@@ -94,9 +92,10 @@ def make_preds():
 
     # Get every scan in airflow/npy
     for h, blob in enumerate(blobs):
-        if h > 1:
-            break
         print(blob.name)
+        if blob.name != 'airflow/test_npy/GJ35FZQ5DSP09A4L.npy':
+            continue
+        print('hi')
         if not blob.name.endswith('.npy'):
             continue
         arr = download_array(blob)
