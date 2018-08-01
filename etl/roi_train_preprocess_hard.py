@@ -66,7 +66,6 @@ prelim_label_data = {}
 with open('tmp/augmented_annotated_labels.csv', 'r') as pos_file:
     reader = csv.reader(pos_file, delimiter=',')
     for row in reader:
-        print(row)
         if row[1] != 'Unnamed: 0.1':
             prelim_label_data[row[1]] = int(row[2])
             # prelim_label_data[row[2]] = int(row[3])
@@ -85,7 +84,6 @@ positive_test_label_data = {}
 # split positives into train/test/val by ID
 for i, id_ in enumerate(list(positive_label_data.keys())):
     if i % 24 == 0:
-        seed = random.randint(1, 100)
         meta_id = id_[:16]
         stripped_id = id_[:-1]
 
@@ -110,6 +108,11 @@ for i, id_ in enumerate(list(positive_label_data.keys())):
             for j in range(2, 25):
                 positive_test_label_data[stripped_id + str(j)] = 1
 
+print(len(positive_train_label_data))
+print(len(positive_val_label_data))
+print(len(positive_test_label_data))
+print(len(positive_train_label_data) + len(positive_val_label_data) + len(positive_test_label_data))
+
 # Get 14500 random negatives from the label data to feed into our generator
 negative_train_label_data = {}
 negative_val_label_data = {}
@@ -125,7 +128,7 @@ for id_, label in list(prelim_label_data.items()):
             negative_test_label_data[id_] = 0
             neg_test += 1
     test_counter += 1
-print(f'')
+print(num_test_chunks)
 
 logging.info("getting 14500 random negative labels")
 negative_counter = 0
