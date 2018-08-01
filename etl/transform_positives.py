@@ -141,7 +141,7 @@ def generate_csv():
             # logging.info(to_add_df)
             labels_df = labels_df.append(to_add_df)
             labels_df = labels_df.drop([index])
-            print("Dropping patient " + index + ": " + str(row[0]))
+            print("Dropping patient " + str(index) + ": " + str(row[0]))
 
     labels_df.to_csv('home/hal/elvo-analysis/augmented_annotated_labels.csv')
 
