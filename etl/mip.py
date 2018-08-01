@@ -12,6 +12,7 @@ from lib import transforms, cloud_management as cloud
 WHENCE = ['numpy/axial',
           'numpy/coronal']
 
+
 def configure_logger():
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.INFO)
@@ -27,13 +28,13 @@ def normal_mip():
     client = cloud.authenticate()
     bucket = client.get_bucket('elvos')
 
-    # iterate through every source directory...
+    # iterate through every source directory
     for location in WHENCE:
         prefix = location + '/'
         logging.info(f"MIPing images from {prefix}")
 
         for in_blob in bucket.list_blobs(prefix=prefix):
-            # blacklist
+            # blacklist; something wrong with this file
             if in_blob.name == prefix + 'LAUIHISOEZIM5ILF.npy':
                 continue
 

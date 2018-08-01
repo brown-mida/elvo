@@ -1,7 +1,7 @@
 """
 Purpose: This script implements maximum intensity projections (MIP). This
 process involves taking 3D brain scans and compressing their maximum values
-down into a single 2D array.
+down into a single 2D array, then removing all extreme HU values.
 """
 
 # TODO: preprocess coronal and sagittal scans so they have mips too
@@ -11,6 +11,7 @@ from lib import transforms, cloud_management as cloud
 
 WHENCE = ['numpy/axial',
           'numpy/coronal']
+
 
 def configure_logger():
     root_logger = logging.getLogger()
