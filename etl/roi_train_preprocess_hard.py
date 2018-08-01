@@ -117,12 +117,15 @@ negative_test_label_data = {}
 
 # get negatives in test set into negative_test_label_data
 test_counter = 0
+num_test_chunks = 0
 for id_, label in list(prelim_label_data.items()):
-    if test_counter % 25 == 0:
-        if id_[:16] in test_ids and label == 0:
+    if id_[:16] in test_ids and label == 0:
+        num_test_chunks += 1
+        if test_counter % 25 == 0:
             negative_test_label_data[id_] = 0
             neg_test += 1
     test_counter += 1
+print(f'')
 
 logging.info("getting 14500 random negative labels")
 negative_counter = 0

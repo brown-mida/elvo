@@ -102,15 +102,12 @@ def clean_new_data():
     bucket = client.get_bucket('elvos')
 
     # iterate through every source directory...
-    prefix = "chunk_data/normal/positive"
+    prefix = "chunk_data/filtered/positive"
     logging.info(f"transforming positive chunks from {prefix}")
 
     i = 0
     for in_blob in bucket.list_blobs(prefix=prefix):
         i += 1
-        # blacklist
-        if in_blob.name == prefix + 'LAUIHISOEZIM5ILF.npy':
-            continue
 
         # perform the normal cropping procedure
         logging.info(f'downloading {in_blob.name}')
@@ -163,8 +160,8 @@ def run_transform():
     configure_logger()
     # clean_csv()
     # clean_old_data()
-    generate_csv()
-    transform_positives()
+    # generate_csv()
+    # transform_positives()
     clean_new_data()
 
 
