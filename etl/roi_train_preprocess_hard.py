@@ -108,11 +108,6 @@ for i, id_ in enumerate(list(positive_label_data.keys())):
             for j in range(2, 25):
                 positive_test_label_data[stripped_id + str(j)] = 1
 
-print(len(positive_train_label_data))
-print(len(positive_val_label_data))
-print(len(positive_test_label_data))
-print(len(positive_train_label_data) + len(positive_val_label_data) + len(positive_test_label_data))
-
 # Get 14500 random negatives from the label data to feed into our generator
 negative_train_label_data = {}
 negative_val_label_data = {}
