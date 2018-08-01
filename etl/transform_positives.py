@@ -128,7 +128,7 @@ def generate_csv():
     labels_df = pd.read_csv('/home/harold_triedman/elvo-analysis/annotated_labels.csv')
     print(labels_df)
     for index, row in labels_df.iterrows():
-        logging.info(index, row[1])
+        # logging.info(index, row[1])
         if row[1] == 1:
             # every time you come across a positive, add in 24 more rows
             to_add = {}
@@ -140,7 +140,7 @@ def generate_csv():
                 to_add, orient='index', columns=['Unnamed: 0', 'label'])
             # logging.info(to_add_df)
             labels_df = labels_df.append(to_add_df)
-            labels_df = labels_df.drop(row[0])
+            labels_df = labels_df.drop([index])
             print("Dropping patient " + index + ": " + str(row[0]))
 
     labels_df.to_csv('home/hal/elvo-analysis/augmented_annotated_labels.csv')
