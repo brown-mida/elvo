@@ -122,7 +122,7 @@ negative_test_label_data = {}
 test_counter = 0
 num_test_chunks = 0
 for id_, label in list(prelim_label_data.items()):
-    if test_counter % 3 == 0:
+    if test_counter % 2 == 0:
         if id_[:16] in test_ids and label == 0:
             negative_test_label_data[id_] = 0
             neg_test += 1
