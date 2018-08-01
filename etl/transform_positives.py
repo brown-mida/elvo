@@ -146,6 +146,8 @@ def generate_csv():
             labels_df = labels_df.drop(row[0])
             print("Dropping patient " + index + ": " + str(row[0]))
 
+    labels_df.to_csv('home/hal/elvo-analysis/augmented_annotated_labels.csv')
+
 
 # take out repeat positives (ones that have already been transformed but
 # have not been removed from initial dataset)
