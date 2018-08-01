@@ -128,10 +128,10 @@ for id_, label in list(prelim_label_data.items()):
             neg_test += 1
     test_counter += 1
 
-logging.info("getting 14500 random negative labels")
+logging.info("getting 18000 random negative labels")
 negative_counter = 0
 # split negatives into train/test/val
-while negative_counter < 14000:
+while negative_counter < 18000:
     id_, label = random.choice(list(prelim_label_data.items()))
     if label == 0:
         if negative_counter % 500 == 0:
