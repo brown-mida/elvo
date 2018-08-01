@@ -135,12 +135,13 @@ def create_chunks(annotations_df: pd.DataFrame, model):
                     chunk = arr[i:(i + 32), j:(j + 32), k:(k + 32)]
 
                     if np.asarray(chunk).shape != (32, 32, 32):
+                        print(np.asarray(chunk).shape)
                         continue
                     # calculate the airspace
                     airspace = np.where(chunk < -300)
                     # if it's less than 90% airspace
                     if (airspace[0].size / chunk.size) < 0.9:
-                        pred_chunk = np.expand_dims(pred_chunk, axis=-1)
+                        pred_chunk = np.expand_dims(chunk, axis=-1)
                         pred_chunk = np.expand_dims(pred_chunk, axis=0)
                         if model.predict(pred_chunk) > 0.4:
                             # save the label as 0 and save it to the cloud
@@ -235,7 +236,7 @@ def create_labels(annotations_df: pd.DataFrame, model):
                     airspace = np.where(chunk < -300)
                     # if it's less than 90% airspace
                     if (airspace[0].size / chunk.size) < 0.9:
-                        pred_chunk = np.expand_dims(pred_chunk, axis=-1)
+                        pred_chunk = np.expand_dims(chunk, axis=-1)
                         pred_chunk = np.expand_dims(pred_chunk, axis=0)
                         if model.predict(pred_chunk) > 0.4:
                             # save the label as 0 and save it to the cloud
