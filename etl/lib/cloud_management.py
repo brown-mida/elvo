@@ -8,8 +8,14 @@ from google.cloud import storage
 
 def authenticate():
     return storage.Client.from_service_account_json(
-        # for running on the airflow GPU
-        '/home/lukezhu/elvo-analysis/credentials/client_secret.json'
+        # for running on airflow GPU
+        # '/home/lukezhu/elvo-analysis/credentials/client_secret.json'
+
+        # for running on hal's GPU
+        '/home/harold_triedman/elvo-analysis/credentials/client_secret.json'
+
+        # for running on amy's GPU
+        # '/home/amy/credentials/client_secret.json'
 
         # for running locally
         # 'credentials/client_secret.json'
@@ -86,7 +92,7 @@ def save_roi_npy(arr: np.ndarray, id: str, type: str, view: str):
 
 def save_chunks_to_cloud(arr: np.ndarray, type: str,
                          elvo_status: str, id: str):
-    """Uploads MIP .npy files to gs://elvos/chunk_data/<patient_id>.npy
+    """Uploads chunk .npy files to gs://elvos/chunk_data/<patient_id>.npy
     """
     try:
         print(f'gs://elvos/chunk_data/{type}/{elvo_status}/{id}.npy')

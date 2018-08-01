@@ -38,7 +38,7 @@ class AllConvModelBuilder(object):
 
         # Conv4: output shape (30, 30, 192)
         x = Conv2D(192, (filt_dims, filt_dims), activation='relu',
-                   padding='same')(input_img)
+                   padding='same')(x)
         x = BatchNormalization()(x)
 
         # Conv5: output shape (30, 30, 192)
