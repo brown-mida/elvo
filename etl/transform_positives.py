@@ -47,7 +47,6 @@ def transform_one(arr, file_id):
 
 
 def transform_positives():
-    configure_logger()
     client = cloud.authenticate()
     bucket = client.get_bucket('elvos')
 
@@ -73,7 +72,6 @@ def transform_positives():
 
 
 def clean_old_data():
-    configure_logger()
     client = cloud.authenticate()
     bucket = client.get_bucket('elvos')
 
@@ -100,7 +98,6 @@ def clean_old_data():
 
 
 def clean_new_data():
-    configure_logger()
     client = cloud.authenticate()
     bucket = client.get_bucket('elvos')
 
@@ -128,8 +125,8 @@ def clean_new_data():
 
 
 def generate_csv():
-    configure_logger()
     labels_df = pd.read_csv('/home/harold_triedman/elvo-analysis/annotated_labels.csv')
+    print(labels_df)
     for index, row in labels_df.iterrows():
         logging.info(index, row[1])
         if row[1] == 1:
@@ -141,7 +138,7 @@ def generate_csv():
                 to_add[index + 500000 + i] = [new_patient_id, 1]
             to_add_df = pd.DataFrame.from_dict(
                 to_add, orient='index', columns=['Unnamed: 0', 'label'])
-            logging.info(to_add_df)
+            # logging.info(to_add_df)
             labels_df = labels_df.append(to_add_df)
             labels_df = labels_df.drop(row[0])
             print("Dropping patient " + index + ": " + str(row[0]))
@@ -152,7 +149,6 @@ def generate_csv():
 # take out repeat positives (ones that have already been transformed but
 # have not been removed from initial dataset)
 def clean_csv():
-    configure_logger()
     labels_df = pd.read_csv('/home/amy/data/augmented_annotated_labels.csv')
     print(len(labels_df))
     for index, row in labels_df.iterrows():
