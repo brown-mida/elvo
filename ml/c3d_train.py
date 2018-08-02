@@ -42,7 +42,9 @@ metrics = ['acc',
 
 # for each possible fraction of the data
 # for i in range(1, 11):
-for i in range(6, 10):
+for i in range(10):
+    if i == 6:
+        continue
     for j in range(10, 11):
 
         # build a model
