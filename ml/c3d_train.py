@@ -40,9 +40,11 @@ metrics = ['acc',
            utils.sensitivity,
            utils.specificity]
 
-# for each possible fraction of the data
-# for i in range(1, 11):
-for i in range(6):
+# 10 training runs
+for i in range(10):
+    # for each possible fraction of the data
+    # for j in range(1, 11):
+    # running on 100% of data
     for j in range(10, 11):
 
         # build a model
