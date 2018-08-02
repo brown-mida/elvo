@@ -7,6 +7,7 @@ with open('chunk_data_separated_ids_hard.pkl', 'rb') as infile:
 
 x_test = np.asarray(full_data[4])
 y_test = np.asarray(full_data[5])
+print(x_test.shape, y_test.shape)
 
 test = np.array([x_test, y_test])
 
@@ -19,6 +20,7 @@ with open('chunk_data_separated_ids.pkl', 'rb') as infile:
 
 x_test = np.asarray(full_data[4])
 y_test = np.asarray(full_data[5])
+print(x_test.shape, y_test.shape)
 
 test = np.array([x_test, y_test])
 
