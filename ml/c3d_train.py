@@ -47,6 +47,7 @@ for i in range(6, 10):
 
         # build a model
         model = c3d.C3DBuilder.build()
+        model.load_weights('tmp/FINAL_RUN_6.hdf5')
         opt = SGD(lr=LEARN_RATE, momentum=0.9, nesterov=True)
         model.compile(optimizer=opt,
                       loss={"out_class": "binary_crossentropy"},
