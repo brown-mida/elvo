@@ -5,8 +5,8 @@ import numpy as np
 with open('chunk_data_separated_ids_hard.pkl', 'rb') as infile:
     full_data = pickle.load(infile)
 
-x_test = full_data[4]
-y_test = full_data[5]
+x_test = np.asarray(full_data[4])
+y_test = np.asarray(full_data[5])
 
 test = np.array([x_test, y_test])
 
@@ -17,8 +17,8 @@ with open('test_data_hard.pkl', 'wb') as outfile:
 with open('chunk_data_separated_ids.pkl', 'rb') as infile:
     full_data = pickle.load(infile)
 
-x_test = full_data[4]
-y_test = full_data[5]
+x_test = np.asarray(full_data[4])
+y_test = np.asarray(full_data[5])
 
 test = np.array([x_test, y_test])
 
