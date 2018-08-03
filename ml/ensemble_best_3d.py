@@ -52,9 +52,9 @@ def get_test_chunks():
 def make_preds(x_test, y_test, models):
     for i, model in enumerate(models):
         if i % 2 == 0:
-            print('\n-----------\nAVERAGE\n-----------\n')
+            print('\n-------\nAVERAGE\n-------\n')
         else:
-            print('\n-----------\nMAXIMUM\n-----------\n')
+            print('\n-------\nMAXIMUM\n-------\n')
         y_prob = model.predict(x_test, batch_size=16)
         y_pred = (y_prob > 0.5).astype('int32')
         print("Accuracy: " + str(
