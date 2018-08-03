@@ -85,7 +85,7 @@ def make_preds(x_test, y_test, models):
         print(f'\n\nOther sklearn statistics:\n')
         log_loss = sklearn.metrics.classification.log_loss(y_test, y_pred)
         print(f'Log loss: {log_loss}\n')
-        print(f'F-1: {sklearn.metrics.f1_score(y_true, y_pred)}\n')
+        print(f'F-1: {sklearn.metrics.f1_score(y_test, y_pred)}\n')
 
 
 def main():
