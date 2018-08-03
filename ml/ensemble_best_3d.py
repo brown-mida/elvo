@@ -33,10 +33,10 @@ def get_ensembles():
                utils.specificity]
     opt = SGD(lr=LEARN_RATE, momentum=0.9, nesterov=True)
     ensemble_avg.compile(optimizer=opt,
-                         loss={"out_class": "binary_crossentropy"},
+                         loss='binary_crossentropy',
                          metrics=metrics)
     ensemble_max.compile(optimizer=opt,
-                         loss={"out_class": "binary_crossentropy"},
+                         loss='binary_crossentropy',
                          metrics=metrics)
     return [ensemble_avg, ensemble_max]
 
