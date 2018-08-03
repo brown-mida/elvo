@@ -1,3 +1,7 @@
+"""
+This script visualizes predictions by slice based off of the high performing
+model in the first run through of training on non-pared-down data
+"""
 import io
 from matplotlib import pyplot as plt
 import math
@@ -20,6 +24,11 @@ def download_array(blob: storage.Blob) -> np.ndarray:
 
 
 def display_preds(preds):
+    """
+    Actually displays the predictions from make_preds()
+    :param preds: a list of 3D predictions by scan
+    :return:
+    """
     # Get npy files from Google Cloud Storage
     gcs_client = storage.Client.from_service_account_json(
         # Use this when running on VM
@@ -33,46 +42,41 @@ def display_preds(preds):
 
     # Get every scan in airflow/test_npy
     for h, blob in enumerate(blobs):
-        print(blob.name)
         if blob.name != 'airflow/test_npy/GJ35FZQ5DSP09A4L.npy':
             continue
-        print('hi')
         if not blob.name.endswith('.npy'):
             continue
         arr = download_array(blob)
         pred = preds[0]
 
-        mips = []
-        preds = []
+        # Go through each 32-voxel thick slice
         for a, i in enumerate(range(0, len(arr), 32)):
+            # Make a mip of the slice
             if i + 32 > len(arr):
                 mip = np.asarray(arr[i:])
             else:
                 mip = np.asarray(arr[i:i+32])
-            print(mip.shape)
             mip = np.max(mip, axis=0)
-            print(mip.shape)
+            # Expand the predictions to a heatmap by a factor of 32x32
             hm = np.kron(pred[a], np.ones(shape=(32, 32)))
-            print(hm)
-            print(hm.shape)
+            # Plot each slice
             fig = plt.figure(figsize=(12, 7))
             fig.add_subplot(1, 2, 1)
             plt.imshow(mip, interpolation='none')
             fig.add_subplot(1, 2, 2)
-            plt.imshow(hm, cmap='Reds')
+            plt.imshow(hm)
             fig.tight_layout()
             plt.plot()
             plt.show()
-            mips.append(mip)
-            preds.append(hm)
-
-        mips = np.asarray(mips)
-        preds = np.asarray(preds)
-
-    return
 
 
 def make_preds():
+    """
+    Loops through every single array in airflow/test_npy/ and makes predictions
+    about each chunk in them using the highest performing first run-through
+    model
+    :return: A list of 3D predictions for each scan
+    """
     # Get npy files from Google Cloud Storage
     gcs_client = storage.Client.from_service_account_json(
         # Use this when running on VM
@@ -103,7 +107,9 @@ def make_preds():
         # Get every chunk in the scan
         preds = []
         for i in range(0, len(arr), 32):
-            layer = np.zeros(shape=(int(math.ceil(len(arr[0]) / 32) * math.ceil(len(arr[0][0]) / 32))))
+            # get a list of 0s as long as the number of chunks in this slice
+            layer = np.zeros(shape=(int(math.ceil(len(arr[0]) / 32) *
+                                        math.ceil(len(arr[0][0]) / 32))))
             layer_idx = 0
             for j in range(0, len(arr[0]), 32):
                 for k in range(0, len(arr[0][0]), 32):
@@ -113,16 +119,19 @@ def make_preds():
                     airspace = np.where(chunk < -300)
                     # if it's less than 90% airspace
                     if (airspace[0].size / chunk.size) < 0.9:
-                        # append it to a list of chunks for this brain
+                        # make a prediction about it using the model
                         if chunk.shape == (32, 32, 32):
                             chunk = np.expand_dims(chunk, axis=-1)
                             chunk = np.expand_dims(chunk, axis=0)
                             layer[layer_idx] = model.predict(chunk)
                     layer_idx += 1
-            layer = layer.reshape((int(math.ceil(len(arr[0]) / 32)), int(math.ceil(len(arr[0][0]) / 32))))
+            # reshape the list into a slice and append it to this scan's preds
+            layer = layer.reshape((int(math.ceil(len(arr[0]) / 32)),
+                                   int(math.ceil(len(arr[0][0]) / 32))))
             preds.append(layer)
 
         preds = np.asarray(preds)
+        # append this scan's preds to metapreds
         metapreds.append(preds)
     return np.asarray(metapreds)
 

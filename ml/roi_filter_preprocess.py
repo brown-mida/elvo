@@ -1,3 +1,10 @@
+# TODO: finish commenting on this code
+"""
+Almost exactly the same script as etl/roi_preprocess.py, but with one important
+difference -- valid negatives are filtered to be the "hard" set of negatives,
+i.e. they are predicted on by the initial highest-performing model and if that
+prediction is false then they are uploaded to the cloud
+"""
 import logging
 import io
 import numpy as np
@@ -9,20 +16,26 @@ from tensorflow.python.lib.io import file_io
 
 
 def download_array(blob: storage.Blob) -> np.ndarray:
+    """Downloads data blobs as numpy arrays
+
+    :param blob: the GCS blob you want to download as an array
+    :return: the downloaded numpy array
+    """
     in_stream = io.BytesIO()
     blob.download_to_file(in_stream)
     in_stream.seek(0)  # Read from the start of the file-like object
     return np.load(in_stream)
 
 
-def save_chunks_to_cloud(arr: np.ndarray, type: str,
-                         elvo_status: str, id: str):
-    """Uploads chunk .npy files to gs://elvos/chunk_data/<patient_id>.npy
+def save_chunks_to_cloud(arr: np.ndarray, type_: str,
+                         elvo_status: str, id_: str):
+    """
+    Uploads chunk .npy files to gs://elvos/chunk_data/<patient_id>.npy
     """
     try:
-        print(f'gs://elvos/chunk_data/{type}/{elvo_status}/{id}.npy')
-        np.save(file_io.FileIO(f'gs://elvos/chunk_data/{type}/'
-                               f'{elvo_status}/{id}.npy', 'w'), arr)
+        print(f'gs://elvos/chunk_data/{type_}/{elvo_status}/{id_}.npy')
+        np.save(file_io.FileIO(f'gs://elvos/chunk_data/{type_}/'
+                               f'{elvo_status}/{id_}.npy', 'w'), arr)
     except Exception as e:
         logging.error(f'for patient ID: {id} {e}')
 
@@ -266,13 +279,17 @@ def process_labels():
 
 
 def inspect_rois(annotations_df):
+    """
+    A function to inspect the ROI in each scan to make sure that it shows an
+    occlusion
+    :param annotations_df: dataframe of IDs/corresponding annotations
+    :return:
+    """
     client = authenticate()
     bucket = client.get_bucket('elvos')
 
     # loop through every array on GCS
     for in_blob in bucket.list_blobs(prefix='airflow/npy'):
-        # if in_blob.name != 'airflow/npy/ZZX0ZNWG6Q9I18GK.npy':
-        #     continue
         # blacklist
         if in_blob.name == 'airflow/npy/LAUIHISOEZIM5ILF.npy':
             continue
@@ -303,9 +320,7 @@ def inspect_rois(annotations_df):
                           green: green + 50, red: red + 50])
             chunks.append(arr[
                           blue: blue + 32, red: red + 50, green: green + 50])
-            start = 0
             for chunk in chunks:
-                logging.info(start)
                 axial = np.max(chunk, axis=0)
                 coronal = np.max(chunk, axis=1)
                 sag = np.max(chunk, axis=2)
@@ -314,7 +329,6 @@ def inspect_rois(annotations_df):
                 ax[1].imshow(coronal, interpolation='none')
                 ax[2].imshow(sag, interpolation='none')
                 plt.show()
-                start += 10
 
 
 def run_preprocess():
