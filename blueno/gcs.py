@@ -2,13 +2,13 @@
 Connection logic with Google Cloud Storage.
 """
 import logging
+import os
 import pathlib
 import subprocess
+import warnings
 
 import keras
 import numpy as np
-import os
-import warnings
 from google.cloud import storage
 
 from blueno.elasticsearch import JOB_INDEX
@@ -133,6 +133,7 @@ def download_to_gpu1708(gcs_url, local_path, folder=False):
 
     :param gcs_url: the source gcs url
     :param local_path:
+    :param folder
     :return:
     """
     # gpu1708 specific code
@@ -173,8 +174,7 @@ def upload_gcs_plots(x_train: np.ndarray,
     :param model:
     :param history:
     :param job_name:
-    :param params:
-    :param token:
+    :param created_at:
     :param id_valid:
     :param chunk:
     :param plot_dir:
@@ -195,5 +195,7 @@ def upload_gcs_plots(x_train: np.ndarray,
     client = storage.Client(project='elvo-198322')
     bucket = client.bucket('elvos-public')
     for filename in os.listdir(str(plot_dir)):
-        blob = bucket.blob(f'plots/{job_name}-{created_at}/{filename}')
+        blob = bucket.blob('plots/{}-{}/{}'.format(job_name,
+                                                   created_at,
+                                                   filename))
         blob.upload_from_filename(str(plot_dir / filename))

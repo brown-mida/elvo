@@ -1,6 +1,6 @@
+import os
 import pathlib
 
-import os
 import pytest
 from elasticsearch_dsl import connections
 

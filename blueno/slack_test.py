@@ -1,8 +1,9 @@
+import os
 import pathlib
+import warnings
 
 import keras
 import numpy as np
-import os
 import pytest
 import sklearn.preprocessing
 
@@ -13,7 +14,7 @@ os.environ['CUDA_VISIBLE_DEVICES'] = ''
 try:
     from config_luke import SLACK_TOKEN
 except ImportError:
-    print('slack token missing')
+    warnings.warn('slack token missing')
     SLACK_TOKEN = ''
 
 
@@ -165,7 +166,6 @@ def test_save_misclassification_plots():
     y_pred = y_pred.argmax(axis=1)
     y_pred_binary = y_pred > 0
 
-    print('starting save')
     plot_dir = '/tmp'
     tp_path = pathlib.Path(plot_dir) / 'true_positives.png'
     fp_path = pathlib.Path(plot_dir) / 'false_positives.png'
@@ -214,7 +214,6 @@ def test_save_misclassification_plots_with_ids():
     y_pred = y_pred.argmax(axis=1)
     y_pred_binary = y_pred > 0
 
-    print('starting save')
     tp_path = pathlib.Path('/tmp/test_true_positives.png')
     fp_path = pathlib.Path('/tmp/test_false_positives.png')
     tn_path = pathlib.Path('/tmp/test_true_negatives.png')

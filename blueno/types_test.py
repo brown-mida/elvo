@@ -8,9 +8,9 @@ def test_from_dict():
     param_dict = {
         'data': [
             {
-                'data_dir': f'/gpfs/main/home/lzhu7/elvo-analysis/data'
+                'data_dir': '/gpfs/main/home/lzhu7/elvo-analysis/data'
                             'processed-standard/arrays/',
-                'labels_path': f'/gpfs/main/home/lzhu7/elvo-analysis/data'
+                'labels_path': '/gpfs/main/home/lzhu7/elvo-analysis/data'
                                'processed-standard/labels.csv',
                 'index_col': 'Anon ID',
                 'label_col': 'occlusion_exists',

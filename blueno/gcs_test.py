@@ -1,9 +1,9 @@
 import datetime
+import os
 import pathlib
 
 import keras
 import numpy as np
-import os
 import pytest
 
 from .gcs import equal_array_counts, upload_gcs_plots, \

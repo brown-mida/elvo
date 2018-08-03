@@ -1,11 +1,12 @@
 import itertools
+import logging
+import os
 import pathlib
 import typing
 
 import keras
 import matplotlib
 import numpy as np
-import os
 import pandas as pd
 import requests
 import sklearn.metrics
@@ -58,13 +59,15 @@ def slack_report(x_train: np.ndarray,
                                loss_path, acc_path, cm_path, tn_path, tp_path,
                                fn_path, fp_path, chunk, id_valid)
 
-    upload_to_slack(loss_path, f'{name}\n\nparams:\n{str(params)}', token)
-    upload_to_slack(acc_path, f'{name}\n\nparams:\n{str(params)}', token)
+    upload_to_slack(loss_path, '{}\n\nparams:\n{}'.format(name, str(params)),
+                    token)
+    upload_to_slack(acc_path, '{}\n\nparams:\n{}'.format(name, str(params)),
+                    token)
     upload_to_slack(cm_path, report, token)
-    upload_to_slack(fp_path, f'{name}\n\nfalse positives', token)
-    upload_to_slack(fn_path, f'{name}\n\nfalse negatives', token)
-    upload_to_slack(tp_path, f'{name}\n\ntrue positives', token)
-    upload_to_slack(tn_path, f'{name}\n\ntrue negatives', token)
+    upload_to_slack(fp_path, '{}\n\nfalse positives'.format(name), token)
+    upload_to_slack(fn_path, '{}\n\nfalse negatives'.format(name), token)
+    upload_to_slack(tp_path, '{}\n\ntrue positives'.format(name), token)
+    upload_to_slack(tn_path, '{}\n\ntrue negatives'.format(name), token)
 
 
 def _create_all_plots(
@@ -142,7 +145,7 @@ def save_history(history: keras.callbacks.History,
                     'acc' in s and 'val' in s]
 
     if len(loss_list) == 0:
-        print('Loss is missing in history')
+        logging.warning('Loss is missing in history')
         return
 
     epochs = range(1, len(history.history[loss_list[0]]) + 1)
@@ -191,11 +194,11 @@ def save_confusion_matrix(cm, classes,
     """
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-        print("Normalized confusion matrix")
+        logging.info("Normalized confusion matrix")
     else:
-        print('Confusion matrix, without normalization')
+        logging.info('Confusion matrix, without normalization')
 
-    print(cm)
+    logging.debug(cm)
 
     plt.figure()
     plt.imshow(cm, interpolation='nearest', cmap=cmap)
@@ -261,7 +264,8 @@ def full_multiclass_report(model: keras.models.Model,
         y_true = y_true.argmax(axis=1)
 
     assert y_pred.shape == y_true.shape, \
-        f'y_pred.shape: {y_pred.shape} must equal y_true.shape: {y_true.shape}'
+        'y_pred.shape: {} must equal y_true.shape: {}'.format(y_pred.shape,
+                                                              y_true.shape)
 
     comment = "Accuracy: " + str(
         sklearn.metrics.accuracy_score(y_true, y_pred))
@@ -274,8 +278,8 @@ def full_multiclass_report(model: keras.models.Model,
                                           y_pred_binary)
 
     # Do not change the line below, it affects reporting._extract_auc
-    comment += f'AUC: {score}\n'
-    comment += f'Assuming {0} is the negative label'
+    comment += 'AUC: {}\n'.format(score)
+    comment += 'Assuming 0 is the negative label'
     comment += '\n\n'
 
     comment += "Classification Report\n"
@@ -289,25 +293,25 @@ def full_multiclass_report(model: keras.models.Model,
     # Compute additional metrics for the 7/31 paper
     try:
         tn, fp, fn, tp = cnf_matrix.ravel()
-        comment += f'\n\nAdditional statistics:\n'
+        comment += '\n\nAdditional statistics:\n'
         sensitivity = tp / (tp + fn)
-        comment += f'Sensitivity: {sensitivity}\n'
+        comment += 'Sensitivity: {}\n'.format(sensitivity)
         specificity = tn / (tn + fp)
-        comment += f'Specificity: {tn / (tn + fp)}\n'
-        comment += f'Precision: {tp / (tp + fp)}\n'
+        comment += 'Specificity: {}\n'.format(specificity)
+        comment += 'Precision: {}\n'.format(tp / (tp + fp))
         total_acc = (tp + tn) / (tp + tn + fp + fn)
         random_acc = (((tn + fp) * (tn + fn) + (fn + tp) * (fp + tp))
                       / (tp + tn + fp + fn) ** 2)
-        comment += f'\n\nNamed statistics:\n'
+        comment += '\n\nNamed statistics:\n'
         kappa = (total_acc - random_acc) / (1 - random_acc)
-        comment += f'Cohen\'s Kappa: {kappa}\n'
+        comment += 'Cohen\'s Kappa: {}\n'.format(kappa)
         youdens = sensitivity - (1 - specificity)
-        comment += f'Youden\'s index: {youdens}\n'
+        comment += 'Youden\'s index: {}\n'.format(youdens)
 
-        comment += f'\n\nOther sklearn statistics:\n'
+        comment += '\n\nOther sklearn statistics:\n'
         log_loss = sklearn.metrics.classification.log_loss(y_true, y_pred)
-        comment += f'Log loss: {log_loss}\n'
-        comment += f'F-1: {sklearn.metrics.f1_score(y_true, y_pred)}\n'
+        comment += 'Log loss: {log_loss}\n'
+        comment += 'F-1: {sklearn.metrics.f1_score(y_true, y_pred)}\n'
     except ValueError as e:
         comment += '\nCould not add additional statistics (tp, fp, etc.)'
         comment += str(e)
@@ -477,8 +481,8 @@ def plot_misclassification(x,
         plot_num = i - offset + 1
         ax = fig.add_subplot(num_rows, num_cols, plot_num)
         if ids is not None:
-            ax.set_title(f'patient: {ids[i][:4]}...')
-        ax.set_xlabel(f'y_true: {y_true[i]} y_pred: {y_pred[i]}')
+            ax.set_title('patient: {}...'.format(ids[i][:4]))
+        ax.set_xlabel('y_true: {} y_pred: {}'.format(y_true[i], y_pred[i]))
         if chunk:
             mip = np.max(arr, axis=0)
             mip = np.reshape(mip, (32, 32))
@@ -514,10 +518,10 @@ def plot_images(data: typing.Dict[str, np.ndarray],
             break
         plot_num = i - offset + 1
         ax = fig.add_subplot(num_rows, num_cols, plot_num)
-        ax.set_title(f'patient: {patient_id[:4]}...')
+        ax.set_title('patient: {}...'.format(patient_id[:4]))
         label = ('positive' if labels.loc[patient_id]['occlusion_exists']
                  else 'negative')
-        ax.set_xlabel(f'label: {label}')
+        ax.set_xlabel('label: {}'.format(label))
         plt.imshow(data[patient_id])
     fig.tight_layout()
     plt.plot()
