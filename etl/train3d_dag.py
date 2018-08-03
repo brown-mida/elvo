@@ -26,14 +26,12 @@ class CustomCloudMLTrainingOperator(BaseOperator):
                  project_id,
                  gcp_conn_id='google_cloud_default',
                  delegate_to=None,
-                 mode='PRODUCTION',
                  *args,
                  **kwargs):
         super(CustomCloudMLTrainingOperator, self).__init__(*args, **kwargs)
         self._project_id = project_id
         self._gcp_conn_id = gcp_conn_id
         self._delegate_to = delegate_to
-        self._mode = mode
 
     def execute(self, context):
         conf = context['dag_run'].conf
@@ -42,25 +40,18 @@ class CustomCloudMLTrainingOperator(BaseOperator):
         training_request = {
             'jobId': job_id,
             'trainingInput': {
-                # TODO(luke): Added by me
                 'scaleTier': 'BASIC_GPU',
                 'packageUris': [
-                    'gs://elvos/cloud-ml/cloud3d/dist/cloudml-c3d-0.0.2.tar'
-                    '.gz'],
+                    'gs://elvos/cloud-ml/blueno-0.1.0.tar.gz',
+                    'gs://elvos/cloud-ml/c3d/cloudml-c3d-0.0.2.tar.gz'
+                ],
                 'pythonModule': 'trainer.task',
                 'region': 'us-east1',
                 'args': '',
-                # TODO(luke): Added by me
                 'runtimeVersion': '1.4',
                 'pythonVersion': '3.5',
             }
         }
-
-        if self._mode == 'DRY_RUN':
-            self.info('In dry_run mode.')
-            self.log.info('MLEngine Training job request is: {}'.format(
-                training_request))
-            return
 
         hook = MLEngineHook(
             gcp_conn_id=self._gcp_conn_id, delegate_to=self._delegate_to)
