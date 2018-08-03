@@ -10,8 +10,8 @@ import subprocess
 import keras
 import numpy as np
 
-from . import plotting
-from . import utils
+from blueno import gcs as plotting
+from blueno import utils
 from .model import C3DBuilder
 
 
