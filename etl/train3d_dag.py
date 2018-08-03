@@ -20,43 +20,36 @@ dag = DAG(dag_id='train3d_web',
 
 
 # Copied from mlengine_operator
-class MyMLEngineTrainingOperator(BaseOperator):
+class CustomCloudMLTrainingOperator(BaseOperator):
     @apply_defaults
     def __init__(self,
                  project_id,
-                 job_id,
-                 package_uris,
-                 training_python_module,
-                 training_args,
-                 region,
                  gcp_conn_id='google_cloud_default',
                  delegate_to=None,
                  mode='PRODUCTION',
                  *args,
                  **kwargs):
-        super(MyMLEngineTrainingOperator, self).__init__(*args, **kwargs)
+        super(CustomCloudMLTrainingOperator, self).__init__(*args, **kwargs)
         self._project_id = project_id
-        self._job_id = job_id
-        self._package_uris = package_uris
-        self._training_python_module = training_python_module
-        self._training_args = training_args
-        self._region = region
         self._gcp_conn_id = gcp_conn_id
         self._delegate_to = delegate_to
         self._mode = mode
 
     def execute(self, context):
-        job_id = self._job_id
+        conf = context['dag_run'].conf
+        job_id = conf['jobName']
+        print('jobID: {}'.format(job_id))
         training_request = {
             'jobId': job_id,
             'trainingInput': {
                 # TODO(luke): Added by me
                 'scaleTier': 'BASIC_GPU',
-                'masterType': '',  # TODO: Set the masterType
-                'packageUris': self._package_uris,
-                'pythonModule': self._training_python_module,
-                'region': self._region,
-                'args': self._training_args,
+                'packageUris': [
+                    'gs://elvos/cloud-ml/cloud3d/dist/cloudml-c3d-0.0.2.tar'
+                    '.gz'],
+                'pythonModule': 'trainer.task',
+                'region': 'us-east1',
+                'args': '',
                 # TODO(luke): Added by me
                 'runtimeVersion': '1.4',
                 'pythonVersion': '3.5',
@@ -64,7 +57,7 @@ class MyMLEngineTrainingOperator(BaseOperator):
         }
 
         if self._mode == 'DRY_RUN':
-            self.log.info('In dry_run mode.')
+            self.info('In dry_run mode.')
             self.log.info('MLEngine Training job request is: {}'.format(
                 training_request))
             return
@@ -90,17 +83,8 @@ class MyMLEngineTrainingOperator(BaseOperator):
             raise RuntimeError(finished_training_job['errorMessage'])
 
 
-# TODO: This should be a variable
-package_uris = ['gs://elvos/cloud-ml/cloud3d/dist/cloudml-c3d-0.0.2.tar.gz']
-job_id = 'c3d_test24'
-
-training_op = MyMLEngineTrainingOperator(
+training_op = CustomCloudMLTrainingOperator(
     project_id='elvo-198322',
-    job_id=job_id,
-    package_uris=package_uris,
-    training_python_module='trainer.task',
-    training_args='',
-    region='us-east1',
     task_id='train_model',
     dag=dag,
     mode='PRODUCTION'
