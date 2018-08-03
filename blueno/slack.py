@@ -310,7 +310,7 @@ def full_multiclass_report(model: keras.models.Model,
 
         comment += '\n\nOther sklearn statistics:\n'
         log_loss = sklearn.metrics.classification.log_loss(y_true, y_pred)
-        comment += 'Log loss: {log_loss}\n'
+        comment += 'Log loss: {}\n'.format(log_loss)
         comment += 'F-1: {sklearn.metrics.f1_score(y_true, y_pred)}\n'
     except ValueError as e:
         comment += '\nCould not add additional statistics (tp, fp, etc.)'
