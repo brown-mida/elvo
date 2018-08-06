@@ -1,3 +1,6 @@
+"""
+Airflow DAG to keep chunks on GCS up to date.
+"""
 from datetime import datetime
 
 import os

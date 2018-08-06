@@ -1,4 +1,5 @@
-"""To run this GOOGLE_APPLICATION_CREDENTIALS should be set.
+"""
+To run this GOOGLE_APPLICATION_CREDENTIALS should be set.
 
 This script converts the compressed files containing dicom files
 to numpy files.

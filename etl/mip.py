@@ -4,7 +4,6 @@ process involves taking 3D brain scans and compressing their maximum values
 down into a single 2D array.
 """
 
-# TODO: preprocess coronal and sagittal scans so they have mips too
 import logging
 # from matplotlib import pyplot as plt
 from lib import transforms, cloud_management as cloud
@@ -89,6 +88,7 @@ def normal_mip():
         prefix = location + '/'
         logging.info(f"MIPing images from {prefix}")
 
+        # get every blob
         for in_blob in bucket.list_blobs(prefix=prefix):
             # blacklist
             if in_blob.name == prefix + 'LAUIHISOEZIM5ILF.npy':
@@ -97,17 +97,17 @@ def normal_mip():
             file_id = in_blob.name.split('/')[2]
             file_id = file_id.split('.')[0]
 
-            if file_id not in FAILURE_ANALYSIS:
-                continue
-
             # perform the normal MIPing procedure
             logging.info(f'downloading {in_blob.name}')
             input_arr = cloud.download_array(in_blob)
             logging.info(f"blob shape: {input_arr.shape}")
+
+            # if it's a failure analysis scan, do the failure analysis MIP
             if file_id in FAILURE_ANALYSIS:
                 if location == 'numpy/axial':
                     cropped_arr = transforms.crop_normal_axial_fa(input_arr,
                                                                   location)
+            # otherwise just do a normal MIP
             else:
                 if location == 'numpy/axial':
                     cropped_arr = transforms.crop_normal_axial(input_arr,
@@ -115,23 +115,20 @@ def normal_mip():
                 else:
                     cropped_arr = transforms.crop_normal_coronal(input_arr,
                                                                  location)
+
+            # remove extremes
             not_extreme_arr = transforms.remove_extremes(cropped_arr)
             logging.info(f'removed array extremes')
+
+            # MIP array
             mip_arr = transforms.mip_normal(not_extreme_arr)
+
+            # OPTIONAL: visualize MIP
             # plt.figure(figsize=(6, 6))
             # plt.imshow(mip_arr, interpolation='none')
             # plt.show()
 
-            # # if the source directory is one of the luke ones
-            # if location != 'numpy':
-            #     file_id = in_blob.name.split('/')[2]
-            #     file_id = file_id.split('.')[0]
-            #     # save to both a training and validation split
-            #     # and a potential generator source directory
-            #     cloud.save_npy_to_cloud(mip_arr, file_id, 'processed')
-            # # otherwise it's from numpy
-            # else:
-            # save to the numpy generator source directory
+            # save to cloud
             cloud.save_npy_to_cloud(mip_arr, file_id, location, 'normal')
 
 

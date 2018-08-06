@@ -93,6 +93,7 @@ def multichannel_mip():
         prefix = location + '/'
         logging.info(f"MIPing images from {prefix}")
 
+        # for every blob in the source directory
         for in_blob in bucket.list_blobs(prefix=prefix):
             # blacklist
             if in_blob.name == prefix + 'LAUIHISOEZIM5ILF.npy':
@@ -101,39 +102,35 @@ def multichannel_mip():
             file_id = in_blob.name.split('/')[2]
             file_id = file_id.split('.')[0]
 
-            # perform the normal MIPing procedure
+            # download array
             logging.info(f'downloading {in_blob.name}')
             input_arr = cloud.download_array(in_blob)
             logging.info(f"blob shape: {input_arr.shape}")
+
+            # if it's a failure analysis array, do a failure analysis MIP
             if file_id in FAILURE_ANALYSIS:
                 if location == 'numpy/axial':
                     cropped_arr = \
                         transforms.crop_multichannel_axial_fa(input_arr,
                                                               location)
+            # else do a normal MIP
             else:
                 if location == 'numpy/axial':
                     cropped_arr = transforms.crop_multichannel_axial(input_arr,
                                                                      location)
                 else:
                     cropped_arr = transforms.crop_multichannel_coronal(
-                        input_arr,
-                        location)
+                        input_arr)
+            # remove extremes
             not_extreme_arr = transforms.remove_extremes(cropped_arr)
             logging.info(f'removed array extremes')
             mip_arr = transforms.mip_multichannel(not_extreme_arr)
+
+            # OPTIONAL: visualize array
             # plt.figure(figsize=(6, 6))
             # plt.imshow(mip_arr[1], interpolation='none')
             # plt.show()
 
-            # if the source directory is one of the luke ones
-            # if location != 'numpy':
-            #     file_id = in_blob.name.split('/')[2]
-            #     file_id = file_id.split('.')[0]
-            #     # save to both a training and validation split
-            #     # and a potential generator source directory
-            #     cloud.save_npy_to_cloud(mip_arr, file_id, 'processed')
-            # # otherwise it's from numpy
-            # else:
             # save to the numpy generator source directory
             cloud.save_npy_to_cloud(mip_arr, file_id, location, 'multichannel')
 

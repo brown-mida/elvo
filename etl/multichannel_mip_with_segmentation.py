@@ -5,6 +5,9 @@ sections, and compressing each section's maximum values down into a 2D array.
 When these are recombined, we get an array with the shape (3, X, Y) — which is
 ready to be fed directly into standardized Keras architecture with pretrained
 feature detection weights from ImageNet/CIFAR10.
+
+Exactly the same as overlap_mip(), but calls segment_vessels() on the array
+instead of remove_extremes().
 """
 
 import logging
@@ -116,8 +119,7 @@ def multichannel_mip():
                                                                      location)
                 else:
                     cropped_arr = transforms.crop_multichannel_coronal(
-                        input_arr,
-                        location)
+                        input_arr)
             not_extreme_arr = transforms.segment_vessels(cropped_arr)
             logging.info(f'removed array extremes')
             mip_arr = transforms.mip_multichannel(not_extreme_arr)
@@ -125,15 +127,6 @@ def multichannel_mip():
             # plt.imshow(mip_arr[1], interpolation='none')
             # plt.show()
 
-            # if the source directory is one of the luke ones
-            # if location != 'numpy':
-            #     file_id = in_blob.name.split('/')[2]
-            #     file_id = file_id.split('.')[0]
-            #     # save to both a training and validation split
-            #     # and a potential generator source directory
-            #     cloud.save_npy_to_cloud(mip_arr, file_id, 'processed')
-            # # otherwise it's from numpy
-            # else:
             # save to the numpy generator source directory
             cloud.save_segmented_npy_to_cloud(mip_arr, file_id, location,
                                               'multichannel')
