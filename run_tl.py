@@ -196,12 +196,6 @@ def fine_tune(data_loc, comment, img_gen=None):
     train_labels = np.array(train_gen.labels)
     test_labels = np.array(test_gen.labels)
 
-    utils.slack_report(train_files, train_labels,
-        test_files, test_labels,
-        model, history, 'Report', comment,
-        'xoxp-314216549302-332571253111-395866627814-3c4d6241fdb752f29fdf328410b8384a'
-    )
-
 
 def fine_tune_2():
     metrics.sensitivity = sensitivity
