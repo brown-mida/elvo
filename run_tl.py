@@ -10,10 +10,7 @@ from keras.layers import Dense, GlobalAveragePooling2D, Dropout, Input
 from keras.optimizers import Adam, SGD
 from keras.applications.resnet50 import ResNet50
 from keras.preprocessing.image import ImageDataGenerator
-# from ml.generators.mip_generator_local import MipGenerator
 from ml.generators.mip_generator_memory import MipGenerator
-
-import blueno.utils as utils
 
 
 class ModelMGPU(Model):
@@ -149,8 +146,8 @@ def fine_tune(data_loc, comment, img_gen=None):
     #     layer.trainable = False
     gpu_model = ModelMGPU(model, 2)
     gpu_model.compile(optimizer=Adam(lr=1e-5),
-                  loss='binary_crossentropy',
-                  metrics=['accuracy', sensitivity, specificity])
+                      loss='binary_crossentropy',
+                      metrics=['accuracy', sensitivity, specificity])
 
     train_gen = MipGenerator(
         data_loc=data_loc,
@@ -181,7 +178,7 @@ def fine_tune(data_loc, comment, img_gen=None):
                                   mode='max',
                                   verbose=1)
 
-    history = gpu_model.fit_generator(
+    gpu_model.fit_generator(
         generator=train_gen.generate(),
         steps_per_epoch=train_gen.get_steps_per_epoch(),
         validation_data=test_gen.generate(),
@@ -190,11 +187,6 @@ def fine_tune(data_loc, comment, img_gen=None):
         verbose=1,
         callbacks=[mc_callback]
     )
-
-    train_files = np.array([x['img'] for x in train_gen.files])
-    test_files = np.array([x['img'] for x in test_gen.files])
-    train_labels = np.array(train_gen.labels)
-    test_labels = np.array(test_gen.labels)
 
 
 def fine_tune_2():
@@ -208,8 +200,8 @@ def fine_tune_2():
         layer.trainable = False
     gpu_model = ModelMGPU(model, 4)
     gpu_model.compile(optimizer=SGD(lr=1e-5, momentum=0.9),
-                  loss='binary_crossentropy',
-                  metrics=['accuracy', sensitivity, specificity])
+                      loss='binary_crossentropy',
+                      metrics=['accuracy', sensitivity, specificity])
 
     train_gen = MipGenerator(
         data_loc='data/mip',

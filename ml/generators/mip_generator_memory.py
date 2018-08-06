@@ -2,7 +2,6 @@ import os
 import csv
 import random
 import numpy as np
-from scipy.ndimage.interpolation import zoom
 from keras.preprocessing.image import ImageDataGenerator
 
 from google.cloud import storage
@@ -29,7 +28,7 @@ class MipGenerator(object):
         self.augment_data = augment_data
         self.validation = validation
 
-        if img_gen == None:
+        if img_gen is None:
             self.datagen = ImageDataGenerator(
                 rotation_range=15,
                 width_shift_range=0.1,
@@ -68,7 +67,6 @@ class MipGenerator(object):
 
                 # if self.augment_data and not self.validation:
                 #    self.__add_augmented(files, file, img)
-
 
         # Get label data from Google Cloud Storage
         blob = storage.Blob('labels.csv', bucket)
