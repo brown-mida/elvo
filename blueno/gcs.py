@@ -8,6 +8,7 @@ import subprocess
 import keras
 import numpy as np
 import os
+import warnings
 from google.cloud import storage
 
 from blueno.elasticsearch import JOB_INDEX
@@ -113,12 +114,39 @@ def upload_model_to_gcs(job_name, created_at, model_filepath):
             check=True)
     except subprocess.CalledProcessError:
         # gpu1708 specific code
-        subprocess.run(
-            ['/bin/bash',
-             '-c',
-             '/gpfs/main/home/lzhu7/google-cloud-sdk/bin/'
-             'gsutil cp {} {}'.format(model_filepath, gcs_filepath)],
-            check=True)
+        if os.uname().nodename == 'gpu1708':
+            subprocess.run(
+                ['/bin/bash',
+                 '-c',
+                 '/gpfs/main/home/lzhu7/google-cloud-sdk/bin/'
+                 'gsutil cp {} {}'.format(model_filepath, gcs_filepath)],
+                check=True)
+        else:
+            warnings.warn('Could not upload model to GCS')
+
+
+def download_to_gpu1708(gcs_url, local_path, folder=False):
+    """
+    Downloads the data from the GCS url to the localpath.
+
+    If folder is true, sync the files (not-recursively).
+
+    :param gcs_url: the source gcs url
+    :param local_path:
+    :return:
+    """
+    # gpu1708 specific code
+    if folder:
+        os.makedirs(local_path, exist_ok=True)
+        cmd = 'rsync'
+    else:
+        cmd = 'cp'
+    subprocess.run(
+        ['/bin/bash',
+         '-c',
+         '/gpfs/main/home/lzhu7/google-cloud-sdk/bin/'
+         'gsutil {} {} {}'.format(cmd, gcs_url, local_path)],
+        check=True)
 
 
 def upload_gcs_plots(x_train: np.ndarray,

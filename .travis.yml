@@ -5,7 +5,6 @@ env:
   - SLACK_TOKEN=''
 install: 
   - pip install .[test,cpu,etl]  # Install blueno
-  - pip install -r dashboard/requirements.txt
 script: 
   - flake8 etl ml dashboard blueno
   - pytest --cov=./
