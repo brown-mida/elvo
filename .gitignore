@@ -19,6 +19,10 @@ data-*/*
 *.swp
 tmp/
 *.pkl
+ELVO_Annotator_Key_Negatives.csv
+ELVO_Annotator_Key_Positives.csv
+metadata_negatives.csv
+metadata_positives.csv
 
 # Models (weights)
 results/
