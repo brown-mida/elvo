@@ -1,3 +1,12 @@
+"""
+Up to date second-stage ROI train preprocessing script. Assembles labels/chunks
+into train/val/test sets and lets us save them for training. Meant to be run on
+instance-1.
+
+Note: exactly the same as roi_train_preprocess.py, but source directory is
+chunk_data/filtered/ instead of chunk_data/normal/.
+"""
+
 import csv
 import numpy as np
 import random
@@ -87,6 +96,7 @@ for i, id_ in enumerate(list(positive_label_data.keys())):
         meta_id = id_[:16]
         stripped_id = id_[:-1]
 
+        # if the ID is in the train set add it to positive_train_label_data
         if meta_id in train_ids:
             pos_train += 1
             positive_train_label_data[id_] = 1
@@ -94,6 +104,7 @@ for i, id_ in enumerate(list(positive_label_data.keys())):
                 positive_train_label_data[stripped_id + str(j)] = 1
             continue
 
+        # if the ID is in the val set add it to positive_val_label_data
         elif meta_id in val_ids:
             pos_val += 1
             positive_val_label_data[id_] = 1

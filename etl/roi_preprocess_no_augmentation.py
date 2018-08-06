@@ -1,6 +1,8 @@
+"""
+Script to see how C3D performs on unaugmented positive data. Runs on Amy's VM.
+"""
 import logging
 import pandas as pd
-
 from lib import cloud_management as cloud
 
 
@@ -15,25 +17,33 @@ def configure_logger():
 
 
 def clean_data():
+    """
+    Deletes everything in chunk_data/normal/positive_no_aug
+
+    :return:
+    """
     configure_logger()
     client = cloud.authenticate()
     bucket = client.get_bucket('elvos')
-
-    # iterate through every source directory...
     prefix = "chunk_data/normal/positive_no_aug"
     logging.info(f"cleaning: deleting positive chunks from {prefix}")
 
+    # delete everything
     for in_blob in bucket.list_blobs(prefix=prefix):
         in_blob.delete()
 
 
-def create_chunks(annotations_df: pd.DataFrame):
+def create_chunks():
+    """
+    Creates gets unaugmented positive chunks and saves them to positive_no_aug.
+
+    :return:
+    """
     client = cloud.authenticate()
     bucket = client.get_bucket('elvos')
 
-    # loop through every positive array on GCS
-    # no need to loop through negatives, as those are fine in their
-    # current state
+    # loop through every positive array on GCS -- no need to loop through
+    #   negatives, as those are fine in their current state
     for in_blob in bucket.list_blobs(prefix='chunk_data/normal/positive'):
 
         # get the file id
@@ -41,9 +51,8 @@ def create_chunks(annotations_df: pd.DataFrame):
         file_id = file_id.split('.')[0]
 
         logging.info(f'getting {file_id}')
-        # copy region if it's the original image, not a rotation/
-        # reflection
 
+        # copy region if it's the original image, not a rotation/reflection
         if file_id.endswith('_1'):
             arr = cloud.download_array(in_blob)
             logging.info(f'downloading {file_id}')
@@ -53,20 +62,31 @@ def create_chunks(annotations_df: pd.DataFrame):
 
 
 def create_labels():
+    """
+    Creates label set based off of unaugmented positives.
+
+    :return:
+    """
     labels_df = pd.read_csv('/home/amy/data/augmented'
                             '_annotated_labels1.csv')
-    print(len(labels_df))
+    print("labels_df: " + str(len(labels_df)))
 
+    # get 0 labels and positives that end with _1
     labels_df = labels_df[
         labels_df['label'] == 0
         | labels_df['Unnamed: 0.1'].str.endswith('_1')]
-
     print("labels_df: " + str(len(labels_df)))
+
+    # drop irrelevant info
     labels_df = labels_df.drop(columns=['Unnamed: 0'])
     labels_df.to_csv('/home/amy/data/no_aug_annotated_labels.csv')
 
 
 def process_labels():
+    """
+    Same as process_labels() in roi_preprocess.py
+    :return:
+    """
     annotations_df = pd.read_csv(
         '/home/amy/elvo-analysis/annotations.csv')
     annotations_df = annotations_df.drop(['created_by',
