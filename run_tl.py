@@ -13,7 +13,7 @@ from keras.preprocessing.image import ImageDataGenerator
 # from ml.generators.mip_generator_local import MipGenerator
 from ml.generators.mip_generator_memory import MipGenerator
 
-import ml.utils as utils
+import blueno.utils as utils
 
 
 class ModelMGPU(Model):
@@ -21,7 +21,7 @@ class ModelMGPU(Model):
         pmodel = multi_gpu_model(ser_model, gpus)
         self.__dict__.update(pmodel.__dict__)
         self._smodel = ser_model
-    
+
     def __getattribute__(self, attrname):
         '''Override load and save methods to be used from the serial-model. The
         serial-model holds references to the weights in the multi-gpu model.
@@ -92,7 +92,7 @@ def train_top_model():
 
     inp = Input(shape=train_data.shape[1:])
     x = GlobalAveragePooling2D(name='t_pool')(inp)
-    x = Dense(1024, activation='relu', 
+    x = Dense(1024, activation='relu',
               name='t_dense_1')(x)
     x = Dropout(0.5, name='t_do_1')(x)
     x = Dense(1024, activation='relu',

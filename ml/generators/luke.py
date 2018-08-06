@@ -1,5 +1,3 @@
-import typing
-
 import numpy as np
 from keras.preprocessing.image import ImageDataGenerator
 
@@ -8,9 +6,15 @@ def standard_generators(x_train: np.ndarray,
                         y_train: np.ndarray,
                         x_valid: np.ndarray,
                         y_valid: np.ndarray,
-                        rotation_range: float,
                         batch_size: int,
-                        zoom_range: typing.List[int] = [1.0, 1.0]):
+                        rotation_range: float,
+                        width_shift_range=0.1,
+                        height_shift_range=0.1,
+                        shear_range=0,
+                        zoom_range=(1.0, 1.0),
+                        horizontal_flip=True,
+                        vertical_flip=False,
+                        **kwargs):
     """
     Creates a standard training and validation generator
     from the input data.
@@ -26,11 +30,12 @@ def standard_generators(x_train: np.ndarray,
     train_datagen = ImageDataGenerator(featurewise_center=True,
                                        featurewise_std_normalization=True,
                                        rotation_range=rotation_range,
-                                       width_shift_range=0.1,
-                                       height_shift_range=0.1,
-                                       # TODO(#63): As config paramaters
+                                       width_shift_range=width_shift_range,
+                                       height_shift_range=height_shift_range,
                                        zoom_range=zoom_range,
-                                       horizontal_flip=True)
+                                       shear_range=shear_range,
+                                       horizontal_flip=horizontal_flip,
+                                       vertical_flip=vertical_flip)
     valid_datagen = ImageDataGenerator(featurewise_center=True,
                                        featurewise_std_normalization=True)
     train_datagen.fit(x_train)

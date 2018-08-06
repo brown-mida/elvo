@@ -18,6 +18,7 @@ data-*/*
 *.zip
 *.swp
 tmp/
+*.pkl
 
 # Models (weights)
 results/
@@ -45,4 +46,7 @@ Thumbs.db
 
 # JavaScript
 node_modules/
+
+# Sandbox
+sandbox/
 
