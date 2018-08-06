@@ -29,7 +29,7 @@ if __name__ == '__main__':
     client = cloud.authenticate()
     bucket = client.get_bucket('elvos')
 
-    # from numpy directory
+    # Get every blob from numpy directory
     for in_blob in bucket.list_blobs(prefix='numpy/'):
 
         # blacklist
@@ -40,23 +40,28 @@ if __name__ == '__main__':
         input_arr = cloud.download_array(in_blob)
         logging.info(f"blob shape: {input_arr.shape}")
 
+        # crop and remove extremes
         cropped_arr = transforms.crop(input_arr, 'numpy')
         not_extreme_arr = transforms.remove_extremes(cropped_arr)
 
         logging.info(f'removed array extremes')
-        # create folder w patient ID
+        # MIP the array
         axial = transforms.mip_array(not_extreme_arr, 'axial')
         logging.info(f'mip-ed CTA image')
-        normalized = transforms.normalize(axial, lower_bound=-400)
+
+        # OPTIONAL: display the three images
         # for i in range(3):
         #     plt.figure(figsize=(6, 6))
         #     plt.imshow(axial[z], interpolation='none')
         #     plt.show()
         file_id = in_blob.name.split('/')[1]
         file_id = file_id.split('.')[0]
-        cloud.save_npy_to_cloud(axial, in_blob.name[6:22], 'numpy')
 
+        # save array to cloud
+        cloud.save_npy_to_cloud(axial, in_blob.name[6:22], 'numpy')
         logging.info(f'saved .npy file to cloud')
+
+    # SAME PROCEDURE AS ABOVE, JUST SOURCED FROM DIFFERENT DIRECTORY
 
     # from preprocess_luke/training directory
     for in_blob in bucket.list_blobs(prefix='preprocess_luke/training/'):

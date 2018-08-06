@@ -1,3 +1,7 @@
+"""
+Airflow DAG for updating annotations from Google Drive to GCS.
+"""
+
 import datetime
 
 import os

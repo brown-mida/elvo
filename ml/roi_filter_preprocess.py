@@ -1,13 +1,59 @@
+# TODO: finish commenting on this code
 """
-A script to save the labels and do initial chunk preprocessing, converting GCS
-full scans to sets of valid scans.
+Almost exactly the same script as etl/roi_preprocess.py, but with one important
+difference -- valid negatives are filtered to be the "hard" set of negatives,
+i.e. they are predicted on by the initial highest-performing model and if that
+prediction is false then they are uploaded to the cloud
 """
 import logging
+import io
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
+from models.three_d import c3d
+from google.cloud import storage
+from tensorflow.python.lib.io import file_io
 
-from lib import cloud_management as cloud
+
+def download_array(blob: storage.Blob) -> np.ndarray:
+    """Downloads data blobs as numpy arrays
+
+    :param blob: the GCS blob you want to download as an array
+    :return: the downloaded numpy array
+    """
+    in_stream = io.BytesIO()
+    blob.download_to_file(in_stream)
+    in_stream.seek(0)  # Read from the start of the file-like object
+    return np.load(in_stream)
+
+
+def save_chunks_to_cloud(arr: np.ndarray, type_: str,
+                         elvo_status: str, id_: str):
+    """
+    Uploads chunk .npy files to gs://elvos/chunk_data/<patient_id>.npy
+    """
+    try:
+        print(f'gs://elvos/chunk_data/{type_}/{elvo_status}/{id_}.npy')
+        np.save(file_io.FileIO(f'gs://elvos/chunk_data/{type_}/'
+                               f'{elvo_status}/{id_}.npy', 'w'), arr)
+    except Exception as e:
+        logging.error(f'for patient ID: {id} {e}')
+
+
+def authenticate():
+    return storage.Client.from_service_account_json(
+        # for running on airflow GPU
+        # '/home/lukezhu/elvo-analysis/credentials/client_secret.json'
+
+        # for running on hal's GPU
+        '/home/harold_triedman/elvo-analysis/credentials/client_secret.json'
+
+        # for running on amy's GPU
+        # '/home/amy/credentials/client_secret.json'
+
+        # for running locally
+        # 'credentials/client_secret.json'
+    )
 
 
 def configure_logger():
@@ -20,15 +66,8 @@ def configure_logger():
     root_logger.addHandler(handler)
 
 
-def create_chunks(annotations_df: pd.DataFrame):
-    """
-    Process and save actual chunks based off of the previously derived
-    annotations.
-
-    :param annotations_df: annotations with where the actual occlusion is
-    :return:
-    """
-    client = cloud.authenticate()
+def create_chunks(annotations_df: pd.DataFrame, model):
+    client = authenticate()
     bucket = client.get_bucket('elvos')
 
     # loop through every array on GCS
@@ -51,14 +90,14 @@ def create_chunks(annotations_df: pd.DataFrame):
         else:
             elvo_positive = True
 
-        arr = cloud.download_array(in_blob)
+        arr = download_array(in_blob)
         rois = []
         centers = []
 
         # if it's elvo positive
         if elvo_positive:
-            # iterate through every occlusion this patient has
             for row in roi_df.itertuples():
+                logging.info(row)
                 """
                 row[0] = index
                 row[1] = patient ID
@@ -69,12 +108,9 @@ def create_chunks(annotations_df: pd.DataFrame):
                 row[6] = blue1
                 row[7] = blue2
                 """
-                # append the lowest-valued corner of the ROI to rois
                 rois.append((int(len(arr) - row[7]),
                              int(row[4]),
                              int(row[2])))
-
-                # append the center of the ROI to centers
                 centers.append((int(((len(arr) - row[6])
                                      + (len(arr) - row[7])) / 2),
                                 int((row[4] + row[5]) / 2),
@@ -99,9 +135,9 @@ def create_chunks(annotations_df: pd.DataFrame):
                             chunk = arr[roi[0]: roi[0] + 32,
                                         roi[1]: roi[1] + 32,
                                         roi[2]: roi[2] + 32]
-                            cloud.save_chunks_to_cloud(np.asarray(chunk),
-                                                       'normal', 'positive',
-                                                       file_id + str(h))
+                            save_chunks_to_cloud(np.asarray(chunk),
+                                                 'filtered', 'positive',
+                                                 file_id + str(h))
                             h += 1
                             found_positive = True
 
@@ -110,27 +146,27 @@ def create_chunks(annotations_df: pd.DataFrame):
 
                     # copy the chunk
                     chunk = arr[i:(i + 32), j:(j + 32), k:(k + 32)]
+
+                    if np.asarray(chunk).shape != (32, 32, 32):
+                        h += 1
+                        continue
                     # calculate the airspace
                     airspace = np.where(chunk < -300)
                     # if it's less than 90% airspace
                     if (airspace[0].size / chunk.size) < 0.9:
-                        # save the label as 0 and save it to the cloud
-                        cloud.save_chunks_to_cloud(np.asarray(chunk),
-                                                   'normal', 'negative',
-                                                   file_id + str(h))
+                        pred_chunk = np.expand_dims(chunk, axis=-1)
+                        pred_chunk = np.expand_dims(pred_chunk, axis=0)
+                        if model.predict(pred_chunk) > 0.4:
+                            # save the label as 0 and save it to the cloud
+                            save_chunks_to_cloud(np.asarray(chunk),
+                                                 'filtered', 'negative',
+                                                 file_id + str(h))
 
                     h += 1
 
 
-def create_labels(annotations_df: pd.DataFrame):
-    """
-    Process and save labels for the chunks based off of previously-derived
-    annotations. Very similar to create_chunks in methodology
-
-    :param annotations_df: annotations to get labels from
-    :return:
-    """
-    client = cloud.authenticate()
+def create_labels(annotations_df: pd.DataFrame, model):
+    client = authenticate()
     bucket = client.get_bucket('elvos')
     label_dict = {}
 
@@ -155,13 +191,13 @@ def create_labels(annotations_df: pd.DataFrame):
         else:
             elvo_positive = True
 
-        arr = cloud.download_array(in_blob)
+        arr = download_array(in_blob)
         rois = []
         centers = []
 
         # if it's elvo positive
         if elvo_positive:
-            # go through each occlusion this patient has
+
             for row in roi_df.itertuples():
                 """
                 row[0] = index
@@ -173,11 +209,9 @@ def create_labels(annotations_df: pd.DataFrame):
                 row[6] = blue1
                 row[7] = blue2
                 """
-                # append ROI to rois
                 rois.append((int(len(arr) - row[7]),
                              int(row[4]),
                              int(row[2])))
-                # append center to centers
                 centers.append((int(((len(arr) - row[6])
                                      + (len(arr) - row[7])) / 2),
                                 int((row[4] + row[5]) / 2),
@@ -208,12 +242,18 @@ def create_labels(annotations_df: pd.DataFrame):
 
                     # copy the chunk
                     chunk = arr[i:(i + 32), j:(j + 32), k:(k + 32)]
+                    if np.asarray(chunk).shape != (32, 32, 32):
+                        h += 1
+                        continue
                     # calculate the airspace
                     airspace = np.where(chunk < -300)
                     # if it's less than 90% airspace
                     if (airspace[0].size / chunk.size) < 0.9:
-                        # save the label as 0 and save it to the cloud
-                        label_dict[file_id + str(h)] = 0
+                        pred_chunk = np.expand_dims(chunk, axis=-1)
+                        pred_chunk = np.expand_dims(pred_chunk, axis=0)
+                        if model.predict(pred_chunk) > 0.4:
+                            # save the label as 0 and save it to the cloud
+                            label_dict[file_id + str(h)] = 0
                     h += 1
 
     # convert the labels to a df
@@ -223,22 +263,15 @@ def create_labels(annotations_df: pd.DataFrame):
 
 
 def process_labels():
-    """
-    Load annotations from a csv.
-
-    :return: cleaned up annotations
-    """
-    # Read from csv
     annotations_df = pd.read_csv(
         '/home/harold_triedman/elvo-analysis/annotations.csv')
-
-    # Drop irrelevant rows
+    # annotations_df = pd.read_csv(
+    #         '/Users/haltriedman/Desktop/annotations.csv')
     annotations_df = annotations_df.drop(['created_by',
                                           'created_at',
                                           'ROI Link',
                                           'Unnamed: 10'],
                                          axis=1)
-    # Drop rows that have NaN values in them
     annotations_df = annotations_df[
         annotations_df.red1 == annotations_df.red1]
     logging.info(annotations_df)
@@ -247,19 +280,16 @@ def process_labels():
 
 def inspect_rois(annotations_df):
     """
-    Sanity-check function to make sure that the ROIs we're getting actually
-    contain occlusions in them.
-
-    :param annotations_df: annotations
+    A function to inspect the ROI in each scan to make sure that it shows an
+    occlusion
+    :param annotations_df: dataframe of IDs/corresponding annotations
     :return:
     """
-    client = cloud.authenticate()
+    client = authenticate()
     bucket = client.get_bucket('elvos')
 
     # loop through every array on GCS
     for in_blob in bucket.list_blobs(prefix='airflow/npy'):
-        # if in_blob.name != 'airflow/npy/ZZX0ZNWG6Q9I18GK.npy':
-        #     continue
         # blacklist
         if in_blob.name == 'airflow/npy/LAUIHISOEZIM5ILF.npy':
             continue
@@ -278,13 +308,11 @@ def inspect_rois(annotations_df):
         else:
             elvo_positive = True
 
-        arr = cloud.download_array(in_blob)
+        arr = download_array(in_blob)
 
         # if it's elvo positive
         if elvo_positive:
             chunks = []
-
-            # get ROI location
             blue = int(len(arr) - roi_df['blue2'].iloc[0])
             green = int(roi_df['green1'].iloc[0])
             red = int(roi_df['red1'].iloc[0])
@@ -292,9 +320,6 @@ def inspect_rois(annotations_df):
                           green: green + 50, red: red + 50])
             chunks.append(arr[
                           blue: blue + 32, red: red + 50, green: green + 50])
-
-            # Loop through all relevant chunks and show the axial, coronal,
-            #   and sagittal views to make sure there's an occlusion
             for chunk in chunks:
                 axial = np.max(chunk, axis=0)
                 coronal = np.max(chunk, axis=1)
@@ -308,9 +333,11 @@ def inspect_rois(annotations_df):
 
 def run_preprocess():
     configure_logger()
+    model = c3d.C3DBuilder.build()
+    model.load_weights('tmp/FINAL_RUN_6.hdf5')
     annotations_df = process_labels()
-    create_labels(annotations_df)
-    create_chunks(annotations_df)
+    create_labels(annotations_df, model)
+    create_chunks(annotations_df, model)
     # inspect_rois(annotations_df)
 
 

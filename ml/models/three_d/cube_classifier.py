@@ -11,7 +11,7 @@ from keras.layers import (
 class CubeClassifierBuilder(object):
 
     @staticmethod
-    def build(input_shape=(28, 28, 1), num_classes=7, dropout=(0.25, 5)):
+    def build(input_shape=(28, 28, 1), dropout=(0.25, 5), binary=False):
         model = Sequential()
         model.add(Conv2D(32, kernel_size=(3, 3),
                          activation='relu',
@@ -22,7 +22,10 @@ class CubeClassifierBuilder(object):
         model.add(Flatten())
         model.add(Dense(128, activation='relu'))
         model.add(Dropout(dropout[1]))
-        model.add(Dense(num_classes, activation='sigmoid'))
+        if binary:
+            model.add(Dense(1, activation='sigmoid'))
+        else:
+            model.add(Dense(7, activation='sigmoid'))
 
         model.summary(line_length=140)
         return model

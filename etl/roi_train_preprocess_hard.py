@@ -1,7 +1,10 @@
 """
-Up to date first-stage ROI train preprocessing script. Assembles labels/chunks
+Up to date second-stage ROI train preprocessing script. Assembles labels/chunks
 into train/val/test sets and lets us save them for training. Meant to be run on
 instance-1.
+
+Note: exactly the same as roi_train_preprocess.py, but source directory is
+chunk_data/filtered/ instead of chunk_data/normal/.
 """
 
 import csv
@@ -38,6 +41,20 @@ def configure_logger():
 configure_logger()
 
 # get test ids from test_ids.csv
+with open('train_ids.csv') as infile:
+    reader = csv.reader(infile, delimiter=',')
+    for row in reader:
+        if row[0] != '':
+            train_ids[row[0]] = ''
+
+# get test ids from test_ids.csv
+with open('val_ids.csv') as infile:
+    reader = csv.reader(infile, delimiter=',')
+    for row in reader:
+        if row[0] != '':
+            val_ids[row[0]] = ''
+
+# get test ids from test_ids.csv
 with open('test_ids.csv') as infile:
     reader = csv.reader(infile, delimiter=',')
     for row in reader:
@@ -58,7 +75,7 @@ prelim_label_data = {}
 with open('tmp/augmented_annotated_labels.csv', 'r') as pos_file:
     reader = csv.reader(pos_file, delimiter=',')
     for row in reader:
-        if row[1] != 'Unnamed: 0.1':
+        if row[1] != 'Unnamed: 0':
             prelim_label_data[row[1]] = int(row[2])
             # prelim_label_data[row[2]] = int(row[3])
 
@@ -76,33 +93,31 @@ positive_test_label_data = {}
 # split positives into train/test/val by ID
 for i, id_ in enumerate(list(positive_label_data.keys())):
     if i % 24 == 0:
-        seed = random.randint(1, 100)
         meta_id = id_[:16]
         stripped_id = id_[:-1]
 
+        # if the ID is in the train set add it to positive_train_label_data
+        if meta_id in train_ids:
+            pos_train += 1
+            positive_train_label_data[id_] = 1
+            for j in range(2, 25):
+                positive_train_label_data[stripped_id + str(j)] = 1
+            continue
+
+        # if the ID is in the val set add it to positive_val_label_data
+        elif meta_id in val_ids:
+            pos_val += 1
+            positive_val_label_data[id_] = 1
+            for j in range(2, 25):
+                positive_val_label_data[stripped_id + str(j)] = 1
+            continue
+
         # if the ID is in the test set add it to positive_test_label_data
-        if meta_id in test_ids:
+        elif meta_id in test_ids:
             pos_test += 1
             positive_test_label_data[id_] = 1
             for j in range(2, 25):
                 positive_test_label_data[stripped_id + str(j)] = 1
-            continue
-
-        # if the ID is in the train set add it to positive_train_label_data
-        if seed > 10:
-            positive_train_label_data[id_] = 1
-            for j in range(2, 25):
-                positive_train_label_data[stripped_id + str(j)] = 1
-            train_ids[meta_id] = ''
-            pos_train += 1
-
-        # if the ID is in the val set add it to positive_val_label_data
-        else:
-            positive_val_label_data[id_] = 1
-            for j in range(2, 25):
-                positive_val_label_data[stripped_id + str(j)] = 1
-            val_ids[meta_id] = ''
-            pos_val += 1
 
 # Get 14500 random negatives from the label data to feed into our generator
 negative_train_label_data = {}
@@ -111,17 +126,18 @@ negative_test_label_data = {}
 
 # get negatives in test set into negative_test_label_data
 test_counter = 0
+num_test_chunks = 0
 for id_, label in list(prelim_label_data.items()):
-    if test_counter % 25 == 0:
+    if test_counter % 2 == 0:
         if id_[:16] in test_ids and label == 0:
             negative_test_label_data[id_] = 0
             neg_test += 1
     test_counter += 1
 
-logging.info("getting 14500 random negative labels")
+logging.info("getting 18000 random negative labels")
 negative_counter = 0
 # split negatives into train/test/val
-while negative_counter < 14000:
+while negative_counter < 18000:
     id_, label = random.choice(list(prelim_label_data.items()))
     if label == 0:
         if negative_counter % 500 == 0:
@@ -176,7 +192,7 @@ for id_, label in list(positive_train_label_data.items()):
     if i % 500 == 0:
         logging.info(f'got chunk {i}')
     i += 1
-    blob = bucket.get_blob('chunk_data/normal/positive/' + id_ + '.npy')
+    blob = bucket.get_blob('chunk_data/filtered/positive/' + id_ + '.npy')
     arr = cloud_management.download_array(blob)
     if arr.shape == (32, 32, 32):
         arr = np.expand_dims(arr, axis=-1)
@@ -190,7 +206,7 @@ for id_, label in list(negative_train_label_data.items()):
     if i % 500 == 0:
         logging.info(f'got chunk {i}')
     i += 1
-    blob = bucket.get_blob('chunk_data/normal/negative/' + id_ + '.npy')
+    blob = bucket.get_blob('chunk_data/filtered/negative/' + id_ + '.npy')
     arr = cloud_management.download_array(blob)
     if arr.shape == (32, 32, 32):
         arr = np.expand_dims(arr, axis=-1)
@@ -204,7 +220,7 @@ for id_, label in list(positive_val_label_data.items()):
     if i % 500 == 0:
         logging.info(f'got chunk {i}')
     i += 1
-    blob = bucket.get_blob('chunk_data/normal/positive/' + id_ + '.npy')
+    blob = bucket.get_blob('chunk_data/filtered/positive/' + id_ + '.npy')
     arr = cloud_management.download_array(blob)
     if arr.shape == (32, 32, 32):
         arr = np.expand_dims(arr, axis=-1)
@@ -218,7 +234,7 @@ for id_, label in list(negative_val_label_data.items()):
     if i % 500 == 0:
         logging.info(f'got chunk {i}')
     i += 1
-    blob = bucket.get_blob('chunk_data/normal/negative/' + id_ + '.npy')
+    blob = bucket.get_blob('chunk_data/filtered/negative/' + id_ + '.npy')
     arr = cloud_management.download_array(blob)
     if arr.shape == (32, 32, 32):
         arr = np.expand_dims(arr, axis=-1)
@@ -232,7 +248,7 @@ for id_, label in list(positive_test_label_data.items()):
     if i % 500 == 0:
         logging.info(f'got chunk {i}')
     i += 1
-    blob = bucket.get_blob('chunk_data/normal/positive/' + id_ + '.npy')
+    blob = bucket.get_blob('chunk_data/filtered/positive/' + id_ + '.npy')
     arr = cloud_management.download_array(blob)
     if arr.shape == (32, 32, 32):
         arr = np.expand_dims(arr, axis=-1)
@@ -246,7 +262,7 @@ for id_, label in list(negative_test_label_data.items()):
     if i % 500 == 0:
         logging.info(f'got chunk {i}')
     i += 1
-    blob = bucket.get_blob('chunk_data/normal/negative/' + id_ + '.npy')
+    blob = bucket.get_blob('chunk_data/filtered/negative/' + id_ + '.npy')
     arr = cloud_management.download_array(blob)
     if arr.shape == (32, 32, 32):
         arr = np.expand_dims(arr, axis=-1)
@@ -289,5 +305,5 @@ full_arr = np.array([full_x_train,
                      y_val,
                      x_test,
                      y_test])
-with open('chunk_data_separated_ids.pkl', 'wb') as outfile:
+with open('chunk_data_separated_ids_hard.pkl', 'wb') as outfile:
     pickle.dump(full_arr, outfile, pickle.HIGHEST_PROTOCOL)

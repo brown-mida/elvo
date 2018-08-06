@@ -1,3 +1,8 @@
+"""
+A script to load new binary labels and one-hot encoded multi-class labels for
+ROI-prediction based training.
+"""
+
 import logging
 import numpy as np
 import pandas as pd
@@ -14,19 +19,29 @@ def configure_logger():
 
 
 def process_labels():
+    """
+    Loads and saves multiclass labels
+
+    :return:
+    """
+
+    # Get relevant info from positive csv
     positives_df = pd.read_csv(
         'ELVO_Annotator_Key_Positives.csv')
-
     positives_df.drop([0, 1, 2])
     positives_df.drop(positives_df.columns[0], axis=1)
     positives_df = positives_df.filter(items=['Anon ID',
                                               'Location of occlusion/s'])
     logging.info(positives_df)
+
+    # Get info from negative csv
     negatives_df = pd.read_csv(
         'ELVO_Annotator_Key_Negatives.csv'
     )
     logging.info(negatives_df)
     to_add = {}
+
+    # For each entry in the negatives set, add an array of 0s
     for index, row in negatives_df.iterrows():
         patient_id = row[0]
         to_add[patient_id] = np.zeros(7)
@@ -41,6 +56,8 @@ def process_labels():
     idx 5: R Vertebral
     idx 6: Basilar
     """
+
+    # For each entry in the positives set, see what it contains
     for index, row in positives_df.iterrows():
         patient_id = row[0][:16]
         occlusion_type = row[1].lower()
@@ -69,9 +86,9 @@ def process_labels():
         # Basilar
         if 'basilar' in occlusion_type:
             occlusion_label[1] = 1
-
         to_add[patient_id] = occlusion_label
 
+    # Save entries
     to_add_df = pd.DataFrame.from_dict(to_add,
                                        orient='index',
                                        columns=['L MCA',
@@ -83,7 +100,6 @@ def process_labels():
                                                 'Basilar']
                                        )
     logging.info(to_add_df)
-
     to_add_df.to_csv(
         'classification_vectors.csv'
     )
@@ -91,10 +107,15 @@ def process_labels():
 
 
 def get_binary_labels():
-    class_labels_df = pd.read_csv('classification_vectors.csv')
-    # class_labels_df = pd.read_csv('/Users/haltriedman/PycharmProjects/'
-    #                               'elvo-analysis/classification_vectors.csv')
+    """
+    Load updated binary labels
+
+    :return:
+    """
+    class_labels_df = pd.read_csv('/Users/haltriedman/PycharmProjects/'
+                                  'elvo-analysis/classification_vectors.csv')
     binary_labels = {}
+    # If anything in the row is 1, this brain has an occlusion
     for _, row in class_labels_df.iterrows():
         if row['L MCA'] == 1:
             binary_labels[row['Unnamed: 0']] = 1
@@ -113,6 +134,7 @@ def get_binary_labels():
         else:
             binary_labels[row['Unnamed: 0']] = 0
 
+    # Save labels
     binary_labels_df = pd.DataFrame.from_dict(binary_labels,
                                               orient='index',
                                               columns=['labels'])

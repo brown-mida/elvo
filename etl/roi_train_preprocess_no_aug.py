@@ -1,3 +1,9 @@
+"""
+Old version of roi_train_preprocess.py, but only pulls non-augmented positive
+chunks from the cloud to use in training.
+
+Same methodology as roi_train_preprocess.py.
+"""
 import csv
 import numpy as np
 import random

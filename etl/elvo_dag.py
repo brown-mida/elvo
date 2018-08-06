@@ -1,3 +1,7 @@
+"""
+Airflow DAG that loads scans and labels from Google Drive to GCS and converts
+scans from DICOM folders to numpy arrays.
+"""
 from datetime import datetime
 
 import os

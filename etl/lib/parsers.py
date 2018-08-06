@@ -1,13 +1,23 @@
+"""
+This is a set of utilities for parsing DICOM files (the standard file format
+for medical imaging data).
+"""
+
 import logging
 import os
 import re
 import shutil
 from typing import List, Dict
-
 import pydicom
 
 
 def load_scans(input_dir: str):
+    """
+    Loads scans from an input directory
+
+    :param input_dir: directory to load scans from
+    :return: set of patient IDs and the preprocessed scans
+    """
     id_pattern = re.compile(r'\d+')
     patient_ids = []
     preprocessed_scans = []

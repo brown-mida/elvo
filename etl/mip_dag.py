@@ -1,3 +1,7 @@
+"""
+Airflow DAG for keeping MIPs on GCS updated.
+"""
+
 from datetime import datetime
 
 import os

@@ -1,3 +1,7 @@
+"""
+Airflow DAG for keeping segmented MIP images up to date on GCS.
+"""
+
 import os
 from datetime import datetime
 
