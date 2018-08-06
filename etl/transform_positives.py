@@ -135,7 +135,8 @@ def generate_csv():
     :return:
     """
     # Get old non-augmented labels
-    labels_df = pd.read_csv('/home/harold_triedman/elvo-analysis/annotated_labels.csv')
+    labels_df = pd.read_csv('/home/harold_triedman/'
+                            'elvo-analysis/annotated_labels.csv')
 
     # iterate through all rows
     for index, row in labels_df.iterrows():

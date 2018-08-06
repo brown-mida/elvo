@@ -1,7 +1,6 @@
 """
 A script to do preprocessing for the ROI-prediction-based classifier model.
 """
-
 import csv
 import numpy as np
 import random
@@ -202,7 +201,8 @@ def main():
     y_val = np.asarray(val_labels)
 
     logging.info(f'{len(train_chunks)} total chunks to train with')
-    logging.info(f'full training data: {full_x_train.shape}, {full_y_train.shape}')
+    logging.info(f'full training data: {full_x_train.shape},'
+                 f'{full_y_train.shape}')
     logging.info(f'full validation data: {x_val.shape}, {y_val.shape}')
 
     full_arr = np.array([full_x_train,
@@ -213,5 +213,3 @@ def main():
     # Save to compressed pickle to maintain ordering
     with open('chunk_data_separated_ids.pkl', 'wb') as outfile:
         pickle.dump(full_arr, outfile, pickle.HIGHEST_PROTOCOL)
-
-

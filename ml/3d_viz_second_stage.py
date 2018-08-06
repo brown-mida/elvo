@@ -158,7 +158,8 @@ def make_preds():
             layer = np.reshape(layer, (int(math.ceil(len(arr[0]) / 32)),
                                        int(math.ceil(len(arr[0][0]) / 32))))
             layer_90 = np.reshape(layer_90, (int(math.ceil(len(arr[0]) / 32)),
-                                             int(math.ceil(len(arr[0][0]) / 32))))
+                                             int(math.ceil(
+                                                 len(arr[0][0]) / 32))))
             # append the layer to the set of preds for the scan
             preds.append(layer)
             preds_90.append(layer_90)
@@ -179,4 +180,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

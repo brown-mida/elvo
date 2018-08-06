@@ -60,7 +60,8 @@ for i in range(10):
         x_train = full_x_train[:int(len(full_x_train) * frac)]
         y_train = full_y_train[:int(len(full_y_train) * frac)]
 
-        # make callbacks — AUC, sensitivity, specificity, accuracy, ModelCheckpoint
+        # make callbacks — AUC, sensitivity, specificity,
+        #   accuracy, ModelCheckpoint
         callbacks = utils.create_callbacks(x_train=x_train,
                                            y_train=y_train,
                                            x_valid=x_val,

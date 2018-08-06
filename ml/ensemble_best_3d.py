@@ -105,7 +105,8 @@ def make_preds(x_test, y_test, models):
         # Get and print confusion matrix
         cnf_matrix = sklearn.metrics.confusion_matrix(y_test, y_pred)
         print(f'Confusion matrix:\n{str(cnf_matrix)}')
-        # Get and print sensitivity, specificity, precision, kappa, and youden's
+        # Get and print sensitivity, specificity,
+        #   precision, kappa, and youden's
         tn, fp, fn, tp = cnf_matrix.ravel()
         sensitivity = tp / (tp + fn)
         print(f'Sensitivity: {sensitivity}\n')
