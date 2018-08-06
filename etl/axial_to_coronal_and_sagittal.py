@@ -1,3 +1,7 @@
+"""
+Script used to convert scans in the numpy/axial folder to sagittal and coronal
+scans. They are then re-saved in GCS.
+"""
 import logging
 import numpy as np
 from tensorflow.python.lib.io import file_io
@@ -19,6 +23,7 @@ def axial_to_coronal_and_sagittal():
     client = cloud.authenticate()
     bucket = client.get_bucket('elvos')
 
+    # for every axial scan
     for in_blob in bucket.list_blobs(prefix='numpy/axial'):
 
         # blacklist
@@ -29,7 +34,7 @@ def axial_to_coronal_and_sagittal():
         elif in_blob.name == 'numpy/ABPO2BORDNF3OVL3.npy':
             continue
 
-        # perform the normal MIPing procedure
+        # download, then transpose, then flip it to orient it correctly
         logging.info(f'downloading {in_blob.name}')
         axial = cloud.download_array(in_blob)
         coronal = np.transpose(axial, (1, 0, 2))
@@ -41,6 +46,7 @@ def axial_to_coronal_and_sagittal():
         file_id = file_id.split('.')[0]
 
         try:
+            # save files to GCS
             coronal_io = file_io.FileIO(f'gs://elvos/numpy/coronal/'
                                         f'{file_id}.npy', 'w')
             np.save(coronal_io, coronal)

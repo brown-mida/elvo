@@ -127,7 +127,7 @@ class MipGenerator(object):
         steps = self.get_steps_per_epoch()
         while True:
             for i in range(steps):
-                # print(i)
+                print(i)
                 x, y = self.__data_generation(i)
                 yield x, y
 
@@ -154,8 +154,8 @@ class MipGenerator(object):
             # print(np.shape(img))
             images.append(img)
         images = np.array(images)
-        # print("Loaded entire batch.")
-        # print(np.shape(images))
+        print("Loaded entire batch.")
+        print(np.shape(images))
         return images, labels
 
     def __transform_images(self, image):

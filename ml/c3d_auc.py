@@ -11,7 +11,8 @@ from matplotlib import pyplot as plt
 sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
 
 # load the test data
-with open('/Users/haltriedman/Desktop/chunk_data_separated_ids.pkl', 'rb') as infile:
+with open('/Users/haltriedman/Desktop/chunk_data_separated_ids.pkl',
+          'rb') as infile:
     full_data = pickle.load(infile)
 x_test = full_data[4]
 y_test = full_data[5]

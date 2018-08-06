@@ -48,3 +48,6 @@ Thumbs.db
 # JavaScript
 node_modules/
 
+# Sandbox
+sandbox/
+
