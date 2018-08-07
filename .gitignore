@@ -58,3 +58,6 @@ node_modules/
 sandbox/
 
 ensembled_3d.hdf5
+train_ids.csv
+test_ids.csv
+val_ids.csv
