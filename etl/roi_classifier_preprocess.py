@@ -1,3 +1,7 @@
+"""
+Preprocesses data for input into the 3D Classifier Model.
+"""
+
 import csv
 import numpy as np
 import random
