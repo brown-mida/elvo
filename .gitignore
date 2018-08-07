@@ -23,6 +23,8 @@ ELVO_Annotator_Key_Negatives.csv
 ELVO_Annotator_Key_Positives.csv
 metadata_negatives.csv
 metadata_positives.csv
+binary_vectors.csv
+classification_vectors.csv
 
 # Models (weights)
 results/
