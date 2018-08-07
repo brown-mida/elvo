@@ -1,4 +1,7 @@
+import os
+
 import numpy as np
+import pytest as pytest
 from google.cloud import storage
 
 from preprocess3d_dag import process_patient, load_split_data
@@ -26,6 +29,10 @@ def test_process_patient_centers_same_chunk():
     assert positives == 1
 
 
+@pytest.mark.skipif(
+    'GOOGLE_APPLICATION_CREDENTIALS' not in os.environ
+    or os.environ['GOOGLE_APPLICATION_CREDENTIALS'] == '',
+    reason='Valid google cloud credentials are required.')
 def test_load_split_data():
     client = storage.Client(project='elvo-198322')
     bucket = client.bucket('elvos')
