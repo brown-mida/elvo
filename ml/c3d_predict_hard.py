@@ -15,6 +15,7 @@ import numpy as np
 import tensorflow as tf
 from google.cloud import storage
 from tensorflow.python.lib.io import file_io
+from ensemble_best_3d import get_ensembles
 
 BLACKLIST = []
 LEARN_RATE = 1e-5
@@ -85,8 +86,7 @@ def main():
     bucket = gcs_client.get_bucket('elvos')
 
     # load model
-    model = c3d.C3DBuilder.build()
-    model.load_weights('tmp/ensembled_3d.hdf5')
+    models = get_ensembles()
 
     # Get every scan in airflow/npy
     for blob in bucket.list_blobs(prefix='airflow/npy'):
@@ -107,7 +107,7 @@ def main():
                         if chunk.shape == (32, 32, 32):
                             chunk = np.expand_dims(chunk, axis=0)
                             chunk = np.expand_dims(chunk, axis=-1)
-                            pred = model.predict(chunk)
+                            pred = models[0].predict(chunk)
                             preds.append(pred)
                     else:
                         preds.append(0)
