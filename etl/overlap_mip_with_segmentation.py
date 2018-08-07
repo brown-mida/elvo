@@ -5,6 +5,9 @@ sections, and compressing each section's maximum values down into a 2D array.
 When these are recombined, we get an array with the shape(3, X, Y) — which is
 ready to be fed directly into standardized Keras architecture with pretrained
 feature detection weights from ImageNet/CIFAR10.
+
+NOTE: this is exactly the same script as overlap_mip.py; the only real change
+is that this calls segment_vessels() instead of remove_extremes().
 """
 
 import logging
@@ -62,15 +65,6 @@ def overlap_mip():
             # plt.imshow(mip_arr[10], interpolation='none')
             # plt.show()
 
-            # if the source directory is one of the luke ones
-            # if location != 'numpy':
-            #     file_id = in_blob.name.split('/')[2]
-            #     file_id = file_id.split('.')[0]
-            #     # save to both a training and validation split
-            #     # and a potential generator source directory
-            #     cloud.save_npy_to_cloud(mip_arr, file_id, 'processed')
-            # # otherwise it's from numpy
-            # else:
             # save to the numpy generator source directory
             cloud.save_segmented_npy_to_cloud(mip_arr, file_id, location,
                                               'overlap')

@@ -16,8 +16,7 @@ Classifier: Programming Language :: Python :: Implementation :: CPython
 Classifier: Programming Language :: Python :: Implementation :: PyPy
 Requires-Python: >=3.6.0
 Description-Content-Type: text/markdown
-Provides-Extra: test
-Provides-Extra: cpu
-Provides-Extra: gpu1708
-Provides-Extra: etl
 Provides-Extra: docs
+Provides-Extra: gpu1708
+Provides-Extra: cpu
+Provides-Extra: test

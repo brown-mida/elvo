@@ -1,4 +1,7 @@
-"""rename the numeric files in the Dropbox Folder "ROI_cropped"
+"""
+/**/NOTE: DEPRECATED, DON'T USE/**/
+
+Rename the numeric files in the Dropbox Folder "ROI_cropped"
 to the corresponding anonymized alphanumber ID found in sheet 3 of
 Google Drive folder
 

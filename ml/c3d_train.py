@@ -21,7 +21,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
 
 # load and unpack data separated by IDs (from etl/roi_train_preprocess.py)
-with open('chunk_data_separated_ids.pkl', 'rb') as infile:
+with open('chunk_data_separated_ids_hard.pkl', 'rb') as infile:
     full_data = pickle.load(infile)
 full_x_train = full_data[0]
 full_y_train = full_data[1]
@@ -40,13 +40,16 @@ metrics = ['acc',
            utils.sensitivity,
            utils.specificity]
 
-# for each possible fraction of the data
-# for i in range(1, 11):
-for i in range(6, 10):
+# 10 training runs
+for i in range(10):
+    # for each possible fraction of the data
+    # for j in range(1, 11):
+    # running on 100% of data
     for j in range(10, 11):
 
         # build a model
         model = c3d.C3DBuilder.build()
+        model.load_weights('tmp/FINAL_RUN_6.hdf5')
         opt = SGD(lr=LEARN_RATE, momentum=0.9, nesterov=True)
         model.compile(optimizer=opt,
                       loss={"out_class": "binary_crossentropy"},
@@ -57,13 +60,14 @@ for i in range(6, 10):
         x_train = full_x_train[:int(len(full_x_train) * frac)]
         y_train = full_y_train[:int(len(full_y_train) * frac)]
 
-        # make callbacks — AUC, sensitivity, specificity, accuracy, ModelCheckpoint
+        # make callbacks — AUC, sensitivity, specificity,
+        #   accuracy, ModelCheckpoint
         callbacks = utils.create_callbacks(x_train=x_train,
                                            y_train=y_train,
                                            x_valid=x_val,
                                            y_valid=y_val,
                                            normalize=False)
-        checkpoint = ModelCheckpoint(f'tmp/FINAL_RUN_{i}.hdf5',
+        checkpoint = ModelCheckpoint(f'tmp/hard_training_{i}.hdf5',
                                      monitor='val_acc',
                                      verbose=1, save_best_only=True,
                                      mode='auto')

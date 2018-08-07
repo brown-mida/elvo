@@ -1,10 +1,13 @@
+"""
+A script to save the labels and do initial chunk preprocessing, converting GCS
+full scans to sets of valid scans.
+"""
 import logging
-
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 
-from lib import cloud_management as cloud  # , roi_transforms, transforms
+from lib import cloud_management as cloud
 
 
 def configure_logger():
@@ -18,6 +21,13 @@ def configure_logger():
 
 
 def create_chunks(annotations_df: pd.DataFrame):
+    """
+    Process and save actual chunks based off of the previously derived
+    annotations.
+
+    :param annotations_df: annotations with where the actual occlusion is
+    :return:
+    """
     client = cloud.authenticate()
     bucket = client.get_bucket('elvos')
 
@@ -47,8 +57,8 @@ def create_chunks(annotations_df: pd.DataFrame):
 
         # if it's elvo positive
         if elvo_positive:
+            # iterate through every occlusion this patient has
             for row in roi_df.itertuples():
-                logging.info(row)
                 """
                 row[0] = index
                 row[1] = patient ID
@@ -59,9 +69,12 @@ def create_chunks(annotations_df: pd.DataFrame):
                 row[6] = blue1
                 row[7] = blue2
                 """
+                # append the lowest-valued corner of the ROI to rois
                 rois.append((int(len(arr) - row[7]),
                              int(row[4]),
                              int(row[2])))
+
+                # append the center of the ROI to centers
                 centers.append((int(((len(arr) - row[6])
                                      + (len(arr) - row[7])) / 2),
                                 int((row[4] + row[5]) / 2),
@@ -110,6 +123,13 @@ def create_chunks(annotations_df: pd.DataFrame):
 
 
 def create_labels(annotations_df: pd.DataFrame):
+    """
+    Process and save labels for the chunks based off of previously-derived
+    annotations. Very similar to create_chunks in methodology
+
+    :param annotations_df: annotations to get labels from
+    :return:
+    """
     client = cloud.authenticate()
     bucket = client.get_bucket('elvos')
     label_dict = {}
@@ -141,7 +161,7 @@ def create_labels(annotations_df: pd.DataFrame):
 
         # if it's elvo positive
         if elvo_positive:
-
+            # go through each occlusion this patient has
             for row in roi_df.itertuples():
                 """
                 row[0] = index
@@ -153,9 +173,11 @@ def create_labels(annotations_df: pd.DataFrame):
                 row[6] = blue1
                 row[7] = blue2
                 """
+                # append ROI to rois
                 rois.append((int(len(arr) - row[7]),
                              int(row[4]),
                              int(row[2])))
+                # append center to centers
                 centers.append((int(((len(arr) - row[6])
                                      + (len(arr) - row[7])) / 2),
                                 int((row[4] + row[5]) / 2),
@@ -201,15 +223,22 @@ def create_labels(annotations_df: pd.DataFrame):
 
 
 def process_labels():
+    """
+    Load annotations from a csv.
+
+    :return: cleaned up annotations
+    """
+    # Read from csv
     annotations_df = pd.read_csv(
         '/home/harold_triedman/elvo-analysis/annotations.csv')
-    # annotations_df = pd.read_csv(
-    #         '/Users/haltriedman/Desktop/annotations.csv')
+
+    # Drop irrelevant rows
     annotations_df = annotations_df.drop(['created_by',
                                           'created_at',
                                           'ROI Link',
                                           'Unnamed: 10'],
                                          axis=1)
+    # Drop rows that have NaN values in them
     annotations_df = annotations_df[
         annotations_df.red1 == annotations_df.red1]
     logging.info(annotations_df)
@@ -217,6 +246,13 @@ def process_labels():
 
 
 def inspect_rois(annotations_df):
+    """
+    Sanity-check function to make sure that the ROIs we're getting actually
+    contain occlusions in them.
+
+    :param annotations_df: annotations
+    :return:
+    """
     client = cloud.authenticate()
     bucket = client.get_bucket('elvos')
 
@@ -247,6 +283,8 @@ def inspect_rois(annotations_df):
         # if it's elvo positive
         if elvo_positive:
             chunks = []
+
+            # get ROI location
             blue = int(len(arr) - roi_df['blue2'].iloc[0])
             green = int(roi_df['green1'].iloc[0])
             red = int(roi_df['red1'].iloc[0])
@@ -254,9 +292,10 @@ def inspect_rois(annotations_df):
                           green: green + 50, red: red + 50])
             chunks.append(arr[
                           blue: blue + 32, red: red + 50, green: green + 50])
-            start = 0
+
+            # Loop through all relevant chunks and show the axial, coronal,
+            #   and sagittal views to make sure there's an occlusion
             for chunk in chunks:
-                logging.info(start)
                 axial = np.max(chunk, axis=0)
                 coronal = np.max(chunk, axis=1)
                 sag = np.max(chunk, axis=2)
@@ -265,7 +304,6 @@ def inspect_rois(annotations_df):
                 ax[1].imshow(coronal, interpolation='none')
                 ax[2].imshow(sag, interpolation='none')
                 plt.show()
-                start += 10
 
 
 def run_preprocess():

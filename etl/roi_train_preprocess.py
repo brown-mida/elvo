@@ -1,3 +1,9 @@
+"""
+Up to date first-stage ROI train preprocessing script. Assembles labels/chunks
+into train/val/test sets and lets us save them for training. Meant to be run on
+instance-1.
+"""
+
 import csv
 import numpy as np
 import random
