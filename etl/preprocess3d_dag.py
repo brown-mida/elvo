@@ -36,7 +36,7 @@ def preprocess3d(data_name: str):
     client = storage.Client(project='elvo-198322')
     data_bucket = client.bucket('elvos')
     # TODO: Upload sample images along the way
-    image_bucket = client.bucket('elvos-public')
+    # image_bucket = client.bucket('elvos-public')
 
     csv_blob = data_bucket.get_blob('airflow/annotations.csv')
     logging.info(f'loading annotations from {csv_blob.name}')
@@ -59,7 +59,6 @@ def process_blob(input_blob: storage.Blob,
     """
     input_filename = input_blob.name.split('/')[-1]
     patient_id = input_filename[:-len('.npy')]
-    label = patient_id == annotations['patient_id']
     logging.info(f'processing patient {patient_id}')
 
     matches = annotations[annotations['patient_id'] == patient_id]
