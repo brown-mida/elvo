@@ -10,7 +10,6 @@ import io
 import logging
 import os
 import random
-from ml.models.three_d import c3d
 import numpy as np
 import tensorflow as tf
 from google.cloud import storage
@@ -138,11 +137,17 @@ def main():
 
         # Upload to GCS
         if train:
-            save_preds_to_cloud(preds, 'train', file_id)
+            print(f'/home/harold_triedman/elvo-analysis/data/preds/train/{file_id}.npy')
+            np.save(f'/home/harold_triedman/elvo-analysis/data/preds/train/{file_id}.npy')
+            # save_preds_to_cloud(preds, 'train', file_id)
         if val:
-            save_preds_to_cloud(preds, 'val', file_id)
+            print(f'/home/harold_triedman/elvo-analysis/data/preds/val/{file_id}.npy')
+            np.save(f'/home/harold_triedman/elvo-analysis/data/preds/val/{file_id}.npy')
+            # save_preds_to_cloud(preds, 'val', file_id)
         if test:
-            save_preds_to_cloud(preds, 'test', file_id)
+            print(f'/home/harold_triedman/elvo-analysis/data/preds/test/{file_id}.npy')
+            np.save(f'/home/harold_triedman/elvo-analysis/data/preds/test/{file_id}.npy')
+            # save_preds_to_cloud(preds, 'test', file_id)
 
 
 if __name__ == '__main__':
