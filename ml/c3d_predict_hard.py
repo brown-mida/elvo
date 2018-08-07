@@ -137,16 +137,22 @@ def main():
 
         # Upload to GCS
         if train:
-            print(f'/home/harold_triedman/elvo-analysis/data/preds/train/{file_id}.npy')
-            np.save(f'/home/harold_triedman/elvo-analysis/data/preds/train/{file_id}.npy')
+            print('/home/harold_triedman/elvo-analysis'
+                  f'/data/preds/train/{file_id}.npy')
+            np.save('/home/harold_triedman/elvo-analysis'
+                    f'/data/preds/train/{file_id}.npy', preds)
             # save_preds_to_cloud(preds, 'train', file_id)
         if val:
-            print(f'/home/harold_triedman/elvo-analysis/data/preds/val/{file_id}.npy')
-            np.save(f'/home/harold_triedman/elvo-analysis/data/preds/val/{file_id}.npy')
+            print('/home/harold_triedman/elvo-analysis'
+                  f'/data/preds/val/{file_id}.npy')
+            np.save('/home/harold_triedman/elvo-analysis'
+                    f'/data/preds/val/{file_id}.npy', preds)
             # save_preds_to_cloud(preds, 'val', file_id)
         if test:
-            print(f'/home/harold_triedman/elvo-analysis/data/preds/test/{file_id}.npy')
-            np.save(f'/home/harold_triedman/elvo-analysis/data/preds/test/{file_id}.npy')
+            print('/home/harold_triedman/elvo-analysis'
+                  f'/data/preds/test/{file_id}.npy')
+            np.save('/home/harold_triedman/elvo-analysis'
+                    f'/data/preds/test/{file_id}.npy', preds)
             # save_preds_to_cloud(preds, 'test', file_id)
 
 
