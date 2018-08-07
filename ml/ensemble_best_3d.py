@@ -132,7 +132,7 @@ def main():
     models = get_ensembles()
     x_test, y_test = get_test_chunks()
     make_preds(x_test, y_test, models)
-    models[0].save('ensembled_3d.hdf5')
+    models[0].save('tmp/ensembled_3d.hdf5')
 
 
 if __name__ == '__main__':

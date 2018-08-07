@@ -41,7 +41,7 @@ def display_preds(probs, probs_90):
 
     # Get every scan in airflow/test_npy
     for h, blob in enumerate(blobs):
-        if blob.name != 'airflow/test_npy/04IOS24JP70LHBGB.npy':
+        if blob.name != 'airflow/test_npy/4EH0PS1IKFIGT1T0.npy':
             continue
 
         arr = download_array(blob)
@@ -118,7 +118,7 @@ def make_preds():
 
     # Get every scan in airflow/npy
     for h, blob in enumerate(blobs):
-        if blob.name != 'airflow/test_npy/04IOS24JP70LHBGB.npy':
+        if blob.name != 'airflow/test_npy/4EH0PS1IKFIGT1T0.npy':
             continue
         if not blob.name.endswith('.npy'):
             continue
