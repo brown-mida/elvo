@@ -25,6 +25,9 @@ metadata_negatives.csv
 metadata_positives.csv
 binary_vectors.csv
 classification_vectors.csv
+train_ids.csv
+test_ids.csv
+val_ids.csv
 
 # Models (weights)
 results/
@@ -32,6 +35,7 @@ models/
 !ml/models
 notebooks/tmp/*.hdf5
 classifer_model_tuning.txt
+ensembled_3d.hdf5
 
 # Config
 secrets/
@@ -56,8 +60,3 @@ node_modules/
 
 # Sandbox
 sandbox/
-
-ensembled_3d.hdf5
-train_ids.csv
-test_ids.csv
-val_ids.csv
