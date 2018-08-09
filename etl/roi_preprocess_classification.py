@@ -112,7 +112,7 @@ def get_binary_labels():
 
     :return:
     """
-    class_labels_df = pd.read_csv('/Users/haltriedman/PycharmProjects/'
+    class_labels_df = pd.read_csv('/home/harold_triedman/'
                                   'elvo-analysis/classification_vectors.csv')
     binary_labels = {}
     # If anything in the row is 1, this brain has an occlusion
