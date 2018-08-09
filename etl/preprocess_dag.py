@@ -1,3 +1,9 @@
+"""
+Creates a Directed Acyclic Graph (DAG) to process/MIP numpy arrays
+and upload numpy and PNG files to Google Cloud Storage using Airflow.
+Compatible with blueno training methods.
+"""
+
 import datetime
 import logging
 
@@ -83,6 +89,11 @@ def process_arrays(data_name, crop_length, height_offset,
 
 
 def _download_arr(input_blob):
+    """
+    Downloads an unprocessed numpy array from GCS
+    :param input_blob: the GCS blob from which the array is downloaded
+    :return: the array to be returned
+    """
     logging.info(f'downloading numpy file: {input_blob.name}')
     input_stream = io.BytesIO()
     input_blob.download_to_file(input_stream)
@@ -93,6 +104,15 @@ def _download_arr(input_blob):
 
 
 def _upload_png(arr, data_name, input_filename, image_bucket):
+    """
+    Creates a PNG from the input array and uploads it to GCS
+    :param arr: the processed (MIPed) array
+    :param data_name: the directory name of the data
+    :param input_filename: the filename (specific for patient ID) under which
+    the file will be saved
+    :param image_bucket: the overall bucket containing the directory to the
+    saved images (so, "elvos-public")
+    """
     logging.debug(f'converting processed array into png')
     png_stream = io.BytesIO()
     # Standardize to [0, 1] otherwise it fails
@@ -110,6 +130,16 @@ def _upload_png(arr, data_name, input_filename, image_bucket):
 
 
 def _upload_npy(arr, data_name, input_filename, data_bucket):
+    """
+    Upload numpy array to GCS
+    :param arr: the processed array
+    :param data_name: the directory name of the data
+    :param input_filename: the filename (specific for patient ID) under which
+    the file will be saved
+    :param data_bucket: the overall bucket containing the directory to the
+    saved images (so, "elvos")
+    :return:
+    """
     arr_stream = io.BytesIO()
     np.save(arr_stream, arr)
     arr_stream.seek(0)
@@ -124,6 +154,18 @@ def process_arr(arr,
                 height_offset,
                 mip_thickness,
                 pixel_value_range):
+    """
+    Crop and multichannel-MIP array
+    :param arr: the unprocessed array
+    :param crop_length: the length of one side of the cropped square resulting
+    from your MIP
+    :param height_offset: the distance from the top of the image to start
+    building a MIP
+    :param mip_thickness: the thickness of the region to compress
+    :param pixel_value_range: a tuple of the lower and upper bounds of your
+    desired pixel values (used in standardization)
+    :return: the preprocessed array
+    """
     arr = blueno.transforms.crop(arr,
                                  (3 * mip_thickness,
                                   crop_length,
@@ -140,12 +182,23 @@ def process_arr(arr,
     return arr
 
 
+# Set outermost parameters
 default_args = {
     'owner': 'luke',
     'email': 'luke_zhu@brown.edu',
     'start_date': datetime.datetime(2018, 7, 24),
 }
 
+# Create DAG
+# dag_id: DAG name, self explanatory
+# description: description of DAG's purpose
+# default_args: previously specified params
+# catchup: whether or not intervals are automated; set to False to
+#         indicate that the DAG will only run for the most current instance
+#         of the interval series
+# max_active_runs: maximum number of active DAG runs, beyond this
+#         number of DAG runs in a running state, the scheduler won't create
+#         new active DAG runs
 dag = DAG(dag_id='preprocess_web',
           description='Preprocesses data using a configuration passed by'
                       ' the web app.',
@@ -153,5 +206,10 @@ dag = DAG(dag_id='preprocess_web',
           schedule_interval=None,
           catchup=False)
 
+# Define operation in DAG (process/MIP numpy arrays
+#       and upload files to Google Cloud Storage)
+# task_id: name of operation, self explanatory
+# python_callable: the imported method that will be called by this operation
+# dag: the previously created DAG
 preprocess_op = PreprocessOperator(task_id='preprocess',
                                    dag=dag)

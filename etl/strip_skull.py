@@ -4,8 +4,8 @@ from matplotlib import pyplot as plt
 import cloud_management as cloud
 import transforms
 
-LOCATIONS = ['numpy/axial',
-             'numpy/coronal']
+location = 'numpy/axial'
+prefix = location + '/'
 
 
 def configure_logger():
@@ -18,17 +18,10 @@ def configure_logger():
     root_logger.addHandler(handler)
 
 
-def set_cloud():
-    configure_logger()
-    client = cloud.authenticate()
-    bucket = client.get_bucket('elvos')
-    return bucket
-
-
 def get_og_mip(cropped_arr: np.ndarray):
     # perform the normal MIPing procedure
     not_extreme_arr = transforms.remove_extremes(cropped_arr)
-    logging.info(f'removed array extremes')
+    logging.info("removed array extremes")
     mip_arr = transforms.mip_normal(not_extreme_arr)
 
     plt.figure(figsize=(6, 6))
@@ -36,35 +29,38 @@ def get_og_mip(cropped_arr: np.ndarray):
     plt.show()
 
 
+def save_to_cloud(arr: np.ndarray, in_blob):
+    file_id = in_blob.name.split('/')[2]
+    file_id = file_id.split('.')[0]
+    print(file_id)
+    cloud.save_stripped_npy(arr, file_id, "axial_single_channel")
+
+
 def get_stripped_mip():
-    for location in LOCATIONS:
-        prefix = location + '/'
-        for in_blob in set_cloud().list_blobs(prefix=prefix):
-            # test: only using one patient's mipped scans for now
-            # if in_blob.name != prefix + '0RB9KGMO90G1YQZD.npy':
-            #     continue
+    configure_logger()
+    client = cloud.authenticate()
+    bucket = client.get_bucket('elvos')
 
-            # perform the normal MIPing procedure
-            logging.info(f'downloading {in_blob.name}')
-            input_arr = cloud.download_array(in_blob)
-            logging.info(f"blob shape: {input_arr.shape}")
-            cropped_arr = transforms.crop_strip_skull(input_arr, location)
-            logging.info(f"mipping numpy array")
-            mip_arr = transforms.mip_normal(cropped_arr)
+    for in_blob in bucket.list_blobs(prefix=prefix):
+        # perform the normal MIPing procedure
+        logging.info(f"downloading {in_blob.name}")
+        input_arr = cloud.download_array(in_blob)
+        logging.info(f"blob shape: {input_arr.shape}")
+        cropped_arr = transforms.crop_strip_skull(input_arr, location)
+        logging.info("mipping numpy array")
+        mip_arr = transforms.mip_normal(cropped_arr)
 
-            print(mip_arr)
+        # strip skull and grey matter to segment blood vessels
+        logging.info("segment blood vessels")
+        stripped_arr = transforms.segment_vessels(mip_arr, location)
 
-            # strip skull and segment blood vessels
-            logging.info(f"segment blood vessels")
-            stripped_arr = transforms.segment_vessels(mip_arr, location)
+        save_to_cloud(stripped_arr, in_blob)
 
-            print(stripped_arr)
+        # get_og_mip(cropped_arr)
 
-            get_og_mip(cropped_arr)
-
-            plt.figure(figsize=(6, 6))
-            plt.imshow(stripped_arr, interpolation='none')
-            plt.show()
+        # plt.figure(figsize=(6, 6))
+        # plt.imshow(stripped_arr, interpolation='none')
+        # plt.show()
 
 
 if __name__ == '__main__':
