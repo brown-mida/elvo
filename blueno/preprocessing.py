@@ -1,10 +1,10 @@
 import logging
+import warnings
 from typing import Dict, Tuple, Union
 
 import keras
 import numpy as np
 import pandas as pd
-import warnings
 from sklearn import model_selection
 
 from blueno import io
@@ -28,17 +28,19 @@ def clean_data(arrays: Dict[str, np.ndarray],
     filtered_arrays = arrays.copy()
     for patient_id in arrays:
         if patient_id not in labels.index.values:
-            print(f'{patient_id} in arrays, but not in labels. Dropping')
+            logging.warning(
+                '{} in arrays, but not in labels. Dropping'.format(patient_id))
             del filtered_arrays[patient_id]
 
     filtered_labels = labels.copy()
-    print('Removing duplicate ids in labels:',
-          filtered_labels[filtered_labels.index.duplicated()].index)
+    logging.info('Removing duplicate ids in labels:',
+                 filtered_labels[filtered_labels.index.duplicated()].index)
     filtered_labels = filtered_labels[~filtered_labels.index.duplicated()]
 
     for patient_id in filtered_labels.index.values:
         if patient_id not in arrays:
-            print(f'{patient_id} in labels, but not in arrays. Dropping')
+            logging.warning(
+                '{} in labels, but not in arrays. Dropping'.format(patient_id))
             filtered_labels = filtered_labels.drop(index=patient_id)
 
     assert len(filtered_arrays) == len(filtered_labels)
@@ -57,6 +59,7 @@ def to_arrays(data: Dict[str, np.ndarray],
 
     :param data:
     :param labels: a dataframe WITH patient ID for the index.
+    :param sort: whether or not to sort the data by patient ID
     :return: three arrays: the arrays, then the labels, then the corresponding
     ids
     """
@@ -75,11 +78,11 @@ def to_arrays(data: Dict[str, np.ndarray],
             X_list += [data[id_]]  # Needs to be in this order
             remaining_ids += [id_]
         except KeyError:
-            logging.warning(f'{id_} in data was not present in labels')
-            logging.warning(f'{len(X_list)}, {len(y_list)}')
+            logging.warning(
+                '{} in data was not present in labels'.format(id_))
     for id_ in labels.index.values:
         if id_ not in patient_ids:
-            logging.warning(f'{id_} in labels was not present in data')
+            logging.warning('{} in labels was not present in data'.format(id_))
 
     assert len(X_list) == len(y_list)
     assert len(X_list) == len(remaining_ids)
@@ -103,22 +106,19 @@ Tuple9 = Tuple[np.ndarray, np.ndarray,
                np.ndarray]
 
 
-# TODO(luke): Refactor this function
+# TODO(luke): Split this function
 def prepare_data(params: ParamConfig,
                  train_test_val=True,
                  sort=True) -> Union[Tuple6, Tuple9]:
     """
     Prepares the data referenced in params for ML. This includes
     shuffling and expanding dims.
-
-    :param params: a hyperparameter dictionary generated from a ParamGrid
-    :return: x_train, x_valid, y_train, y_valid
     """
     if not sort:
         warnings.warn('Sort has been set to false. The split will only be'
                       ' the same only in certain conditions.')
 
-    logging.info(f'using params:\n{params}')
+    logging.info('using params:\n{}'.format(params))
     # Load the arrays and labels
     data_params = params.data
     if isinstance(data_params, LukePipelineConfig):
@@ -151,9 +151,9 @@ def prepare_data(params: ParamConfig,
 
     assert y.ndim == 2
 
-    logging.debug(f'x shape: {x.shape}')
-    logging.debug(f'y shape: {y.shape}')
-    logging.info(f'seeding to {params.seed} before shuffling')
+    logging.debug('x shape: {}'.format(x.shape))
+    logging.debug('y shape: {}'.format(y.shape))
+    logging.info('seeding to {} before shuffling'.format(params.seed))
 
     x_train, x_test, y_train, y_test, ids_train, ids_test = \
         model_selection.train_test_split(

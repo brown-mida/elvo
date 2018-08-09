@@ -1,10 +1,11 @@
+import logging
+import os
 import pathlib
 import typing
 from typing import Dict
 
 import keras
 import numpy as np
-import os
 import pandas as pd
 
 from blueno import utils
@@ -40,7 +41,7 @@ def load_compressed_arrays(data_dir: str,
     if limit:
         filenames = filenames[:limit]
     for filename in filenames:
-        print(f'Loading file {filename}')
+        logging.info('Loading file {}'.format(filename))
         d = np.load(pathlib.Path(data_dir) / filename)
         data.update(d)  # merge all_data with d
     return data
@@ -49,11 +50,11 @@ def load_compressed_arrays(data_dir: str,
 def load_raw_labels(labels_dir: str, index_col='Anon ID') -> pd.DataFrame:
     """Loads a directory containing a postives.csv and negatives.csv
     file."""
-    positives_df: pd.DataFrame = pd.read_csv(
+    positives_df = pd.read_csv(
         pathlib.Path(labels_dir) / 'positives.csv',
         index_col=index_col)
     positives_df['occlusion_exists'] = 1
-    negatives_df: pd.DataFrame = pd.read_csv(
+    negatives_df = pd.read_csv(
         pathlib.Path(labels_dir) / 'negatives.csv',
         index_col=index_col)
     negatives_df['occlusion_exists'] = 0

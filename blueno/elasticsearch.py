@@ -1,11 +1,13 @@
 import ast
+import logging
 import pathlib
+import re
 import typing
-from collections.__init__ import namedtuple
+from collections import namedtuple
 
 import elasticsearch_dsl
+import elasticsearch_dsl.connections
 import pandas as pd
-import re
 from pandas.errors import EmptyDataError
 
 TRAINING_JOBS = 'training_jobs'
@@ -57,7 +59,7 @@ class TrainingJob(elasticsearch_dsl.Document):
 
     rotation_range = elasticsearch_dsl.Float()
     width_shift_range = elasticsearch_dsl.Float()
-    height_shift_range: float = elasticsearch_dsl.Float()
+    height_shift_range = elasticsearch_dsl.Float()
     shear_range = elasticsearch_dsl.Float()
     zoom_range = elasticsearch_dsl.Keyword()
     horizontal_flip = elasticsearch_dsl.Boolean()
@@ -191,7 +193,7 @@ def insert_or_replace_filepaths(log_file: pathlib.Path,
                                                 csv_file,
                                                 gpu1708)
     if training_job is None:
-        print('training job is none, not inserting')
+        logging.info('training job is none, not inserting')
         return
     insert_or_replace(training_job, alias=alias)
 
@@ -216,7 +218,7 @@ def insert_or_ignore_filepaths(log_file: pathlib.Path,
                                                 csv_file,
                                                 gpu1708)
     if training_job is None:
-        print('training job is none, not inserting')
+        logging.info('training job is none, not inserting')
         return
     insert_or_ignore(training_job, alias=alias)
 
@@ -228,21 +230,23 @@ def insert_or_replace(training_job: TrainingJob, alias='default'):
     Raises a ValueError if multiple matches exist.
     """
     if 'slack' not in training_job.raw_log:
-        print('job is incomplete, returning')
+        logging.info('job is incomplete, returning')
         return
 
-    search: elasticsearch_dsl.Search = JOB_INDEX.search(using=alias) \
+    search = JOB_INDEX.search(using=alias) \
         .query('match', job_name=training_job.job_name) \
         .query('match', created_at=training_job.created_at)
 
     if len(search.execute()) > 1:
-        raise ValueError(f'Found two matches to {training_job.job_name}'
-                         f'created at {training_job.created_at}')
+        raise ValueError('Found two matches to {}'
+                         'created at {}'.format(training_job.job_name,
+                                                training_job.created_at))
     elif len(search.execute()) == 1:
-        print('replacing result {} created at'.format(training_job.job_name,
-                                                      training_job.created_at))
+        logging.info(
+            'replacing result {} created at'.format(training_job.job_name,
+                                                    training_job.created_at))
     else:
-        print('no match found for {} created at'.format(
+        logging.info('no match found for {} created at'.format(
             training_job.job_name,
             training_job.created_at))
 
@@ -256,7 +260,7 @@ def insert_or_ignore(job: elasticsearch_dsl.Document, alias='default',
     if no job with the same name and creation timestamp exists.
     """
     if index == JOB_INDEX and 'slack' not in job.raw_log:
-        print('job is incomplete, returning')
+        logging.info('job is incomplete, returning')
         return
 
     matches = index.search() \
@@ -267,7 +271,7 @@ def insert_or_ignore(job: elasticsearch_dsl.Document, alias='default',
     if matches == 0:
         job.save(using=alias)
     else:
-        print('job {} created at {} exists'.format(
+        logging.info('job {} created at {} exists'.format(
             job.job_name, job.created_at))
 
 
@@ -283,7 +287,6 @@ def construct_job_from_filepaths(
     :param log_file:
     :param csv_file:
     :param gpu1708:
-    :param alias:
     :return:
     """
     filename = str(log_file.name)
@@ -308,7 +311,7 @@ def construct_job_from_filepaths(
     try:
         metrics = _extract_metrics(csv_file)
     except (ValueError, EmptyDataError):
-        print('metrics file {} is empty'.format(csv_file))
+        logging.info('metrics file {} is empty'.format(csv_file))
         return None
 
     training_job = construct_job(job_name,
@@ -342,17 +345,6 @@ def construct_job(job_name,
     Constructs a training job object from the given parameters.
 
     Note that these parameters are experimental.
-    :param job_name:
-    :param created_at:
-    :param params: a string of bluenot config params
-    :param raw_log:
-    :param metrics:
-    :param metrics_filename:
-    :param author:
-    :param ended_at:
-    :param model_url:
-    :param final_val_auc:
-    :return:
     """
     training_job = TrainingJob(schema_version=1,
                                job_name=job_name,
@@ -372,7 +364,7 @@ def construct_job(job_name,
             training_job.__setattr__(key, val)
 
     if (job_name, created_at) == _parse_filename(metrics_filename):
-        print('found matching CSV file, setting metrics')
+        logging.info('found matching CSV file, setting metrics')
         training_job.epochs = metrics.epochs
         training_job.train_acc = metrics.train_acc
         training_job.final_val_acc = metrics.final_val_acc
@@ -453,7 +445,8 @@ def _extract_best_auc(log_path: pathlib.Path) -> typing.Optional[float]:
                     auc = float(line.split(' ')[-1].rstrip('\n'))
                     aucs.append(auc)
                 except ValueError:
-                    print('matching line could not be parsed: {}'.format(line))
+                    logging.info(
+                        'matching line could not be parsed: {}'.format(line))
 
     if len(aucs) == 0:
         return None
@@ -475,7 +468,6 @@ def _parse_params_str(params_str: str) -> typing.Dict[str, typing.Any]:
                 float_pattern,
                 float_pattern,
             )
-            print(params_str)
             match = re.search(pattern, params_str)
             if match:
                 param_dict[param] = match.group(1)
@@ -488,7 +480,7 @@ def _parse_params_str(params_str: str) -> typing.Dict[str, typing.Any]:
                     value_str = match.group(1)
                     value = ast.literal_eval(value_str)
                     param_dict[param] = value
-    print('parsed params:', param_dict)
+    logging.debug('parsed params:', param_dict)
     return param_dict
 
 
@@ -573,8 +565,7 @@ def filter_top_models(address, models):
 
 
 def get_validation_job_from_log(log_path):
-    """
-    Creates a ValidationJob from the log.
+    """Creates a ValidationJob from the log.
     """
     with open(log_path) as f:
         lines = f.read().splitlines()

@@ -7,7 +7,7 @@ setup(
     long_description_content_type='text/markdown',
     author='luke-zhu',
     author_email='luke_zhu@brown.edu',
-    python_requires='>=3.6.0',
+    python_requires='>=3.5',
     url='https://github.com/elvoai/elvo-analysis',
     packages=['blueno'],
     install_requires=[
@@ -19,6 +19,7 @@ setup(
         'numpy>=1.14.5',
         'pandas>=0.23.1',
         'Pillow>=5.1.0',
+        'requests>=2.19.1',
         'scikit-image>=0.14.0',
         'scikit-learn>=0.19.1',
         'scipy>=1.1.0',
@@ -32,14 +33,12 @@ setup(
             'tensorflow-gpu==1.4.1',
             'keras==2.1.3',
         ],
-        'dev': [
-            'jupyter>=1.0.0',
-            'notebook>=5.5.0',
-        ],
         'etl': [
             'dropbox>=8.9.0',
             'gspread>=3.0.0',
-            'apache-airflow[slack,gcp_api,postgres]==1.8.2',
+            #  Include dataflow 2.2 otherwise airflow can't be installed
+            'google-cloud-dataflow==2.2.0',
+            'apache-airflow[slack,gcp_api,postgres]==1.9',
             'paramiko>=2.4.1',
             'pydicom>=1.0.2',
         ],

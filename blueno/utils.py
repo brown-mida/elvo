@@ -40,14 +40,13 @@ class AucCallback(keras.callbacks.Callback):
     def on_epoch_end(self, epoch: int, logs=None):
         y_pred = self.model.predict(self.x_valid_standardized)
         score = sklearn.metrics.roc_auc_score(self.y_valid, y_pred)
-        logging.info(f'val_auc: {score}')
+        logging.info('val_auc: {}'.format(score))
 
 
 class CustomReduceLR(keras.callbacks.ReduceLROnPlateau):
     """
     A LR reduction callback that will not lower the lr before
     epoch 25.
-
     """
 
     def on_epoch_end(self, epoch, logs=None):
@@ -77,6 +76,8 @@ def create_callbacks(x_train: np.ndarray, y_train: np.ndarray,
     :param y_valid:
     :param early_stopping: bool flag for whether to do early stopping
         on val_acc
+    :param reduce_lr: bool flag for for whether or not to reduce the
+        learning rate upon plateau
     :param csv_file: the filepath to save the CSV results to
     :param model_file: the filepath to save the models to
     :param normalize: whether or not to normalize the x data
