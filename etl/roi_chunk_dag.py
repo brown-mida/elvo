@@ -30,8 +30,8 @@ default_args = {
 dag = DAG(dag_id='roi_chunk_dag', default_args=default_args)
 
 # Define operation in DAG (preprocess images from airflow/npy by converting to
-#       chunks and saving in gs://elvos/chunk_data/{type}/{elvo_status}/, also update
-#       labels and save as annotated_labels.csv)
+#       chunks and saving in gs://elvos/chunk_data/{type}/{elvo_status}/, also
+#       update labels and save as annotated_labels.csv)
 # task_id: name of operation, self explanatory
 # python_callable: the imported method that will be called by this operation
 # dag: the previously created DAG
@@ -39,8 +39,8 @@ preprocess_op = PythonOperator(task_id='run_preprocess',
                                python_callable=run_preprocess,
                                dag=dag)
 
-# Define operation in DAG (transform positive cubes via 24 lossless rotations and/or
-#       reflections and upload to gs://elvos/chunk_data/{type}/positives/;
+# Define operation in DAG (transform positive cubes via 24 lossless rotations
+#       and reflections and upload to gs://elvos/chunk_data/{type}/positives/;
 #       also update labels and save as augmented_annotated_labels.csv)
 # task_id: name of operation, self explanatory
 # python_callable: the imported method that will be called by this operation

@@ -97,6 +97,7 @@ class WebTrainerSensor(BaseSensorOperator):
             return True
         return False
 
+
 # Set outermost parameters
 args = {
     'owner': 'luke',

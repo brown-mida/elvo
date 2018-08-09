@@ -77,6 +77,7 @@ def upload_numpy_files():
             print(f'uploading blob {blob.name}')
             to_public_png(blob, out_bucket)
 
+
 # Set outermost parameters
 default_args = {
     'owner': 'luke',

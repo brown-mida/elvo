@@ -110,8 +110,8 @@ def _upload_png(arr, data_name, input_filename, image_bucket):
     :param data_name: the directory name of the data
     :param input_filename: the filename (specific for patient ID) under which
     the file will be saved
-    :param image_bucket: the overall bucket containing the directory to the saved
-    images (so, "elvos-public")
+    :param image_bucket: the overall bucket containing the directory to the
+    saved images (so, "elvos-public")
     """
     logging.debug(f'converting processed array into png')
     png_stream = io.BytesIO()
@@ -136,8 +136,8 @@ def _upload_npy(arr, data_name, input_filename, data_bucket):
     :param data_name: the directory name of the data
     :param input_filename: the filename (specific for patient ID) under which
     the file will be saved
-    :param data_bucket: the overall bucket containing the directory to the saved
-    images (so, "elvos")
+    :param data_bucket: the overall bucket containing the directory to the
+    saved images (so, "elvos")
     :return:
     """
     arr_stream = io.BytesIO()
@@ -157,11 +157,13 @@ def process_arr(arr,
     """
     Crop and multichannel-MIP array
     :param arr: the unprocessed array
-    :param crop_length: the length of one side of the cropped square resulting from your MIP
-    :param height_offset: the distance from the top of the image to start building a MIP
+    :param crop_length: the length of one side of the cropped square resulting
+    from your MIP
+    :param height_offset: the distance from the top of the image to start
+    building a MIP
     :param mip_thickness: the thickness of the region to compress
-    :param pixel_value_range: a tuple of the lower and upper bounds of your desired pixel
-    values (used in standardization)
+    :param pixel_value_range: a tuple of the lower and upper bounds of your
+    desired pixel values (used in standardization)
     :return: the preprocessed array
     """
     arr = blueno.transforms.crop(arr,
@@ -178,6 +180,7 @@ def process_arr(arr,
     arr = arr.max(axis=1)
     arr = arr.transpose((1, 2, 0))
     return arr
+
 
 # Set outermost parameters
 default_args = {
@@ -210,4 +213,3 @@ dag = DAG(dag_id='preprocess_web',
 # dag: the previously created DAG
 preprocess_op = PreprocessOperator(task_id='preprocess',
                                    dag=dag)
-

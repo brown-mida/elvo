@@ -33,7 +33,7 @@ default_args = {
 dag = DAG(dag_id='segmented_mip_dag', default_args=default_args)
 
 # Define operation in DAG (generate axial and coronal MIPs, strip the skull,
-#       and upload to gs://elvos/stripped_mip_data/numpy/normal/{axial or coronal}/)
+#       upload to gs://elvos/stripped_mip_data/numpy/normal/{axial or coronal})
 # task_id: name of operation, self explanatory
 # python_callable: the imported method that will be called by this operation
 # dag: the previously created DAG
@@ -41,8 +41,8 @@ normal_mip_op = PythonOperator(task_id='normal_mip',
                                python_callable=normal_mip,
                                dag=dag)
 
-# Define operation in DAG (generate 3-channel MIPs, strip the skull, and
-#        upload to gs://elvos/stripped_mip_data/numpy/multichannel/{axial or coronal}/)
+# Define operation in DAG (generate 3-channel MIPs, strip the skull, upload
+#        to gs://elvos/stripped_mip_data/numpy/multichannel/{axial or coronal})
 # task_id: name of operation, self explanatory
 # python_callable: the imported method that will be called by this operation
 # dag: the previously created DAG
@@ -50,8 +50,8 @@ multichannel_mip_op = PythonOperator(task_id='multichannel_mip',
                                      python_callable=multichannel_mip,
                                      dag=dag)
 
-# Define operation in DAG (generate 20-channel overlapping MIPs, strip the skull
-#        and upload to gs://elvos/stripped_mip_data/numpy/overlap/{axial or coronal}/)
+# Define operation in DAG (get 20-channel overlapping MIPs, strip the skull
+#      upload to gs://elvos/stripped_mip_data/numpy/overlap/{axial or coronal})
 # task_id: name of operation, self explanatory
 # python_callable: the imported method that will be called by this operation
 # dag: the previously created DAG
