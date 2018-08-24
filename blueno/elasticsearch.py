@@ -1,13 +1,13 @@
 import ast
 import logging
 import pathlib
-import re
 import typing
 from collections import namedtuple
 
 import elasticsearch_dsl
 import elasticsearch_dsl.connections
 import pandas as pd
+import re
 from pandas.errors import EmptyDataError
 
 TRAINING_JOBS = 'training_jobs'
@@ -480,7 +480,7 @@ def _parse_params_str(params_str: str) -> typing.Dict[str, typing.Any]:
                     value_str = match.group(1)
                     value = ast.literal_eval(value_str)
                     param_dict[param] = value
-    logging.debug('parsed params:', param_dict)
+    logging.debug('parsed params: {}'.format(param_dict))
     return param_dict
 
 
