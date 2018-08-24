@@ -6,8 +6,8 @@ Compatible with blueno training methods.
 
 import datetime
 import logging
-import os
 
+import os
 import paramiko
 from airflow import DAG
 from airflow.models import BaseOperator
@@ -40,6 +40,7 @@ def run_bluenot(config: dict):
             f" --author_name={config['authorName']}"
             f" --batch_size={config['batchSize']}"
             f" --val_split={config['valSplit']}"
+            f" --three_fold_split={True}"
             " > web-trainer.log 2>&1 & echo $!'"
         )
         err = stderr.read()

@@ -1,9 +1,9 @@
 """Configuration type definitions for bluenot.py
 """
 import typing
-import warnings
 
 import keras
+import warnings
 
 
 class DataConfig:
@@ -130,7 +130,27 @@ class ParamConfig:
                  early_stopping: bool = True,
                  reduce_lr: bool = False,
                  job_fn: typing.Callable = None,
-                 job_name: str = None):
+                 job_name: str = None,
+                 three_fold_split=False):
+        """
+        Configuration object for training models
+
+        :param data:
+        :param generator:
+        :param model:
+        :param batch_size:
+        :param seed: the seed for determining the training/validation split
+        :param val_split: the proportion of samples to include in the train
+            split
+        :param max_epochs:
+        :param early_stopping: set to True to end training when the loss
+            does not decrease
+        :param reduce_lr: dont use this
+        :param job_fn: the job function, typically for bluenot.start_job
+        :param job_name: the name of the job
+        :param three_fold_split: whether to include a test split. The
+            test split will be the same size as the val split
+        """
         self.data = data
         self.generator = generator
         self.model = model
@@ -142,6 +162,21 @@ class ParamConfig:
         self.reduce_lr = reduce_lr
         self.job_fn = job_fn
         self.job_name = job_name
+        self.three_fold_split = three_fold_split
+
+    def __str__(self):
+        return ('ParamConfig(' + 'data = ' + str(self.data)
+                + '\n generator = ' + str(self.generator) + 'model = ' + str(
+                    self.model)
+                + '\n batch_size = ' + str(self.batch_size)
+                + '\n seed = ' + str(self.seed)
+                + '\n val_split = ' + str(self.val_split)
+                + '\n max_epochs = ' + str(self.max_epochs)
+                + '\n early_stopping = ' + str(self.early_stopping)
+                + '\n reduce_lr = ' + str(self.reduce_lr)
+                + '\n job_fn = ' + str(self.job_fn)
+                + '\n job_name = ' + str(self.job_name)
+                + '\n three_fold_split = ' + str(self.three_fold_split) + ')')
 
 
 class ParamGrid:
