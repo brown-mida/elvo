@@ -29,6 +29,7 @@ import datetime
 import importlib
 import logging
 import multiprocessing
+import os
 import pathlib
 import time
 from argparse import ArgumentParser
@@ -36,7 +37,6 @@ from typing import List, Union
 
 import keras
 import numpy as np
-import os
 from elasticsearch_dsl import connections
 from google.auth.exceptions import DefaultCredentialsError
 from sklearn import model_selection

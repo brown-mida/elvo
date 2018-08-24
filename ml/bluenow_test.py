@@ -1,4 +1,5 @@
 import os
+
 import pytest
 
 from bluenow import run_web_gpu1708_job

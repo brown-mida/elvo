@@ -5,10 +5,10 @@ Do not change this filename without updating train_dag as well
 """
 import argparse
 import logging
+import os
 import pathlib
 
 import keras
-import os
 
 import blueno
 import bluenot

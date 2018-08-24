@@ -1,9 +1,9 @@
 """Configuration type definitions for bluenot.py
 """
 import typing
+import warnings
 
 import keras
-import warnings
 
 
 class DataConfig:

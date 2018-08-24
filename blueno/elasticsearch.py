@@ -1,13 +1,13 @@
 import ast
 import logging
 import pathlib
+import re
 import typing
 from collections import namedtuple
 
 import elasticsearch_dsl
 import elasticsearch_dsl.connections
 import pandas as pd
-import re
 from pandas.errors import EmptyDataError
 
 TRAINING_JOBS = 'training_jobs'

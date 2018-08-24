@@ -6,8 +6,8 @@ Compatible with blueno training methods.
 
 import datetime
 import logging
-
 import os
+
 import paramiko
 from airflow import DAG
 from airflow.models import BaseOperator
