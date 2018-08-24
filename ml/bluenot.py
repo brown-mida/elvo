@@ -29,7 +29,6 @@ import datetime
 import importlib
 import logging
 import multiprocessing
-import os
 import pathlib
 import time
 from argparse import ArgumentParser
@@ -37,6 +36,7 @@ from typing import List, Union
 
 import keras
 import numpy as np
+import os
 from elasticsearch_dsl import connections
 from google.auth.exceptions import DefaultCredentialsError
 from sklearn import model_selection
@@ -64,7 +64,7 @@ def start_job(x_train: np.ndarray,
               slack_token: str = None,
               log_dir: str = None,
               plot_dir=None,
-              id_valid: np.ndarray = None) -> None:
+              id_valid: np.ndarray = None) -> keras.Model:
     """
     Builds, fits, and evaluates a model.
 
@@ -84,7 +84,7 @@ def start_job(x_train: np.ndarray,
     :param log_dir:
     :param plot_dir: the directory to save plots to, defaults to /tmp/plots-
     :param id_valid: the patient ids ordered to correspond with y_valid
-    :return:
+    :return: a trained keras Model
     """
     num_classes = y_train.shape[1]
     created_at = datetime.datetime.utcnow().isoformat()
@@ -197,6 +197,8 @@ def start_job(x_train: np.ndarray,
             pathlib.Path(csv_filepath),
         )
 
+    return model
+
 
 def hyperoptimize(hyperparams: Union[blueno.ParamGrid,
                                      List[blueno.ParamConfig]],
@@ -279,9 +281,9 @@ def hyperoptimize(hyperparams: Union[blueno.ParamGrid,
         if gpu_index == 0:
             logging.info(f'all gpus used, calling join on processes:'
                          f' {processes}')
-        p: multiprocessing.Process
-        for p in processes:
-            p.join()
+            p: multiprocessing.Process
+            for p in processes:
+                p.join()
         processes = []
         time.sleep(60)
 
