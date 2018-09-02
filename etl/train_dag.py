@@ -40,12 +40,14 @@ def run_bluenot(config: dict):
             f" --author_name={config['authorName']}"
             f" --batch_size={config['batchSize']}"
             f" --val_split={config['valSplit']}"
-            f" --three_fold_split={True}"
+            f" --three_fold_split={config['threeFoldSplit']}"
             " > web-trainer.log 2>&1 & echo $!'"
         )
         err = stderr.read()
         if err != b'':
-            raise ValueError(f'stderr contains message: {err}')
+            # We need to ignore the stderr message
+            # /usr/bin/groups: cannot find name for group ID 1397241
+            logging.warning(f'stderr contains message: {err}')
         pid = int(stdout.read())
     finally:
         client.close()
