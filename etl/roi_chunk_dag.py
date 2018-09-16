@@ -58,7 +58,7 @@ transform_op = PythonOperator(task_id='run_transform',
 # dag: the previously created DAG
 slack_confirmation = SlackAPIPostOperator(
     task_id='slack_confirmation',
-    channel='i-utra',
+    channel='airflow',
     username='airflow',
     token=os.environ['SLACK_TOKEN'],
     text=f'ROI chunk data processed + uploaded',

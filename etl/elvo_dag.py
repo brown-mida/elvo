@@ -106,7 +106,7 @@ encode_labels_op = PythonOperator(task_id='encode_labels',
 # dag: the previously created DAG
 slack_confirmation = SlackAPIPostOperator(
     task_id='slack_confirmation',
-    channel='i-utra',
+    channel='airflow',
     username='airflow',
     token=os.environ['SLACK_TOKEN'],
     text=f'ELVO data synced',

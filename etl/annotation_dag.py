@@ -51,7 +51,7 @@ load_op = PythonOperator(task_id='load',
 # dag: the previously created DAG
 notify_slack = SlackAPIPostOperator(
     task_id='slack_confirmation',
-    channel='i-utra',
+    channel='airflow',
     username='airflow',
     token=os.environ['SLACK_TOKEN'],
     text=f'Uploaded annotations to GCS',
