@@ -15,6 +15,7 @@ setup(
         'elasticsearch-dsl==6.2.1',
         'elasticsearch==6.3.0',
         'google-cloud-storage==1.10.0',
+        'h5py==2.8.0',
         'matplotlib==2.2.2',
         'numpy==1.14.5',
         'pandas==0.23.1',
