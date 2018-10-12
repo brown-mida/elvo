@@ -1,5 +1,5 @@
 """Moves new data in https://www.dropbox.com/home/ELVOs_anon
-to gs://elvos/elvos_anon.
+to gs://elvos/ELVOS_anon.
 
 This script will only load top level files and files in
 specified subdirectories. The subdirectory files will
@@ -22,12 +22,17 @@ from google.cloud import storage
 
 def upload_entry_if_outdated(entry: FileMetadata,
                              dbx: dropbox.Dropbox,
-                             bucket: storage.Bucket):
-    """Uploads the entry to Google Cloud"""
+                             bucket: storage.Bucket) -> None:
+    """Saves the dropbox entry in GCS as
+    gs://elvos/ELVOs_anon/{entry.name} if the corresponding
+    GCS file is outdated.
+
+    We compare using last updated dates.
+    """
     blob = storage.Blob('ELVOs_anon/' + entry.name, bucket)
 
     if blob.exists():
-        blob.reload()
+        blob.reload() # Needed otherwise blob.updated is None
         dropbox_time = entry.server_modified.replace(
             tzinfo=datetime.timezone.utc)
     else:

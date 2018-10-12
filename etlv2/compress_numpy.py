@@ -1,6 +1,8 @@
 """
-Script used to compress numpy files to .npz files so that they can be saved on
-department GPU 1708 and then trained upon.
+Methods for compressing .npy files into .npz files.
+
+These are needed because of limited disk space
+on GPU 1708.
 """
 
 import io
@@ -11,15 +13,15 @@ import numpy as np
 from google.cloud import storage
 
 
-def save_arrays(arrays: Dict[str, np.ndarray],
+def _upload_npz(arrays: Dict[str, np.ndarray],
                 filename: str,
-                bucket: storage.Bucket):
+                bucket: storage.Bucket) -> None:
     """
-    Saves .npz arrays (compressed in groups of 10) to cloud
+    Saves the arrays to GCS in compressed .npz format.
 
-    :param arrays: dict mapping IDs --> arrays to be saved
-    :param filename: new filename
-    :param bucket: bucket to be saved within
+    :param arrays: a dict mapping IDs to arrays
+    :param filename: a GCS blob name
+    :param bucket: a GCS bucket name
     :return:
     """
     out_stream = io.BytesIO()
@@ -29,12 +31,18 @@ def save_arrays(arrays: Dict[str, np.ndarray],
     out_blob.upload_from_file(out_stream)
 
 
-def compress_numpy(in_dir, out_dir):
+def compress_gcs_arrays(in_dir: str, out_dir: str) -> None:
     """
-    Saves the arrays in batches of 10.
+    Saves .npy files as .npz files.
 
-    :param in_dir: directory to be sourcing the compression from
-    :param out_dir: directory to be sourcing the compression to
+    Each .npz file contain the contents of 10 .npy files with patient IDs
+    for keys. See the numpy documentation for info on how
+    to load these files.
+
+    :param in_dir: directory with .npy files within the 'elvos' bucket,
+        ending with a '/'
+    :param out_dir: directory to save compressed .npz files in
+        within the 'elvos' bucket, ending with a '/'
     :return:
     """
     client = storage.Client(project='elvo-198322')
@@ -43,14 +51,12 @@ def compress_numpy(in_dir, out_dir):
     blob: storage.Blob
     arrays = {}
     i = 0
-    # for every blob in the in_dir
     for blob in bucket.list_blobs(prefix=in_dir):
         patient_id = blob.name[len(in_dir): -len('.npy')]
-        # Case >= 10 arrays left to be uploaded
-        if len(arrays) >= 10:
+        if len(arrays) == 10:
             # Upload arrays
             logging.info(f'uploading arrays: {list(arrays.keys())}')
-            save_arrays(arrays,
+            _upload_npz(arrays,
                         f'{out_dir}{i}.npz',
                         bucket)
             arrays = {}
@@ -63,9 +69,9 @@ def compress_numpy(in_dir, out_dir):
         arr = np.load(in_stream)
         arrays[patient_id] = arr
 
-    # Upload remaining files
+    # Upload the remaining files
     if len(arrays) > 0:
         logging.info(f'uploading arrays: {list(arrays.keys())}')
-        save_arrays(arrays,
+        _upload_npz(arrays,
                     f'{out_dir}{i}.npz',
                     bucket)

@@ -1,8 +1,5 @@
 """
-To run this GOOGLE_APPLICATION_CREDENTIALS should be set.
-
-This script converts the compressed files containing dicom files
-to numpy files.
+Methods for converting DICOM files to npy files.
 """
 import io
 import logging
@@ -206,7 +203,7 @@ def up_to_date(input_blob: storage.Blob, output_blob: storage.Blob):
     return True
 
 
-def dicom_to_npy(in_dir, out_dir):
+def dicom_to_npy(in_dir: str, out_dir: str):
     """
     :param in_dir: directory in gs://elvos to load from. must end with /
     :param out_dir: directory in gs://elvos to save to. must end with /

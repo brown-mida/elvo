@@ -11,9 +11,9 @@ from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.slack_operator import SlackAPIPostOperator
 
-from compress_numpy import compress_numpy
+from compress_numpy import compress_gcs_arrays
 from dicom_to_npy import dicom_to_npy
-from encode_labels import encode_labels
+from prepare_labels import prepare_labels
 from spreadsheet_to_gcs import spreadsheet_to_gcs
 
 # Set outermost parameters
@@ -76,7 +76,7 @@ elvos_anon_to_numpy_op = PythonOperator(task_id='elvos_anon_to_numpy',
 # python_callable: the imported method that will be called by this operation
 # dag: the previously created DAG
 compress_numpy_op = PythonOperator(task_id='compress_numpy',
-                                   python_callable=lambda: compress_numpy(
+                                   python_callable=lambda: compress_gcs_arrays(
                                        RAW_NUMPY, COMPRESSED_NUMPY),
                                    dag=dag)
 
@@ -94,7 +94,7 @@ spreadsheet_to_gcs_op = PythonOperator(task_id='spreadsheet_to_gcs',
 # python_callable: the imported method that will be called by this operation
 # dag: the previously created DAG
 encode_labels_op = PythonOperator(task_id='encode_labels',
-                                  python_callable=encode_labels,
+                                  python_callable=prepare_labels,
                                   dag=dag)
 
 # Define operation in DAG (notify Slack channel with a token)
