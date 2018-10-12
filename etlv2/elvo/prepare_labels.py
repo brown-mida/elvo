@@ -4,8 +4,6 @@ import logging
 import pandas as pd
 from google.cloud import storage
 
-IN_DIR = 'ELVOs_anon/'
-
 
 def load_metadata(bucket):
     """Loads the metadata from GCS.
@@ -22,18 +20,18 @@ def load_metadata(bucket):
     return positives_df, negatives_df
 
 
-def create_labels_csv(bucket, positives_df, negatives_df) -> None:
+def create_labels_csv(positives_df, negatives_df, bucket, in_dir) -> None:
     """Creates a file labels.csv mapping patient_id to 1, if positive
-    and 0, if negative.
+    and 0, if negative, in GCS as gs://elvos/processed/labels.csv
     """
     labels = []
     blob: storage.Blob
-    for blob in bucket.list_blobs(prefix=IN_DIR):
+    for blob in bucket.list_blobs(prefix=in_dir):
         if len(blob.name) < 4 or blob.name[-4:] not in ('.zip', '.cab'):
             logging.info(f'ignoring non-data file {blob.name}')
             continue
 
-        patient_id = blob.name[len(IN_DIR): -len('.npy')]
+        patient_id = blob.name[len(in_dir): -len('.npy')]
 
         if patient_id in positives_df['Anon ID'].values:
             labels.append((patient_id, 1))
@@ -51,13 +49,13 @@ def create_labels_csv(bucket, positives_df, negatives_df) -> None:
     logging.info(f'label value counts {labels_df["label"].value_counts()}')
 
 
-def prepare_labels():
+def prepare_labels(in_dir: str):
     gcs_client = storage.Client(project='elvo-198322')
     input_bucket = gcs_client.get_bucket('elvos')
 
     positives_df, negatives_df = load_metadata(input_bucket)
-    create_labels_csv(input_bucket, positives_df, negatives_df)
+    create_labels_csv(positives_df, negatives_df, input_bucket, in_dir)
 
 
 if __name__ == '__main__':
-    prepare_labels()
+    prepare_labels('ELVOs_anon/')

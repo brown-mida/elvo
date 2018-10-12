@@ -31,7 +31,7 @@ def _upload_npz(arrays: Dict[str, np.ndarray],
     out_blob.upload_from_file(out_stream)
 
 
-def compress_gcs_arrays(in_dir: str, out_dir: str) -> None:
+def compress_arrays(in_dir: str, out_dir: str) -> None:
     """
     Saves .npy files as .npz files.
 
@@ -54,14 +54,12 @@ def compress_gcs_arrays(in_dir: str, out_dir: str) -> None:
     for blob in bucket.list_blobs(prefix=in_dir):
         patient_id = blob.name[len(in_dir): -len('.npy')]
         if len(arrays) == 10:
-            # Upload arrays
             logging.info(f'uploading arrays: {list(arrays.keys())}')
             _upload_npz(arrays,
                         f'{out_dir}{i}.npz',
                         bucket)
             arrays = {}
             i += 1
-        # add array to dict
         in_stream = io.BytesIO()
         logging.info(f'downloading {blob.name}, patient id: {patient_id}')
         blob.download_to_file(in_stream)
