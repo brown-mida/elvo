@@ -11,10 +11,10 @@ from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.slack_operator import SlackAPIPostOperator
 
-from compress_numpy import compress_gcs_arrays
-from dicom_to_npy import dicom_to_npy
-from prepare_labels import prepare_labels
-from spreadsheet_to_gcs import spreadsheet_to_gcs
+from elvo.compress_numpy import compress_gcs_arrays
+from elvo.dicom_to_npy import dicom_to_npy
+from elvo.prepare_labels import prepare_labels
+from elvo.spreadsheet_to_gcs import spreadsheet_to_gcs
 
 # Set outermost parameters
 default_args = {

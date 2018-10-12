@@ -3,7 +3,7 @@ import os
 import pytest
 from google.cloud import storage
 
-import dropbox_to_gcs
+from elvo import dropbox_to_gcs
 
 
 @pytest.mark.skipif('DROPBOX_TOKEN' not in os.environ,
