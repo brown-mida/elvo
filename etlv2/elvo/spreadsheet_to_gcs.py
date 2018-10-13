@@ -62,7 +62,3 @@ def spreadsheet_to_gcs():
     os.remove('/tmp/elvo_keys_positive.csv')
     os.remove('/tmp/elvo_keys_negative.csv')
     print("Done.")
-
-
-if __name__ == '__main__':
-    spreadsheet_to_gcs()

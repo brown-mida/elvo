@@ -58,7 +58,7 @@ def upload_entry_if_outdated(entry: FileMetadata,
         logging.info('blob {} is not outdated, not uploading'.format(blob.name))
 
 
-if __name__ == '__main__':
+def dropbox_to_gcs():
     dbx = dropbox.Dropbox(os.environ['DROPBOX_TOKEN'])
 
     gcs_client = storage.Client(project='elvo-198322')

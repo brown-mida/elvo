@@ -1,5 +1,5 @@
 """
-Methods for converting DICOM files to npy files.
+Methods for processing the raw data into to ML-ready .npy files.
 """
 import io
 import logging
@@ -216,7 +216,7 @@ def up_to_date(input_blob: storage.Blob, output_blob: storage.Blob):
     return True
 
 
-def dicom_to_npy(in_dir: str, out_dir: str):
+def prepare_arrays(in_dir: str, out_dir: str):
     """
     Loads .cab and .zip files in the in_dir and saves processed
     .npy data in the output directory.

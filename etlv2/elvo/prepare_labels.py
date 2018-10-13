@@ -75,7 +75,3 @@ def prepare_labels(in_dir: str):
 
     positives_df, negatives_df = load_metadata(input_bucket)
     create_labels_csv(positives_df, negatives_df, input_bucket, in_dir)
-
-
-if __name__ == '__main__':
-    prepare_labels('ELVOs_anon/')
