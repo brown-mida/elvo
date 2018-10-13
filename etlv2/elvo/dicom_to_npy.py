@@ -16,7 +16,7 @@ from typing import List, Dict
 from scipy.ndimage import zoom
 
 
-def process_cab(blob: storage.Blob, patient_id: str) -> np.ndarray:
+def process_cab(blob: storage.Blob) -> np.ndarray:
     """
     Loads and processes a .cab file on GCS into a 3D standardized numpy
     array.
@@ -34,9 +34,11 @@ def process_cab(blob: storage.Blob, patient_id: str) -> np.ndarray:
     os.makedirs(dirname, exist_ok=True)
     os.chdir(dirname)
 
-    blob.download_to_filename(patient_id + '.cab')
+    # Download the data
+    filename = blob.name.split('/')[-1]
+    blob.download_to_filename(filename)
     # Make sure that cabextract is installed on the VM!
-    subprocess.call(['cabextract', patient_id + '.cab'])
+    subprocess.call(['cabextract', filename])
     logging.info('extracted cab file')
 
     dirpath = list(os.walk('.'))[2][0]
@@ -44,12 +46,13 @@ def process_cab(blob: storage.Blob, patient_id: str) -> np.ndarray:
     scan = load_scan(dirpath)
     processed_scan = preprocess_scan(scan)
 
+    # Remove all data from disk
     os.chdir(old_wd)
     shutil.rmtree(dirname)
     return processed_scan
 
 
-def process_zip(blob: storage.Blob, patient_id: str) -> np.ndarray:
+def process_zip(blob: storage.Blob) -> np.ndarray:
     """
     Loads and processes a .zip file on GCS into a 3D standardized numpy
     array.
@@ -65,9 +68,10 @@ def process_zip(blob: storage.Blob, patient_id: str) -> np.ndarray:
     os.makedirs(dirname, exist_ok=True)
     os.chdir(dirname)
 
-    blob.download_to_filename(patient_id + '.zip')
+    filename = blob.name.split('/')[-1]
+    blob.download_to_filename(filename)
     logging.info('extracting zip file')
-    shutil.unpack_archive(patient_id + '.zip', format='zip')
+    shutil.unpack_archive(filename, format='zip')
 
     dirpath = list(os.walk('.'))[3][0]
     logging.info(f'loading scans from {dirpath}')
@@ -145,8 +149,9 @@ def get_pixels_hu(slices: List[pydicom.FileDataset]) -> np.ndarray:
         assert s.Rows == 512
         assert s.Columns == 512
 
-    image = np.stack([np.frombuffer(s.pixel_array, np.int16).reshape(512, 512)
-                      for s in slices])
+    arrays = [np.frombuffer(s.pixel_array, np.int16).reshape(512, 512)
+              for s in slices]
+    image = np.stack(arrays)
 
     # Convert the pixels to Hounsfield units (HU)
     intercept = 0
@@ -225,35 +230,25 @@ def dicom_to_npy(in_dir: str, out_dir: str):
 
     blob: storage.Blob
     for blob in bucket.list_blobs(prefix=in_dir):
-        try:
-            if len(blob.name) < 4 or blob.name[-4:] not in ('.zip', '.cab'):
-                logging.info(f'ignoring non-data file {blob.name}')
-                continue
+        if len(blob.name) < 4 or blob.name[-4:] not in ('.zip', '.cab'):
+            logging.warning(f'ignoring non-data file {blob.name}')
+            continue
 
-            logging.info(f'processing blob {blob.name}')
-            patient_id = blob.name[len(in_dir): -len('.cab')]
-            outpath = f'{out_dir}{patient_id}.npy'
+        logging.info(f'processing blob {blob.name}')
+        patient_id = blob.name[len(in_dir): -len('.cab')]
+        outpath = f'{out_dir}{patient_id}.npy'
 
-            if up_to_date(blob, storage.Blob(outpath, bucket)):
-                logging.info(f'outfile {outpath} already exists')
-                continue
+        if up_to_date(blob, storage.Blob(outpath, bucket)):
+            logging.info(f'outfile {outpath} already exists')
+            continue
 
-            logging.info(f'outfile {outpath} is outdated, updating')
-            if blob.name.endswith('.cab'):
-                processed_scan = process_cab(blob, patient_id)
-                save_to_gcs(processed_scan, outpath, bucket)
-            elif blob.name.endswith('.zip'):
-                processed_scan = process_zip(blob, patient_id)
-                save_to_gcs(processed_scan, outpath, bucket)
-            else:
-                logging.info(f'file extension must be .cab or .zip,'
-                             f' got {blob.name}')
-        except Exception as e:
-            # TODO(luke): This should be removed. We don't want bad data
-            logging.error(e)
-            logging.error(traceback.format_exc())
-
-
-if __name__ == '__main__':
-    logging.basicConfig()
-    dicom_to_npy('ELVOs_anon/', 'raw_numpy/')
+        logging.info(f'outfile {outpath} is outdated, updating')
+        if blob.name.endswith('.cab'):
+            processed_scan = process_cab(blob)
+            save_to_gcs(processed_scan, outpath, bucket)
+        elif blob.name.endswith('.zip'):
+            processed_scan = process_zip(blob)
+            save_to_gcs(processed_scan, outpath, bucket)
+        else:
+            logging.info(f'file extension must be .cab or .zip,'
+                         f' got {blob.name}')

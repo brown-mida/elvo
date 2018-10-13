@@ -8,7 +8,7 @@ from elvo import dropbox_to_gcs
 
 @pytest.mark.skipif('DROPBOX_TOKEN' not in os.environ,
                     reason='Token needed for the test')
-def test_upload_entry():
+def test_upload_entry_if_outdated():
     dbx = dropbox.Dropbox(os.environ['DROPBOX_TOKEN'])
 
     gcs_client = storage.Client(project='elvo-198322')
