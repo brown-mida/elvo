@@ -1,7 +1,7 @@
-"""Fetches ELVO key spreadsheet from Google Drive, and saves it in
-Google Cloud Storage.
+"""Saves the positives and elvos sheets within the ELVO_key spreadsheet
+as CSVs in Google Cloud Storage.
 
-This requires a `client_secret.json` file in the credentials folder.
+This requires a `client_secret.json` file in the credentials/ folder.
 Download it (the gcloud service account) from the Google Cloud Console.
 """
 

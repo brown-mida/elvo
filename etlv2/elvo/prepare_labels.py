@@ -5,8 +5,12 @@ import pandas as pd
 from google.cloud import storage
 
 
-def load_metadata(bucket):
-    """Loads the metadata from GCS.
+def load_metadata(bucket: storage.Bucket) -> (pd.DataFrame, pd.DataFrame):
+    """
+    Loads metadata/positives.csv and metadata/negatives.csv from GCS.
+
+    :param bucket: the GCS bucket, typically 'elvos'
+    :return: positives_df, negatives_df
     """
     positives_blob = bucket.get_blob('metadata/positives.csv')
     positives_bytes = positives_blob.download_as_string()
@@ -20,9 +24,23 @@ def load_metadata(bucket):
     return positives_df, negatives_df
 
 
-def create_labels_csv(positives_df, negatives_df, bucket, in_dir) -> None:
-    """Creates a file labels.csv mapping patient_id to 1, if positive
-    and 0, if negative, in GCS as gs://elvos/processed/labels.csv
+def create_labels_csv(positives_df, negatives_df, bucket, in_dir):
+    """
+    Constructs the gs://elvos/processed/labels.csv file from the
+    DataFrame and the .cab/.zip data on GCS.
+
+    Warning: some data files on GCS may not be linked to positives_df or
+    negatives_df. # TODO(luke): Eliminate checking code.
+
+    labels.csv has 2 columns:
+     - patient_id: the patient Anon ID
+     - label: 1 or 0
+
+    :param positives_df:
+    :param negatives_df:
+    :param bucket:
+    :param in_dir: directory containing .npy data
+    :return:
     """
     labels = []
     blob: storage.Blob
@@ -38,9 +56,11 @@ def create_labels_csv(positives_df, negatives_df, bucket, in_dir) -> None:
         elif patient_id in negatives_df['Anon ID'].values:
             labels.append((patient_id, 0))
         else:
+            # TODO(luke): This should send a Slack alert
             logging.warning(f'blob with patient id {patient_id} not found in'
                             f' the metadata CSVs, defaulting to negative')
             labels.append((patient_id, 0))
+
     labels_df = pd.DataFrame(labels, columns=['patient_id', 'label'])
     labels_df.to_csv('/tmp/labels.csv', index=False)
     logging.info('uploading labels to the gs://elvos/processed/labels.csv')

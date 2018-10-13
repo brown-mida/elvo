@@ -3,7 +3,7 @@ import os
 import pytest
 from google.cloud import storage
 
-from elvo import dropbox_to_gcs
+from .dropbox_to_gcs import upload_entry_if_outdated
 
 
 @pytest.mark.skipif('DROPBOX_TOKEN' not in os.environ,
@@ -15,4 +15,4 @@ def test_upload_entry_if_outdated():
     bucket = gcs_client.get_bucket('elvos')
 
     entry = dbx.files_get_metadata('/ELVOs_anon/068WBWCQGW5JHBYV.cab')
-    dropbox_to_gcs.upload_entry_if_outdated(entry, dbx, bucket)
+    upload_entry_if_outdated(entry, dbx, bucket)
