@@ -18,43 +18,47 @@ from scipy.ndimage import zoom
 
 def process_cab(blob: storage.Blob, patient_id: str) -> np.ndarray:
     """
-    Downloads the blob and return a 3D standardized numpy array.
+    Loads and processes a .cab file on GCS into a 3D standardized numpy
+    array.
 
-    :param blob:
-    :param patient_id:
-    :return:
+    Note: This will only work on machines with cabextract installed.
+
+    :param blob: the GCS object containing array data
+    # TODO(luke): refactor param patient_id to out_filename
+    :param patient_id: a legacy str used to specify what temp filenames
+        to save the blob to.
+    :return: the processed numpy array
     """
-    # TODO: Fix issues with process_cab workingdir failing
     old_wd = os.getcwd()
     dirname = f'/tmp/dicom_to_npy-{int(time.time())}'
     os.makedirs(dirname, exist_ok=True)
     os.chdir(dirname)
 
     blob.download_to_filename(patient_id + '.cab')
+    # Make sure that cabextract is installed on the VM!
     subprocess.call(['cabextract', patient_id + '.cab'])
     logging.info('extracted cab file')
 
     dirpath = list(os.walk('.'))[2][0]
     logging.info(f'loading scans from {dirpath}')
-    processed_scan = _process_cab(dirpath)
+    scan = load_scan(dirpath)
+    processed_scan = preprocess_scan(scan)
 
     os.chdir(old_wd)
     shutil.rmtree(dirname)
     return processed_scan
 
 
-def _process_cab(dirpath: str) -> np.array:
-    scan = load_scan(dirpath)
-    processed_scan = preprocess_scan(scan)
-    return processed_scan
-
-
 def process_zip(blob: storage.Blob, patient_id: str) -> np.ndarray:
     """
-    Downloads the blob and returns a 3D standardized numpy array.
-    :param blob:
-    :param patient_id:
-    :return:
+    Loads and processes a .zip file on GCS into a 3D standardized numpy
+    array.
+
+    :param blob: the GCS object containing array data
+    # TODO(luke): refactor param patient_id to out_filename
+    :param patient_id: a legacy str used to specify what temp filenames
+        to save the blob to.
+    :return: the processed numpy array
     """
     old_wd = os.getcwd()
     dirname = f'/tmp/dicom_to_npy-{int(time.time())}'
@@ -77,13 +81,16 @@ def process_zip(blob: storage.Blob, patient_id: str) -> np.ndarray:
 
 
 def load_scan(dirpath: str) -> List[pydicom.FileDataset]:
-    """Loads a CT scan.
+    """
+    Loads all DICOM files contained in dirpath, sorted by
+    the ImagePositionPatient[2] DICOM field in ascending order
 
-    This only loads dicom files ending in .dcm and ignores nested
+    This only loads files ending in .dcm and ignores nested
     folders.
 
-    :param dirpath: the path to a directory containing dicom (.dcm) files
-    :return: a list of all dicom FileDataset objects, sorted by
+    :param dirpath: the path to a directory containing dicom (.dcm)
+        files
+    :return: a list of all pydicom FileDataset objects, sorted by
         ImagePositionPatient
     """
     slices = [pydicom.read_file(dirpath + '/' + filename)
@@ -92,50 +99,47 @@ def load_scan(dirpath: str) -> List[pydicom.FileDataset]:
     return sorted(slices, key=lambda x: float(x.ImagePositionPatient[2]))
 
 
-def load_patient_infos(input_dir: str) -> Dict[str, str]:
-    """Returns a mapping of patient ids to the directory of scans"""
-    patient_ids = {}
-    for dirpath, dirnames, filenames in os.walk(input_dir):
-        if filenames and '.dcm' in filenames[0]:
-            patient_id = _parse_id(dirpath, input_dir)
-            patient_ids[patient_id] = dirpath
-    return patient_ids
-
-
-def _parse_id(dirpath: str, input_dir: str) -> str:
-    """Turns a dirpath like
-        ELVOS_anon/HIA2VPHI6ABMCQTV HANKERSON IGNACIO A/f8...
-    to its patient id: HIA2VPHI6ABMCQTV
+def save_to_gcs(array: np.ndarray,
+                blob_name: str,
+                bucket: storage.Bucket) -> None:
     """
-    return dirpath[len(input_dir) + 1:].split()[0]
-
-
-def save_to_gcs(processed_scan, outpath, bucket):
+    Saves the array to GCS.
+    
+    :param array: the numpy array to save
+    :param blob_name: the name of the output blob
+    :param bucket: the output bucket
+    :return:
+    """
     stream = io.BytesIO()
-    np.save(stream, processed_scan)
-    processed_blob = storage.Blob(outpath, bucket=bucket)
+    # noinspection PyTypeChecker
+    np.save(stream, array)
+    processed_blob = storage.Blob(blob_name, bucket=bucket)
     stream.seek(0)
     processed_blob.upload_from_file(stream)
-    logging.info(f'saving dicom data to GCS in {outpath}')
+    logging.info(f'saving dicom data to GCS in {blob_name}')
     stream.close()
 
 
 def preprocess_scan(slices: List[pydicom.FileDataset]) -> np.array:
-    """Transforms the input dicom slices into a numpy array of pixels
-    in Hounsfield units with standardized spacing.
     """
+    Transforms the input dicom slices into a numpy array of pixels
+    in Hounsfield units with standardized spacing.
+
+    :param slices: a list of sorted slices
+    :return: a numpy array
+    """
+    # TODO(luke): Data validation w/ asserts
     scan = get_pixels_hu(slices)
     scan = standardize_spacing(scan, slices)
     return scan
 
 
-def get_pixels_hu(slices):
+def get_pixels_hu(slices: List[pydicom.FileDataset]) -> np.ndarray:
     """
-    Takes in a list of dicom datasets and returns the 3D pixel array in
-    Hounsfield scale, taking slope and intercept into account.
+    Processes the slices into a 3D Hounsfied unit pixel array.
 
-    :param slices: 3D DICOM image to process
-    :return:
+    :param slices: sorted list of slices 3D DICOM image to process
+    :return: a 3D numpy array
     """
     for s in slices:
         assert s.Rows == 512
@@ -144,7 +148,7 @@ def get_pixels_hu(slices):
     image = np.stack([np.frombuffer(s.pixel_array, np.int16).reshape(512, 512)
                       for s in slices])
 
-    # Convert the pixels Hounsfield units (HU)
+    # Convert the pixels to Hounsfield units (HU)
     intercept = 0
     for i, s in enumerate(slices):
         intercept = s.RescaleIntercept
@@ -161,35 +165,39 @@ def get_pixels_hu(slices):
     return image
 
 
-def standardize_spacing(image, slices):
+def standardize_spacing(image, slices) -> np.ndarray:
     """
-    Takes in a 3D image and interpolates the image so each pixel corresponds to
-    approximately a 1x1x1 box.
+    Interpolates the image so each pixel corresponds to
+    approximately a 1mm^3 box.
 
-    :param image: Non-interpolated array
+    :param image: input numpy array
     :param slices: actual DICOM slices with spacing info
-    :return:
+    :return: a standardized array
     """
-    # Determine current pixel spacing
-    spacing = np.array(
-        [slices[0].SliceThickness] + list(slices[0].PixelSpacing),
-        dtype=np.float32
-    )
+    # pixel spacing values in (height, length, width) order
+    height_spacing = slices[0].SliceThickness
+    length_spacing, width_spacing = slices[0].PixelSpacing
+
+    for s in slices:
+        assert s.SliceThickness == height_spacing
+        assert s.PixelSpacing[0] == length_spacing
+        assert s.PixelSpacing[1] == width_spacing
+
+    spacing = np.array([height_spacing, length_spacing, width_spacing])
     new_shape = np.round(image.shape * spacing)
     resize_factor = new_shape / image.shape
 
-    # zoom to the right size
     return zoom(image, resize_factor, mode='nearest')
 
 
 def up_to_date(input_blob: storage.Blob, output_blob: storage.Blob):
     """
-    Checks if the blob is up-to-date.
+    Checks if the output blob is up-to-date with the input blob.
 
     :param input_blob:
     :param output_blob:
-    :return: true if the output blob is up-to-date. If the blob doesn't
-    exist or is outdated, returns false.
+    :return: true if the output blob is exists and was updated after
+    the input blob was last updated, false otherwise
     """
     if not output_blob.exists():
         return False
@@ -205,6 +213,9 @@ def up_to_date(input_blob: storage.Blob, output_blob: storage.Blob):
 
 def dicom_to_npy(in_dir: str, out_dir: str):
     """
+    Loads .cab and .zip files in the in_dir and saves processed
+    .npy data in the output directory.
+
     :param in_dir: directory in gs://elvos to load from. must end with /
     :param out_dir: directory in gs://elvos to save to. must end with /
     :return:
@@ -238,6 +249,7 @@ def dicom_to_npy(in_dir: str, out_dir: str):
                 logging.info(f'file extension must be .cab or .zip,'
                              f' got {blob.name}')
         except Exception as e:
+            # TODO(luke): This should be removed. We don't want bad data
             logging.error(e)
             logging.error(traceback.format_exc())
 
