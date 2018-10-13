@@ -24,9 +24,6 @@ def process_cab(blob: storage.Blob) -> np.ndarray:
     Note: This will only work on machines with cabextract installed.
 
     :param blob: the GCS object containing array data
-    # TODO(luke): refactor param patient_id to out_filename
-    :param patient_id: a legacy str used to specify what temp filenames
-        to save the blob to.
     :return: the processed numpy array
     """
     old_wd = os.getcwd()
@@ -58,7 +55,6 @@ def process_zip(blob: storage.Blob) -> np.ndarray:
     array.
 
     :param blob: the GCS object containing array data
-    # TODO(luke): refactor param patient_id to out_filename
     :param patient_id: a legacy str used to specify what temp filenames
         to save the blob to.
     :return: the processed numpy array
@@ -132,7 +128,6 @@ def preprocess_scan(slices: List[pydicom.FileDataset]) -> np.array:
     :param slices: a list of sorted slices
     :return: a numpy array
     """
-    # TODO(luke): Data validation w/ asserts
     scan = get_pixels_hu(slices)
     scan = standardize_spacing(scan, slices)
     return scan
