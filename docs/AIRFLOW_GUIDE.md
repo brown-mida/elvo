@@ -28,7 +28,7 @@ See http://michal.karzynski.pl/blog/2017/03/19/developing-workflows-with-apache-
 and https://docs.astronomer.io/v2/apache_airflow/best-practices-guide.html
 for more tips on how to get started.
 
-For this part, just push your commits to `airflow`.
+For this part, just push your commits to `master`.
 
 To run airflow commands, do the following within the
 `elvo-analysis` dir:

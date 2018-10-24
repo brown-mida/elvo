@@ -1,5 +1,7 @@
 # Intro to our Workflow
 
+_Note: This is likely outdated and describes our 2018 summer workflow_.
+
 This document assumes you have a general understanding of what machine
 learning is. The [Google ML Crash Course](https://developers.google.com/machine-learning/crash-course/)
 and [Machine Learning for Humans](https://medium.com/machine-learning-for-humans/why-machine-learning-matters-6164faf1df12)

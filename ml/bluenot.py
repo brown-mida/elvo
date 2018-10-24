@@ -197,6 +197,8 @@ def start_job(x_train: np.ndarray,
             pathlib.Path(csv_filepath),
         )
 
+    os.remove(model_filepath)
+
 
 def hyperoptimize(hyperparams: Union[blueno.ParamGrid,
                                      List[blueno.ParamConfig]],

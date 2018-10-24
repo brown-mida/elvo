@@ -3,9 +3,8 @@
 [![Documentation Status](https://readthedocs.org/projects/elvo-analysis/badge/?version=latest)](https://elvo-analysis.readthedocs.io/en/latest/?badge=latest)
 
 ### Getting started
-Create a virtual environment, run `pip install -e .`
-and then run `pytest`. If the test cases pass you should be good to
-start developing.
+
+- Get credentials
 
 ### Organization
 
