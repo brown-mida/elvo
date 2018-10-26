@@ -1,5 +1,9 @@
 # You should run this only once, when first setting up airflow
 # on a new VM. This works on Ubuntu 18.04 LTS with only the repo cloned
+
+# If the last step fails you will have to add your own slack token as
+# an environment variable.
+
 #!/usr/bin/env bash
 
 # Install Unix packages

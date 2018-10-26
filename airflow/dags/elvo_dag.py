@@ -5,11 +5,11 @@ from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.slack_operator import SlackAPIPostOperator
 
-from dags.elvo.dropbox_to_gcs import dropbox_to_gcs
-from dags.elvo.compress_arrays import compress_arrays
-from dags.elvo.prepare_arrays import prepare_arrays
-from dags.elvo.prepare_labels import prepare_labels
-from dags.elvo.spreadsheet_to_gcs import spreadsheet_to_gcs
+from elvo.dropbox_to_gcs import dropbox_to_gcs
+from elvo.compress_arrays import compress_arrays
+from elvo.prepare_arrays import prepare_arrays
+from elvo.prepare_labels import prepare_labels
+from elvo.spreadsheet_to_gcs import spreadsheet_to_gcs
 
 default_args = {
     'owner': 'luke',
