@@ -14,6 +14,15 @@ sudo apt-get install python3-pip python3-venv -y
 echo export AIRFLOW_HOME=$PWD >> ~/.bashrc
 export AIRFLOW_HOME=$PWD
 
+# Add necessary tokens
+read -p "Enter your Dropbox token:" DROPBOX_TOKEN
+echo export DROPBOX_TOKEN=$DROPBOX_TOKEN >> ~/.bashrc
+read -p "Enter your Slack token:" SLACK_TOKEN
+echo export AIRFLOW_HOME=$SLACK_TOKEN >> ~/.bashrc
+
+
+source ~/.bashrc
+
 # Set up a virtual environment
 python3 -m venv venv
 source $PWD/venv/bin/activate
