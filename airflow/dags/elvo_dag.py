@@ -24,6 +24,7 @@ COMPRESSED_NUMPY = 'airflow/npz/'
 dag = DAG(dag_id='elvo_main',
           description='Loads ELVOs from Dropbox and'
                       ' and labels from Google Drive',
+          schedule_interval=None,
           default_args=default_args,
           catchup=False,
           max_active_runs=1)
