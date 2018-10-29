@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 
 import os
 from airflow import DAG
@@ -14,7 +14,7 @@ from elvo.spreadsheet_to_gcs import spreadsheet_to_gcs
 default_args = {
     'owner': 'luke',
     'email': 'luke_zhu@brown.edu',
-    'start_date': datetime(2018, 6, 28, 5),
+    'start_date': datetime.datetime(2018, 6, 28, 5),
 }
 
 ELVOS_ANON = 'ELVOs_anon/'  # Holds compressed DICOM files
@@ -22,16 +22,15 @@ RAW_NUMPY = 'airflow/npy/'
 COMPRESSED_NUMPY = 'airflow/npz/'
 
 dag = DAG(dag_id='elvo_main',
-          description='Loads ELVOs from Dropbox and'
-                      ' and labels from Google Drive',
+          description='Loads and prepares single-phase ELVOs',
           schedule_interval=None,
           default_args=default_args,
           catchup=False,
           max_active_runs=1)
 
 dropbox_to_gcs_op = PythonOperator(task_id='dropbox_to_gcs',
-                                python_callable=lambda: dropbox_to_gcs(),
-                                dag=dag)
+                                   python_callable=lambda: dropbox_to_gcs(),
+                                   dag=dag)
 
 elvos_anon_to_numpy_op = PythonOperator(task_id='prepare_arrays',
                                         python_callable=lambda: prepare_arrays(

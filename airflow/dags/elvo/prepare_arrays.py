@@ -238,12 +238,17 @@ def prepare_arrays(in_dir: str, out_dir: str):
             continue
 
         logging.info(f'outfile {outpath} is outdated, updating')
-        if blob.name.endswith('.cab'):
-            processed_scan = process_cab(blob)
-            save_to_gcs(processed_scan, outpath, bucket)
-        elif blob.name.endswith('.zip'):
-            processed_scan = process_zip(blob)
-            save_to_gcs(processed_scan, outpath, bucket)
-        else:
-            logging.info(f'file extension must be .cab or .zip,'
-                         f' got {blob.name}')
+        try:
+            if blob.name.endswith('.cab'):
+                processed_scan = process_cab(blob)
+                save_to_gcs(processed_scan, outpath, bucket)
+            elif blob.name.endswith('.zip'):
+                processed_scan = process_zip(blob)
+                save_to_gcs(processed_scan, outpath, bucket)
+            else:
+                logging.info(f'file extension must be .cab or .zip,'
+                             f' got {blob.name}')
+        except Exception:
+            # TODO(luke): Remove this after catching new issues
+            logging.error(f'Error processing file: {blob.name}')
+            traceback.print_exc()
