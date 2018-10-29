@@ -76,6 +76,10 @@ def prepare_multiphase():
             dirs.add(in_dir)
 
     for in_dir in dirs:
-        arrays = process_patient(in_dir, bucket)
-        out_dir = 'airflow/' + in_dir
-        savez_to_gcs(arrays, out_dir, bucket)
+        try:
+            print(f'Processing dir {in_dir}')
+            arrays = process_patient(in_dir, bucket)
+            out_dir = 'airflow/' + in_dir
+            savez_to_gcs(arrays, out_dir, bucket)
+        except Exception:
+            print(f"Error processing {in_dir}")
