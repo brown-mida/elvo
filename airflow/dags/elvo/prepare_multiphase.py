@@ -72,7 +72,8 @@ def prepare_multiphase():
         if ('multiphase/positive' in blob.name or
             'multiphase/negative' in blob.name):
             name_parts = blob.name.split('/')
-            in_dir = '/'.join(name_parts[:-1])
+            # in_dir = multiphase/(positive|negative)/<id>/
+            in_dir = '/'.join(name_parts[0:3])
             dirs.add(in_dir)
 
     for in_dir in dirs:
