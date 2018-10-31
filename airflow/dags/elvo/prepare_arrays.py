@@ -140,11 +140,15 @@ def get_pixels_hu(slices: List[pydicom.FileDataset]) -> np.ndarray:
     :param slices: sorted list of slices 3D DICOM image to process
     :return: a 3D numpy array
     """
+    logging.debug('checking that slices have same shape')
+    s0_rows = slices[0].Rows
+    s0_cols = slices[0].Columns
+    logging.debug(f'slices should have shape: {s0_rows}, {s0_cols}')
     for s in slices:
-        assert s.Rows == 512
-        assert s.Columns == 512
+        assert s.Rows == s0_rows
+        assert s.Columns == s0_cols
 
-    arrays = [np.frombuffer(s.pixel_array, np.int16).reshape(512, 512)
+    arrays = [np.frombuffer(s.pixel_array, np.int16).reshape(s0_rows, s0_cols)
               for s in slices]
     image = np.stack(arrays)
 
