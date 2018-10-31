@@ -48,7 +48,7 @@ def process_patient(gcs_dir: str,
         gcs_dir += '/'
     logging.info(f'processing GCS subdirectory: {gcs_dir}')
 
-    os.makedirs('tmp', exist_ok=True)
+    os.makedirs('multiphase', exist_ok=True)
     arrays = []
     for i in range(1, 4):
         logging.debug(f'downloading dicom slices from GCS')
@@ -67,7 +67,7 @@ def process_patient(gcs_dir: str,
         arr = preprocess_scan(slices)
         arrays.append(arr)
 
-    shutil.rmtree('tmp')
+    shutil.rmtree('multiphase', ignore_errors=True)
     return arrays
 
 
