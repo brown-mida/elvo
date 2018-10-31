@@ -29,7 +29,7 @@ def savez_to_gcs(arrays: List[np.ndarray],
 
     stream = io.BytesIO()
     # noinspection PyTypeChecker
-    np.savez(stream, arrays)
+    np.savez(stream, *arrays)
     processed_blob = storage.Blob(blob_name, bucket=bucket)
     stream.seek(0)
     processed_blob.upload_from_file(stream)
@@ -67,7 +67,7 @@ def process_patient(gcs_dir: str,
         arr = preprocess_scan(slices)
         arrays.append(arr)
 
-        shutil.rmtree('tmp/' + gcs_dir)
+    shutil.rmtree('tmp')
     return arrays
 
 
@@ -81,6 +81,7 @@ def prepare_multiphase():
     blob: storage.Blob
 
     dirs = set()
+
     for blob in bucket.list_blobs(prefix='multiphase'):
         if ('multiphase/positive' in blob.name
                 or 'multiphase/negative' in blob.name):
