@@ -3,16 +3,16 @@ Methods for processing the raw data into to ML-ready .npy files.
 """
 import io
 import logging
-import numpy as np
 import os
-import pydicom
 import shutil
 import subprocess
 import time
 import traceback
-from google.cloud import storage
-from typing import List, Dict
+from typing import List
 
+import numpy as np
+import pydicom
+from google.cloud import storage
 from scipy.ndimage import zoom
 
 
@@ -104,7 +104,7 @@ def save_to_gcs(array: np.ndarray,
                 bucket: storage.Bucket) -> None:
     """
     Saves the array to GCS.
-    
+
     :param array: the numpy array to save
     :param blob_name: the name of the output blob
     :param bucket: the output bucket

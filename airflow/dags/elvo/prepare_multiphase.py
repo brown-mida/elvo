@@ -5,11 +5,12 @@ import io
 import logging
 import os
 import shutil
+import traceback
 from typing import List
 
-import pydicom
 import numpy as np
 from google.cloud import storage
+
 from .prepare_arrays import load_scan, preprocess_scan
 
 
@@ -43,7 +44,7 @@ def process_patient(gcs_dir: str, bucket: storage.Bucket) -> List[np.ndarray]:
     """
     if gcs_dir[-1] != '/':
         gcs_dir += '/'
-    print(f'Processing GCS subdirectory: {gcs_dir}')
+    logging.info(f'processing GCS subdirectory: {gcs_dir}')
 
     os.makedirs('tmp', exist_ok=True)
     arrays = []
@@ -69,8 +70,8 @@ def prepare_multiphase():
 
     dirs = set()
     for blob in bucket.list_blobs(prefix='multiphase'):
-        if ('multiphase/positive' in blob.name or
-            'multiphase/negative' in blob.name):
+        if ('multiphase/positive' in blob.name
+                or 'multiphase/negative' in blob.name):
             name_parts = blob.name.split('/')
             # in_dir = multiphase/(positive|negative)/<id>/
             in_dir = '/'.join(name_parts[0:3])
@@ -82,5 +83,6 @@ def prepare_multiphase():
             arrays = process_patient(in_dir, bucket)
             out_dir = 'airflow/' + in_dir
             savez_to_gcs(arrays, out_dir, bucket)
-        except Exception:
-            print(f"Error processing {in_dir}")
+        except Exception as e:
+            logging.error(f"error processing {in_dir}")
+            logging.error(traceback.format_exc())

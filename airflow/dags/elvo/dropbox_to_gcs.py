@@ -55,7 +55,8 @@ def upload_entry_if_outdated(entry: FileMetadata,
         logging.info('blob {} is outdated, updating'.format(blob.name))
         upload_entry(blob, dbx, entry)
     else:
-        logging.info('blob {} is not outdated, not uploading'.format(blob.name))
+        logging.info(
+            'blob {} is not outdated, not uploading'.format(blob.name))
 
 
 def dropbox_to_gcs():

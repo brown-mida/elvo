@@ -1,7 +1,6 @@
-import pytest
 from google.cloud import storage
 
-from .prepare_multiphase import process_patient, prepare_multiphase
+from .prepare_multiphase import process_patient
 
 
 def test_process_patient_no_err():
