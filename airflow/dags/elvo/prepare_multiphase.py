@@ -39,10 +39,12 @@ def savez_to_gcs(arrays: List[np.ndarray],
 def process_patient(gcs_dir: str,
                     bucket: storage.Bucket) -> List[np.ndarray]:
     """
-    Prepares patient
+    Downloads and processes the multiphase data for a single patient
+    in the GCS directory.
 
-    :param blob:
-    :return:
+    :param gcs_dir: a gcs directory string (ex. multiphase/negatives/N123
+        the directory should contain folders named mip1, mip2 and mip3
+    :return: a list of three processed arrays
     """
     if gcs_dir[-1] != '/':
         gcs_dir += '/'
@@ -51,9 +53,8 @@ def process_patient(gcs_dir: str,
     os.makedirs('/tmp/multiphase', exist_ok=True)
     arrays = []
     for i in range(1, 4):
-        logging.debug(f'downloading dicom slices from GCS')
-
         prefix = os.path.join(gcs_dir + f'mip{i}')
+        logging.info(f'downloading dicom slices from GCS prefix: {prefix}')
         mip_dir = os.path.join('tmp', prefix)
         shutil.rmtree(mip_dir, ignore_errors=True)
         os.makedirs(mip_dir)
@@ -62,8 +63,9 @@ def process_patient(gcs_dir: str,
             blob_filename = os.path.join(mip_dir, f'{j}.dcm')
             blob.download_to_filename(blob_filename)
 
-        logging.debug(f'loading and processing slices')
+        logging.info(f'loading slices from {mip_dir}')
         slices = load_scan(mip_dir)
+        logging.info(f'procecessing slices from {mip_dir}')
         arr = preprocess_scan(slices)
         arrays.append(arr)
 
@@ -81,7 +83,6 @@ def prepare_multiphase():
     blob: storage.Blob
 
     dirs = set()
-
     for blob in bucket.list_blobs(prefix='multiphase'):
         if ('multiphase/positive' in blob.name
                 or 'multiphase/negative' in blob.name):
@@ -95,6 +96,6 @@ def prepare_multiphase():
             arrays = process_patient(in_dir, bucket)
             out_dir = 'airflow/' + in_dir
             savez_to_gcs(arrays, out_dir, bucket)
-        except Exception as e:
+        except Exception:  # TODO(luke): Remove when all errors are handled
             logging.error(f"error processing {in_dir}")
             logging.error(traceback.format_exc())
