@@ -144,9 +144,13 @@ def get_pixels_hu(slices: List[pydicom.FileDataset]) -> np.ndarray:
     s0_rows = slices[0].Rows
     s0_cols = slices[0].Columns
     logging.debug(f'slices should have shape: {s0_rows}, {s0_cols}')
-    for s in slices:
-        assert s.Rows == s0_rows
-        assert s.Columns == s0_cols
+    for i, s in enumerate(slices):
+        msg = f'Slice {i} has row size different than slice 0:' \
+              f' {s.Rows} != {s0_rows}'
+        assert s.Rows == s0_rows, msg
+        msg = f'Slice {i} has column size different than slice 0:' \
+              f' {s.Columns} != {s0_cols}'
+        assert s.Columns == s0_cols, msg
 
     arrays = [np.frombuffer(s.pixel_array, np.int16).reshape(s0_rows, s0_cols)
               for s in slices]
@@ -182,10 +186,16 @@ def standardize_spacing(image, slices) -> np.ndarray:
     height_spacing = slices[0].SliceThickness
     length_spacing, width_spacing = slices[0].PixelSpacing
 
-    for s in slices:
-        assert s.SliceThickness == height_spacing
-        assert s.PixelSpacing[0] == length_spacing
-        assert s.PixelSpacing[1] == width_spacing
+    for i, s in enumerate(slices):
+        msg = f'Slice {i} has different slice thickness than slice {0}:' \
+              f' {s.SliceThickness} != {height_spacing}'
+        assert s.SliceThickness == height_spacing, msg
+        msg = f'Slice {i} has different length spacing than slice {0}:' \
+              f' {s.PixelSpacing[0]} != {length_spacing}'
+        assert s.PixelSpacing[0] == length_spacing, msg
+        msg = f'Slice {i} has different width spacing than slice {0}:' \
+              f' {s.PixelSpacing[1]} != {width_spacing}'
+        assert s.PixelSpacing[1] == width_spacing, msg
 
     spacing = np.array([height_spacing, length_spacing, width_spacing])
     new_shape = np.round(image.shape * spacing)
