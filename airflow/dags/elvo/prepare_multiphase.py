@@ -91,6 +91,7 @@ def prepare_multiphase():
             in_dir = '/'.join(name_parts[0:3])
             dirs.add(in_dir)
 
+    bad_patients = []
     for in_dir in dirs:
         try:
             arrays = process_patient(in_dir, bucket)
@@ -99,3 +100,8 @@ def prepare_multiphase():
         except Exception:  # TODO(luke): Remove when all errors are handled
             logging.error(f"error processing {in_dir}")
             logging.error(traceback.format_exc())
+            bad_patients.append(in_dir)
+
+    print('bad patients:')
+    for s in bad_patients:
+        print(s)

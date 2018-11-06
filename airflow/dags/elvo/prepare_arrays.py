@@ -94,8 +94,7 @@ def load_scan(dirpath: str) -> List[pydicom.FileDataset]:
         ImagePositionPatient
     """
     slices = [pydicom.read_file(dirpath + '/' + filename)
-              for filename in os.listdir(dirpath)
-              if filename.endswith('.dcm')]
+              for filename in os.listdir(dirpath)]
     return sorted(slices, key=lambda x: float(x.ImagePositionPatient[2]))
 
 
