@@ -236,6 +236,7 @@ def prepare_arrays(in_dir: str, out_dir: str):
     gcs_client = storage.Client(project='elvo-198322')
     bucket = gcs_client.get_bucket('elvos')
 
+    bad_patients = []
     blob: storage.Blob
     for blob in bucket.list_blobs(prefix=in_dir):
         if len(blob.name) < 4 or blob.name[-4:] not in ('.zip', '.cab'):
@@ -265,3 +266,8 @@ def prepare_arrays(in_dir: str, out_dir: str):
             # TODO(luke): Remove this after catching new issues
             logging.error(f'Error processing file: {blob.name}')
             traceback.print_exc()
+            bad_patients.append(blob)
+
+    print('bad blobs:')
+    for f in bad_patients:
+        print(f)
