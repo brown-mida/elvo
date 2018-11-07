@@ -46,7 +46,7 @@ def compress_arrays(in_dir: str, out_dir: str) -> None:
     :return:
     """
     client = storage.Client(project='elvo-198322')
-    bucket = client.get_bucket('elvos')
+    bucket = client.get_bucket('data-elvo')
 
     blob: storage.Blob
     arrays = {}
