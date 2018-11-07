@@ -63,7 +63,7 @@ def dropbox_to_gcs():
     dbx = dropbox.Dropbox(os.environ['DROPBOX_TOKEN'])
 
     gcs_client = storage.Client(project='elvo-198322')
-    bucket = gcs_client.get_bucket('elvos')
+    bucket = gcs_client.get_bucket('data-elvo')
 
     # This is the ELVOs_anon folder on Dropbox (10/13/2018).
     # You will need permission from Matt Stib to read from this folder.

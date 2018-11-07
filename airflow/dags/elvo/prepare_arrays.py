@@ -234,7 +234,7 @@ def prepare_arrays(in_dir: str, out_dir: str):
     :return:
     """
     gcs_client = storage.Client(project='elvo-198322')
-    bucket = gcs_client.get_bucket('elvos')
+    bucket = gcs_client.get_bucket('data-elvo')
 
     bad_patients = []
     blob: storage.Blob
