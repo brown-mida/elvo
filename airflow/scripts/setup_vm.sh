@@ -9,6 +9,7 @@
 # Install Unix packages
 sudo apt-get update
 sudo apt-get install python3-pip python3-venv -y
+sudo apt-get install cabextract # for the .cab files in dropbox
 
 # So $AIRFLOW_HOME is permanently set in the shell
 echo export AIRFLOW_HOME=$PWD >> ~/.bashrc
