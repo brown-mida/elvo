@@ -68,7 +68,7 @@ def create_labels_csv(positives_df, negatives_df, bucket, in_dir):
 
 def prepare_labels(in_dir: str):
     gcs_client = storage.Client(project='elvo-198322')
-    input_bucket = gcs_client.get_bucket('elvos')
+    input_bucket = gcs_client.get_bucket('data-elvo')
 
     positives_df, negatives_df = load_metadata(input_bucket)
     create_labels_csv(positives_df, negatives_df, input_bucket, in_dir)

@@ -49,7 +49,7 @@ def spreadsheet_to_gcs():
     # Upload to Google Cloud
     print("Uploading to Google Cloud...")
     gcs_client = storage.Client()
-    bucket = gcs_client.get_bucket('elvos')
+    bucket = gcs_client.get_bucket('data-elvo')
 
     blob = storage.Blob('labels/positives.csv', bucket)
     blob.upload_from_filename('/tmp/elvo_keys_positive.csv')
