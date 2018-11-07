@@ -95,7 +95,7 @@ def prepare_multiphase():
     for in_dir in dirs:
         try:
             arrays = process_patient(in_dir, bucket)
-            blob_name = os.path.join('airflow', in_dir, '.npz')
+            blob_name = os.path.join('airflow', in_dir) + '.npz'
             savez_to_gcs(arrays, blob_name, bucket)
         except Exception:  # TODO(luke): Remove when all errors are handled
             logging.error(f"error processing {in_dir}")
