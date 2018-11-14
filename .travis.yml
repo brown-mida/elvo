@@ -1,12 +1,16 @@
 language: python
 python:
-  - 3.6
+- 3.6
 env:
-  - SLACK_TOKEN=''
-install: 
-  - pip install .[test,cpu]  # Install blueno
-script: 
-  - flake8 ml blueno
-  - pytest --cov=./
+- SLACK_TOKEN='' GOOGLE_APPLICATION_CREDENTIALS='credentials/elvo-05b77356bd6f.json' SPREADSHEET_CREDENTIALS='credentials/elvo-0ee4560c5dbb.json'
+before_install:
+- openssl aes-256-cbc -K $encrypted_5dacdc162043_key -iv $encrypted_5dacdc162043_iv
+  -in secrets.tar.enc -out secrets.tar -d
+- tar xvf secrets.tar
+install:
+- pip install .[test,cpu]  # Install blueno
+script:
+- flake8 ml blueno
+- pytest --cov=./
 after_success:
-  - codecov --token 54bae0d6-e9bd-4bb9-b926-875f5cc023f2
+- codecov --token 54bae0d6-e9bd-4bb9-b926-875f5cc023f2
