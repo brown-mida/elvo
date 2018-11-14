@@ -4,9 +4,9 @@ python:
 env:
   - SLACK_TOKEN=''
 install: 
-  - pip install .[test,cpu,etl]  # Install blueno
+  - pip install .[test,cpu]  # Install blueno
 script: 
-  - flake8 etl ml dashboard blueno
+  - flake8 ml blueno
   - pytest --cov=./
 after_success:
   - codecov --token 54bae0d6-e9bd-4bb9-b926-875f5cc023f2

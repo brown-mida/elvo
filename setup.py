@@ -34,15 +34,6 @@ setup(
             'tensorflow-gpu==1.4.1',
             'keras==2.1.3',
         ],
-        'etl': [
-            'dropbox==8.9.0',
-            'gspread==3.0.0',
-            #  Include dataflow 2.2 otherwise airflow can't be installed
-            'google-cloud-dataflow==2.2.0',
-            'apache-airflow[slack,gcp_api,postgres]==1.9',
-            'paramiko==2.4.1',
-            'pydicom==1.0.2',
-        ],
         'test': [
             'pytest==3.6.1',
             'pytest-cov==2.5.1',
