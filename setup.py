@@ -28,7 +28,7 @@ setup(
     extras_require={
         'cpu': [
             'tensorflow==1.4',
-            'Keras==2.1.3',
+            'keras==2.1.3',
         ],
         'gpu': [
             'tensorflow-gpu==1.4.1',

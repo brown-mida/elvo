@@ -12,8 +12,8 @@ from .gcs import equal_array_counts, upload_gcs_plots, \
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
 
 
-@pytest.mark.skipif('TRAVIS' in os.environ,
-                    reason='Test requires GCS credentials')
+@pytest.mark.skipif(os.uname().nodename != 'gpu1708',
+                    reason='Function only for  gpu1708')
 def test_compare_dir_len():
     # ls processed-lower/arrays | wc -l
     # gsutil ls gs://elvos/processed/processed-lower/arrays | wc -l
