@@ -12,6 +12,6 @@ install:
 - pip install .[test,cpu]
 script:
 - flake8 ml blueno
-- pytest --cov=./
+- pytest --cov=./ --ignore=etl
 after_success:
 - codecov --token 54bae0d6-e9bd-4bb9-b926-875f5cc023f2
