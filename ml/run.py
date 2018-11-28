@@ -7,21 +7,14 @@ import blueno
 import generators.luke
 import models.luke
 
-<<<<<<< HEAD
 USER = 'mary'
-BLUENO_HOME = '/research/rih-cs/datasets/elvo/v1/'
-DATA_DIR = f'{BLUENO_HOME}preprocessed/'
+BLUENO_HOME = '/research/rih-cs/datasets/elvo-multiphase/v1/'
+DATA_DIR = f'{BLUENO_HOME}preprocessed/phase2/'
 LOG_DIR = f'{BLUENO_HOME}logs/'
 SLACK_TOKEN = 'xoxp-314216549302-331430419907-396979178437-' \
               'ae769a026a3c0f91623e9a6565f0d9ee'
-=======
-USER = 'charlene'
-BLUENO_HOME = '/research/rih-cs/datasets/elvo/v1/'
-DATA_DIR = f'{BLUENO_HOME}preprocessed/'
-LOG_DIR = f'{BLUENO_HOME}logs/'
->>>>>>> dd7b66dbe3118dc9485a132f083839ab5bfc16da
 
-NUM_GPUS = 2
+NUM_GPUS = 1
 GPU_OFFSET = 2
 
 # a lot of .npy files in data/ and preprocessed/ and labels.csv (patient_id, label 0 or 1)
@@ -60,8 +53,4 @@ PARAM_GRID = model_selection.ParameterGrid({
     'val_split': [0.1],  # So we run the grid 16 times
 })
 
-<<<<<<< HEAD
 PARAM_GRID = [blueno.ParamConfig(**p) for p in PARAM_GRID]
-=======
-PARAM_GRID = [blueno.ParamConfig(**p) for p in PARAM_GRID]
->>>>>>> dd7b66dbe3118dc9485a132f083839ab5bfc16da
