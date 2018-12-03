@@ -51,12 +51,13 @@ def preprocess(dir_path, category):
     :return: nothing
     """
     for npz_file in os.listdir(dir_path):
-        # assert npz_file.endswith(".npz")
+        assert npz_file.endswith(".npz")  # expecting npz files
         if npz_file.endswith(".npz"):  # ignore gstmp files
             patient_id = os.path.splitext(npz_file)[0]    # get id w/o extension
 
-            npy_files = unzip(dir_path + '/' + npz_file)  # unzip file
-            assert len(npy_files) == 3                    # expect 3 phases
+            # npy_files = unzip(dir_path + '/' + npz_file)  # unzip file
+            npy_files = np.load(dir_path + '/' + npz_file)
+            # assert len(npy_files) == 3                    # expect 3 phases
 
             try:
                 phase1 = mip(npy_files['arr_0'])
