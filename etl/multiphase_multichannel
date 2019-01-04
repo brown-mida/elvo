@@ -27,8 +27,8 @@ def mip(arr):
     """
     location = 'numpy/axial'
     cropped = transforms.crop_multichannel_axial_fa(arr, location)
-    remove_extremes = transforms.remove_extremes(cropped)
-    return transforms.mip_multichannel(remove_extremes)
+    # remove_extremes = transforms.remove_extremes(cropped)
+    return transforms.mip_multichannel(cropped)
 
 
 def save(mipped_arr, path):
@@ -51,7 +51,7 @@ def preprocess(dir_path, category):
     :return: nothing
     """
     for npz_file in os.listdir(dir_path):
-        assert npz_file.endswith(".npz")  # expecting npz files
+        # assert npz_file.endswith(".npz")  # expecting npz files
         if npz_file.endswith(".npz"):  # ignore gstmp files
             patient_id = os.path.splitext(npz_file)[0]    # get id w/o extension
 
