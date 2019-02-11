@@ -1,0 +1,90 @@
+"""
+A scipt that creates multichannel MIPs from multiphase data.
+Pulls in npz files, processes each npy (each phase) separately, then saves each
+phase into a directory.
+"""
+
+import numpy as np
+import os
+import lib.transforms as transforms
+
+
+def unzip(path):
+    """
+    unzips one npz file given path of file
+    :param path: string path of a singular npz file
+    :return: the contents of the zip file
+    """
+    files = np.load(path)
+    return files
+
+
+def mip(arr):
+    """
+    applies multichannel mip preprocessing to one array
+    :param arr: numpy array to be preprocessed
+    :return: MIP-ed array
+    """
+    location = 'numpy/axial'
+    cropped = transforms.crop_multichannel_axial_fa(arr, location)
+    # remove_extremes = transforms.remove_extremes(cropped)
+    return transforms.mip_multichannel(cropped)
+
+
+def save(mipped_arr, path):
+    """
+    saves multichannel mip array to the corresponding directory, organized
+    based on phase
+    :param mipped_arr: numpy array, mipped
+    :param path: string path, indicated dir where file should be saved
+    :return: nothing
+    """
+    np.save(path, mipped_arr)
+
+
+def preprocess(dir_path, category):
+    """
+    preprocesses all data in a given directory (all pos or all neg) and saves
+    them to the correct location
+    :param dir_path: path to the directory
+    :param category: string, pos or neg
+    :return: nothing
+    """
+    for npz_file in os.listdir(dir_path):
+        # assert npz_file.endswith(".npz")  # expecting npz files
+        if npz_file.endswith(".npz"):  # ignore gstmp files
+            patient_id = os.path.splitext(npz_file)[0]    # get id w/o extension
+
+            # npy_files = unzip(dir_path + '/' + npz_file)  # unzip file
+            npy_files = np.load(dir_path + '/' + npz_file)
+            # assert len(npy_files) == 3                    # expect 3 phases
+
+            try:
+                phase1 = mip(npy_files['arr_0'])
+            except Exception:
+                print('could not mip phase 1 of ' + patient_id + ' in ' + category)
+
+            try:
+                phase2 = mip(npy_files['arr_1'])
+            except Exception:
+                print('could not mip phase 2 of ' + patient_id + ' in ' + category)
+
+            try:
+                phase3 = mip(npy_files['arr_2'])
+            except Exception:
+                print('could not mip phase 3 of ' + patient_id + ' in ' + category)
+
+            save(phase1,
+                 '/research/rih-cs/datasets/elvo-multiphase/preprocessed/phase1/' +
+                 category + '/' + patient_id)
+            save(phase2,
+                 '/research/rih-cs/datasets/elvo-multiphase/preprocessed/phase2/' +
+                 category + '/' + patient_id)
+            save(phase3,
+                 '/research/rih-cs/datasets/elvo-multiphase/preprocessed/phase3/' +
+                 category + '/' + patient_id)
+
+
+if __name__ == '__main__':
+    preprocess('/research/rih-cs/datasets/elvo-multiphase/v0.1/positive', 'pos')
+    preprocess('/research/rih-cs/datasets/elvo-multiphase/v0.1/negative', 'neg')

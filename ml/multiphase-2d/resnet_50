@@ -1,0 +1,37 @@
+"""
+author: mary
+purpose: first attempt to finetune resnet-50 for classifying elvo images using multi-
+phase data
+ref: https://github.com/sebastianbk/finetuned-resnet50-keras/blob/master/resnet50_train.py
+"""
+
+import numpy as np
+import data_split
+
+from keras.applications.resnet50 import ResNet50
+from keras.preprocessing import image
+from keras.applications.resnet50 import preprocess_input, decode_predictions
+
+
+DATA_DIR = '/research/rih-cs/datasets/elvo-multiphase/preprocessed/'
+PHASE = 'phase2'  # can make an enum?
+
+
+class Model:
+    def __init__(self):
+        pass
+
+    def train(self):
+        pass
+
+    def test(self):
+        pass
+
+
+def main():
+    pass
+
+
+if __name__ == '__main__':
+    main()
+

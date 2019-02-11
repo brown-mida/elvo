@@ -7,12 +7,14 @@ import blueno
 import generators.luke
 import models.luke
 
-USER = 'charlene'
-BLUENO_HOME = '/research/rih-cs/datasets/elvo/v1/'
-DATA_DIR = f'{BLUENO_HOME}preprocessed/'
+USER = 'mary'
+BLUENO_HOME = '/research/rih-cs/datasets/elvo-multiphase/v1/'
+DATA_DIR = f'{BLUENO_HOME}preprocessed/phase2/'
 LOG_DIR = f'{BLUENO_HOME}logs/'
+SLACK_TOKEN = 'xoxp-314216549302-331430419907-396979178437-' \
+              'ae769a026a3c0f91623e9a6565f0d9ee'
 
-NUM_GPUS = 2
+NUM_GPUS = 1
 GPU_OFFSET = 2
 
 # a lot of .npy files in data/ and preprocessed/ and labels.csv (patient_id, label 0 or 1)
